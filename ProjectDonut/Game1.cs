@@ -7,6 +7,7 @@ using System.Linq;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.GameObjects;
 using System;
+using ProjectDonut.ProceduralGeneration;
 
 namespace ProjectDonut
 {
@@ -22,7 +23,7 @@ namespace ProjectDonut
         // World Map
         private Vector2 mapSizeWorld = new Vector2(1000, 1000);
         private WorldGenerator worldGenerator;
-        private int[,] map;
+        private Tilemap map;
         private string[] mapStrings;
 
         private Camera camera = new Camera();
@@ -47,9 +48,9 @@ namespace ProjectDonut
             _gameObjects.Add("player", new Player(_graphics, GraphicsDevice, Content, _spriteBatch));
             _gameObjects["player"].position = new Vector2(250, 250);
 
-            worldGenerator = new WorldGenerator();
+            worldGenerator = new WorldGenerator(Content, GraphicsDevice);
             map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
-            mapStrings = MapToStrings(map);
+            
             _gameObjects.Add("MapDrawer", new MapDrawer(map, Content, _graphics, _spriteBatch, camera, GraphicsDevice));
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());

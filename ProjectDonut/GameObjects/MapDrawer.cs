@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.ProceduralGeneration;
 using ProjectGorilla.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace ProjectDonut.GameObjects
 {
     internal class MapDrawer : GameObject
     {
-        private int[,] mapData;
+        private Tilemap map;
 
         private Texture2D spriteSheet;
 
@@ -24,9 +25,9 @@ namespace ProjectDonut.GameObjects
 
         private int tileSize = 32;
 
-        public MapDrawer(int[,] mapData, ContentManager content, GraphicsDeviceManager graphics, SpriteBatch spriteBatch, Camera camera, GraphicsDevice graphicsDevice)
+        public MapDrawer(Tilemap mapData, ContentManager content, GraphicsDeviceManager graphics, SpriteBatch spriteBatch, Camera camera, GraphicsDevice graphicsDevice)
         {
-            this.mapData = mapData;
+            this.map = mapData;
             this.content = content;
             this.graphics = graphics;
             this.spriteBatch = spriteBatch;
@@ -36,26 +37,18 @@ namespace ProjectDonut.GameObjects
 
         public override void Draw(GameTime gameTime)
         {
-            for (int y = 0; y < mapData.GetLength(1); y++)
+            var viewportRectangle = new Rectangle(
+                (int)camera.Position.X - (graphicsDevice.Viewport.Width / 2) - 32,
+                (int)camera.Position.Y - (graphicsDevice.Viewport.Height / 2) - 32,
+                graphicsDevice.Viewport.Width + 32,
+                graphicsDevice.Viewport.Height + 32
+            );
+
+            foreach (var tile in map.Map)
             {
-                for (int x = 0; x < mapData.GetLength(0); x++)
+                if (viewportRectangle.Contains(tile.Position.X, tile.Position.Y))
                 {
-                    var position = new Vector2(x * tileSize, y * tileSize);
-                    var tileBounds = new Rectangle(x, y, tileSize, tileSize);
-
-                    var viewportRectangle = new Rectangle(
-                        (int)camera.Position.X - (graphicsDevice.Viewport.Width / 2),
-                        (int)camera.Position.Y - (graphicsDevice.Viewport.Height / 2),
-                        graphicsDevice.Viewport.Width,
-                        graphicsDevice.Viewport.Height
-                    );
-
-                    //if (IsTileVisible(tileBounds, cameraBounds))
-                    if (viewportRectangle.Contains(x * tileSize, y * tileSize))
-                    {
-                        var sourceRect = DetermineSourceRect(mapData[x, y]);
-                        spriteBatch.Draw(spriteSheet, position, sourceRect, Color.White);
-                    }
+                    spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White);
                 }
             }
         }
