@@ -53,46 +53,10 @@ namespace ProjectDonut
             
             _gameObjects.Add("MapDrawer", new MapDrawer(map, Content, _graphics, _spriteBatch, camera, GraphicsDevice));
 
+            _gameObjects.Add("camera", camera);
+
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             base.Initialize();
-        }
-
-        private string[] MapToStrings(char[,] map)
-        {
-            var result = new List<string>();
-
-            for (int i = 0; i < map.GetLength(0); i++)
-            {
-                var line = string.Empty;
-
-                for (int j = 0; j < map.GetLength(1); j++)
-                {
-                    line += map[i, j];
-                }
-
-                result.Add(line);
-            }
-
-            return result.ToArray();
-        }
-
-        private string[] MapToStrings(int[,] map)
-        {
-            var result = new List<string>();
-
-            for (int i = 0; i < map.GetLength(0); i++)
-            {
-                var line = string.Empty;
-
-                for (int j = 0; j < map.GetLength(1); j++)
-                {
-                    line += map[i, j];
-                }
-
-                result.Add(line);
-            }
-
-            return result.ToArray();
         }
 
         protected override void LoadContent()
@@ -102,54 +66,22 @@ namespace ProjectDonut
             _font = Content.Load<SpriteFont>("Fonts/Default");
         }
 
-        private MouseState _previousMouseState;
+        
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            HandleMouseZoom();
 
 
-            camera.Position = _gameObjects["player"].position; ;
+            camera.Position = _gameObjects["player"].position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
             base.Update(gameTime);
         }
 
-        private void HandleMouseZoom()
-        {
-            MouseState mouseState = Mouse.GetState();
 
-            int scrollDelta = mouseState.ScrollWheelValue - _previousMouseState.ScrollWheelValue;
-
-            if (scrollDelta != 0)
-            {
-                if (scrollDelta > 0)
-                {
-                    camera.Zoom++;
-                }
-                else
-                {
-                    camera.Zoom--;
-                }
-
-                scrollDelta = (int)MathHelper.Clamp(scrollDelta, -1f, 1f);
-                camera.Zoom += scrollDelta;
-
-                if (camera.Zoom < 2)
-                {
-                    camera.Zoom = 2;
-                }
-                else if (camera.Zoom > 10)
-                {
-                    camera.Zoom = 50;
-                }
-            }
-
-            _previousMouseState = mouseState;
-        }
 
         protected override void Draw(GameTime gameTime)
         {

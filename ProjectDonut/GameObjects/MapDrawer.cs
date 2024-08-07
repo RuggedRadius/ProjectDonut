@@ -37,12 +37,7 @@ namespace ProjectDonut.GameObjects
 
         public override void Draw(GameTime gameTime)
         {
-            var viewportRectangle = new Rectangle(
-                (int)camera.Position.X - (graphicsDevice.Viewport.Width / 2) - 32,
-                (int)camera.Position.Y - (graphicsDevice.Viewport.Height / 2) - 32,
-                graphicsDevice.Viewport.Width + 32,
-                graphicsDevice.Viewport.Height + 32
-            );
+            var viewportRectangle = GetViewportRect();
 
             foreach (var tile in map.Map)
             {
@@ -53,39 +48,27 @@ namespace ProjectDonut.GameObjects
             }
         }
 
+        private Rectangle GetViewportRect() 
+        {
+            var tileSize = 32;
+
+            // Adjust position based on the camera's zoom
+            var halfViewportWidth = (int)((graphicsDevice.Viewport.Width / 2) / camera.Zoom);
+            var halfViewportHeight = (int)((graphicsDevice.Viewport.Height / 2) / camera.Zoom);
+
+            var xPosition = (int)camera.Position.X - halfViewportWidth - tileSize;
+            var yPosition = (int)camera.Position.Y - halfViewportHeight - tileSize;
+
+            // Adjust size based on the camera's zoom
+            var width = (int)((graphicsDevice.Viewport.Width + tileSize * 2) / camera.Zoom);
+            var height = (int)((graphicsDevice.Viewport.Height + tileSize * 2) / camera.Zoom);
+
+            return new Rectangle(xPosition, yPosition, width, height);
+        }
+
         bool IsTileVisible(Rectangle tileBounds, Rectangle cameraBounds)
         {
             return tileBounds.Intersects(cameraBounds);
-        }
-
-        private Rectangle DetermineSourceRect(int dataValue)
-        {
-            if (dataValue >= 5)
-            {
-                return new Rectangle(tileSize * 1, tileSize * 1, tileSize, tileSize);
-            }
-            else
-            {
-                return new Rectangle(tileSize * 4, tileSize * 1, tileSize, tileSize);
-            }
-
-
-            switch (dataValue)
-            {
-                case 0: return new Rectangle(tileSize * 0, tileSize * 1, tileSize, tileSize);
-                case 1: return new Rectangle(tileSize * 1, tileSize * 1, tileSize, tileSize);
-                case 2: return new Rectangle(tileSize * 2, tileSize * 1, tileSize, tileSize);
-
-                case 3: return new Rectangle(tileSize * 0, tileSize * 2, tileSize, tileSize);
-                case 4: return new Rectangle(tileSize * 1, tileSize * 2, tileSize, tileSize);
-                case 5: return new Rectangle(tileSize * 2, tileSize * 2, tileSize, tileSize);
-
-                case 6: return new Rectangle(tileSize * 2, tileSize * 3, tileSize, tileSize);
-                case 7: return new Rectangle(tileSize * 2, tileSize * 3, tileSize, tileSize);
-                case 8: return new Rectangle(tileSize * 2, tileSize * 3, tileSize, tileSize);
-
-                default: return new Rectangle(tileSize * 1, tileSize * 2, tileSize, tileSize);
-            }
         }
 
         public override void Initialize()
