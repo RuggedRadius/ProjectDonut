@@ -30,12 +30,12 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             GenerateTerrain(width, height);            
             CreateTilemap(mapData);
-            MapPass1();
+            ApplyTileRules();
 
             return tilemap;
         }
 
-        private void MapPass1()
+        private void ApplyTileRules()
         {
             int counter = 0;
             foreach (var tile in tilemap.Map)
@@ -257,6 +257,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             spriteLib.Add("coast-S", ExtractSprite(1, 2));
             spriteLib.Add("coast-SE", ExtractSprite(2, 2));
 
+            // Inverted coast
             spriteLib.Add("coast-inv-NW", ExtractSprite(3, 0));
             spriteLib.Add("coast-inv-N", ExtractSprite(4, 0));
             spriteLib.Add("coast-inv-NE", ExtractSprite(5, 0));
@@ -266,6 +267,50 @@ namespace ProjectDonut.ProceduralGeneration.World
             spriteLib.Add("coast-inv-SW", ExtractSprite(3, 2));
             spriteLib.Add("coast-inv-S", ExtractSprite(4, 2));
             spriteLib.Add("coast-inv-SE", ExtractSprite(5, 2));
+
+            // Grass
+            spriteLib.Add("grass-NW", ExtractSprite(6, 0));
+            spriteLib.Add("grass-N", ExtractSprite(7, 0));
+            spriteLib.Add("grass-NE", ExtractSprite(8, 0));
+            spriteLib.Add("grass-W", ExtractSprite(6, 1));
+            spriteLib.Add("grass", ExtractSprite(7, 1));
+            spriteLib.Add("grass-E", ExtractSprite(8, 1));
+            spriteLib.Add("grass-SW", ExtractSprite(6, 2));
+            spriteLib.Add("grass-S", ExtractSprite(7, 2));
+            spriteLib.Add("grass-SE", ExtractSprite(8, 2));
+
+            // Inverted grass
+            spriteLib.Add("grass-inv-NW", ExtractSprite(9, 0));
+            spriteLib.Add("grass-inv-N", ExtractSprite(10, 0));
+            spriteLib.Add("grass-inv-NE", ExtractSprite(11, 0));
+            spriteLib.Add("grass-inv-W", ExtractSprite(9, 1));
+            spriteLib.Add("grass-inv", ExtractSprite(10, 1));
+            spriteLib.Add("grass-inv-E", ExtractSprite(11, 1));
+            spriteLib.Add("grass-inv-SW", ExtractSprite(9, 2));
+            spriteLib.Add("grass-inv-S", ExtractSprite(10, 2));
+            spriteLib.Add("grass-inv-SE", ExtractSprite(11, 2));
+
+            // Mountain
+            spriteLib.Add("mountain-NW", ExtractSprite(12, 0));
+            spriteLib.Add("mountain-N", ExtractSprite(13, 0));
+            spriteLib.Add("mountain-NE", ExtractSprite(14, 0));
+            spriteLib.Add("mountain-W", ExtractSprite(12, 1));
+            spriteLib.Add("mountain", ExtractSprite(13, 1));
+            spriteLib.Add("mountain-E", ExtractSprite(14, 1));
+            spriteLib.Add("mountain-SW", ExtractSprite(12, 2));
+            spriteLib.Add("mountain-S", ExtractSprite(13, 2));
+            spriteLib.Add("mountain-SE", ExtractSprite(14, 2));
+
+            // Inverted mountain
+            spriteLib.Add("mountain-inv-NW", ExtractSprite(15, 0));
+            spriteLib.Add("mountain-inv-N", ExtractSprite(16, 0));
+            spriteLib.Add("mountain-inv-NE", ExtractSprite(17, 0));
+            spriteLib.Add("mountain-inv-W", ExtractSprite(15, 1));
+            spriteLib.Add("mountain-inv", ExtractSprite(16, 1));
+            spriteLib.Add("mountain-inv-E", ExtractSprite(17, 1));
+            spriteLib.Add("mountain-inv-SW", ExtractSprite(15, 2));
+            spriteLib.Add("mountain-inv-S", ExtractSprite(16, 2));
+            spriteLib.Add("mountain-inv-SE", ExtractSprite(17, 2));
         }
 
         private Texture2D ExtractSprite(int x, int y)
@@ -318,7 +363,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         public void GenerateTerrain(int width, int height)
         {
             FastNoiseLite noise = new FastNoiseLite();
-            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+            noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
+            noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
 
             // Gather noise data
             float[,] noiseData = new float[height, width];
@@ -359,7 +405,15 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private (Texture2D, TileType) DetermineTexture(int dataValue)
         {
-            if (dataValue >= 5)
+            if (dataValue >= 8)
+            {
+                return (spriteLib["mountain"], TileType.Mountain);
+            }
+            else if (dataValue >= 6)
+            {
+                return (spriteLib["grass"], TileType.Grass);
+            }
+            else if (dataValue >= 3)
             {
                 return (spriteLib["coast"], TileType.Coast);
             }

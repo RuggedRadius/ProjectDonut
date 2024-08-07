@@ -7,6 +7,8 @@ namespace ProjectDonut.ProceduralGeneration
     {        
         Coast,
         Water,
+        Grass,
+        Mountain
     }
 
     public class Tile

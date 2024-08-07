@@ -50,8 +50,6 @@ namespace ProjectDonut.GameObjects
 
         private Rectangle GetViewportRect() 
         {
-            var tileSize = 32;
-
             // Adjust position based on the camera's zoom
             var halfViewportWidth = (int)((graphicsDevice.Viewport.Width / 2) / camera.Zoom);
             var halfViewportHeight = (int)((graphicsDevice.Viewport.Height / 2) / camera.Zoom);

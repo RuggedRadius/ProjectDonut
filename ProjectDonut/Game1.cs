@@ -36,8 +36,8 @@ namespace ProjectDonut
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 2880;
+            _graphics.PreferredBackBufferHeight = 1920;
         }
 
         protected override void Initialize()
@@ -54,6 +54,8 @@ namespace ProjectDonut
             _gameObjects.Add("MapDrawer", new MapDrawer(map, Content, _graphics, _spriteBatch, camera, GraphicsDevice));
 
             _gameObjects.Add("camera", camera);
+
+            _gameObjects["player"].position = mapSizeWorld / 2;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             base.Initialize();
