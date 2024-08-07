@@ -24,8 +24,7 @@ namespace ProjectGorilla.GameObjects
 
         private Vector2 spriteSize;
         private Rectangle currentFrame;
-
-        private Vector2 position;
+        
         private int speed;
 
         private int _frameWidth;

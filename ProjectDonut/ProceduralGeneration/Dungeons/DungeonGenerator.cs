@@ -4,23 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static BSPDungeon.BSP2;
+using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;
 
-namespace BSPDungeon
+namespace ProjectDonut.ProceduralGeneration.Dungeons
 {
-
-
-    public class BSP2
+    public class DungeonGenerator
     {
         private static Random randy = new Random();
 
         private const int minRoomWidth = 8;
         private const int minRoomHeight = 8;
 
+        private static List<Area> areas;
+        private static List<Room> rooms2;
+
         public static char[,] Generate(int width, int height, int minAreaSize)
         {
-            var startingArea = new Area(0, 0, width, height, null);
-            var areas = new List<Area> { startingArea };
+            var startingArea = new Area(0, 0, width, height, null, minRoomWidth, minRoomHeight);
+            areas = new List<Area> { startingArea };
 
             while (areas.Any(a => a.IsPartitionable))
             {
@@ -29,9 +30,9 @@ namespace BSPDungeon
                 areas.AddRange(PartitionArea(areaToPartition));
             }
 
-            var rooms = ReplaceAreasWithRooms(areas);
-            var map = CompileTo2DArray(rooms, width, height);
-            map = LinkBrotherRooms(rooms, map);
+            ReplaceAreasWithRooms(areas);
+            var map = CompileTo2DArray(areas, width, height);
+            map = LinkBrotherRooms(areas, map);
             return map;
         }
 
@@ -41,7 +42,7 @@ namespace BSPDungeon
             {
                 var area = areas.First();
                 areas.Remove(area);
-                
+
 
                 var brother = area.brother;
 
@@ -118,19 +119,17 @@ namespace BSPDungeon
         }
 
 
-        private static List<Area> ReplaceAreasWithRooms(List<Area> areas)
+        private static void ReplaceAreasWithRooms(List<Area> areas)
         {
-            var rooms = new List<Area>();
+            DungeonGenerator.areas = new List<Area>();
 
             foreach (var area in areas)
             {
                 if (area.Width > minRoomWidth && area.Height > minRoomHeight)
                 {
-                    rooms.Add(CreateRoomInArea(area));
+                    DungeonGenerator.areas.Add(CreateRoomInArea(area));
                 }
             }
-
-            return rooms;
         }
 
         private static Area CreateRoomInArea(Area area)
@@ -146,7 +145,7 @@ namespace BSPDungeon
             var endX = randy.Next(startX + minRoomWidth, area.xTop);
             var endY = randy.Next(startY + minRoomHeight, area.yTop);
 
-            return new Area(startX, startY, endX, endY, area.brother);
+            return new Area(startX, startY, endX, endY, area.brother, minRoomWidth, minRoomHeight);
         }
 
         private static char[,] CompileTo2DArray(List<Area> areas, int initialWidth, int initialHeight)
@@ -187,8 +186,8 @@ namespace BSPDungeon
             {
                 var partitionPoint = randy.Next(area.xBottom + minRoomWidth, area.xTop - minRoomWidth);
 
-                var leftArea = new Area(area.xBottom, area.yBottom, partitionPoint, area.yTop, null);
-                var rightArea = new Area(partitionPoint, area.yBottom, area.xTop, area.yTop, leftArea);
+                var leftArea = new Area(area.xBottom, area.yBottom, partitionPoint, area.yTop, null, minRoomWidth, minRoomHeight);
+                var rightArea = new Area(partitionPoint, area.yBottom, area.xTop, area.yTop, leftArea, minRoomWidth, minRoomHeight);
                 leftArea.brother = rightArea;
 
                 results.Add(leftArea);
@@ -198,8 +197,8 @@ namespace BSPDungeon
             {
                 var partitionPoint = randy.Next(area.yBottom + minRoomHeight, area.yTop - minRoomHeight);
 
-                var topArea = new Area(area.xBottom, partitionPoint, area.xTop, area.yTop, null);
-                var bottomArea = new Area(area.xBottom, area.yBottom, area.xTop, partitionPoint, topArea);
+                var topArea = new Area(area.xBottom, partitionPoint, area.xTop, area.yTop, null, minRoomWidth, minRoomHeight);
+                var bottomArea = new Area(area.xBottom, area.yBottom, area.xTop, partitionPoint, topArea, minRoomWidth, minRoomHeight);
                 topArea.brother = bottomArea;
 
                 results.Add(topArea);
@@ -207,35 +206,6 @@ namespace BSPDungeon
             }
 
             return results;
-        }
-
-        public class Area
-        {
-            public int xTop { get; set; }
-            public int yTop { get; set; }
-            public int xBottom { get; set; }
-            public int yBottom { get; set; }
-
-            public Area brother { get; set; }
-
-            public int Width { get { return xTop - xBottom; } }
-            public int Height { get { return yTop - yBottom; } }
-            public bool IsPartitionable
-            {
-                get
-                {
-                    return Width > (2 * minRoomWidth) && (Height > 2 * minRoomHeight);
-                }
-            }
-
-            public Area(int xBottom, int yBottom, int xTop, int yTop, Area brother)
-            {
-                this.xTop = xTop;
-                this.yTop = yTop;
-                this.xBottom = xBottom;
-                this.yBottom = yBottom;
-                this.brother = brother;
-            }
         }
     }
 }

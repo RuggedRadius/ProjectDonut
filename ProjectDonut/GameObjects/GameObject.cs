@@ -9,6 +9,7 @@ namespace ProjectGorilla.GameObjects
 {
     public class GameObject : IGameObject
     {
+        public Vector2 position { get; set; }
         public int ZIndex { get; set; }
 
 
