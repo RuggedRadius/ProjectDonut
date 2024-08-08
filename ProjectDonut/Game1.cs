@@ -85,11 +85,13 @@ namespace ProjectDonut
             s.TileSize = 32;
 
             // Heights
-            s.WaterHeightMin = 0;
-            s.WaterHeightMax = 2;
-            s.GroundHeightMin = 2;
+            s.DeepWaterHeightMin = 0;
+            s.DeepWaterHeightMax = 1;
+            s.WaterHeightMin = 1;
+            s.WaterHeightMax = 3;
+            s.GroundHeightMin = 3;
             s.GroundHeightMax = 8;
-            s.MountainHeightMin = 8;
+            s.MountainHeightMin = 9;
             s.MountainHeightMax = 10;
 
             // Forest

@@ -36,13 +36,13 @@ namespace ProjectDonut.ProceduralGeneration.World
                 var start = coastCoords[startindex];
                 var length = randy.Next(minLength, maxLength);
 
-                CarveRiver(width, height, length, start.Item3, start.Item1, start.Item2, heightData);
+                heightData = CarveRiver(width, height, length, start.Item3, start.Item1, start.Item2, heightData);
             }
 
             return heightData;
         }
 
-        private void CarveRiver(int width, int height, int length, int startDirection, int startX, int startY, int[,] heightData)
+        private int[,] CarveRiver(int width, int height, int length, int startDirection, int startX, int startY, int[,] heightData)
         {
             var randy = new Random();
 
@@ -82,7 +82,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                         }
                     }
 
-                    CarveRiver(width, height, forkLength, forkDirection, startX, startY, heightData);
+                    heightData = CarveRiver(width, height, forkLength, forkDirection, startX, startY, heightData);
                 }
 
                 var direction = randy.Next(0, 4);
@@ -137,12 +137,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     if (heightData[startX, startY] >= settings.MountainHeightMin)
                     {
-                        return;
+                        return heightData;
                     }
 
-                    heightData[startX, startY] = settings.WaterHeightMax;
+                    heightData[startX, startY] = settings.WaterHeightMin;
                 }
             }
+
+            return heightData;
         }
 
         private List<(int, int, int)> FindCoastCoords(int width, int height, int[,] heightData)

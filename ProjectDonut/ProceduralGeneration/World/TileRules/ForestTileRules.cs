@@ -36,25 +36,68 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                         continue;
                     }
 
-                    //if (isNorthWestCoast(x, y))
-                    //{
-                    //    tile.Texture = spriteLib.GetSprite("coast-NW");
-                    //}
+                    var n = tilemap.GetTile(x, y - 1) != null;
+                    var nw = tilemap.GetTile(x - 1, y - 1) != null;
+                    var ne = tilemap.GetTile(x + 1, y - 1) != null;
+                    var e = tilemap.GetTile(x + 1, y) != null;
+                    var w = tilemap.GetTile(x - 1, y) != null;
+                    var s = tilemap.GetTile(x, y + 1) != null;
+                    var se = tilemap.GetTile(x + 1, y + 1) != null;
+                    var sw = tilemap.GetTile(x - 1, y + 1) != null;
+                    
 
-                    //if (isNorthEastCoast(x, y))
-                    //{
-                    //    tile.Texture = spriteLib.GetSprite("coast-NE");
-                    //}
-
-                    //if (isSouthEastCoast(x, y))
-                    //{
-                    //    tile.Texture = spriteLib.GetSprite("coast-SE");
-                    //}
-
-                    //if (isSouthWestCoast(x, y))
-                    //{
-                    //    tile.Texture = spriteLib.GetSprite("coast-SW");
-                    //}
+                    if (!n && e && s && !w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-NW");
+                    }
+                    else if (!n && e && s && w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-N");
+                    }
+                    else if (!n && !e && s && w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-NE");
+                    }
+                    else if (n && e && s && !w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-W");
+                    }
+                    else if (n && e && s && w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-C");
+                    }
+                    else if (n && !e && s && w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-E");
+                    }
+                    else if (n && e && !s && !w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-SW");
+                    }
+                    else if (n && e && !s && w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-S");
+                    }
+                    else if (n && !e && !s && w)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-SE");
+                    }
+                    else if (n && e && s && w && !se && nw && ne && sw)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-inv-NW");
+                    }
+                    else if (n && e && s && w && !sw && ne && nw && se)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-inv-NE");
+                    }
+                    else if (n && e && s && w && sw && ne && !nw && se)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-inv-SE");
+                    }
+                    else if (n && e && s && w && sw && !ne && nw && se)
+                    {
+                        tile.Texture = spriteLib.GetSprite("forest-inv-SW");
+                    }
                 }
                 catch (Exception ex)
                 {

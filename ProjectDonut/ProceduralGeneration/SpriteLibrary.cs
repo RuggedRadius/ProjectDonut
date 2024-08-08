@@ -39,8 +39,27 @@ namespace ProjectDonut.ProceduralGeneration
 
             spriteLib = new Dictionary<string, Texture2D>();
 
+            // Water
+            spriteLib.Add("deepwater-NW", ExtractSprite(spriteSheetTiles, 18, 0));
+            spriteLib.Add("deepwater-N",  ExtractSprite(spriteSheetTiles, 19, 0));
+            spriteLib.Add("deepwater-NE", ExtractSprite(spriteSheetTiles, 20, 0));
+            spriteLib.Add("deepwater-W", ExtractSprite(spriteSheetTiles, 18, 1));
+            spriteLib.Add("deepwater-C", ExtractSprite(spriteSheetTiles, 19, 1));
+            spriteLib.Add("deepwater-E", ExtractSprite(spriteSheetTiles, 20, 1));
+            spriteLib.Add("deepwater-SW", ExtractSprite(spriteSheetTiles, 18, 2));
+            spriteLib.Add("deepwater-S",  ExtractSprite(spriteSheetTiles, 19, 2));
+            spriteLib.Add("deepwater-SE", ExtractSprite(spriteSheetTiles, 20, 2));
+
             // Forest
             ExtractSprites("forest", spriteSheetForest, 3, 3);
+            spriteLib.Add("forest-inv-NW", ExtractSprite(spriteSheetForest, 3, 0));
+            spriteLib.Add("forest-inv-N",  ExtractSprite(spriteSheetForest, 4, 0));
+            spriteLib.Add("forest-inv-NE", ExtractSprite(spriteSheetForest, 5, 0));
+            spriteLib.Add("forest-inv-W", ExtractSprite(spriteSheetForest, 3, 1));
+            spriteLib.Add("forest-inv-E", ExtractSprite(spriteSheetForest, 5, 1));
+            spriteLib.Add("forest-inv-SW", ExtractSprite(spriteSheetForest, 3, 2));
+            spriteLib.Add("forest-inv-S",  ExtractSprite(spriteSheetForest, 4, 2));
+            spriteLib.Add("forest-inv-SE", ExtractSprite(spriteSheetForest, 5, 2));
 
             // Biomes
             spriteLib.Add("grasslands", ExtractBiomeSprite(0, 0));

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System.Collections.Generic;
+using System.IO;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectDonut.ProceduralGeneration.World
@@ -47,12 +49,31 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             biomeData = biomes.GenerateBiomes(width, height);
             heightData = baseGen.GenerateHeightMap(width, height);
-            heightData = rivers.CarveRivers(heightData);          
-            
+            //WriteMapToFile(heightData, @"C:\map1.txt");
+            heightData = rivers.CarveRivers(heightData);
+            //WriteMapToFile(heightData, @"C:\map2.txt");
+
             tmBase = baseGen.CreateBaseTilemap(heightData, biomeData);
             tmBase = rules.ApplyBaseRules(tmBase);
 
             return tmBase;
+        }
+
+        private void WriteMapToFile(int[,] map, string filePath)
+        {
+            var lines = new List<string>();
+
+            for (int y = 0; y < map.GetLength(1); y++)
+            {
+                var line = "";
+                for (int x = 0; x < map.GetLength(0); x++)
+                {
+                    line += map[x, y] + " ";
+                }
+                lines.Add(line);
+            }
+
+            File.WriteAllLines(filePath, lines);
         }
 
         public Tilemap GenerateForestMap(int width, int height)

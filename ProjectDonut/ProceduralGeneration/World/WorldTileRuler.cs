@@ -25,7 +25,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Tilemap ApplyBaseRules(Tilemap tilemap)
         {
-            tilemap = forestRules.ApplyForestRules(tilemap);
+            tilemap = coastRules.ApplyCoastLineRules(tilemap);
 
             return tilemap;
         }

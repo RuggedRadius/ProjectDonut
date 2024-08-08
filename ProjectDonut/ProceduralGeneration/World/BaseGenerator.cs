@@ -117,7 +117,14 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
             else
             {
-                return spriteLib.GetSprite("coast-inv");
+                if (heightValue >= settings.WaterHeightMin)
+                {
+                    return spriteLib.GetSprite("coast-inv");
+                }
+                else
+                {
+                    return spriteLib.GetSprite("deepwater-C");
+                }
             }
         }
 

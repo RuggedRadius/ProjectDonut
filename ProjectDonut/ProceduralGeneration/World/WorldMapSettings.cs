@@ -14,6 +14,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int TileSize { get; set; }
 
         // Heights
+        public int DeepWaterHeightMin { get; set; }
+        public int DeepWaterHeightMax { get; set; }
         public int WaterHeightMin { get; set; }
         public int WaterHeightMax { get; set; }
         public int GroundHeightMin { get; set; }
