@@ -23,6 +23,8 @@ namespace ProjectDonut.ProceduralGeneration
 
         private Dictionary<string, Texture2D> spriteLib;
 
+        private int TileSize = 32;
+
         public SpriteLibrary(ContentManager content, GraphicsDevice graphicsDevice)
         {
             this.content = content;
@@ -146,8 +148,8 @@ namespace ProjectDonut.ProceduralGeneration
 
         private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y) 
         {
-            var width = 32;
-            var height = 32;
+            var width = TileSize;
+            var height = TileSize;
 
             x *= width;
             y *= height;
@@ -172,8 +174,8 @@ namespace ProjectDonut.ProceduralGeneration
 
         private Texture2D ExtractBiomeSprite(int x, int y)
         {
-            var width = 32;
-            var height = 32;
+            var width = TileSize;
+            var height = TileSize;
 
             x *= width;
             y *= height;
@@ -194,8 +196,8 @@ namespace ProjectDonut.ProceduralGeneration
 
         private Texture2D ExtractTileSprite(int x, int y)
         {
-            var width = 32;
-            var height = 32;
+            var width = TileSize;
+            var height = TileSize;
 
             x *= width;
             y *= height;
@@ -216,8 +218,8 @@ namespace ProjectDonut.ProceduralGeneration
 
         private Texture2D ExtractForestSprite(int x, int y)
         {
-            var width = 32;
-            var height = 32;
+            var width = TileSize;
+            var height = TileSize;
 
             x *= width;
             y *= height;

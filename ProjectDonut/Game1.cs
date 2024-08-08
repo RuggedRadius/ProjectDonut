@@ -20,15 +20,7 @@ namespace ProjectDonut
 
         private SpriteFont _font;
 
-        // World Map
-        private Vector2 mapSizeWorld = new Vector2(1000, 1000);
-        private WorldGenerator worldGenerator;
-        private Tilemap map;
-        private string[] mapStrings;
-
-        private Camera camera = new Camera();
-
-        
+        private WorldMapSettings worldMapSettings;
 
         public Game1()
         {
@@ -45,20 +37,62 @@ namespace ProjectDonut
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _gameObjects = new Dictionary<string, GameObject>();
 
-            _gameObjects.Add("player", new Player(_graphics, GraphicsDevice, Content, _spriteBatch));
-            _gameObjects["player"].position = new Vector2(250, 250);
+            // Camera
+            _gameObjects.Add("camera", new Camera());
 
-            worldGenerator = new WorldGenerator(Content, GraphicsDevice);
-            map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
-            
-            _gameObjects.Add("MapDrawer", new WorldMap(Content, _graphics, _spriteBatch, camera, GraphicsDevice));
+            // Player
+            _gameObjects.Add("player", new Player(
+                _graphics,
+                GraphicsDevice, 
+                Content, 
+                _spriteBatch, 
+                (Camera)_gameObjects["camera"]
+                ));
 
-            _gameObjects.Add("camera", camera);
-
-            _gameObjects["player"].position = mapSizeWorld / 2;
+            // World map
+            worldMapSettings = CreateWorldMapSettings();
+            _gameObjects.Add("worldmap", new WorldMap(
+                worldMapSettings.Width,
+                worldMapSettings.Height, 
+                new List<object>()
+                { 
+                    Content, 
+                    _graphics, 
+                    _spriteBatch, 
+                    _gameObjects["camera"],
+                    GraphicsDevice 
+                },
+                worldMapSettings
+                ));
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
+
+            // Position player in middle of the map
+            var playerStartPosX = (worldMapSettings.Width * worldMapSettings.TileSize) / 2;
+            var playerStartPosY = (worldMapSettings.Height * worldMapSettings.TileSize) / 2;
+            _gameObjects["player"].position = new Vector2(playerStartPosX, playerStartPosY);
+
             base.Initialize();
+        }
+
+        private WorldMapSettings CreateWorldMapSettings()
+        {
+            var s = new WorldMapSettings();
+
+            // Dimensions
+            s.Width = 1000;
+            s.Height = 1000;
+            s.TileSize = 32;
+
+            // Heights
+            s.WaterHeightMin = 0;
+            s.WaterHeightMax = 2;
+            s.GroundHeightMin = 3;
+            s.GroundHeightMax = 7;
+            s.MountainHeightMin = 8;
+            s.MountainHeightMax = 10;
+
+            return s;
         }
 
         protected override void LoadContent()
@@ -74,29 +108,18 @@ namespace ProjectDonut
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // Debug world generation
-            var keyboardState = Keyboard.GetState();
-            if(keyboardState.IsKeyDown(Keys.OemTilde))
-            {
-                map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
-                ((WorldMap)_gameObjects["MapDrawer"]).mapBase = map;
-            }
-
-            camera.Position = _gameObjects["player"].position;
+            ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
             base.Update(gameTime);
         }
 
-
-
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
-            _spriteBatch.Begin(transformMatrix: camera.GetTransformationMatrix(GraphicsDevice, GraphicsDevice.Viewport));
-
+            _spriteBatch.Begin(transformMatrix: ((Camera)_gameObjects["camera"]).GetTransformationMatrix(GraphicsDevice, GraphicsDevice.Viewport));
 
             _gameObjects
                 .Select(x => x.Value)
@@ -104,24 +127,9 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            //DrawMap();
-
             _spriteBatch.End();
 
             base.Draw(gameTime);
-        }
-
-        private void DrawMap()
-        {
-            var x = 0;
-            var y = 0;
-
-            foreach (var line in mapStrings)
-            {
-                _spriteBatch.DrawString(_font, $"{line}", new Vector2(x, y), Color.Green);
-
-                y += 20;
-            }
         }
     }
 }

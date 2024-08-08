@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
+using ProjectDonut.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace ProjectGorilla.GameObjects
         private GraphicsDevice _graphicsDevice;
         private ContentManager _content;
         private SpriteBatch _spriteBatch;
+
+        private Camera camera;
 
         private Vector2 spriteSize;
         private Rectangle currentFrame;
@@ -42,24 +45,27 @@ namespace ProjectGorilla.GameObjects
 
         private SpriteFont debugFont;
 
+        private int TileSize = 32;
 
-        public Player(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content, SpriteBatch spriteBatch)
+
+        public Player(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content, SpriteBatch spriteBatch, Camera camera)
         {
             this._graphics = graphics;
             this._graphicsDevice = graphicsDevice;
             this._content = content;
             this._spriteBatch = spriteBatch;
+            this.camera = camera;
         }
 
         public override void Initialize()
         {
             position = new Vector2(50, 50);
             speed = 2000;
-            spriteSize = new Vector2(32, 32);
+            spriteSize = new Vector2(TileSize, TileSize);
             ZIndex = 10;
 
-            _frameWidth = 32; // Width of a single frame
-            _frameHeight = 32; // Height of a single frame
+            _frameWidth = TileSize; // Width of a single frame
+            _frameHeight = TileSize; // Height of a single frame
             _frameCount = 9; // Total number of frames in the sprite sheet
             _currentFrame = 0; // Start at the first frame
             _frameTime = 0.1f; // Duration of each frame in seconds
@@ -134,42 +140,42 @@ namespace ProjectGorilla.GameObjects
         {
             if (movement.X > 0 && movement.Y > 0)
             {
-                currentFrame = new Rectangle(64, 64, 32, 32);
+                currentFrame = new Rectangle(TileSize * 2, TileSize * 2, TileSize, TileSize);
                 return;
             }
             if (movement.X < 0 && movement.Y > 0)
             {
-                currentFrame = new Rectangle(0, 64, 32, 32);
+                currentFrame = new Rectangle(0, TileSize * 2, TileSize, TileSize);
                 return;
             }
             if (movement.X < 0 && movement.Y < 0)
             {
-                currentFrame = new Rectangle(0, 0, 32, 32);
+                currentFrame = new Rectangle(0, 0, TileSize, TileSize);
                 return;
             }
             if (movement.X > 0 && movement.Y < 0)
             {
-                currentFrame = new Rectangle(64, 0, 32, 32);
+                currentFrame = new Rectangle(TileSize * 2, 0, TileSize, TileSize);
                 return;
             }
             if (movement.Y < 0)
             {
-                currentFrame = new Rectangle(32, 0, 32, 32);
+                currentFrame = new Rectangle(TileSize, 0, TileSize, TileSize);
                 return;
             }
             if (movement.Y > 0)
             {
-                currentFrame = new Rectangle(32, 64, 32, 32);
+                currentFrame = new Rectangle(TileSize, TileSize * 2, TileSize, TileSize);
                 return;
             }
             if (movement.X < 0)
             {
-                currentFrame = new Rectangle(0, 32, 32, 32);
+                currentFrame = new Rectangle(0, TileSize, TileSize, TileSize);
                 return;
             }
             if (movement.X > 0)
             {
-                currentFrame = new Rectangle(64, 32, 32, 32);
+                currentFrame = new Rectangle(TileSize * 2, TileSize, TileSize, TileSize);
                 return;
             }
         }

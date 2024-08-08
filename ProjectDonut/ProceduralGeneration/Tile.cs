@@ -7,18 +7,9 @@ namespace ProjectDonut.ProceduralGeneration
     {        
         Coast,
         Water,
-        Grass,
-        Mountain
-    }
-
-    public enum TileType2
-    {
-        WaterDeep,
-        WaterShallow,
-        Coast,
         Ground,
-        Forest,
-        Mountain
+        Mountain,
+        Forest
     }
 
     public enum Biome

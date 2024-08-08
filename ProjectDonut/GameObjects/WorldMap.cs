@@ -14,10 +14,10 @@ namespace ProjectDonut.GameObjects
 {
     internal class WorldMap : GameObject
     {
-        public Tilemap mapBase;
-        public Tilemap mapForest;
+        public Dictionary<string, Tilemap> tilemaps;
 
         private WorldGenerator worldGen;
+        private WorldMapSettings settings;
 
         private ContentManager content;
         private GraphicsDeviceManager graphics;
@@ -25,18 +25,50 @@ namespace ProjectDonut.GameObjects
         private SpriteBatch spriteBatch;
         private Camera camera;
 
-        private int tileSize = 32;
+        private int width;
+        private int height;
 
-        public WorldMap(ContentManager content, GraphicsDeviceManager graphics, SpriteBatch spriteBatch, Camera camera, GraphicsDevice graphicsDevice)
+        public WorldMap(int width, int height, List<object> dependencies, WorldMapSettings settings)
         {
-            
-            this.content = content;
-            this.graphics = graphics;
-            this.spriteBatch = spriteBatch;
-            this.camera = camera;
-            this.graphicsDevice = graphicsDevice;
+            this.width = width;
+            this.height = height;
+            this.settings = settings;
 
-            worldGen = new WorldGenerator(content, graphicsDevice);
+            foreach (var dependency in dependencies)
+            {
+                switch (dependency)
+                {
+                    case ContentManager content:
+                        this.content = content;
+                        break;
+
+                    case GraphicsDeviceManager graphicsDeviceManager:
+                        this.graphics = graphicsDeviceManager;
+                        break;
+
+                    case GraphicsDevice graphicsDevice:
+                        this.graphicsDevice = graphicsDevice;
+                        break;
+
+                    case SpriteBatch spriteBatch:
+                        this.spriteBatch = spriteBatch;
+                        break;
+
+                    case Camera camera:
+                        this.camera = camera;
+                        break;
+
+                    default:
+                        throw new ArgumentException("Unknown dependency type");
+                }
+            }
+
+            if (content == null || graphics == null || spriteBatch == null || camera == null)
+            {
+                throw new ArgumentException("WorldMap: Missing dependencies");
+            }
+
+            worldGen = new WorldGenerator(content, graphicsDevice, settings);
         }
 
         public override void Initialize()
@@ -46,18 +78,32 @@ namespace ProjectDonut.GameObjects
 
         public override void LoadContent()
         {
-            mapBase = worldGen.Generate(1000, 1000);
+            tilemaps = new Dictionary<string, Tilemap>();
+            tilemaps.Add("base", worldGen.GenerateBaseMap(width, height));
+            tilemaps.Add("forest", worldGen.GenerateForestMap(width, height));
         }
 
         public override void Draw(GameTime gameTime)
         {
             var viewportRectangle = GetViewportRect();
 
-            foreach (var tile in mapBase.Map)
+            for (int x = 0; x < width; x++)
             {
-                if (viewportRectangle.Contains(tile.Position.X, tile.Position.Y))
+                for (int y = 0; y < height; y++)
                 {
-                    spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White);
+                    foreach (var tilemap in tilemaps)
+                    {
+                        var tile = tilemap.Value.Map[x, y];
+                        if (tile == null)
+                        {
+                            continue;
+                        }
+
+                        if (viewportRectangle.Contains(tile.Position.X, tile.Position.Y))
+                        {
+                            spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White);
+                        }
+                    }
                 }
             }
         }
@@ -68,12 +114,12 @@ namespace ProjectDonut.GameObjects
             var halfViewportWidth = (int)((graphicsDevice.Viewport.Width / 2) / camera.Zoom);
             var halfViewportHeight = (int)((graphicsDevice.Viewport.Height / 2) / camera.Zoom);
 
-            var xPosition = (int)camera.Position.X - halfViewportWidth - tileSize;
-            var yPosition = (int)camera.Position.Y - halfViewportHeight - tileSize;
+            var xPosition = (int)camera.Position.X - halfViewportWidth - settings.TileSize;
+            var yPosition = (int)camera.Position.Y - halfViewportHeight - settings.TileSize;
 
             // Adjust size based on the camera's zoom
-            var width = (int)((graphicsDevice.Viewport.Width + tileSize * 2) / camera.Zoom);
-            var height = (int)((graphicsDevice.Viewport.Height + tileSize * 2) / camera.Zoom);
+            var width = (int)((graphicsDevice.Viewport.Width + settings.TileSize * 2) / camera.Zoom);
+            var height = (int)((graphicsDevice.Viewport.Height + settings.TileSize * 2) / camera.Zoom);
 
             return new Rectangle(xPosition, yPosition, width, height);
         }

@@ -14,59 +14,76 @@ namespace ProjectDonut.ProceduralGeneration.World
         private int[,] biomeData;
         private int[,] forestData;
 
-        private Tilemap tilemap;
+        private Tilemap tmBase;
+        private Tilemap tmForest;
+
 
         private ContentManager content;
         private GraphicsDevice graphicsDevice;
         private WorldTileRuler rules;
         private SpriteLibrary spriteLib;
 
-        public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice)
+        // Sub-generators
+        private ForestGenerator genForest;
+
+        private WorldMapSettings settings;
+
+        public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice, WorldMapSettings settings)
         {
             this.content = content;
             this.graphicsDevice = graphicsDevice;
             this.spriteLib = new SpriteLibrary(content, graphicsDevice);
+            this.settings = settings;
         }
 
-        public Tilemap Generate(int width, int height)
+        public Tilemap GenerateBaseMap(int width, int height)
         {
             spriteLib.LoadSpriteLibrary();
 
             GenerateTerrain(width, height);
             GenerateBiomes(width, height);
-            CarveRivers(width, height);
-            GenerateForests(width, height);
-            CreateTilemap(heightData);
+            CarveRivers(width, height);            
+            tmBase = CreateBaseTilemap(heightData);
 
-            rules = new WorldTileRuler(spriteLib, tilemap);
-            tilemap = rules.ApplyTileRules();
+            genForest = new ForestGenerator(spriteLib, heightData, biomeData, settings);
 
-            return tilemap;
-        }   
+            rules = new WorldTileRuler(spriteLib, tmBase);
+            tmBase = rules.ApplyBaseMapTileRules();
 
-        private void CreateTilemap(int[,] mapData)
+            return tmBase;
+        }
+
+        public Tilemap GenerateForestMap(int width, int height)
         {
-            tilemap = new Tilemap(mapData.GetLength(0), mapData.GetLength(1));
+            var gen = new ForestGenerator(spriteLib, heightData, biomeData, settings);
+            var tilemap = gen.CreateForestTilemap(width, height);
+            //tilemap = rules.ApplyForestRules(tilemap);
+            return tilemap;
+        }
+
+        private Tilemap CreateBaseTilemap(int[,] mapData)
+        {
+            var tmBase = new Tilemap(mapData.GetLength(0), mapData.GetLength(1));
 
             for (int i = 0; i < mapData.GetLength(0); i++)
             {
                 for (int j = 0; j < mapData.GetLength(1); j++)
                 {
-                    var determinations = DetermineTexture(i, j);
-
                     var tile = new Tile
                     {
                         xIndex = i,
                         yIndex = j,
-                        Position = new Vector2(i * 32, j * 32),
-                        Size = new Vector2(32, 32),
-                        Texture = determinations.Item1,
-                        TileType = determinations.Item2
+                        Position = new Vector2(i * settings.TileSize, j * settings.TileSize),
+                        Size = new Vector2(settings.TileSize, settings.TileSize),
+                        Texture = DetermineTexture(i, j),
+                        TileType = DetermineTileType(i, j)
                     };
 
-                    tilemap.Map[i, j] = tile;
+                    tmBase.Map[i, j] = tile;
                 }
             }
+
+            return tmBase;
         }
 
         public void GenerateTerrain(int width, int height)
@@ -168,91 +185,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             biomeData = intData;
         }
 
-        public void GenerateForests(int width, int height)
-        {
-            int forestCount = 250;
-            int minWalk = 250;
-            int maxWalk = 1000;
-            int walkRadius = 5;
-
-            var grasslandCoords = new List<(int, int)>();
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (biomeData[x, y] == (int)Biome.Grasslands)
-                    {
-                        grasslandCoords.Add((x, y));
-                    }
-                }
-            }
-            
-            forestData = new int[width, height];
-            var randy = new Random();
-            
-            for (int x = 0; x < forestCount; x++)
-            {
-                var randomIndex = randy.Next(0, grasslandCoords.Count);
-                var coords = grasslandCoords[randomIndex];
-
-                forestData[coords.Item1, coords.Item2] = 1;
-                var walkLength = randy.Next(minWalk, maxWalk);
-
-                for (int y = 0; y < walkLength; y++)
-                {
-                    var direction = randy.Next(0, 4);
-                    switch (direction)
-                    {
-                        case 0:
-                            if (coords.Item1 + 1 < width)
-                            {
-                                coords.Item1 += 1;
-                            }
-                            break;
-                        case 1:
-                            if (coords.Item1 - 1 >= 0)
-                            {
-                                coords.Item1 -= 1;
-                            }
-                            break;
-                        case 2:
-                            if (coords.Item2 + 1 < height)
-                            {
-                                coords.Item2 += 1;
-                            }
-                            break;
-                        case 3:
-                            if (coords.Item2 - 1 >= 0)
-                            {
-                                coords.Item2 -= 1;
-                            }
-                            break;
-                    }
-
-                    for (int i = -walkRadius; i < walkRadius; i++)
-                    {
-                        for (int j = -walkRadius; j < walkRadius; j++)
-                        {
-                            var xCoord = coords.Item1 + i;
-                            var yCoord = coords.Item2 + j;
-
-                            if (xCoord < 0 || xCoord >= width || yCoord < 0 || yCoord >= height)
-                            {
-                                continue;
-                            }
-
-                            if (biomeData[xCoord, yCoord] == (int)Biome.Grasslands)
-                            {
-                                forestData[xCoord, yCoord] = 1;
-                            }
-                        }
-                    }
-                }
-
-                grasslandCoords.Remove(coords);
-            }
-
-        }
+        
 
         public void CarveRivers(int width, int height)
         {
@@ -369,14 +302,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                         break;
                 }
 
-                if (heightData[startX, startY] > waterHeight)
+                if (heightData[startX, startY] > settings.WaterHeightMax)
                 {
-                    if (heightData[startX, startY] >= mountainHeight)
+                    if (heightData[startX, startY] >= settings.MountainHeightMin)
                     {
                         return;
                     }
 
-                    heightData[startX, startY] = waterHeight;
+                    heightData[startX, startY] = settings.WaterHeightMax;
                 }
             }
         }
@@ -389,7 +322,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (heightData[x,y] <= waterHeight)
+                    if (heightData[x,y] <= settings.WaterHeightMax)
                     {
                         var direction = IsCoastCoord(x, y);
 
@@ -409,10 +342,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             if (x == 0 || x == heightData.GetLength(0) - 1 || y == 0 || y == heightData.GetLength(1) - 1)
                 return -1;
 
-            var isCoastNorth = heightData[x, y - 1] > waterHeight;
-            var isCoastEast = heightData[x + 1, y] > waterHeight;
-            var isCoastSouth = heightData[x - 1, y] > waterHeight;
-            var isCoastWest = heightData[x, y + 1] > waterHeight;
+            var isCoastNorth = heightData[x, y - 1] > settings.WaterHeightMax;
+            var isCoastEast = heightData[x + 1, y] > settings.WaterHeightMax;
+            var isCoastSouth = heightData[x - 1, y] > settings.WaterHeightMax;
+            var isCoastWest = heightData[x, y + 1] > settings.WaterHeightMax;
 
             if (isCoastNorth)
                 return 0;
@@ -426,56 +359,55 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return -1;
         }
 
-        private int mountainHeight = 8;
-        private int waterHeight = 2;
-
-        private (Texture2D, TileType) DetermineTexture(int x, int y)
+        private Texture2D DetermineTexture(int x, int y)
         {
             var biomeIndex = biomeData[x, y];
             var heightIndex = heightData[x, y];
 
             var biome = (Biome) biomeIndex;
 
-            if (heightIndex >= 8)
+            if (heightIndex > settings.MountainHeightMin)
             {
-                return (spriteLib.GetSprite("mountain"), TileType.Mountain);
+                return spriteLib.GetSprite("mountain");
             }
-            else if (heightIndex >= 3)
+            else if (heightIndex > settings.WaterHeightMax)
             {
                 switch (biome)
                 {
                     case Biome.Desert: 
-                        return (spriteLib.GetSprite("desert"), TileType.Grass);
+                        return spriteLib.GetSprite("desert");
 
                     case Biome.Grasslands:
-                        if (forestData[x, y] == 1)
-                        {
-                            return (spriteLib.GetSprite("forest-C"), TileType.Grass);
-                        }
-                        else
-                        {
-                            return (spriteLib.GetSprite("grasslands"), TileType.Grass);
-                        }
-                        
+                        return spriteLib.GetSprite("grasslands");
 
                     case Biome.Winterlands: 
-                        return (spriteLib.GetSprite("winterlands"), TileType.Grass);
+                        return spriteLib.GetSprite("winterlands");
 
                     default: 
-                        return (spriteLib.GetSprite("grasslands"), TileType.Grass);
+                        return spriteLib.GetSprite("grasslands");
                 }
             }
-            //else if (heightIndex >= 6)
-            //{
-            //    return (spriteLib.GetSprite("grass"), TileType.Grass);
-            //}
-            //else if (heightIndex >= 3)
-            //{
-            //    return (spriteLib.GetSprite("coast"), TileType.Coast);
-            //}
             else
             {
-                return (spriteLib.GetSprite("coast-inv"), TileType.Water);
+                return spriteLib.GetSprite("coast-inv");
+            }
+        }
+
+        private TileType DetermineTileType(int x, int y)
+        {
+            var heightIndex = heightData[x, y];
+
+            if (heightIndex > settings.MountainHeightMin)
+            {
+                return TileType.Mountain;
+            }
+            else if (heightIndex > settings.WaterHeightMax)
+            {
+                return TileType.Ground;
+            }
+            else
+            {
+                return TileType.Water;
             }
         }
     }

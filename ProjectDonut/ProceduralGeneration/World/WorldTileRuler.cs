@@ -19,13 +19,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.tilemap = tilemap;
         }
 
-        public Tilemap ApplyTileRules()
+        public Tilemap ApplyBaseMapTileRules()
         {
             tilemap = ApplyCoastLineRules();
-            tilemap = ApplyForestRules();
             return tilemap;
         }
-
 
         #region Coast-line Rules
         private Tilemap ApplyCoastLineRules()
@@ -221,11 +219,16 @@ namespace ProjectDonut.ProceduralGeneration.World
         #endregion
 
         #region Forest Rules
-        private Tilemap ApplyForestRules()
+        public Tilemap ApplyForestRules(Tilemap tilemap)
         {
             int counter = 0;
             foreach (var tile in tilemap.Map)
             {
+                if (tile == null)
+                {
+                    continue;
+                }
+
                 int x = tile.xIndex;
                 int y = tile.yIndex;
 
