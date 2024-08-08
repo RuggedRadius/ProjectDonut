@@ -237,24 +237,46 @@ namespace ProjectDonut.ProceduralGeneration.World
                         continue;
                     }
 
-                    if (isNorthWestCoast(x, y))
+                    if (tile.TileType != TileType.Forest)
                     {
-                        tile.Texture = spriteLib.GetSprite("coast-NW");
+                        continue;
                     }
 
-                    if (isNorthEastCoast(x, y))
-                    {
-                        tile.Texture = spriteLib.GetSprite("coast-NE");
-                    }
+                    var placement = GetForestTilePlacement(x, y);
 
-                    if (isSouthEastCoast(x, y))
+                    switch (placement)
                     {
-                        tile.Texture = spriteLib.GetSprite("coast-SE");
-                    }
+                        case TilePlacement.NW:
+                            tile.Texture = spriteLib.GetSprite("forest-NW");
+                            break;
 
-                    if (isSouthWestCoast(x, y))
-                    {
-                        tile.Texture = spriteLib.GetSprite("coast-SW");
+                        case TilePlacement.N:
+                            tile.Texture = spriteLib.GetSprite("forest-N");
+                            break;
+
+                        case TilePlacement.NE:
+                            tile.Texture = spriteLib.GetSprite("forest-NE");
+                            break;
+
+                        //case TilePlacement.E:
+                        //    break;
+
+                        //case TilePlacement.SE:
+                        //    break;
+
+                        //case TilePlacement.S:
+                        //    break;
+
+                        //case TilePlacement.SW:
+                        //    break;
+
+                        //case TilePlacement.W:
+                        //    break;
+
+                        case TilePlacement.C:
+                        default:
+                            tile.Texture = spriteLib.GetSprite("forest-C");
+                            break;
                     }
                 }
                 catch (Exception ex)
@@ -282,6 +304,40 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             return neighbours;
+        }
+
+        private TilePlacement GetForestTilePlacement(int x, int y)
+        {
+            var neighbours = GetNeighbours(x, y);
+
+            var currentTile = neighbours[4].TileType;
+
+            var nw = neighbours[0].TileType;
+            var w = neighbours[1].TileType;
+            var sw = neighbours[2].TileType;
+            var n = neighbours[3].TileType;
+            
+            var s = neighbours[5].TileType;
+            var ne = neighbours[6].TileType;
+            var e = neighbours[7].TileType;
+            var se = neighbours[8].TileType;
+
+            if (nw != TileType.Forest && n != TileType.Forest && w != TileType.Forest)
+            {
+                return TilePlacement.NW;
+            }
+            else if (n != TileType.Forest && w == TileType.Forest && e == TileType.Forest)
+            {
+                return TilePlacement.N;
+            }
+            else if (e != TileType.Forest && n != TileType.Forest && w == TileType.Forest)
+            {
+                return TilePlacement.NE;
+            }
+            else
+            {
+                return TilePlacement.C;
+            }
         }
     }
 }

@@ -4,21 +4,25 @@ using Microsoft.Xna.Framework.Graphics;
 namespace ProjectDonut.ProceduralGeneration
 {
     public enum TileType
-    {        
-        Coast,
-        Water,
-        Grass,
-        Mountain
-    }
-
-    public enum TileType2
     {
-        WaterDeep,
-        WaterShallow,
+        Water,
         Coast,
         Ground,
         Forest,
         Mountain
+    }
+
+    public enum TilePlacement
+    {
+        NW,
+        N,
+        NE,
+        E,
+        SE,
+        S,
+        SW,
+        W,
+        C
     }
 
     public enum Biome

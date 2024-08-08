@@ -13,7 +13,8 @@ namespace ProjectDonut.GameObjects
 {
     internal class MapDrawer : GameObject
     {
-        public Tilemap map;
+        public Tilemap mapBase;
+        public Tilemap mapForest;
 
         private Texture2D spriteSheet;
 
@@ -22,28 +23,48 @@ namespace ProjectDonut.GameObjects
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
         private Camera camera;
+        private SpriteLibrary spriteLib;
 
         private int tileSize = 32;
 
-        public MapDrawer(Tilemap mapData, ContentManager content, GraphicsDeviceManager graphics, SpriteBatch spriteBatch, Camera camera, GraphicsDevice graphicsDevice)
+        public MapDrawer(Tilemap mapBase, Tilemap mapForest, ContentManager content, GraphicsDeviceManager graphics, SpriteBatch spriteBatch, Camera camera, GraphicsDevice graphicsDevice, SpriteLibrary spriteLib)
         {
-            this.map = mapData;
+            this.mapBase = mapBase;
+            this.mapForest = mapForest;
             this.content = content;
             this.graphics = graphics;
             this.spriteBatch = spriteBatch;
             this.camera = camera;
             this.graphicsDevice = graphicsDevice;
+            this.spriteLib = spriteLib;
         }
 
         public override void Draw(GameTime gameTime)
         {
             var viewportRectangle = GetViewportRect();
 
-            foreach (var tile in map.Map)
+            var width = mapBase.Map.GetLength(0);
+            var height = mapBase.Map.GetLength(1);
+
+            for (int i = 0; i < width; i++)
             {
-                if (viewportRectangle.Contains(tile.Position.X, tile.Position.Y))
+                for (int j = 0; j < height; j++)
                 {
-                    spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White);
+                    var tile = mapBase.Map[i, j];
+                    var position = tile.Position;
+
+                    if (viewportRectangle.Contains(position.X, position.Y))
+                    {
+                        // Base
+                        spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+
+                        // Forest
+                        var forestTile = mapForest.Map[i, j];
+                        if (forestTile != null)
+                        {
+                            spriteBatch.Draw(forestTile.Texture, forestTile.Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1);
+                        }
+                    }
                 }
             }
         }

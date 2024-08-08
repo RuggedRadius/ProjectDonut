@@ -14,12 +14,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         private int[,] biomeData;
         private int[,] forestData;
 
-        private Tilemap tilemap;
+        private Tilemap tilemapBase;
+        private Tilemap tilemapForest;
 
         private ContentManager content;
         private GraphicsDevice graphicsDevice;
         private WorldTileRuler rules;
-        private SpriteLibrary spriteLib;
+        public SpriteLibrary spriteLib;
 
         public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice)
         {
@@ -28,25 +29,32 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.spriteLib = new SpriteLibrary(content, graphicsDevice);
         }
 
-        public Tilemap Generate(int width, int height)
+        public Tilemap GenerateBase(int width, int height)
         {
             spriteLib.LoadSpriteLibrary();
 
             GenerateTerrain(width, height);
             GenerateBiomes(width, height);
             CarveRivers(width, height);
-            GenerateForests(width, height);
-            CreateTilemap(heightData);
+            GenerateForestData(width, height);
+            CreateBaseTilemap(heightData);
 
-            rules = new WorldTileRuler(spriteLib, tilemap);
-            tilemap = rules.ApplyTileRules();
+            rules = new WorldTileRuler(spriteLib, tilemapBase);
+            tilemapBase = rules.ApplyTileRules();
 
-            return tilemap;
+            return tilemapBase;
         }   
 
-        private void CreateTilemap(int[,] mapData)
+        public Tilemap GenerateForest()
         {
-            tilemap = new Tilemap(mapData.GetLength(0), mapData.GetLength(1));
+            CreateForestTilemap(forestData);
+
+            return tilemapForest;
+        }
+
+        private void CreateBaseTilemap(int[,] mapData)
+        {
+            tilemapBase = new Tilemap(mapData.GetLength(0), mapData.GetLength(1));
 
             for (int i = 0; i < mapData.GetLength(0); i++)
             {
@@ -64,7 +72,33 @@ namespace ProjectDonut.ProceduralGeneration.World
                         TileType = determinations.Item2
                     };
 
-                    tilemap.Map[i, j] = tile;
+                    tilemapBase.Map[i, j] = tile;
+                }
+            }
+        }
+
+        private void CreateForestTilemap(int[,] forestData)
+        {
+            tilemapForest = new Tilemap(forestData.GetLength(0), forestData.GetLength(1));
+
+            for (int i = 0; i < forestData.GetLength(0); i++)
+            {
+                for (int j = 0; j < forestData.GetLength(1); j++)
+                {
+                    if (forestData[i, j] != 0)
+                    {
+                        var tile = new Tile
+                        {
+                            xIndex = i,
+                            yIndex = j,
+                            Position = new Vector2(i * 32, j * 32),
+                            Size = new Vector2(32, 32),
+                            Texture = spriteLib.GetSprite("forest-C"),
+                            TileType = TileType.Forest
+                        };
+
+                        tilemapForest.Map[i, j] = tile;
+                    }
                 }
             }
         }
@@ -168,7 +202,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             biomeData = intData;
         }
 
-        public void GenerateForests(int width, int height)
+        public void GenerateForestData(int width, int height)
         {
             int forestCount = 250;
             int minWalk = 250;
@@ -445,24 +479,24 @@ namespace ProjectDonut.ProceduralGeneration.World
                 switch (biome)
                 {
                     case Biome.Desert: 
-                        return (spriteLib.GetSprite("desert"), TileType.Grass);
+                        return (spriteLib.GetSprite("desert"), TileType.Ground);
 
                     case Biome.Grasslands:
-                        if (forestData[x, y] == 1)
-                        {
-                            return (spriteLib.GetSprite("forest-C"), TileType.Grass);
-                        }
-                        else
-                        {
-                            return (spriteLib.GetSprite("grasslands"), TileType.Grass);
-                        }
+                        //if (forestData[x, y] == 1)
+                        //{
+                        //    return (spriteLib.GetSprite("forest-C"), TileType.Forest);
+                        //}
+                        //else
+                        //{
+                            return (spriteLib.GetSprite("grasslands"), TileType.Ground);
+                        //}
                         
 
                     case Biome.Winterlands: 
-                        return (spriteLib.GetSprite("winterlands"), TileType.Grass);
+                        return (spriteLib.GetSprite("winterlands"), TileType.Ground);
 
                     default: 
-                        return (spriteLib.GetSprite("grasslands"), TileType.Grass);
+                        return (spriteLib.GetSprite("grasslands"), TileType.Ground);
                 }
             }
             //else if (heightIndex >= 6)

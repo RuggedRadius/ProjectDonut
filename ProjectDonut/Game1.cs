@@ -23,7 +23,8 @@ namespace ProjectDonut
         // World Map
         private Vector2 mapSizeWorld = new Vector2(1000, 1000);
         private WorldGenerator worldGenerator;
-        private Tilemap map;
+        private Tilemap mapBase;
+        private Tilemap mapForest;
         private string[] mapStrings;
 
         private Camera camera = new Camera();
@@ -49,15 +50,19 @@ namespace ProjectDonut
             _gameObjects["player"].position = new Vector2(250, 250);
 
             worldGenerator = new WorldGenerator(Content, GraphicsDevice);
-            map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
+            mapBase = worldGenerator.GenerateBase((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
+            mapForest = worldGenerator.GenerateForest();
             
-            _gameObjects.Add("MapDrawer", new MapDrawer(map, Content, _graphics, _spriteBatch, camera, GraphicsDevice));
+            _gameObjects.Add("MapDrawer", new MapDrawer(mapBase, mapForest, Content, _graphics, _spriteBatch, camera, GraphicsDevice, worldGenerator.spriteLib));
 
             _gameObjects.Add("camera", camera);
 
-            _gameObjects["player"].position = mapSizeWorld / 2;
+            
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
+
+            _gameObjects["player"].position = (mapSizeWorld * 32) / 2;
+
             base.Initialize();
         }
 
@@ -78,8 +83,8 @@ namespace ProjectDonut
             var keyboardState = Keyboard.GetState();
             if(keyboardState.IsKeyDown(Keys.OemTilde))
             {
-                map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
-                ((MapDrawer)_gameObjects["MapDrawer"]).map = map;
+                mapBase = worldGenerator.GenerateBase((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
+                ((MapDrawer)_gameObjects["MapDrawer"]).mapBase = mapBase;
             }
 
             camera.Position = _gameObjects["player"].position;
