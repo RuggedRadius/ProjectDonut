@@ -9,11 +9,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class WorldTileRuler
     {
-        private Dictionary<string, Texture2D> spriteLib;
+        private SpriteLibrary spriteLib;
         private Tilemap tilemap;
 
 
-        public WorldTileRuler(Dictionary<string, Texture2D> spriteLib, Tilemap tilemap)
+        public WorldTileRuler(SpriteLibrary spriteLib, Tilemap tilemap)
         {
             this.spriteLib = spriteLib;
             this.tilemap = tilemap;
@@ -31,29 +31,28 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     if (x == 0 || y == 0 || x == tilemap.Map.GetLength(0) - 1 || y == tilemap.Map.GetLength(1) - 1)
                     {
-                        //tile.Texture = spriteLib["coast-inv"];
                         counter++;
                         continue;
                     }
 
                     if (isNorthWestCoast(x, y))
                     {
-                        tile.Texture = spriteLib["coast-NW"];
+                        tile.Texture = spriteLib.GetSprite("coast-NW");
                     }
 
                     if (isNorthEastCoast(x, y))
                     {
-                        tile.Texture = spriteLib["coast-NE"];
+                        tile.Texture = spriteLib.GetSprite("coast-NE");
                     }
 
                     if (isSouthEastCoast(x, y))
                     {
-                        tile.Texture = spriteLib["coast-SE"];
+                        tile.Texture = spriteLib.GetSprite("coast-SE");
                     }
 
                     if (isSouthWestCoast(x, y))
                     {
-                        tile.Texture = spriteLib["coast-SW"];
+                        tile.Texture = spriteLib.GetSprite("coast-SW");
                     }
                 }
                 catch (Exception ex)
