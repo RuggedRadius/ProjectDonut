@@ -13,7 +13,7 @@ namespace ProjectDonut.GameObjects
 {
     internal class MapDrawer : GameObject
     {
-        private Tilemap map;
+        public Tilemap map;
 
         private Texture2D spriteSheet;
 

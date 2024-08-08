@@ -74,7 +74,13 @@ namespace ProjectDonut
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
+            // Debug world generation
+            var keyboardState = Keyboard.GetState();
+            if(keyboardState.IsKeyDown(Keys.OemTilde))
+            {
+                map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
+                ((MapDrawer)_gameObjects["MapDrawer"]).map = map;
+            }
 
             camera.Position = _gameObjects["player"].position;
 

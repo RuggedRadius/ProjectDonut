@@ -21,6 +21,15 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Tilemap ApplyTileRules()
         {
+            tilemap = ApplyCoastLineRules();
+            tilemap = ApplyForestRules();
+            return tilemap;
+        }
+
+
+        #region Coast-line Rules
+        private Tilemap ApplyCoastLineRules()
+        {
             int counter = 0;
             foreach (var tile in tilemap.Map)
             {
@@ -209,6 +218,56 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return false;
             }
         }
+        #endregion
+
+        #region Forest Rules
+        private Tilemap ApplyForestRules()
+        {
+            int counter = 0;
+            foreach (var tile in tilemap.Map)
+            {
+                int x = tile.xIndex;
+                int y = tile.yIndex;
+
+                try
+                {
+                    if (x == 0 || y == 0 || x == tilemap.Map.GetLength(0) - 1 || y == tilemap.Map.GetLength(1) - 1)
+                    {
+                        counter++;
+                        continue;
+                    }
+
+                    if (isNorthWestCoast(x, y))
+                    {
+                        tile.Texture = spriteLib.GetSprite("coast-NW");
+                    }
+
+                    if (isNorthEastCoast(x, y))
+                    {
+                        tile.Texture = spriteLib.GetSprite("coast-NE");
+                    }
+
+                    if (isSouthEastCoast(x, y))
+                    {
+                        tile.Texture = spriteLib.GetSprite("coast-SE");
+                    }
+
+                    if (isSouthWestCoast(x, y))
+                    {
+                        tile.Texture = spriteLib.GetSprite("coast-SW");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+
+                counter++;
+            }
+
+            return tilemap;
+        }
+        #endregion
 
         private List<Tile> GetNeighbours(int x, int y)
         {

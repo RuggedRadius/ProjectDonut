@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AsepriteDotNet;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -14,6 +15,7 @@ namespace ProjectDonut.ProceduralGeneration
     {
         private Texture2D spriteSheetTiles;
         private Texture2D spriteSheetBiomes;
+        private Texture2D spriteSheetForest;
 
 
         private ContentManager content;
@@ -31,8 +33,12 @@ namespace ProjectDonut.ProceduralGeneration
         {
             spriteSheetTiles = content.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
             spriteSheetBiomes = content.Load<Texture2D>("Sprites/Map/World/Biomes");
+            spriteSheetForest = content.Load<Texture2D>("Sprites/Map/World/Forest");
 
             spriteLib = new Dictionary<string, Texture2D>();
+
+            // Forest
+            ExtractSprites("forest", spriteSheetForest, 3, 3);
 
             // Biomes
             spriteLib.Add("grasslands", ExtractBiomeSprite(0, 0));
@@ -106,6 +112,59 @@ namespace ProjectDonut.ProceduralGeneration
             spriteLib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
         }
 
+        public void ExtractSprites(string spriteSet, Texture2D spriteSheet, int xCount, int yCount)
+        {
+            for (int x = 0; x < xCount; x++)
+            {
+                for (int y = 0; y < yCount; y++)
+                {
+                    var sprite = ExtractSprite(spriteSheet, x, y);
+                    var direction = DetermineSpriteDirection(x, y);
+
+                    spriteLib.Add($"{spriteSet}-{direction}", sprite);
+                }
+            }
+        }
+
+        private string DetermineSpriteDirection(int x, int y)
+        {
+            if (x == 0 && y == 0) return "NW";
+            if (x == 1 && y == 0) return "N";
+            if (x == 2 && y == 0) return "NE";
+
+            if (x == 0 && y == 1) return "W";
+            if (x == 1 && y == 1) return "C";
+            if (x == 2 && y == 1) return "E";
+
+            if (x == 0 && y == 2) return "SW";
+            if (x == 1 && y == 2) return "S";
+            if (x == 2 && y == 2) return "SE";
+
+            else
+                return "C";
+        }
+
+        private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y) 
+        {
+            var width = 32;
+            var height = 32;
+
+            x *= width;
+            y *= height;
+
+            Rectangle sourceRectangle = new Rectangle(x, y, width, height);
+
+            // Extract the pixel data from the spritesheet
+            Color[] data = new Color[width * height];
+            spriteSheet.GetData(0, sourceRectangle, data, 0, data.Length);
+
+            // Create a new texture for the sprite and set the pixel data
+            Texture2D sprite = new Texture2D(graphicsDevice, width, height);
+            sprite.SetData(data);
+
+            return sprite;
+        }
+
         public Texture2D GetSprite(string key)
         {
             return spriteLib[key];
@@ -146,6 +205,28 @@ namespace ProjectDonut.ProceduralGeneration
             // Extract the pixel data from the spritesheet
             Color[] data = new Color[width * height];
             spriteSheetTiles.GetData(0, sourceRectangle, data, 0, data.Length);
+
+            // Create a new texture for the sprite and set the pixel data
+            Texture2D sprite = new Texture2D(graphicsDevice, width, height);
+            sprite.SetData(data);
+
+            // Store the new texture in the array
+            return sprite;
+        }
+
+        private Texture2D ExtractForestSprite(int x, int y)
+        {
+            var width = 32;
+            var height = 32;
+
+            x *= width;
+            y *= height;
+
+            Rectangle sourceRectangle = new Rectangle(x, y, width, height);
+
+            // Extract the pixel data from the spritesheet
+            Color[] data = new Color[width * height];
+            spriteSheetForest.GetData(0, sourceRectangle, data, 0, data.Length);
 
             // Create a new texture for the sprite and set the pixel data
             Texture2D sprite = new Texture2D(graphicsDevice, width, height);
