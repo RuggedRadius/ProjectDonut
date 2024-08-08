@@ -1,25 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
     public class ForestGenerator
     {
-        private int[,] heightData;
-        private int[,] biomeData;
-
         private SpriteLibrary spriteLib;
         private WorldMapSettings settings;
 
-        public ForestGenerator(SpriteLibrary spriteLib, int[,] heightData, int[,] biomeData, WorldMapSettings mapSettings)
+        public ForestGenerator(SpriteLibrary spriteLib, WorldMapSettings mapSettings)
         {
-            this.heightData = heightData;
-            this.biomeData = biomeData;
             this.spriteLib = spriteLib;
             this.settings = mapSettings;
         }
@@ -57,12 +48,15 @@ namespace ProjectDonut.ProceduralGeneration.World
             return tmForest;
         }
 
-        public int[,] GenerateForestData(int width, int height)
+        public int[,] GenerateForestData(int[,] heightData, int[,] biomeData)
         {
             int forestCount = 250;
             int minWalk = 250;
             int maxWalk = 1000;
             int walkRadius = 5;
+
+            var width = heightData.GetLength(0);
+            var height = heightData.GetLength(1);
 
             var grasslandCoords = new List<(int, int)>();
             for (int x = 0; x < width; x++)
