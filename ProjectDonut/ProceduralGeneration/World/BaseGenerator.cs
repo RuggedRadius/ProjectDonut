@@ -134,7 +134,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 return TileType.Mountain;
             }
-            else if (heightValue >= settings.WaterHeightMax)
+            else if (heightValue >= settings.GroundHeightMin)
             {
                 return TileType.Ground;
             }

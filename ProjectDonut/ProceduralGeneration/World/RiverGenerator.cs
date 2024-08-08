@@ -155,7 +155,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (heightData[x, y] <= settings.WaterHeightMax)
+                    if (heightData[x, y] <= settings.WaterHeightMax &&
+                        heightData[x, y] >= settings.WaterHeightMin)
                     {
                         var direction = IsCoastCoord(x, y, heightData);
 
