@@ -87,8 +87,8 @@ namespace ProjectDonut
             // Heights
             s.WaterHeightMin = 0;
             s.WaterHeightMax = 2;
-            s.GroundHeightMin = 3;
-            s.GroundHeightMax = 7;
+            s.GroundHeightMin = 2;
+            s.GroundHeightMax = 8;
             s.MountainHeightMin = 8;
             s.MountainHeightMax = 10;
 

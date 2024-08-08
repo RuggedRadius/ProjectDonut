@@ -94,11 +94,11 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var biome = (Biome)biomeValue;
 
-            if (heightValue > settings.MountainHeightMin)
+            if (heightValue >= settings.MountainHeightMin)
             {
                 return spriteLib.GetSprite("mountain");
             }
-            else if (heightValue > settings.WaterHeightMax)
+            else if (heightValue >= settings.WaterHeightMax)
             {
                 switch (biome)
                 {
@@ -123,11 +123,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private TileType DetermineTileType(int x, int y, int heightValue)
         {
-            if (heightValue > settings.MountainHeightMin)
+            if (heightValue >= settings.MountainHeightMin)
             {
                 return TileType.Mountain;
             }
-            else if (heightValue > settings.WaterHeightMax)
+            else if (heightValue >= settings.WaterHeightMax)
             {
                 return TileType.Ground;
             }

@@ -125,8 +125,8 @@ namespace ProjectDonut.ProceduralGeneration.World
                             }
 
                             if (biomeData[xCoord, yCoord] == (int)Biome.Grasslands
-                                && heightData[xCoord, yCoord] > settings.WaterHeightMax
-                                && heightData[xCoord, yCoord] < settings.MountainHeightMin)
+                                && heightData[xCoord, yCoord] >= settings.GroundHeightMin
+                                && heightData[xCoord, yCoord] <= settings.GroundHeightMax)
                             {
                                 forestData[xCoord, yCoord] = 1;
                             }
