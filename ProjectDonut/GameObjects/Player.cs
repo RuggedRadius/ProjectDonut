@@ -54,7 +54,7 @@ namespace ProjectGorilla.GameObjects
         public override void Initialize()
         {
             position = new Vector2(50, 50);
-            speed = 500;
+            speed = 2000;
             spriteSize = new Vector2(32, 32);
             ZIndex = 10;
 

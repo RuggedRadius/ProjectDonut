@@ -36,8 +36,8 @@ namespace ProjectDonut
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            _graphics.PreferredBackBufferWidth = 2880;
-            _graphics.PreferredBackBufferHeight = 1920;
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
         }
 
         protected override void Initialize()

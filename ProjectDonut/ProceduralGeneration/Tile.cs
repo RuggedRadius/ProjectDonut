@@ -11,6 +11,13 @@ namespace ProjectDonut.ProceduralGeneration
         Mountain
     }
 
+    public enum Biome
+    {
+        Grasslands,
+        Desert,
+        Winterlands
+    }
+
     public class Tile
     {
         public int xIndex { get; set; }
@@ -19,6 +26,7 @@ namespace ProjectDonut.ProceduralGeneration
         public Vector2 Size { get; set; }
         public Texture2D Texture;
         public TileType TileType { get; set; }
+
     }
 
     public class Tilemap
