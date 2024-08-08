@@ -10,21 +10,18 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class WorldGenerator
     {
-        private int[,] heightData;
         private int[,] biomeData;
-        private int[,] forestData;
 
+        private int[,] heightData;
         private Tilemap tmBase;
+        
+        private int[,] forestData;
         private Tilemap tmForest;
-
 
         private ContentManager content;
         private GraphicsDevice graphicsDevice;
         private WorldTileRuler rules;
         private SpriteLibrary spriteLib;
-
-        // Sub-generators
-        private ForestGenerator genForest;
 
         private WorldMapSettings settings;
 
@@ -40,12 +37,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             spriteLib.LoadSpriteLibrary();
 
-            GenerateTerrain(width, height);
-            GenerateBiomes(width, height);
-            CarveRivers(width, height);            
-            tmBase = CreateBaseTilemap(heightData);
+            heightData = GenerateTerrain(width, height);
+            biomeData = GenerateBiomes(width, height);
 
-            genForest = new ForestGenerator(spriteLib, heightData, biomeData, settings);
+            var genRivers = new RiverGenerator(heightData, settings);
+            heightData = genRivers.CarveRivers(width, height);          
+            
+            tmBase = CreateBaseTilemap(heightData);
 
             rules = new WorldTileRuler(spriteLib, tmBase);
             tmBase = rules.ApplyBaseMapTileRules();
@@ -56,9 +54,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Tilemap GenerateForestMap(int width, int height)
         {
             var gen = new ForestGenerator(spriteLib, heightData, biomeData, settings);
-            var tilemap = gen.CreateForestTilemap(width, height);
-            //tilemap = rules.ApplyForestRules(tilemap);
-            return tilemap;
+
+            forestData = gen.GenerateForestData(width, height);
+
+            tmForest = gen.CreateForestTilemap(forestData);
+            tmForest = rules.ApplyForestRules(tmForest);
+
+            return tmForest;
         }
 
         private Tilemap CreateBaseTilemap(int[,] mapData)
@@ -86,7 +88,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             return tmBase;
         }
 
-        public void GenerateTerrain(int width, int height)
+        public int[,] GenerateTerrain(int width, int height)
         {
             FastNoiseLite noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
@@ -126,10 +128,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            heightData = intData;
+            return intData;
         }
 
-        public void GenerateBiomes(int width, int height)
+        public int[,] GenerateBiomes(int width, int height)
         {
             FastNoiseLite noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
@@ -182,182 +184,12 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            biomeData = intData;
+            return intData;
         }
 
         
 
-        public void CarveRivers(int width, int height)
-        {
-            int riverCount = 50;
-            int minLength = 50;
-            int maxLength = 500;
-
-            var randy = new Random();
-
-            // Find coast
-            var coastCoords = FindCoastCoords(width, height);
-
-            // Random walk + splinter
-            for (int i = 0; i < riverCount; i++)
-            {
-                var startindex = randy.Next(0, coastCoords.Count);
-                var start = coastCoords[startindex];
-                var length = randy.Next(minLength, maxLength);
-
-                CarveRiver(width, height, length, start.Item3, start.Item1, start.Item2);
-            }
-        }
-
-        private void CarveRiver(int width, int height, int length, int startDirection, int startX, int startY)
-        {
-            double forkChance = 0.0025f;
-            int minForkLength = 5;
-
-            var randy = new Random();
-
-            var bannedDirection = 0;
-            if (startDirection == 0)
-                bannedDirection = 2;
-            if (startDirection == 1)
-                bannedDirection = 3;
-            if (startDirection == 2)
-                bannedDirection = 0;
-            if (startDirection == 3)
-                bannedDirection = 1;
-
-            for (int j = 0; j < length; j++)
-            {
-                if (randy.NextDouble() <= forkChance && (length - j) > minForkLength)
-                {
-                    var forkLength = randy.Next(minForkLength, length - j);
-                    var forkDirection = randy.Next(0, 4);
-                    int forkCounter = 0;
-                    var suitableForkDirectionFound = false;
-                    while (suitableForkDirectionFound == false)
-                    {
-                        forkDirection = randy.Next(0, 4);
-
-                        if (forkDirection != bannedDirection)
-                        {
-                            suitableForkDirectionFound = true;
-                        }
-
-                        forkCounter++;
-
-                        if (forkCounter > 1000)
-                        {
-                            continue;
-                        }
-                    }
-
-                    CarveRiver(width, height, forkLength, forkDirection, startX, startY);
-                }
-
-                var direction = randy.Next(0, 4);
-                int counter = 0;
-                var suitableDirectionFound = false;
-                while (suitableDirectionFound == false)
-                {
-                    direction = randy.Next(0, 4);
-
-                    if (direction != bannedDirection)
-                    {
-                        suitableDirectionFound = true;
-                    }
-
-                    counter++;
-
-                    if (counter > 1000)
-                    {
-                        continue;
-                    }
-                }
-
-                switch (direction)
-                {
-                    case 0:
-                        if (startX + 1 < width)
-                        {
-                            startX += 1;
-                        }
-                        break;
-                    case 1:
-                        if (startX - 1 >= 0)
-                        {
-                            startX -= 1;
-                        }
-                        break;
-                    case 2:
-                        if (startY + 1 < height)
-                        {
-                            startY += 1;
-                        }
-                        break;
-                    case 3:
-                        if (startY - 1 >= 0)
-                        {
-                            startY -= 1;
-                        }
-                        break;
-                }
-
-                if (heightData[startX, startY] > settings.WaterHeightMax)
-                {
-                    if (heightData[startX, startY] >= settings.MountainHeightMin)
-                    {
-                        return;
-                    }
-
-                    heightData[startX, startY] = settings.WaterHeightMax;
-                }
-            }
-        }
-
-        private List<(int, int, int)> FindCoastCoords(int width, int height)
-        {
-            var coords = new List<(int, int, int)>();
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (heightData[x,y] <= settings.WaterHeightMax)
-                    {
-                        var direction = IsCoastCoord(x, y);
-
-                        if (direction >= 0)
-                        {
-                            coords.Add((x, y, direction));
-                        }
-                    }
-                }
-            }
-
-            return coords;
-        }
-
-        private int IsCoastCoord(int x, int y)
-        {
-            if (x == 0 || x == heightData.GetLength(0) - 1 || y == 0 || y == heightData.GetLength(1) - 1)
-                return -1;
-
-            var isCoastNorth = heightData[x, y - 1] > settings.WaterHeightMax;
-            var isCoastEast = heightData[x + 1, y] > settings.WaterHeightMax;
-            var isCoastSouth = heightData[x - 1, y] > settings.WaterHeightMax;
-            var isCoastWest = heightData[x, y + 1] > settings.WaterHeightMax;
-
-            if (isCoastNorth)
-                return 0;
-            if (isCoastEast)
-                return 1;
-            if (isCoastSouth)
-                return 2;
-            if (isCoastWest)
-                return 3;
-            else
-                return -1;
-        }
+        
 
         private Texture2D DetermineTexture(int x, int y)
         {

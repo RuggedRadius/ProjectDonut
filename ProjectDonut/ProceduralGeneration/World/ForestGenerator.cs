@@ -24,20 +24,17 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.settings = mapSettings;
         }
 
-        public Tilemap CreateForestTilemap(int width, int height)
+        public Tilemap CreateForestTilemap(int[,] forestData)
         {
-            var forestData = GenerateForestData(width, height);
-
-            var path = @$"C:\Flandaria_forestData_debug_{DateTime.Now.ToString("hh-mm-sstt")}.txt";            
+            var width = forestData.GetLength(0);
+            var height = forestData.GetLength(1);
 
             var tmForest = new Tilemap(forestData.GetLength(0), forestData.GetLength(1));
 
-            for (int i = 0; i < forestData.GetLength(0); i++)
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < forestData.GetLength(1); j++)
+                for (int j = 0; j < height; j++)
                 {
-                    //System.IO.File.AppendAllText(path, $"{forestData[i, j]}");
-
                     if (forestData[i, j] == 0)
                     {
                         continue;
@@ -55,14 +52,12 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                     tmForest.Map[i, j] = tile;
                 }
-
-                //System.IO.File.AppendAllText(path, Environment.NewLine);
             }
 
             return tmForest;
         }
 
-        private int[,] GenerateForestData(int width, int height)
+        public int[,] GenerateForestData(int width, int height)
         {
             int forestCount = 250;
             int minWalk = 250;
