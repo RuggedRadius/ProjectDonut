@@ -51,7 +51,7 @@ namespace ProjectDonut
             worldGenerator = new WorldGenerator(Content, GraphicsDevice);
             map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
             
-            _gameObjects.Add("MapDrawer", new MapDrawer(map, Content, _graphics, _spriteBatch, camera, GraphicsDevice));
+            _gameObjects.Add("MapDrawer", new WorldMap(Content, _graphics, _spriteBatch, camera, GraphicsDevice));
 
             _gameObjects.Add("camera", camera);
 
@@ -79,7 +79,7 @@ namespace ProjectDonut
             if(keyboardState.IsKeyDown(Keys.OemTilde))
             {
                 map = worldGenerator.Generate((int)mapSizeWorld.X, (int)mapSizeWorld.Y);
-                ((MapDrawer)_gameObjects["MapDrawer"]).map = map;
+                ((WorldMap)_gameObjects["MapDrawer"]).mapBase = map;
             }
 
             camera.Position = _gameObjects["player"].position;

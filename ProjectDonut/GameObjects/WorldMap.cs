@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.ProceduralGeneration;
+using ProjectDonut.ProceduralGeneration.World;
 using ProjectGorilla.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,12 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.GameObjects
 {
-    internal class MapDrawer : GameObject
+    internal class WorldMap : GameObject
     {
-        public Tilemap map;
+        public Tilemap mapBase;
+        public Tilemap mapForest;
 
-        private Texture2D spriteSheet;
+        private WorldGenerator worldGen;
 
         private ContentManager content;
         private GraphicsDeviceManager graphics;
@@ -25,21 +27,33 @@ namespace ProjectDonut.GameObjects
 
         private int tileSize = 32;
 
-        public MapDrawer(Tilemap mapData, ContentManager content, GraphicsDeviceManager graphics, SpriteBatch spriteBatch, Camera camera, GraphicsDevice graphicsDevice)
+        public WorldMap(ContentManager content, GraphicsDeviceManager graphics, SpriteBatch spriteBatch, Camera camera, GraphicsDevice graphicsDevice)
         {
-            this.map = mapData;
+            
             this.content = content;
             this.graphics = graphics;
             this.spriteBatch = spriteBatch;
             this.camera = camera;
             this.graphicsDevice = graphicsDevice;
+
+            worldGen = new WorldGenerator(content, graphicsDevice);
+        }
+
+        public override void Initialize()
+        {
+            ZIndex = 11;
+        }
+
+        public override void LoadContent()
+        {
+            mapBase = worldGen.Generate(1000, 1000);
         }
 
         public override void Draw(GameTime gameTime)
         {
             var viewportRectangle = GetViewportRect();
 
-            foreach (var tile in map.Map)
+            foreach (var tile in mapBase.Map)
             {
                 if (viewportRectangle.Contains(tile.Position.X, tile.Position.Y))
                 {
@@ -69,15 +83,7 @@ namespace ProjectDonut.GameObjects
             return tileBounds.Intersects(cameraBounds);
         }
 
-        public override void Initialize()
-        {
-            ZIndex = 11;
-        }
-
-        public override void LoadContent()
-        {
-            spriteSheet = content.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
-        }
+        
 
         public override void Update(GameTime gameTime)
         {            
