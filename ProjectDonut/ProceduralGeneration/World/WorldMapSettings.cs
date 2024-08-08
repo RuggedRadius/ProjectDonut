@@ -19,11 +19,16 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int GroundHeightMin { get; set; }
         public int GroundHeightMax { get; set; }
         public int MountainHeightMin { get; set; }
-        public int MountainHeightMax { get; set; }     
+        public int MountainHeightMax { get; set; }
 
         // Forest
-
+        public int ForestCount { get; set; }
+        public int MinWalk { get; set; }
+        public int MaxWalk { get; set; }
+        public int WalkRadius { get; set; } 
 
         // Rivers
+        public double RiverForkChance { get; set; }
+        public int MinForkLength { get; set; }
     }
 }

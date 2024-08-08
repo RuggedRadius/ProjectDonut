@@ -92,6 +92,16 @@ namespace ProjectDonut
             s.MountainHeightMin = 8;
             s.MountainHeightMax = 10;
 
+            // Forest
+            s.ForestCount = 250;
+            s.MinWalk = 250;
+            s.MaxWalk = 1000;
+            s.WalkRadius = 5;
+
+            // Rivers
+            s.RiverForkChance = 0.0025f;
+            s.MinForkLength = 5;
+
             return s;
         }
 
@@ -102,7 +112,6 @@ namespace ProjectDonut
             _font = Content.Load<SpriteFont>("Fonts/Default");
         }
 
-        
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))

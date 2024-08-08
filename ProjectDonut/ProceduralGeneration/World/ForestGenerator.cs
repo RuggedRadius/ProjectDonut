@@ -50,10 +50,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public int[,] GenerateForestData(int[,] heightData, int[,] biomeData)
         {
-            int forestCount = 250;
-            int minWalk = 250;
-            int maxWalk = 1000;
-            int walkRadius = 5;
+
 
             var width = heightData.GetLength(0);
             var height = heightData.GetLength(1);
@@ -73,13 +70,13 @@ namespace ProjectDonut.ProceduralGeneration.World
             var forestData = new int[width, height];
             var randy = new Random();
 
-            for (int x = 0; x < forestCount; x++)
+            for (int x = 0; x < settings.ForestCount; x++)
             {
                 var randomIndex = randy.Next(0, grasslandCoords.Count);
                 var coords = grasslandCoords[randomIndex];
 
                 //forestData[coords.Item1, coords.Item2] = 1;
-                var walkLength = randy.Next(minWalk, maxWalk);
+                var walkLength = randy.Next(settings.MinWalk, settings.MaxWalk);
 
                 for (int y = 0; y < walkLength; y++)
                 {
@@ -112,9 +109,9 @@ namespace ProjectDonut.ProceduralGeneration.World
                             break;
                     }
 
-                    for (int i = -walkRadius; i < walkRadius; i++)
+                    for (int i = -settings.WalkRadius; i < settings.WalkRadius; i++)
                     {
-                        for (int j = -walkRadius; j < walkRadius; j++)
+                        for (int j = -settings.WalkRadius; j < settings.WalkRadius; j++)
                         {
                             var xCoord = coords.Item1 + i;
                             var yCoord = coords.Item2 + j;

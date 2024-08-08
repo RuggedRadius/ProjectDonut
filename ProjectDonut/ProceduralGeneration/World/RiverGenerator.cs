@@ -44,9 +44,6 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private void CarveRiver(int width, int height, int length, int startDirection, int startX, int startY, int[,] heightData)
         {
-            double forkChance = 0.0025f;
-            int minForkLength = 5;
-
             var randy = new Random();
 
             var bannedDirection = 0;
@@ -61,9 +58,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             for (int j = 0; j < length; j++)
             {
-                if (randy.NextDouble() <= forkChance && (length - j) > minForkLength)
+                if (randy.NextDouble() <= settings.RiverForkChance && (length - j) > settings.MinForkLength)
                 {
-                    var forkLength = randy.Next(minForkLength, length - j);
+                    var forkLength = randy.Next(settings.MinForkLength, length - j);
                     var forkDirection = randy.Next(0, 4);
                     int forkCounter = 0;
                     var suitableForkDirectionFound = false;
