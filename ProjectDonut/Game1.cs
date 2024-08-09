@@ -110,8 +110,13 @@ namespace ProjectDonut
             s.MaxRiverRadius = 3;
             s.RiverRadiusDegradationChance = 0.1f;
 
+            // Erosion
             s.CoastErosionMin = 2;
             s.CoastErosionMax = 10;
+            s.BiomeErosionMin = 100;
+            s.BiomeErosionMax = 500;
+            s.DeepWaterErosionMin = 30;
+            s.DeepWaterErosionMax = 80;
 
             return s;
         }

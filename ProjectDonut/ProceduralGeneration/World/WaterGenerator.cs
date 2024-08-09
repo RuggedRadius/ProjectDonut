@@ -37,7 +37,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 var startindex = randy.Next(0, coastCoords.Count);
                 var start = coastCoords[startindex];
                 var length = randy.Next(settings.MinLength, settings.MaxLength);
-                
+
                 heightData = CarveRiver(length, start.Item3, start.Item1, start.Item2, heightData);
             }
 
@@ -49,16 +49,14 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private int[,] CarveRiver(int length, int startDirection, int startX, int startY, int[,] heightData)
         {
-            //// TEMP
-            //heightData[startX, startY] = -1;
-            //return heightData;
-
             var width = heightData.GetLength(0);
             var height = heightData.GetLength(1);
 
             var randy = new Random();
             var bannedDirection = CalculateBannedDirection(startDirection);
             var riverRadius = randy.Next(settings.MinRiverRadius, settings.MaxRiverRadius);
+
+            var originalHeightData = (int[,])heightData.Clone();
 
             for (int j = 0; j < length; j++)
             {
@@ -72,7 +70,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                 // Fork river by chance
                 ForkRiverChance(length, j, startDirection, startX, startY, bannedDirection, heightData, riverRadius);
-                
+
                 // Get new direction
                 var direction = GetRandomDirection(bannedDirection);
 
@@ -81,12 +79,12 @@ namespace ProjectDonut.ProceduralGeneration.World
                 startX = newDirections.Item1;
                 startY = newDirections.Item2;
 
-                if (heightData[startX, startY] >= settings.MountainHeightMin)
+                if (originalHeightData[startX, startY] >= settings.MountainHeightMin)
                 {
                     return heightData;
                 }
 
-                if (heightData[startX, startY] <= settings.DeepWaterHeightMax)
+                if (originalHeightData[startX, startY] <= settings.DeepWaterHeightMax)
                 {
                     return heightData;
                 }
@@ -188,11 +186,11 @@ namespace ProjectDonut.ProceduralGeneration.World
         }
 
         private void ForkRiverChance(
-            int length, 
-            int currentLength, 
-            int startDirection, 
-            int startX, 
-            int startY, 
+            int length,
+            int currentLength,
+            int startDirection,
+            int startX,
+            int startY,
             int bannedDirection,
             int[,] heightData,
             int riverRadius)
@@ -249,10 +247,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                     continue;
                 }
 
-                var n   = heightData[x + 0, y - 1] >= settings.GroundHeightMin;
-                var w   = heightData[x + 0, y + 1] >= settings.GroundHeightMin;
-                var e   = heightData[x + 1, y + 0] >= settings.GroundHeightMin;
-                var s    = heightData[x - 1, y + 0] >= settings.GroundHeightMin;
+                var n = heightData[x + 0, y - 1] >= settings.GroundHeightMin;
+                var w = heightData[x + 0, y + 1] >= settings.GroundHeightMin;
+                var e = heightData[x + 1, y + 0] >= settings.GroundHeightMin;
+                var s = heightData[x - 1, y + 0] >= settings.GroundHeightMin;
 
                 if (n)
                 {
@@ -279,6 +277,26 @@ namespace ProjectDonut.ProceduralGeneration.World
             return coords;
         }
 
+        private List<(int, int)> GetAllDeepWaterCoords(int[,] heightData)
+        {
+            var coords = new List<(int, int)>();
+            var width = heightData.GetLength(0);
+            var height = heightData.GetLength(1);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (heightData[x, y] <= settings.DeepWaterHeightMax && heightData[x, y] >= settings.DeepWaterHeightMin)
+                    {
+                        coords.Add((x, y));
+                    }
+                }
+            }
+
+            return coords;
+        }
+
         private List<(int, int)> GetAllWaterCoords(int[,] heightData)
         {
             var coords = new List<(int, int)>();
@@ -289,7 +307,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (heightData[x,y] <= settings.WaterHeightMax)
+                    if (heightData[x, y] <= settings.WaterHeightMax && heightData[x, y] >= settings.WaterHeightMin)
                     {
                         coords.Add((x, y));
                     }
@@ -320,7 +338,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             else
                 return -1;
         }
-    
+
         public int[,] ErodeCoast(int[,] heightData)
         {
             var width = heightData.GetLength(0);
@@ -343,7 +361,8 @@ namespace ProjectDonut.ProceduralGeneration.World
                         continue;
                     }
 
-                    var erodeDirection = new Random().Next(0, 4);
+                    var erodeDirection = randy.Next(0, 4);
+                    var erodeFactor = randy.Next(settings.DeepWaterErosionWidthMin, settings.DeepWaterErosionWidthMax);
                     switch (erodeDirection)
                     {
                         case 0:
@@ -373,6 +392,137 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             return heightData;
+        }
+
+        public int[,] ErodeDeepWater(int[,] heightData)
+        {
+            var width = heightData.GetLength(0);
+            var height = heightData.GetLength(1);
+
+            var coastCoords = GetAllDeepWaterCoords(heightData);
+
+            var randy = new Random();
+
+            foreach (var coord in coastCoords)
+            {
+                var x = coord.Item1;
+                var y = coord.Item2;
+
+                var erodeCount = randy.Next(settings.DeepWaterErosionMin, settings.DeepWaterErosionMax);
+                for (int i = 0; i < erodeCount; i++)
+                {
+                    if (x < 1 || x >= width - 1 || y < 1 || y >= height - 1)
+                    {
+                        continue;
+                    }
+
+                    var erodeDirection = new Random().Next(0, 4);
+                    switch (erodeDirection)
+                    {
+                        case 0:
+                            heightData[x + 0, y - 1] = settings.DeepWaterHeightMin;
+                            y--;
+                            break;
+
+                        case 1:
+                            heightData[x + 1, y + 0] = settings.DeepWaterHeightMin;
+                            x++;
+                            break;
+
+                        case 2:
+                            heightData[x + 0, y + 1] = settings.DeepWaterHeightMin;
+                            y++;
+                            break;
+
+                        case 3:
+                            heightData[x - 1, y + 0] = settings.DeepWaterHeightMin;
+                            x--;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return heightData;
+        }
+
+        public int[,] ErodeBiomeBorder(Biome biome, int[,] biomeData)
+        {
+            var width = biomeData.GetLength(0);
+            var height = biomeData.GetLength(1);
+
+            var coords = GetBiomeCoordsList(biome, biomeData);
+            int targetValue = (int)biome;
+
+            var randy = new Random();
+
+            foreach (var coord in coords)
+            {
+                var x = coord.Item1;
+                var y = coord.Item2;
+
+                var erodeCount = randy.Next(settings.BiomeErosionMin, settings.BiomeErosionMax);
+                for (int i = 0; i < erodeCount; i++)
+                {
+                    if (x < 1 || x >= width - 1 || y < 1 || y >= height - 1)
+                    {
+                        continue;
+                    }
+
+                    var erodeDirection = new Random().Next(0, 4);
+                    switch (erodeDirection)
+                    {
+                        case 0:
+                            biomeData[x + 0, y - 1] = targetValue;
+                            y--;
+                            break;
+
+                        case 1:
+                            biomeData[x + 1, y + 0] = targetValue;
+                            x++;
+                            break;
+
+                        case 2:
+                            biomeData[x + 0, y + 1] = targetValue;
+                            y++;
+                            break;
+
+                        case 3:
+                            biomeData[x - 1, y + 0] = targetValue;
+                            x--;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return biomeData;
+        }
+
+        public List<(int, int)> GetBiomeCoordsList(Biome biome, int[,] biomeData)
+        {
+            int targetValue = (int)biome;
+            var width = biomeData.GetLength(0);
+            var height = biomeData.GetLength(1);
+
+            var coords = new List<(int, int)>();
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (biomeData[x, y] == targetValue)
+                    {
+                        coords.Add((x, y));
+                    }
+                }
+            }
+
+            return coords;
         }
     }
 }

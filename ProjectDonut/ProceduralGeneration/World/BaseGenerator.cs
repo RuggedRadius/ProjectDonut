@@ -22,7 +22,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int[,] GenerateHeightMap(int width, int height)
         {
             FastNoiseLite noise = new FastNoiseLite();
-            noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
+            //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
+            noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
 
             // Gather noise data

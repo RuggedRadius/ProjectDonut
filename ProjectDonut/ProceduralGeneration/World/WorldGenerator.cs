@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,10 +51,19 @@ namespace ProjectDonut.ProceduralGeneration.World
             var debugger = new DebugMapData(settings);
 
             biomeData = biomes.GenerateBiomes(width, height);
+            foreach (Biome biome in Enum.GetValues(typeof(Biome))) 
+            {
+                biomeData = water.ErodeBiomeBorder(biome, biomeData);
+            }
+            
+
             heightData = baseGen.GenerateHeightMap(width, height);
             //debugger.WriteMapData(heightData, "base");
-            heightData = water.ErodeCoast(heightData);
+            
+            
             heightData = water.CarveRivers(heightData);
+            heightData = water.ErodeCoast(heightData);
+            heightData = water.ErodeDeepWater(heightData);
             //debugger.WriteMapData(heightData, "rivers");
 
             tmBase = baseGen.CreateBaseTilemap(heightData, biomeData);

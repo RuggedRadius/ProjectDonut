@@ -40,8 +40,14 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int MaxRiverRadius { get; set; } 
         public float RiverRadiusDegradationChance { get; set; }
 
-        // Coast
+        // Erosion
         public int CoastErosionMin { get; set; }
         public int CoastErosionMax { get; set; }
+        public int BiomeErosionMin { get; set; }
+        public int BiomeErosionMax { get; set; }
+        public int DeepWaterErosionMin { get; set; }
+        public int DeepWaterErosionMax { get; set; }
+        public int DeepWaterErosionWidthMin { get; set; }
+        public int DeepWaterErosionWidthMax { get; set; }
     }
 }
