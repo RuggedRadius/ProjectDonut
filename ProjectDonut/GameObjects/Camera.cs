@@ -10,7 +10,7 @@ namespace ProjectDonut.GameObjects
     {
         public Vector2 Position { get; set; }
         public float Zoom { get; set; }
-        public float ZoomMax = 0.05f;
+        public float ZoomMax = 0.025f;
         public float ZoomMin = 4f;
         public float Rotation { get; set; }
 

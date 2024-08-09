@@ -80,16 +80,16 @@ namespace ProjectDonut
             var s = new WorldMapSettings();
 
             // Dimensions
-            s.Width = 1000;
-            s.Height = 1000;
+            s.Width = 500;
+            s.Height = 500;
             s.TileSize = 32;
 
             // Heights
             s.DeepWaterHeightMin = 0;
             s.DeepWaterHeightMax = 1;
-            s.WaterHeightMin = 1;
+            s.WaterHeightMin = 2;
             s.WaterHeightMax = 3;
-            s.GroundHeightMin = 3;
+            s.GroundHeightMin = 4;
             s.GroundHeightMax = 8;
             s.MountainHeightMin = 9;
             s.MountainHeightMax = 10;
@@ -101,8 +101,17 @@ namespace ProjectDonut
             s.WalkRadius = 5;
 
             // Rivers
+            //s.RiverCount = 50;
+            s.MinLength = 50;
+            s.MaxLength = 500;
             s.RiverForkChance = 0.0025f;
             s.MinForkLength = 5;
+            s.MinRiverRadius = 1;
+            s.MaxRiverRadius = 3;
+            s.RiverRadiusDegradationChance = 0.1f;
+
+            s.CoastErosionMin = 2;
+            s.CoastErosionMax = 10;
 
             return s;
         }

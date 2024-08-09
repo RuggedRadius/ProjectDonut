@@ -9,7 +9,7 @@ namespace ProjectDonut.ProceduralGeneration.World
     {
         private int[,] biomeData;
 
-        private int[,] heightData;
+        public int[,] heightData;
         private Tilemap tmBase;
         
         private int[,] forestData;
@@ -25,7 +25,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         // Generators
         private BaseGenerator baseGen;
         private BiomeGenerator biomes;
-        private RiverGenerator rivers;
+        private WaterGenerator water;
         private ForestGenerator forest;
 
         public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice, WorldMapSettings settings)
@@ -37,7 +37,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             baseGen = new BaseGenerator(settings, spriteLib);
             biomes = new BiomeGenerator();
-            rivers = new RiverGenerator(settings);
+            water = new WaterGenerator(settings);
             forest = new ForestGenerator(spriteLib, settings);
 
             rules = new WorldTileRuler(spriteLib);
@@ -47,11 +47,14 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Tilemap GenerateBaseMap(int width, int height)
         {
+            var debugger = new DebugMapData(settings);
+
             biomeData = biomes.GenerateBiomes(width, height);
             heightData = baseGen.GenerateHeightMap(width, height);
-            //WriteMapToFile(heightData, @"C:\map1.txt");
-            heightData = rivers.CarveRivers(heightData);
-            //WriteMapToFile(heightData, @"C:\map2.txt");
+            //debugger.WriteMapData(heightData, "base");
+            heightData = water.ErodeCoast(heightData);
+            heightData = water.CarveRivers(heightData);
+            //debugger.WriteMapData(heightData, "rivers");
 
             tmBase = baseGen.CreateBaseTilemap(heightData, biomeData);
             tmBase = rules.ApplyBaseRules(tmBase);

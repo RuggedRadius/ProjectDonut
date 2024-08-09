@@ -183,8 +183,8 @@ namespace ProjectGorilla.GameObjects
         public override void Draw(GameTime gameTime)
         {            
             _spriteBatch.Draw(spriteSheet, position, currentFrame, Color.White);
-            _spriteBatch.DrawString(debugFont, $"X:{position.X}", new Vector2(0, 0), Color.Green);
-            _spriteBatch.DrawString(debugFont, $"Y:{position.Y}", new Vector2(0, 20), Color.Green);
+            //_spriteBatch.DrawString(debugFont, $"X:{position.X}", new Vector2(0, 0), Color.Green);
+            //_spriteBatch.DrawString(debugFont, $"Y:{position.Y}", new Vector2(0, 20), Color.Green);
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)

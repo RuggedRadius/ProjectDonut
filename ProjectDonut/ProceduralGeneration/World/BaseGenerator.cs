@@ -58,7 +58,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     intData[x, y] = (int)(normalizedValue * 9);
                 }
             }
-
+            
             return intData;
         }
 
@@ -98,7 +98,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 return spriteLib.GetSprite("mountain");
             }
-            else if (heightValue >= settings.WaterHeightMax)
+            else if (heightValue >= settings.GroundHeightMin)
             {
                 switch (biome)
                 {

@@ -8,9 +8,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class WorldMapSettings
     {
+        // General 
         public int Width { get; set; }
         public int Height { get; set; }
-
         public int TileSize { get; set; }
 
         // Heights
@@ -27,10 +27,21 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int ForestCount { get; set; }
         public int MinWalk { get; set; }
         public int MaxWalk { get; set; }
-        public int WalkRadius { get; set; } 
+        public int WalkRadius { get; set; }
 
         // Rivers
+        //public int RiverCount { get; set; }
+        public int RiverCount => 20;// (Width * Height) / 1000;
+        public int MinLength { get; set; }
+        public int MaxLength { get; set; }
         public double RiverForkChance { get; set; }
         public int MinForkLength { get; set; }
+        public int MinRiverRadius { get; set; }
+        public int MaxRiverRadius { get; set; } 
+        public float RiverRadiusDegradationChance { get; set; }
+
+        // Coast
+        public int CoastErosionMin { get; set; }
+        public int CoastErosionMax { get; set; }
     }
 }
