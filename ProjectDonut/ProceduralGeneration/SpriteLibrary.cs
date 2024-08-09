@@ -16,6 +16,7 @@ namespace ProjectDonut.ProceduralGeneration
         private Texture2D spriteSheetTiles;
         private Texture2D spriteSheetBiomes;
         private Texture2D spriteSheetForest;
+        private Texture2D spriteSheetWinter;
 
 
         private ContentManager content;
@@ -60,6 +61,26 @@ namespace ProjectDonut.ProceduralGeneration
             spriteLib.Add("forest-inv-SW", ExtractSprite(spriteSheetForest, 3, 2));
             spriteLib.Add("forest-inv-S",  ExtractSprite(spriteSheetForest, 4, 2));
             spriteLib.Add("forest-inv-SE", ExtractSprite(spriteSheetForest, 5, 2));
+
+            spriteLib.Add("forest-frost-NW", ExtractSprite(spriteSheetForest, 0, 3));
+            spriteLib.Add("forest-frost-N", ExtractSprite(spriteSheetForest, 1, 3));
+            spriteLib.Add("forest-frost-NE", ExtractSprite(spriteSheetForest, 2, 3));
+            spriteLib.Add("forest-frost-W", ExtractSprite(spriteSheetForest, 0, 4));
+            spriteLib.Add("forest-frost-C", ExtractSprite(spriteSheetForest, 1, 4));
+            spriteLib.Add("forest-frost-E", ExtractSprite(spriteSheetForest, 2, 4));
+            spriteLib.Add("forest-frost-SW", ExtractSprite(spriteSheetForest, 0, 5));
+            spriteLib.Add("forest-frost-S", ExtractSprite(spriteSheetForest, 1, 5));
+            spriteLib.Add("forest-frost-SE", ExtractSprite(spriteSheetForest, 2, 5));
+
+            spriteLib.Add("forest-frost-inv-NW", ExtractSprite(spriteSheetForest, 3, 3));
+            spriteLib.Add("forest-frost-inv-N", ExtractSprite(spriteSheetForest, 4, 3));
+            spriteLib.Add("forest-frost-inv-NE", ExtractSprite(spriteSheetForest, 5, 3));
+            spriteLib.Add("forest-frost-inv-W", ExtractSprite(spriteSheetForest, 3, 4));
+            spriteLib.Add("forest-frost-inv-C", ExtractSprite(spriteSheetForest, 4, 4));
+            spriteLib.Add("forest-frost-inv-E", ExtractSprite(spriteSheetForest, 5, 4));
+            spriteLib.Add("forest-frost-inv-SW", ExtractSprite(spriteSheetForest, 3, 5));
+            spriteLib.Add("forest-frost-inv-S", ExtractSprite(spriteSheetForest, 4, 5));
+            spriteLib.Add("forest-frost-inv-SE", ExtractSprite(spriteSheetForest, 5, 5));
 
             // Biomes
             spriteLib.Add("grasslands", ExtractBiomeSprite(0, 0));

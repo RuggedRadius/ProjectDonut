@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -15,7 +16,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.settings = mapSettings;
         }
 
-        public Tilemap CreateForestTilemap(int[,] forestData)
+        public Tilemap CreateForestTilemap(int[,] forestData, int[,] biomeData)
         {
             var width = forestData.GetLength(0);
             var height = forestData.GetLength(1);
@@ -37,7 +38,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                         yIndex = j,
                         Position = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = spriteLib.GetSprite("forest-C"),
+                        Texture = DetermineTexture(i, j, biomeData),
                         TileType = TileType.Forest
                     };
 
@@ -48,21 +49,43 @@ namespace ProjectDonut.ProceduralGeneration.World
             return tmForest;
         }
 
+        private Texture2D DetermineTexture(int x, int y, int[,] biomeData)
+        {
+            var tileType = (Biome)biomeData[x, y];
+
+            switch (tileType)
+            {
+                case Biome.Grasslands:
+                    return spriteLib.GetSprite("forest-C");
+
+                case Biome.Desert:
+                    return spriteLib.GetSprite("forest-C"); // Change this later?
+
+                case Biome.Winterlands:
+                    return spriteLib.GetSprite("forest-frost-C"); 
+
+                default:
+                    return spriteLib.GetSprite("forest-C");
+            }
+        }
+
         public int[,] GenerateForestData(int[,] heightData, int[,] biomeData)
         {
-
-
             var width = heightData.GetLength(0);
             var height = heightData.GetLength(1);
 
-            var grasslandCoords = new List<(int, int)>();
+            var possibleCoords = new List<(int, int)>();
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
                     if (biomeData[x, y] == (int)Biome.Grasslands)
                     {
-                        grasslandCoords.Add((x, y));
+                        possibleCoords.Add((x, y));
+                    }
+                    else if (biomeData[x, y] == (int)Biome.Winterlands)
+                    {
+                        possibleCoords.Add((x, y));
                     }
                 }
             }
@@ -72,8 +95,8 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             for (int x = 0; x < settings.ForestCount; x++)
             {
-                var randomIndex = randy.Next(0, grasslandCoords.Count);
-                var coords = grasslandCoords[randomIndex];
+                var randomIndex = randy.Next(0, possibleCoords.Count);
+                var coords = possibleCoords[randomIndex];
 
                 //forestData[coords.Item1, coords.Item2] = 1;
                 var walkLength = randy.Next(settings.MinWalk, settings.MaxWalk);
@@ -121,8 +144,13 @@ namespace ProjectDonut.ProceduralGeneration.World
                                 continue;
                             }
 
-                            if (biomeData[xCoord, yCoord] == (int)Biome.Grasslands
-                                && heightData[xCoord, yCoord] >= settings.GroundHeightMin
+                            if (biomeData[xCoord, yCoord] == (int)Biome.Grasslands ||
+                                biomeData[xCoord, yCoord] == (int)Biome.Winterlands)
+                            {
+                                continue;
+                            }
+
+                            if ( heightData[xCoord, yCoord] >= settings.GroundHeightMin
                                 && heightData[xCoord, yCoord] <= settings.GroundHeightMax)
                             {
                                 forestData[xCoord, yCoord] = 1;
@@ -131,7 +159,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     }
                 }
 
-                grasslandCoords.Remove(coords);
+                possibleCoords.Remove(coords);
             }
 
             return forestData;

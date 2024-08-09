@@ -92,10 +92,10 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Tilemap GenerateForestMap(int width, int height)
         {
-             forestData = forest.GenerateForestData(heightData, biomeData);
+            forestData = forest.GenerateForestData(heightData, biomeData);
 
-            tmForest = forest.CreateForestTilemap(forestData);
-            tmForest = rules.ApplyForestRules(tmForest);
+            tmForest = forest.CreateForestTilemap(forestData, biomeData);
+            //tmForest = rules.ApplyForestRules(tmForest);
 
             return tmForest;
         }

@@ -45,7 +45,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            // Normalize and convert to integer
+            // Normalise and convert to integer
             int[,] intData = new int[height, width];
             float range = maxValue - minValue;
 
@@ -53,7 +53,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    // Normalize value to the range [0, 1]
+                    // Normalise value to the range [0, 1]
                     float normalizedValue = (noiseData[x, y] - minValue) / range;
 
                     // Scale to integer range (e.g., 0 to 255)
