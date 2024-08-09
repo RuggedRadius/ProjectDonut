@@ -317,6 +317,26 @@ namespace ProjectDonut.ProceduralGeneration.World
             return coords;
         }
 
+        private List<(int, int)> GetAllMountainCoords(int[,] heightData)
+        {
+            var coords = new List<(int, int)>();
+            var width = heightData.GetLength(0);
+            var height = heightData.GetLength(1);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (heightData[x, y] <= settings.MountainHeightMax && heightData[x, y] >= settings.MountainHeightMin)
+                    {
+                        coords.Add((x, y));
+                    }
+                }
+            }
+
+            return coords;
+        }
+
         private int IsCoastCoord(int x, int y, int[,] heightData)
         {
             if (x == 0 || x == heightData.GetLength(0) - 1 || y == 0 || y == heightData.GetLength(1) - 1)
@@ -455,6 +475,60 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                         case 3:
                             heightData[x - 1, y + 0] = settings.DeepWaterHeightMin;
+                            x--;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return heightData;
+        }
+
+        public int[,] ErodeMountains(int[,] heightData)
+        {
+            var width = heightData.GetLength(0);
+            var height = heightData.GetLength(1);
+
+            var coastCoords = GetAllMountainCoords(heightData);
+
+            var randy = new Random();
+
+            foreach (var coord in coastCoords)
+            {
+                var x = coord.Item1;
+                var y = coord.Item2;
+
+                var erodeCount = randy.Next(settings.CoastErosionMin, settings.CoastErosionMax);
+                for (int i = 0; i < erodeCount; i++)
+                {
+                    if (x < 1 || x >= width - 1 || y < 1 || y >= height - 1)
+                    {
+                        continue;
+                    }
+
+                    var erodeDirection = new Random().Next(0, 4);
+                    switch (erodeDirection)
+                    {
+                        case 0:
+                            heightData[x + 0, y - 1] = settings.MountainHeightMax;
+                            y--;
+                            break;
+
+                        case 1:
+                            heightData[x + 1, y + 0] = settings.MountainHeightMax;
+                            x++;
+                            break;
+
+                        case 2:
+                            heightData[x + 0, y + 1] = settings.MountainHeightMax;
+                            y++;
+                            break;
+
+                        case 3:
+                            heightData[x - 1, y + 0] = settings.MountainHeightMax;
                             x--;
                             break;
 

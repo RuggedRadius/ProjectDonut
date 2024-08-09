@@ -58,6 +58,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             
 
             heightData = baseGen.GenerateHeightMap(width, height);
+            heightData = water.ErodeMountains(heightData);
             //debugger.WriteMapData(heightData, "base");
             
             
