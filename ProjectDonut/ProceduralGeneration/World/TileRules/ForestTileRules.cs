@@ -82,7 +82,8 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                     {
                         tile.Texture = spriteLib.GetSprite("forest-SE");
                     }
-                    else if (n && e && s && w && !se && nw && ne && sw)
+                    
+                    if (n && e && s && w && !se && nw && ne && sw)
                     {
                         tile.Texture = spriteLib.GetSprite("forest-inv-NW");
                     }
