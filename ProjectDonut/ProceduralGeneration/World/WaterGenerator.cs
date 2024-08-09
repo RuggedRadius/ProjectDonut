@@ -366,21 +366,25 @@ namespace ProjectDonut.ProceduralGeneration.World
                     switch (erodeDirection)
                     {
                         case 0:
+                            //ErodeTile(x, y - 1, erodeFactor, settings.WaterHeightMin, heightData);
                             heightData[x + 0, y - 1] = settings.WaterHeightMin;
                             y--;
                             break;
 
                         case 1:
+                            //ErodeTile(x + 1, y, erodeFactor, settings.WaterHeightMin, heightData);
                             heightData[x + 1, y + 0] = settings.WaterHeightMin;
                             x++;
                             break;
 
                         case 2:
+                            //ErodeTile(x, y + 1, erodeFactor, settings.WaterHeightMin, heightData);
                             heightData[x + 0, y + 1] = settings.WaterHeightMin;
                             y++;
                             break;
 
                         case 3:
+                            //ErodeTile(x - 1, y, erodeFactor, settings.WaterHeightMin, heightData);
                             heightData[x - 1, y + 0] = settings.WaterHeightMin;
                             x--;
                             break;
@@ -392,6 +396,21 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             return heightData;
+        }
+
+        private void ErodeTile(int x, int y, int radius, int targetValue, int[,] heightData)
+        {
+            for (int i = -radius; i <= radius; i++)
+            {
+                for (int j = -radius; j <= radius; j++)
+                {
+                    try
+                    {
+                        heightData[x + i, y + j] = targetValue;
+                    }
+                    catch (Exception ex) {}
+                }
+            }
         }
 
         public int[,] ErodeDeepWater(int[,] heightData)

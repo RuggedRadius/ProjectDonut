@@ -90,8 +90,8 @@ namespace ProjectDonut
             s.WaterHeightMin = 2;
             s.WaterHeightMax = 3;
             s.GroundHeightMin = 4;
-            s.GroundHeightMax = 8;
-            s.MountainHeightMin = 9;
+            s.GroundHeightMax = 7;
+            s.MountainHeightMin = 8;
             s.MountainHeightMax = 10;
 
             // Forest
@@ -117,6 +117,9 @@ namespace ProjectDonut
             s.BiomeErosionMax = 500;
             s.DeepWaterErosionMin = 30;
             s.DeepWaterErosionMax = 80;
+            s.DeepWaterErosionWidthMin = 10;
+            s.DeepWaterErosionWidthMax = 20;
+            
 
             return s;
         }
