@@ -81,7 +81,8 @@ namespace ProjectDonut.ProceduralGeneration.World
                         Position = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(i, j, biomeValue, heightValue),
-                        TileType = DetermineTileType(i, j, heightValue)
+                        TileType = DetermineTileType(i, j, heightValue),
+                        Biome = (Biome)biomeData[i, j]
                     };
 
                     tmBase.Map[i, j] = tile;

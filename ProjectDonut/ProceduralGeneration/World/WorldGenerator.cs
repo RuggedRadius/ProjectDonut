@@ -55,12 +55,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 biomeData = water.ErodeBiomeBorder(biome, biomeData);
             }
-            
 
             heightData = baseGen.GenerateHeightMap(width, height);
             heightData = water.ErodeMountains(heightData);
             //debugger.WriteMapData(heightData, "base");
-            
             
             heightData = water.CarveRivers(heightData);
             heightData = water.ErodeCoast(heightData);
@@ -95,7 +93,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             forestData = forest.GenerateForestData(heightData, biomeData);
 
             tmForest = forest.CreateForestTilemap(forestData, biomeData);
-            //tmForest = rules.ApplyForestRules(tmForest);
+            tmForest = rules.ApplyForestRules(tmForest);
 
             return tmForest;
         }

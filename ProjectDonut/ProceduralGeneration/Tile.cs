@@ -25,9 +25,9 @@ namespace ProjectDonut.ProceduralGeneration
         public int yIndex { get; set; }
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
-        public Texture2D Texture;
+        public Texture2D Texture { get; set; }
         public TileType TileType { get; set; }
-
+        public Biome Biome { get; set; }
     }
 
     public class Tilemap
