@@ -10,7 +10,7 @@ namespace ProjectDonut.GameObjects
     {
         private bool TEMP_EXPLORE_ALL = true;
 
-        private int sightRadius = 10;
+        private int sightRadius = 20;
         public bool[,] exploredTiles;
 
         public FogOfWar(int width, int height)

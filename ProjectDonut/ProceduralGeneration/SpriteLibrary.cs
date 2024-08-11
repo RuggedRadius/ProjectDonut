@@ -17,6 +17,7 @@ namespace ProjectDonut.ProceduralGeneration
         private Texture2D spriteSheetBiomes;
         private Texture2D spriteSheetForest;
         private Texture2D spriteSheetWinter;
+        private Texture2D spriteSheetMountain;
 
 
         private ContentManager content;
@@ -37,8 +38,11 @@ namespace ProjectDonut.ProceduralGeneration
             spriteSheetTiles = content.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
             spriteSheetBiomes = content.Load<Texture2D>("Sprites/Map/World/Biomes");
             spriteSheetForest = content.Load<Texture2D>("Sprites/Map/World/Forest");
+            spriteSheetMountain = content.Load<Texture2D>("Sprites/Map/World/Mountain");
 
             spriteLib = new Dictionary<string, Texture2D>();
+
+            
 
             // Water
             spriteLib.Add("deepwater-NW", ExtractSprite(spriteSheetTiles, 18, 0));
@@ -136,7 +140,10 @@ namespace ProjectDonut.ProceduralGeneration
             spriteLib.Add("mountain-N", ExtractTileSprite(13, 0));
             spriteLib.Add("mountain-NE", ExtractTileSprite(14, 0));
             spriteLib.Add("mountain-W", ExtractTileSprite(12, 1));
-            spriteLib.Add("mountain", ExtractTileSprite(13, 1));
+
+            //spriteLib.Add("mountain", ExtractTileSprite(13, 1));
+            spriteLib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
+
             spriteLib.Add("mountain-E", ExtractTileSprite(14, 1));
             spriteLib.Add("mountain-SW", ExtractTileSprite(12, 2));
             spriteLib.Add("mountain-S", ExtractTileSprite(13, 2));
