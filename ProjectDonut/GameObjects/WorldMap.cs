@@ -31,6 +31,10 @@ namespace ProjectDonut.GameObjects
         private int width;
         private int height;
 
+        private Player player;
+        public FogOfWar fog;
+        Color halfOpacity = new Color(255, 255, 255, 128);
+
         public WorldMap(int width, int height, List<object> dependencies, WorldMapSettings settings)
         {
             this.width = width;
@@ -59,6 +63,14 @@ namespace ProjectDonut.GameObjects
 
                     case Camera camera:
                         this.camera = camera;
+                        break;
+
+                    case Player player:
+                        this.player = player;
+                        break;
+
+                    case FogOfWar fog:
+                        this.fog = fog;
                         break;
 
                     default:
@@ -103,16 +115,34 @@ namespace ProjectDonut.GameObjects
                         if (tile == null)
                         {
                             continue;
-                        }
+                        }                        
 
                         if (viewportRectangle.Contains(tile.Position.X, tile.Position.Y))
                         {
-                            spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White);
+                            var isExplored = fog.IsTileExplored(x, y);
+
+                            if (!isExplored)
+                            {
+                                spriteBatch.Draw(tile.Texture, tile.Position, null, Color.Black);
+                            }
+                            else
+                            {
+                                if (fog.IsTileInSightRadius(x, y, (int)player.position.X, (int)player.position.Y))
+                                {
+                                    spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White);
+                                }
+                                else
+                                {
+                                    spriteBatch.Draw(tile.Texture, tile.Position, null, Color.Gray);
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+
+        
 
         private Rectangle GetViewportRect() 
         {

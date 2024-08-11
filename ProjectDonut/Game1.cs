@@ -21,6 +21,7 @@ namespace ProjectDonut
         private SpriteFont _font;
 
         private WorldMapSettings worldMapSettings;
+        private FogOfWar fog;
 
         public Game1()
         {
@@ -37,6 +38,11 @@ namespace ProjectDonut
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _gameObjects = new Dictionary<string, GameObject>();
 
+            worldMapSettings = CreateWorldMapSettings();
+
+            // Fog of ware
+            fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
+
             // Camera
             _gameObjects.Add("camera", new Camera());
 
@@ -46,11 +52,11 @@ namespace ProjectDonut
                 GraphicsDevice, 
                 Content, 
                 _spriteBatch, 
-                (Camera)_gameObjects["camera"]
+                (Camera)_gameObjects["camera"],
+                fog
                 ));
 
             // World map
-            worldMapSettings = CreateWorldMapSettings();
             _gameObjects.Add("worldmap", new WorldMap(
                 worldMapSettings.Width,
                 worldMapSettings.Height, 
@@ -60,6 +66,8 @@ namespace ProjectDonut
                     _graphics, 
                     _spriteBatch, 
                     _gameObjects["camera"],
+                    _gameObjects["player"],
+                    fog,
                     GraphicsDevice 
                 },
                 worldMapSettings

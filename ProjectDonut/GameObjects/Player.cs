@@ -46,15 +46,23 @@ namespace ProjectGorilla.GameObjects
         private SpriteFont debugFont;
 
         private int TileSize = 32;
+        private FogOfWar fog;
 
 
-        public Player(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content, SpriteBatch spriteBatch, Camera camera)
+        public Player(
+            GraphicsDeviceManager graphics, 
+            GraphicsDevice graphicsDevice, 
+            ContentManager content, 
+            SpriteBatch spriteBatch, 
+            Camera camera,
+            FogOfWar fog)
         {
             this._graphics = graphics;
             this._graphicsDevice = graphicsDevice;
             this._content = content;
             this._spriteBatch = spriteBatch;
             this.camera = camera;
+            this.fog = fog;
         }
 
         public override void Initialize()
@@ -105,6 +113,8 @@ namespace ProjectGorilla.GameObjects
             //    }
             //    _timer = 0f; // Reset the timer
             //}
+
+            fog.UpdateFogOfWar((int)position.X, (int)position.Y);
 
             HandleInput(gameTime);
         }
