@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AsepriteDotNet;
+using MonoGame.Aseprite;
 
 namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {
@@ -17,7 +19,6 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
 
         public Tilemap ApplyForestRules(Tilemap tilemap)
         {
-            int counter = 0;
             foreach (var tile in tilemap.Map)
             {
                 if (tile == null)
@@ -30,90 +31,108 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
 
                 try
                 {
-                    if (x == 0 || y == 0 || x == tilemap.Map.GetLength(0) - 1 || y == tilemap.Map.GetLength(1) - 1)
+                    if (x == 0 || 
+                        y == 0 || 
+                        x == tilemap.Map.GetLength(0) - 1 || 
+                        y == tilemap.Map.GetLength(1) - 1)
                     {
-                        counter++;
                         continue;
                     }
 
-                    var n = tilemap.GetTile(x, y - 1) != null;
-                    var nw = tilemap.GetTile(x - 1, y - 1) != null;
-                    var ne = tilemap.GetTile(x + 1, y - 1) != null;
-                    var e = tilemap.GetTile(x + 1, y) != null;
-                    var w = tilemap.GetTile(x - 1, y) != null;
-                    var s = tilemap.GetTile(x, y + 1) != null;
-                    var se = tilemap.GetTile(x + 1, y + 1) != null;
-                    var sw = tilemap.GetTile(x - 1, y + 1) != null;
-                    
+                    var directionString = GetDirectionString(tilemap, x, y);
+                    var biomeString = GetBiomeString(tile);
+                    var tileString = $"{biomeString}-{directionString}";
 
-                    if (!n && e && s && !w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-NW");
-                    }
-                    else if (!n && e && s && w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-N");
-                    }
-                    else if (!n && !e && s && w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-NE");
-                    }
-                    else if (n && e && s && !w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-W");
-                    }
-                    else if (n && e && s && w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-C");
-                    }
-                    else if (n && !e && s && w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-E");
-                    }
-                    else if (n && e && !s && !w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-SW");
-                    }
-                    else if (n && e && !s && w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-S");
-                    }
-                    else if (n && !e && !s && w)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-SE");
-                    }
-                    
-                    if (n && e && s && w && !se && nw && ne && sw)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-inv-NW");
-                    }
-                    else if (n && e && s && w && !sw && ne && nw && se)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-inv-NE");
-                    }
-                    else if (n && e && s && w && sw && ne && !nw && se)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-inv-SE");
-                    }
-                    else if (n && e && s && w && sw && !ne && nw && se)
-                    {
-                        tile.Texture = spriteLib.GetSprite("forest-inv-SW");
-                    }
+                    tile.Texture = spriteLib.GetSprite(tileString);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
                 }
-
-                counter++;
             }
 
             return tilemap;
         }
 
-        //private string GetDirectionString()
-        //{
+        private string GetBiomeString(Tile tile)
+        {
+            switch (tile.Biome)
+            {
+                case Biome.Winterlands:
+                    return "forest-frost";
 
-        //}
+                case Biome.Grasslands:
+                default:
+                    return "forest";
+            }
+        }
+
+        private string GetDirectionString(Tilemap tilemap, int x, int y)
+        {
+            var n = tilemap.GetTile(x, y - 1) != null;
+            var nw = tilemap.GetTile(x - 1, y - 1) != null;
+            var ne = tilemap.GetTile(x + 1, y - 1) != null;
+            var e = tilemap.GetTile(x + 1, y) != null;
+            var w = tilemap.GetTile(x - 1, y) != null;
+            var s = tilemap.GetTile(x, y + 1) != null;
+            var se = tilemap.GetTile(x + 1, y + 1) != null;
+            var sw = tilemap.GetTile(x - 1, y + 1) != null;
+
+            if (!n && e && s && !w)
+            {
+                return "NW";
+            }
+            else if (!n && e && s && w)
+            {
+                return "N";
+            }
+            else if (!n && !e && s && w)
+            {
+                return "NE";
+            }
+            else if (n && e && s && !w)
+            {
+                return "W";
+            }
+            else if (n && e && s && w)
+            {
+                return "C";
+            }
+            else if (n && !e && s && w)
+            {
+                return "E";
+            }
+            else if (n && e && !s && !w)
+            {
+                return "SW";
+            }
+            else if (n && e && !s && w)
+            {
+                return "S";
+            }
+            else if (n && !e && !s && w)
+            {
+                return "SE";
+            }
+
+            if (n && e && s && w && !se && nw && ne && sw)
+            {
+                return "inv-NW";
+            }
+            else if (n && e && s && w && !sw && ne && nw && se)
+            {
+                return "inv-NE";
+            }
+            else if (n && e && s && w && sw && ne && !nw && se)
+            {
+                return "inv-SE";
+            }
+            else if (n && e && s && w && sw && !ne && nw && se)
+            {
+                return "inv-SW";
+            }
+
+            return "C";
+        }
     }
 }
