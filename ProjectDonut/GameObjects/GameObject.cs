@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectGorilla.GameObjects
+namespace ProjectDonut.GameObjects
 {
     public class GameObject : IGameObject
     {

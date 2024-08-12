@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace ProjectGorilla.GameObjects
+namespace ProjectDonut.GameObjects
 {
     public interface IGameObject
     {

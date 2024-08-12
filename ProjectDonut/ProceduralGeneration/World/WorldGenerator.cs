@@ -29,11 +29,11 @@ namespace ProjectDonut.ProceduralGeneration.World
         private WaterGenerator water;
         private ForestGenerator forest;
 
-        public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice, WorldMapSettings settings)
+        public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice, WorldMapSettings settings, SpriteLibrary spriteLib)
         {
             this.content = content;
             this.graphicsDevice = graphicsDevice;
-            this.spriteLib = new SpriteLibrary(content, graphicsDevice);
+            this.spriteLib = spriteLib;
             this.settings = settings;
 
             baseGen = new BaseGenerator(settings, spriteLib);

@@ -1,13 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ProjectGorilla.GameObjects;
+using ProjectDonut.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.GameObjects;
 using System;
 using ProjectDonut.ProceduralGeneration;
+using ProjectDonut.UI;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace ProjectDonut
 {
@@ -22,6 +25,8 @@ namespace ProjectDonut
 
         private WorldMapSettings worldMapSettings;
         private FogOfWar fog;
+
+        private SpriteLibrary spriteLib;
 
         public Game1()
         {
@@ -39,6 +44,8 @@ namespace ProjectDonut
             _gameObjects = new Dictionary<string, GameObject>();
 
             worldMapSettings = CreateWorldMapSettings();
+
+            spriteLib = new SpriteLibrary(Content, GraphicsDevice);
 
             // Fog of ware
             fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
@@ -68,12 +75,42 @@ namespace ProjectDonut
                     _gameObjects["camera"],
                     _gameObjects["player"],
                     fog,
-                    GraphicsDevice 
+                    GraphicsDevice,
+                    spriteLib
                 },
                 worldMapSettings
                 ));
 
+            _gameObjects.Add("dialogue", new DialogueSystem(spriteLib, _spriteBatch, (Camera)_gameObjects["camera"], Content));
+
+            
+
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
+
+            Task.Run(() =>
+            {
+                var dialogue = (DialogueSystem)_gameObjects["dialogue"];
+                var lines = new Dictionary<string, int>()
+                {
+                    { "Hello, welcome to Flandaria! A place of nonsense and whimsical adventure!", 3000 },
+                    { "I hope you enjoy your stay!", 3000 },
+                    { "Goodbye!", 3000 }
+                };
+
+                var width = 22;
+                var height = 3;
+                var startX = -(width * 32) / 2;
+                var startY = -(height * 32) / 2;
+                var rect = new Rectangle(startX, startY, width, height);
+
+                foreach (var line in lines)
+                {
+                    dialogue.CreateDialogue(rect, line.Key);
+                    Thread.Sleep(line.Value);
+                    dialogue.CloseAllDialogues();
+                }
+            });
+
 
             // Position player in middle of the map
             var playerStartPosX = (worldMapSettings.Width * worldMapSettings.TileSize) / 2;
@@ -88,8 +125,8 @@ namespace ProjectDonut
             var s = new WorldMapSettings();
 
             // Dimensions
-            s.Width = 500;
-            s.Height = 500;
+            s.Width = 100;
+            s.Height = 100;
             s.TileSize = 32;
 
             // Heights
@@ -128,7 +165,6 @@ namespace ProjectDonut
             s.DeepWaterErosionWidthMin = 10;
             s.DeepWaterErosionWidthMax = 20;
             
-
             return s;
         }
 

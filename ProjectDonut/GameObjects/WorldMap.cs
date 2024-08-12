@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
-using ProjectGorilla.GameObjects;
+using ProjectDonut.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +25,7 @@ namespace ProjectDonut.GameObjects
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
         private Camera camera;
+        private SpriteLibrary spriteLib;
 
         private SpriteFont debugFont;
 
@@ -73,6 +74,10 @@ namespace ProjectDonut.GameObjects
                         this.fog = fog;
                         break;
 
+                    case SpriteLibrary spriteLib:
+                        this.spriteLib = spriteLib;
+                        break;
+
                     default:
                         throw new ArgumentException("Unknown dependency type");
                 }
@@ -83,7 +88,7 @@ namespace ProjectDonut.GameObjects
                 throw new ArgumentException("WorldMap: Missing dependencies");
             }
 
-            worldGen = new WorldGenerator(content, graphicsDevice, settings);
+            worldGen = new WorldGenerator(content, graphicsDevice, settings, spriteLib);
         }
 
         public override void Initialize()

@@ -73,13 +73,16 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public int[,] GenerateForestData(int[,] heightData, int[,] biomeData)
         {
+            var randy = new Random();
             var width = heightData.GetLength(0);
             var height = heightData.GetLength(1);
-
             var possibleCoords = GetPossibleStartingCoordinates(heightData, biomeData);
-
             var forestData = new int[width, height];
-            var randy = new Random();
+
+            if (possibleCoords.Count == 0)
+            {
+                return forestData;
+            }
 
             for (int x = 0; x < settings.ForestCount; x++)
             {

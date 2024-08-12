@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
-namespace ProjectGorilla.GameObjects
+namespace ProjectDonut.GameObjects
 {
     public class Player : GameObject
     {

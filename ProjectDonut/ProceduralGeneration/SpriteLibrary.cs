@@ -19,11 +19,13 @@ namespace ProjectDonut.ProceduralGeneration
         private Texture2D spriteSheetWinter;
         private Texture2D spriteSheetMountain;
 
+        private Dictionary<string, Texture2D> sheets;
+
 
         private ContentManager content;
         private GraphicsDevice graphicsDevice;
 
-        private Dictionary<string, Texture2D> spriteLib;
+        private Dictionary<string, Texture2D> lib;
 
         private int TileSize = 32;
 
@@ -35,130 +37,150 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void LoadSpriteLibrary()
         {
+            sheets = new Dictionary<string, Texture2D>();
+            lib = new Dictionary<string, Texture2D>();
+
             spriteSheetTiles = content.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
             spriteSheetBiomes = content.Load<Texture2D>("Sprites/Map/World/Biomes");
             spriteSheetForest = content.Load<Texture2D>("Sprites/Map/World/Forest");
             spriteSheetMountain = content.Load<Texture2D>("Sprites/Map/World/Mountain");
 
-            spriteLib = new Dictionary<string, Texture2D>();
+            LoadDialogueSystem();
 
             
 
             // Water
-            spriteLib.Add("deepwater-NW", ExtractSprite(spriteSheetTiles, 18, 0));
-            spriteLib.Add("deepwater-N",  ExtractSprite(spriteSheetTiles, 19, 0));
-            spriteLib.Add("deepwater-NE", ExtractSprite(spriteSheetTiles, 20, 0));
-            spriteLib.Add("deepwater-W", ExtractSprite(spriteSheetTiles, 18, 1));
-            spriteLib.Add("deepwater-C", ExtractSprite(spriteSheetTiles, 19, 1));
-            spriteLib.Add("deepwater-E", ExtractSprite(spriteSheetTiles, 20, 1));
-            spriteLib.Add("deepwater-SW", ExtractSprite(spriteSheetTiles, 18, 2));
-            spriteLib.Add("deepwater-S",  ExtractSprite(spriteSheetTiles, 19, 2));
-            spriteLib.Add("deepwater-SE", ExtractSprite(spriteSheetTiles, 20, 2));
+            lib.Add("deepwater-NW", ExtractSprite(spriteSheetTiles, 18, 0));
+            lib.Add("deepwater-N",  ExtractSprite(spriteSheetTiles, 19, 0));
+            lib.Add("deepwater-NE", ExtractSprite(spriteSheetTiles, 20, 0));
+            lib.Add("deepwater-W", ExtractSprite(spriteSheetTiles, 18, 1));
+            lib.Add("deepwater-C", ExtractSprite(spriteSheetTiles, 19, 1));
+            lib.Add("deepwater-E", ExtractSprite(spriteSheetTiles, 20, 1));
+            lib.Add("deepwater-SW", ExtractSprite(spriteSheetTiles, 18, 2));
+            lib.Add("deepwater-S",  ExtractSprite(spriteSheetTiles, 19, 2));
+            lib.Add("deepwater-SE", ExtractSprite(spriteSheetTiles, 20, 2));
 
             // Forest
             ExtractSprites("forest", spriteSheetForest, 3, 3);
-            spriteLib.Add("forest-inv-NW", ExtractSprite(spriteSheetForest, 3, 0));
-            spriteLib.Add("forest-inv-N",  ExtractSprite(spriteSheetForest, 4, 0));
-            spriteLib.Add("forest-inv-NE", ExtractSprite(spriteSheetForest, 5, 0));
-            spriteLib.Add("forest-inv-W", ExtractSprite(spriteSheetForest, 3, 1));
-            spriteLib.Add("forest-inv-E", ExtractSprite(spriteSheetForest, 5, 1));
-            spriteLib.Add("forest-inv-SW", ExtractSprite(spriteSheetForest, 3, 2));
-            spriteLib.Add("forest-inv-S",  ExtractSprite(spriteSheetForest, 4, 2));
-            spriteLib.Add("forest-inv-SE", ExtractSprite(spriteSheetForest, 5, 2));
+            lib.Add("forest-inv-NW", ExtractSprite(spriteSheetForest, 3, 0));
+            lib.Add("forest-inv-N",  ExtractSprite(spriteSheetForest, 4, 0));
+            lib.Add("forest-inv-NE", ExtractSprite(spriteSheetForest, 5, 0));
+            lib.Add("forest-inv-W", ExtractSprite(spriteSheetForest, 3, 1));
+            lib.Add("forest-inv-E", ExtractSprite(spriteSheetForest, 5, 1));
+            lib.Add("forest-inv-SW", ExtractSprite(spriteSheetForest, 3, 2));
+            lib.Add("forest-inv-S",  ExtractSprite(spriteSheetForest, 4, 2));
+            lib.Add("forest-inv-SE", ExtractSprite(spriteSheetForest, 5, 2));
 
-            spriteLib.Add("forest-frost-NW", ExtractSprite(spriteSheetForest, 0, 3));
-            spriteLib.Add("forest-frost-N", ExtractSprite(spriteSheetForest, 1, 3));
-            spriteLib.Add("forest-frost-NE", ExtractSprite(spriteSheetForest, 2, 3));
-            spriteLib.Add("forest-frost-W", ExtractSprite(spriteSheetForest, 0, 4));
-            spriteLib.Add("forest-frost-C", ExtractSprite(spriteSheetForest, 1, 4));
-            spriteLib.Add("forest-frost-E", ExtractSprite(spriteSheetForest, 2, 4));
-            spriteLib.Add("forest-frost-SW", ExtractSprite(spriteSheetForest, 0, 5));
-            spriteLib.Add("forest-frost-S", ExtractSprite(spriteSheetForest, 1, 5));
-            spriteLib.Add("forest-frost-SE", ExtractSprite(spriteSheetForest, 2, 5));
+            lib.Add("forest-frost-NW", ExtractSprite(spriteSheetForest, 0, 3));
+            lib.Add("forest-frost-N", ExtractSprite(spriteSheetForest, 1, 3));
+            lib.Add("forest-frost-NE", ExtractSprite(spriteSheetForest, 2, 3));
+            lib.Add("forest-frost-W", ExtractSprite(spriteSheetForest, 0, 4));
+            lib.Add("forest-frost-C", ExtractSprite(spriteSheetForest, 1, 4));
+            lib.Add("forest-frost-E", ExtractSprite(spriteSheetForest, 2, 4));
+            lib.Add("forest-frost-SW", ExtractSprite(spriteSheetForest, 0, 5));
+            lib.Add("forest-frost-S", ExtractSprite(spriteSheetForest, 1, 5));
+            lib.Add("forest-frost-SE", ExtractSprite(spriteSheetForest, 2, 5));
 
-            spriteLib.Add("forest-frost-inv-NW", ExtractSprite(spriteSheetForest, 3, 3));
-            spriteLib.Add("forest-frost-inv-N", ExtractSprite(spriteSheetForest, 4, 3));
-            spriteLib.Add("forest-frost-inv-NE", ExtractSprite(spriteSheetForest, 5, 3));
-            spriteLib.Add("forest-frost-inv-W", ExtractSprite(spriteSheetForest, 3, 4));
-            spriteLib.Add("forest-frost-inv-C", ExtractSprite(spriteSheetForest, 4, 4));
-            spriteLib.Add("forest-frost-inv-E", ExtractSprite(spriteSheetForest, 5, 4));
-            spriteLib.Add("forest-frost-inv-SW", ExtractSprite(spriteSheetForest, 3, 5));
-            spriteLib.Add("forest-frost-inv-S", ExtractSprite(spriteSheetForest, 4, 5));
-            spriteLib.Add("forest-frost-inv-SE", ExtractSprite(spriteSheetForest, 5, 5));
+            lib.Add("forest-frost-inv-NW", ExtractSprite(spriteSheetForest, 3, 3));
+            lib.Add("forest-frost-inv-N", ExtractSprite(spriteSheetForest, 4, 3));
+            lib.Add("forest-frost-inv-NE", ExtractSprite(spriteSheetForest, 5, 3));
+            lib.Add("forest-frost-inv-W", ExtractSprite(spriteSheetForest, 3, 4));
+            lib.Add("forest-frost-inv-C", ExtractSprite(spriteSheetForest, 4, 4));
+            lib.Add("forest-frost-inv-E", ExtractSprite(spriteSheetForest, 5, 4));
+            lib.Add("forest-frost-inv-SW", ExtractSprite(spriteSheetForest, 3, 5));
+            lib.Add("forest-frost-inv-S", ExtractSprite(spriteSheetForest, 4, 5));
+            lib.Add("forest-frost-inv-SE", ExtractSprite(spriteSheetForest, 5, 5));
 
             // Biomes
-            spriteLib.Add("grasslands", ExtractBiomeSprite(0, 0));
-            spriteLib.Add("desert", ExtractBiomeSprite(1, 0));
-            spriteLib.Add("winterlands", ExtractBiomeSprite(2, 0));
+            lib.Add("grasslands", ExtractBiomeSprite(0, 0));
+            lib.Add("desert", ExtractBiomeSprite(1, 0));
+            lib.Add("winterlands", ExtractBiomeSprite(2, 0));
 
             // Coast
-            spriteLib.Add("coast-NW", ExtractTileSprite(0, 0));
-            spriteLib.Add("coast-N", ExtractTileSprite(1, 0));
-            spriteLib.Add("coast-NE", ExtractTileSprite(2, 0));
-            spriteLib.Add("coast-W", ExtractTileSprite(0, 1));
-            spriteLib.Add("coast", ExtractTileSprite(1, 1));
-            spriteLib.Add("coast-E", ExtractTileSprite(2, 1));
-            spriteLib.Add("coast-SW", ExtractTileSprite(0, 2));
-            spriteLib.Add("coast-S", ExtractTileSprite(1, 2));
-            spriteLib.Add("coast-SE", ExtractTileSprite(2, 2));
+            lib.Add("coast-NW", ExtractTileSprite(0, 0));
+            lib.Add("coast-N", ExtractTileSprite(1, 0));
+            lib.Add("coast-NE", ExtractTileSprite(2, 0));
+            lib.Add("coast-W", ExtractTileSprite(0, 1));
+            lib.Add("coast", ExtractTileSprite(1, 1));
+            lib.Add("coast-E", ExtractTileSprite(2, 1));
+            lib.Add("coast-SW", ExtractTileSprite(0, 2));
+            lib.Add("coast-S", ExtractTileSprite(1, 2));
+            lib.Add("coast-SE", ExtractTileSprite(2, 2));
 
             // Inverted coast
-            spriteLib.Add("coast-inv-NW", ExtractTileSprite(3, 0));
-            spriteLib.Add("coast-inv-N", ExtractTileSprite(4, 0));
-            spriteLib.Add("coast-inv-NE", ExtractTileSprite(5, 0));
-            spriteLib.Add("coast-inv-W", ExtractTileSprite(3, 1));
-            spriteLib.Add("coast-inv", ExtractTileSprite(4, 1));
-            spriteLib.Add("coast-inv-E", ExtractTileSprite(5, 1));
-            spriteLib.Add("coast-inv-SW", ExtractTileSprite(3, 2));
-            spriteLib.Add("coast-inv-S", ExtractTileSprite(4, 2));
-            spriteLib.Add("coast-inv-SE", ExtractTileSprite(5, 2));
+            lib.Add("coast-inv-NW", ExtractTileSprite(3, 0));
+            lib.Add("coast-inv-N", ExtractTileSprite(4, 0));
+            lib.Add("coast-inv-NE", ExtractTileSprite(5, 0));
+            lib.Add("coast-inv-W", ExtractTileSprite(3, 1));
+            lib.Add("coast-inv", ExtractTileSprite(4, 1));
+            lib.Add("coast-inv-E", ExtractTileSprite(5, 1));
+            lib.Add("coast-inv-SW", ExtractTileSprite(3, 2));
+            lib.Add("coast-inv-S", ExtractTileSprite(4, 2));
+            lib.Add("coast-inv-SE", ExtractTileSprite(5, 2));
 
             // Grass
-            spriteLib.Add("grass-NW", ExtractTileSprite(6, 0));
-            spriteLib.Add("grass-N", ExtractTileSprite(7, 0));
-            spriteLib.Add("grass-NE", ExtractTileSprite(8, 0));
-            spriteLib.Add("grass-W", ExtractTileSprite(6, 1));
-            spriteLib.Add("grass", ExtractTileSprite(7, 1));
-            spriteLib.Add("grass-E", ExtractTileSprite(8, 1));
-            spriteLib.Add("grass-SW", ExtractTileSprite(6, 2));
-            spriteLib.Add("grass-S", ExtractTileSprite(7, 2));
-            spriteLib.Add("grass-SE", ExtractTileSprite(8, 2));
+            lib.Add("grass-NW", ExtractTileSprite(6, 0));
+            lib.Add("grass-N", ExtractTileSprite(7, 0));
+            lib.Add("grass-NE", ExtractTileSprite(8, 0));
+            lib.Add("grass-W", ExtractTileSprite(6, 1));
+            lib.Add("grass", ExtractTileSprite(7, 1));
+            lib.Add("grass-E", ExtractTileSprite(8, 1));
+            lib.Add("grass-SW", ExtractTileSprite(6, 2));
+            lib.Add("grass-S", ExtractTileSprite(7, 2));
+            lib.Add("grass-SE", ExtractTileSprite(8, 2));
 
             // Inverted grass
-            spriteLib.Add("grass-inv-NW", ExtractTileSprite(9, 0));
-            spriteLib.Add("grass-inv-N", ExtractTileSprite(10, 0));
-            spriteLib.Add("grass-inv-NE", ExtractTileSprite(11, 0));
-            spriteLib.Add("grass-inv-W", ExtractTileSprite(9, 1));
-            spriteLib.Add("grass-inv", ExtractTileSprite(10, 1));
-            spriteLib.Add("grass-inv-E", ExtractTileSprite(11, 1));
-            spriteLib.Add("grass-inv-SW", ExtractTileSprite(9, 2));
-            spriteLib.Add("grass-inv-S", ExtractTileSprite(10, 2));
-            spriteLib.Add("grass-inv-SE", ExtractTileSprite(11, 2));
+            lib.Add("grass-inv-NW", ExtractTileSprite(9, 0));
+            lib.Add("grass-inv-N", ExtractTileSprite(10, 0));
+            lib.Add("grass-inv-NE", ExtractTileSprite(11, 0));
+            lib.Add("grass-inv-W", ExtractTileSprite(9, 1));
+            lib.Add("grass-inv", ExtractTileSprite(10, 1));
+            lib.Add("grass-inv-E", ExtractTileSprite(11, 1));
+            lib.Add("grass-inv-SW", ExtractTileSprite(9, 2));
+            lib.Add("grass-inv-S", ExtractTileSprite(10, 2));
+            lib.Add("grass-inv-SE", ExtractTileSprite(11, 2));
 
             // Mountain
-            spriteLib.Add("mountain-NW", ExtractTileSprite(12, 0));
-            spriteLib.Add("mountain-N", ExtractTileSprite(13, 0));
-            spriteLib.Add("mountain-NE", ExtractTileSprite(14, 0));
-            spriteLib.Add("mountain-W", ExtractTileSprite(12, 1));
+            lib.Add("mountain-NW", ExtractTileSprite(12, 0));
+            lib.Add("mountain-N", ExtractTileSprite(13, 0));
+            lib.Add("mountain-NE", ExtractTileSprite(14, 0));
+            lib.Add("mountain-W", ExtractTileSprite(12, 1));
 
             //spriteLib.Add("mountain", ExtractTileSprite(13, 1));
-            spriteLib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
+            lib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
 
-            spriteLib.Add("mountain-E", ExtractTileSprite(14, 1));
-            spriteLib.Add("mountain-SW", ExtractTileSprite(12, 2));
-            spriteLib.Add("mountain-S", ExtractTileSprite(13, 2));
-            spriteLib.Add("mountain-SE", ExtractTileSprite(14, 2));
+            lib.Add("mountain-E", ExtractTileSprite(14, 1));
+            lib.Add("mountain-SW", ExtractTileSprite(12, 2));
+            lib.Add("mountain-S", ExtractTileSprite(13, 2));
+            lib.Add("mountain-SE", ExtractTileSprite(14, 2));
 
             // Inverted mountain
-            spriteLib.Add("mountain-inv-NW", ExtractTileSprite(15, 0));
-            spriteLib.Add("mountain-inv-N", ExtractTileSprite(16, 0));
-            spriteLib.Add("mountain-inv-NE", ExtractTileSprite(17, 0));
-            spriteLib.Add("mountain-inv-W", ExtractTileSprite(15, 1));
-            spriteLib.Add("mountain-inv", ExtractTileSprite(16, 1));
-            spriteLib.Add("mountain-inv-E", ExtractTileSprite(17, 1));
-            spriteLib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
-            spriteLib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
-            spriteLib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
+            lib.Add("mountain-inv-NW", ExtractTileSprite(15, 0));
+            lib.Add("mountain-inv-N", ExtractTileSprite(16, 0));
+            lib.Add("mountain-inv-NE", ExtractTileSprite(17, 0));
+            lib.Add("mountain-inv-W", ExtractTileSprite(15, 1));
+            lib.Add("mountain-inv", ExtractTileSprite(16, 1));
+            lib.Add("mountain-inv-E", ExtractTileSprite(17, 1));
+            lib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
+            lib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
+            lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
+        }
+
+        private void LoadDialogueSystem()
+        {
+            sheets.Add("dialogue", content.Load<Texture2D>("Sprites/UI/Dialogue"));
+
+            lib.Add("dialogue-NW", ExtractSprite(sheets["dialogue"], 0, 0));
+            lib.Add("dialogue-N", ExtractSprite(sheets["dialogue"], 1, 0));
+            lib.Add("dialogue-NE", ExtractSprite(sheets["dialogue"], 2, 0));
+
+            lib.Add("dialogue-W", ExtractSprite(sheets["dialogue"], 0, 1));
+            lib.Add("dialogue-C", ExtractSprite(sheets["dialogue"], 1, 1));
+            lib.Add("dialogue-E", ExtractSprite(sheets["dialogue"], 2, 1));
+
+            lib.Add("dialogue-SW", ExtractSprite(sheets["dialogue"], 0, 2));
+            lib.Add("dialogue-S", ExtractSprite(sheets["dialogue"], 1, 2));
+            lib.Add("dialogue-SE", ExtractSprite(sheets["dialogue"], 2, 2));
         }
 
         public void ExtractSprites(string spriteSet, Texture2D spriteSheet, int xCount, int yCount)
@@ -170,7 +192,7 @@ namespace ProjectDonut.ProceduralGeneration
                     var sprite = ExtractSprite(spriteSheet, x, y);
                     var direction = DetermineSpriteDirection(x, y);
 
-                    spriteLib.Add($"{spriteSet}-{direction}", sprite);
+                    lib.Add($"{spriteSet}-{direction}", sprite);
                 }
             }
         }
@@ -216,7 +238,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         public Texture2D GetSprite(string key)
         {
-            return spriteLib[key];
+            return lib[key];
         }
 
         private Texture2D ExtractBiomeSprite(int x, int y)

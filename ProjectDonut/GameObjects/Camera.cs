@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
-using ProjectGorilla.GameObjects;
+using ProjectDonut.GameObjects;
 using Microsoft.Xna.Framework.Input;
 
 namespace ProjectDonut.GameObjects
