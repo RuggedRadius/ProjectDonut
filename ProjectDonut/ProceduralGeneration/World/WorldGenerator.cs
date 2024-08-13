@@ -68,7 +68,37 @@ namespace ProjectDonut.ProceduralGeneration.World
             tmBase = baseGen.CreateBaseTilemap(heightData, biomeData);
             tmBase = rules.ApplyBaseRules(tmBase);
 
+            // TEMP
+            tmBase = TEMPBorderAroundChunk(tmBase);
+
             return tmBase;
+        }
+
+        private Tilemap TEMPBorderAroundChunk(Tilemap map)
+        {
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 0; y < 100; y++)
+                {
+                    if (x == 0 || x == 99)
+                    {
+                        map.Map[x, y] = new Tile()
+                        {
+                            Texture = spriteLib.GetSprite("mountain")
+                        };
+                    }
+
+                    if (y == 0 || y == 99)
+                    {
+                        map.Map[x, y] = new Tile()
+                        {
+                            Texture = spriteLib.GetSprite("mountain")
+                        };
+                    }
+                }
+            }
+
+            return map;
         }
 
         private void WriteMapToFile(int[,] map, string filePath)

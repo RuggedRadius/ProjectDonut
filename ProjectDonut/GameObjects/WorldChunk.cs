@@ -115,6 +115,8 @@ namespace ProjectDonut.GameObjects
         {
             var viewportRectangle = GetViewportRect();
 
+            var playerChunkCoords = player.GetWorldChunkCoords();
+
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -127,29 +129,36 @@ namespace ProjectDonut.GameObjects
                             continue;
                         }
 
-                        //// TEMP
-                        //var newX = tile.LocalPosition.X + (20 * ChunkXPos);
-                        //var newY = tile.LocalPosition.Y + (20 * ChunkYPos);
+                        // TEMP
+                        var newX = tile.LocalPosition.X - (settings.Width * settings.TileSize * ChunkXPos);
+                        var newY = tile.LocalPosition.Y - (settings.Height * settings.TileSize * ChunkYPos);
                         //tile.LocalPosition = new Vector2(newX, newY);
 
-                        if (viewportRectangle.Contains(tile.LocalPosition.X, tile.LocalPosition.Y))
+                        if (viewportRectangle.Contains(new Vector2(newX, newY).X, new Vector2(newX, newY).Y))
                         {
-                            var isExplored = fog.IsTileExplored(x, y);
+                            if (player.ChunkPosX == ChunkXPos && player.ChunkPosY == ChunkYPos)
+                            {
+                                var isExplored = fog.IsTileExplored(x, y);
 
-                            if (!isExplored)
-                            {
-                                spriteBatch.Draw(tile.Texture, tile.LocalPosition, null, Color.Black);
-                            }
-                            else
-                            {
-                                if (fog.IsTileInSightRadius(x, y, (int)player.position.X, (int)player.position.Y))
+                                if (!isExplored)
                                 {
-                                    spriteBatch.Draw(tile.Texture, tile.LocalPosition, null, Color.White);
+                                    spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Black);
                                 }
                                 else
                                 {
-                                    spriteBatch.Draw(tile.Texture, tile.LocalPosition, null, Color.Gray);
+                                    if (fog.IsTileInSightRadius(x, y, (int)player.position.X, (int)player.position.Y))
+                                    {
+                                        spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.White);
+                                    }
+                                    else
+                                    {
+                                        spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
                             }
                         }
                     }

@@ -91,11 +91,11 @@ namespace ProjectDonut
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            Task.Run(() =>
-            {
-                var test = dialogue.CreateTestDialogue();
-                dialogue.ExecuteMultipleLines(test);
-            });
+            //Task.Run(() =>
+            //{
+            //    var test = dialogue.CreateTestDialogue();
+            //    dialogue.ExecuteMultipleLines(test);
+            //});
 
 
             // Position player in middle of the map

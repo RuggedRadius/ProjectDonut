@@ -49,6 +49,8 @@ namespace ProjectDonut.GameObjects
         private int TileSize = 32;
         private FogOfWar fog;
 
+        public int ChunkPosX { get; set; }
+        public int ChunkPosY { get; set; }
 
         public Player(
             GraphicsDeviceManager graphics, 
@@ -71,7 +73,7 @@ namespace ProjectDonut.GameObjects
             position = new Vector2(50, 50);
             speed = 2000;
             spriteSize = new Vector2(TileSize, TileSize);
-            ZIndex = 10;
+            ZIndex = -100;
 
             _frameWidth = TileSize; // Width of a single frame
             _frameHeight = TileSize; // Height of a single frame
@@ -101,6 +103,10 @@ namespace ProjectDonut.GameObjects
 
         public override void Update(GameTime gameTime)
         {
+            var chunkCoords = GetWorldChunkCoords();
+            ChunkPosX = chunkCoords.Item1;
+            ChunkPosY = chunkCoords.Item2;
+
             // Update the timer
             _timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -194,8 +200,15 @@ namespace ProjectDonut.GameObjects
         public override void Draw(GameTime gameTime)
         {            
             _spriteBatch.Draw(spriteSheet, position, currentFrame, Color.White);
-            //_spriteBatch.DrawString(debugFont, $"X:{position.X}", new Vector2(0, 0), Color.Green);
-            //_spriteBatch.DrawString(debugFont, $"Y:{position.Y}", new Vector2(0, 20), Color.Green);
+
+            var debugPos = camera.Position;
+
+            _spriteBatch.DrawString(debugFont, $"Chunk-X:{ChunkPosX}", debugPos + new Vector2(0, 0), Color.Red);
+            _spriteBatch.DrawString(debugFont, $"Chunk-Y:{ChunkPosY}", debugPos + new Vector2(0, 20), Color.Red);
+            _spriteBatch.DrawString(debugFont, $"Tile-X:{(int)(position.X / 32)}", debugPos + new Vector2(0, 40), Color.Red);
+            _spriteBatch.DrawString(debugFont, $"Tile-Y:{(int)(position.Y / 32)}", debugPos + new Vector2(0, 60), Color.Red);
+            _spriteBatch.DrawString(debugFont, $"X:{position.X}", debugPos + new Vector2(0, 80), Color.Red);
+            _spriteBatch.DrawString(debugFont, $"Y:{position.Y}", debugPos + new Vector2(0, 100), Color.Red);
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)
@@ -216,6 +229,29 @@ namespace ProjectDonut.GameObjects
             var playerStartPosY = (settings.Height * settings.TileSize) / 2;
             
             position = new Vector2(playerStartPosX, playerStartPosY);
+        }
+
+        public (int, int) GetWorldChunkCoords()
+        {
+            
+            var x = (int)((position.X / 3200));
+            var y = (int)((position.Y / 3200));
+
+            if (position.X < 0)
+            {
+                x--;
+            }
+
+            if (position.Y < 0)
+            {
+                y--;
+            }
+
+            if (x != 0 || y != 0)
+            {
+            }
+
+            return (x, y);
         }
     }
 }

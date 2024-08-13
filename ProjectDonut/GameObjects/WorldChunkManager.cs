@@ -91,33 +91,43 @@ namespace ProjectDonut.GameObjects
 
         public override void Update(GameTime gameTime)
         {
-            var chunkPosX = (int)player.position.X / Settings.TileSize / ChunkSize;
-            var chunkPosY = (int)player.position.Y / Settings.TileSize / ChunkSize;
-            PlayerChunkPosition = (chunkPosX, chunkPosY);
+            var chunkPosChanged = false;
 
-            if (PlayerChunkPosition.Item1 != 0 || PlayerChunkPosition.Item2 != 0)
+            if (player.ChunkPosX != PlayerChunkPosition.Item1)
             {
+                chunkPosChanged = true;
 
+                // Handle horizontal chunk loading/generating
             }
 
-            CurrentChunks = GetPlayerSurroundingChunks();       
+            if (player.ChunkPosY != PlayerChunkPosition.Item2) 
+            {
+                chunkPosChanged = true;
+
+                // Handle vertical chunk loading/generating
+            }
+
+            if (chunkPosChanged)
+            {
+                PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
+                CurrentChunks = GetPlayerSurroundingChunks();
+            }
         }
 
         public override void Initialize()
         { 
-            // Player chunk position
-            var playerChunkX = (int)player.position.X / ChunkSize;
-            var playerChunkY = (int)player.position.Y / ChunkSize;
-            PlayerChunkPosition = (playerChunkX, playerChunkY);
+            //// Player chunk position
+            PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
 
             // All chunks dictionary - initialised with starting 9 chunks
             AllChunks = new Dictionary<(int, int), WorldChunk>();
-            for (int i = 0; i < 3; i++)
+            int testsize = 2;
+            for (int i = -testsize; i <= testsize; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int j = -testsize; j <= testsize; j++)
                 {
-                    var key = (i - 1, j - 1);
-                    var chunk = CreateChunk(i - 1, j - 1);
+                    var key = (i, j);
+                    var chunk = CreateChunk(i, j);
                     AllChunks.Add(key, chunk);
                 }
             }
@@ -159,8 +169,11 @@ namespace ProjectDonut.GameObjects
             {
                 for(int j = -1; j < 2; j++)
                 {
-                    var chunkX = PlayerChunkPosition.Item1 + i;
-                    var chunkY = PlayerChunkPosition.Item2 + j;
+                    //var chunkX = PlayerChunkPosition.Item1 + i;
+                    //var chunkY = PlayerChunkPosition.Item2 + j;
+
+                    var chunkX = player.ChunkPosX + i;
+                    var chunkY = player.ChunkPosY + j;
 
                     playerChunks.Add(AllChunks[(chunkX, chunkY)]);
                 }
