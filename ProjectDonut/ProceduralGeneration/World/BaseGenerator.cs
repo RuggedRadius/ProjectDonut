@@ -19,7 +19,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.spriteLib = spriteLib;
         }
 
-        public int[,] GenerateHeightMap(int width, int height)
+        public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
         {
             FastNoiseLite noise = new FastNoiseLite();
             //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
@@ -35,7 +35,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseData[x, y] = noise.GetNoise(x, y);
+                    noiseData[x, y] = noise.GetNoise(x + xOffset, y + yOffset);
 
                     if (noiseData[x, y] < minValue)
                         minValue = noiseData[x, y];
@@ -78,7 +78,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     {
                         xIndex = i,
                         yIndex = j,
-                        Position = new Vector2(i * settings.TileSize, j * settings.TileSize),
+                        LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(i, j, biomeValue, heightValue),
                         TileType = DetermineTileType(i, j, heightValue),

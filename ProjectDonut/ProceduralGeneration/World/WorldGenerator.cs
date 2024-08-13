@@ -46,7 +46,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             spriteLib.LoadSpriteLibrary();
         }
 
-        public Tilemap GenerateBaseMap(int width, int height)
+        public Tilemap GenerateBaseMap(int width, int height, int xOffset, int yOffset)
         {
             var debugger = new DebugMapData(settings);
 
@@ -56,7 +56,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 biomeData = water.ErodeBiomeBorder(biome, biomeData);
             }
 
-            heightData = baseGen.GenerateHeightMap(width, height);
+            heightData = baseGen.GenerateHeightMap(width, height, xOffset, yOffset);
             heightData = water.ErodeMountains(heightData);
             //debugger.WriteMapData(heightData, "base");
             

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.GameObjects
 {
-    internal class WorldMap : GameObject
+    public class WorldChunk : GameObject
     {
         public Dictionary<string, Tilemap> tilemaps;
 
@@ -36,11 +36,16 @@ namespace ProjectDonut.GameObjects
         public FogOfWar fog;
         Color halfOpacity = new Color(255, 255, 255, 128);
 
-        public WorldMap(List<object> dependencies, WorldMapSettings settings)
+        public int ChunkXPos;
+        public int ChunkYPos;
+
+        public WorldChunk(List<object> dependencies, WorldMapSettings settings, int chunkXPos, int chunkYPos)
         {
             this.width = settings.Width;
             this.height = settings.Height;
             this.settings = settings;
+            this.ChunkXPos = chunkXPos;
+            this.ChunkYPos = chunkYPos;
 
             foreach (var dependency in dependencies)
             {
@@ -99,7 +104,7 @@ namespace ProjectDonut.GameObjects
         public override void LoadContent()
         {
             tilemaps = new Dictionary<string, Tilemap>();
-            tilemaps.Add("base", worldGen.GenerateBaseMap(width, height));
+            tilemaps.Add("base", worldGen.GenerateBaseMap(width, height, ChunkXPos, ChunkYPos));
             tilemaps.Add("forest", worldGen.GenerateForestMap(width, height));
 
             //debugFont = content.Load<SpriteFont>("Fonts/Default");
@@ -122,23 +127,23 @@ namespace ProjectDonut.GameObjects
                             continue;
                         }                        
 
-                        if (viewportRectangle.Contains(tile.Position.X, tile.Position.Y))
+                        if (viewportRectangle.Contains(tile.LocalPosition.X, tile.LocalPosition.Y))
                         {
                             var isExplored = fog.IsTileExplored(x, y);
 
                             if (!isExplored)
                             {
-                                spriteBatch.Draw(tile.Texture, tile.Position, null, Color.Black);
+                                spriteBatch.Draw(tile.Texture, tile.LocalPosition, null, Color.Black);
                             }
                             else
                             {
                                 if (fog.IsTileInSightRadius(x, y, (int)player.position.X, (int)player.position.Y))
                                 {
-                                    spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White);
+                                    spriteBatch.Draw(tile.Texture, tile.LocalPosition, null, Color.White);
                                 }
                                 else
                                 {
-                                    spriteBatch.Draw(tile.Texture, tile.Position, null, Color.Gray);
+                                    spriteBatch.Draw(tile.Texture, tile.LocalPosition, null, Color.Gray);
                                 }
                             }
                         }

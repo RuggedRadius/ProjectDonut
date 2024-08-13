@@ -23,7 +23,7 @@ namespace ProjectDonut.ProceduralGeneration
     {
         public int xIndex { get; set; }
         public int yIndex { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 LocalPosition { get; set; }
         public Vector2 Size { get; set; }
         public Texture2D Texture { get; set; }
         public TileType TileType { get; set; }

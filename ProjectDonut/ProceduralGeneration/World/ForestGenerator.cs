@@ -37,7 +37,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     {
                         xIndex = i,
                         yIndex = j,
-                        Position = new Vector2(i * settings.TileSize, j * settings.TileSize),
+                        LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(i, j, biomeData),
                         TileType = TileType.Forest,

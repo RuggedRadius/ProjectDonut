@@ -32,6 +32,9 @@ namespace ProjectDonut
         private Player player;
         private DialogueSystem dialogue;
 
+        //private WorldChunk[,] worldChunks;
+        private WorldChunkManager worldChunks;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -48,6 +51,7 @@ namespace ProjectDonut
             _gameObjects = new Dictionary<string, GameObject>();
 
             worldMapSettings = CreateWorldMapSettings();
+            //worldChunks = new WorldChunk[3,3];
 
             spriteLib = new SpriteLibrary(Content, GraphicsDevice);
 
@@ -63,12 +67,12 @@ namespace ProjectDonut
             _gameObjects.Add("player", player);
 
             // World map
-            _gameObjects.Add("worldmap", new WorldMap(
+            worldChunks = new WorldChunkManager(
                 new List<object>()
-                { 
-                    Content, 
-                    _graphics, 
-                    _spriteBatch, 
+                {
+                    Content,
+                    _graphics,
+                    _spriteBatch,
                     camera,
                     player,
                     fog,
@@ -76,7 +80,8 @@ namespace ProjectDonut
                     spriteLib
                 },
                 worldMapSettings
-                ));
+                );
+            _gameObjects.Add("chunkmanager", worldChunks);
 
             dialogue = new DialogueSystem(spriteLib, _spriteBatch, camera, Content);
             _gameObjects.Add("dialogue", dialogue);
