@@ -34,6 +34,7 @@ namespace ProjectDonut
 
         //private WorldChunk[,] worldChunks;
         private WorldChunkManager worldChunks;
+        private const int ChunkSize = 100;
 
         public Game1()
         {
@@ -98,7 +99,7 @@ namespace ProjectDonut
 
 
             // Position player in middle of the map
-            player.PositionPlayerInMiddleOfMap(worldMapSettings);
+            //player.PositionPlayerInMiddleOfMap(worldMapSettings);
 
             base.Initialize();
         }
@@ -108,8 +109,8 @@ namespace ProjectDonut
             var s = new WorldMapSettings();
 
             // Dimensions
-            s.Width = 100;
-            s.Height = 100;
+            s.Width = ChunkSize;
+            s.Height = ChunkSize;
             s.TileSize = 32;
 
             // Heights
