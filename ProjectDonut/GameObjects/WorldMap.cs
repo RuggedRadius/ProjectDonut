@@ -36,10 +36,10 @@ namespace ProjectDonut.GameObjects
         public FogOfWar fog;
         Color halfOpacity = new Color(255, 255, 255, 128);
 
-        public WorldMap(int width, int height, List<object> dependencies, WorldMapSettings settings)
+        public WorldMap(List<object> dependencies, WorldMapSettings settings)
         {
-            this.width = width;
-            this.height = height;
+            this.width = settings.Width;
+            this.height = settings.Height;
             this.settings = settings;
 
             foreach (var dependency in dependencies)

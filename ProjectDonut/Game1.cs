@@ -28,6 +28,10 @@ namespace ProjectDonut
 
         private SpriteLibrary spriteLib;
 
+        private Camera camera;
+        private Player player;
+        private DialogueSystem dialogue;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -51,29 +55,22 @@ namespace ProjectDonut
             fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
 
             // Camera
-            _gameObjects.Add("camera", new Camera());
+            camera = new Camera();
+            _gameObjects.Add("camera", camera);
 
             // Player
-            _gameObjects.Add("player", new Player(
-                _graphics,
-                GraphicsDevice, 
-                Content, 
-                _spriteBatch, 
-                (Camera)_gameObjects["camera"],
-                fog
-                ));
+            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, camera, fog);
+            _gameObjects.Add("player", player);
 
             // World map
             _gameObjects.Add("worldmap", new WorldMap(
-                worldMapSettings.Width,
-                worldMapSettings.Height, 
                 new List<object>()
                 { 
                     Content, 
                     _graphics, 
                     _spriteBatch, 
-                    _gameObjects["camera"],
-                    _gameObjects["player"],
+                    camera,
+                    player,
                     fog,
                     GraphicsDevice,
                     spriteLib
@@ -81,7 +78,8 @@ namespace ProjectDonut
                 worldMapSettings
                 ));
 
-            _gameObjects.Add("dialogue", new DialogueSystem(spriteLib, _spriteBatch, (Camera)_gameObjects["camera"], Content));
+            dialogue = new DialogueSystem(spriteLib, _spriteBatch, camera, Content);
+            _gameObjects.Add("dialogue", dialogue);
 
             
 
@@ -89,33 +87,13 @@ namespace ProjectDonut
 
             Task.Run(() =>
             {
-                var dialogue = (DialogueSystem)_gameObjects["dialogue"];
-                var lines = new Dictionary<string, int>()
-                {
-                    { "Hello, welcome to Flandaria! A place of nonsense and whimsical adventure!", 3000 },
-                    { "I hope you enjoy your stay!", 3000 },
-                    { "Goodbye!", 3000 }
-                };
-
-                var width = 22;
-                var height = 3;
-                var startX = -(width * 32) / 2;
-                var startY = -(height * 32) / 2;
-                var rect = new Rectangle(startX, startY, width, height);
-
-                foreach (var line in lines)
-                {
-                    dialogue.CreateDialogue(rect, line.Key);
-                    Thread.Sleep(line.Value);
-                    dialogue.CloseAllDialogues();
-                }
+                var test = dialogue.CreateTestDialogue();
+                dialogue.ExecuteMultipleLines(test);
             });
 
 
             // Position player in middle of the map
-            var playerStartPosX = (worldMapSettings.Width * worldMapSettings.TileSize) / 2;
-            var playerStartPosY = (worldMapSettings.Height * worldMapSettings.TileSize) / 2;
-            _gameObjects["player"].position = new Vector2(playerStartPosX, playerStartPosY);
+            player.PositionPlayerInMiddleOfMap(worldMapSettings);
 
             base.Initialize();
         }

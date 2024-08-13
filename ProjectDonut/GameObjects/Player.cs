@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using ProjectDonut.GameObjects;
+using ProjectDonut.ProceduralGeneration.World;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -207,6 +208,14 @@ namespace ProjectDonut.GameObjects
             spriteBatch.Draw(debugTexture, new Rectangle(rectangle.Right, rectangle.Top, 1, rectangle.Height), color);
             // Draw bottom side
             spriteBatch.Draw(debugTexture, new Rectangle(rectangle.Left, rectangle.Bottom, rectangle.Width, 1), color);
+        }
+
+        public void PositionPlayerInMiddleOfMap(WorldMapSettings settings)
+        {
+            var playerStartPosX = (settings.Width * settings.TileSize) / 2;
+            var playerStartPosY = (settings.Height * settings.TileSize) / 2;
+            
+            position = new Vector2(playerStartPosX, playerStartPosY);
         }
     }
 }

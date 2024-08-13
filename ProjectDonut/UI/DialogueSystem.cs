@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -19,6 +20,11 @@ namespace ProjectDonut.UI
         public int Width { get; set; }
         public int Height { get; set; }
         public string Text { get; set; }
+        public float ShowTime { get; set; }
+        public float ShowTimer { get; set; }
+        public int CharCounter { get; set; }
+        public float CharInterval { get; set; }
+        public float CharTimer { get; set; }
     }
 
     internal class DialogueSystem : GameObject
@@ -64,20 +70,23 @@ namespace ProjectDonut.UI
 
         public override void Update(GameTime gameTime)
         {
-            if (_dialogues.Where(x => x.IsActive).Any())
+            for (int i = 0; i < _dialogues.Count; i++)
             {
-                charTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                var timeElapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                var d = _dialogues[i];
+                d.CharTimer += timeElapsed;
+                d.ShowTimer += timeElapsed;
 
                 if (charTimer >= charInterval)
                 {
-                    charCount++;
-                    charTimer = 0f;
+                    d.CharCounter++;
+                    d.CharTimer = 0f;
                 }
-            }
-            else
-            {
-                charTimer = 0f;
-                charCount = 0;
+
+                if (d.ShowTimer >= d.ShowTime)
+                {
+                    _dialogues.Remove(d);
+                }
             }
 
             base.Update(gameTime);
@@ -85,8 +94,9 @@ namespace ProjectDonut.UI
 
         public override void Draw(GameTime gameTime)
         {
-            foreach (var dialogue in _dialogues)
+            for (int i = 0; i < _dialogues.Count; i++)
             {
+                var dialogue = _dialogues[i];
                 if (dialogue.IsActive)
                 {
                     DrawDialogueBox(dialogue);
@@ -104,17 +114,18 @@ namespace ProjectDonut.UI
             charTimer = 0f;
         }
 
-        public void CreateDialogue(Rectangle rect, string text)
+        public Dialogue CreateDialogue(Rectangle rect, string text, float time)
         {
-            _dialogues.Add(new Dialogue
+            return new Dialogue
             {
                 X = rect.X,
                 Y = rect.Y,
                 Width = rect.Width,
                 Height = rect.Height,
                 Text = text,
-                IsActive = true
-            });
+                IsActive = true, 
+                ShowTime = time
+            };
         }
 
         private void DrawDialogueBox(Dialogue dialogue)
@@ -189,7 +200,7 @@ namespace ProjectDonut.UI
             var x = camera.Position.X + (dialogue.X + TileSize);
             var y = camera.Position.Y + (dialogue.Y + TileSize);
 
-            for (int j = 0; j < charCount; j++)
+            for (int j = 0; j < dialogue.Text.Length; j++)
             {
                 if (j < dialogue.Text.Length)
                 {
@@ -202,6 +213,34 @@ namespace ProjectDonut.UI
                     spriteBatch.DrawString(dialogueFont, dialogue.Text[j].ToString(), new Vector2(x, y), Color.White);
                     x += TileSize / 2;
                 }
+            }
+        }
+
+        public List<Dialogue> CreateTestDialogue()
+        {
+            var width = 22;
+            var height = 3;
+            var startX = -(width * 32) / 2;
+            var startY = -(height * 32) / 2;
+            var rect = new Rectangle(startX, startY, width, height);
+
+            var lines = new List<Dialogue>()
+            {
+                CreateDialogue(rect, "Hello, welcome to Flandaria! A place of nonsense and whimsical adventure!", 3000f),
+                CreateDialogue(rect, "I hope you enjoy your stay!", 3000f),
+                CreateDialogue(rect, "Goodbye!", 3000f),
+            };
+
+            return lines;
+        }
+
+        public void ExecuteMultipleLines(List<Dialogue> lines)
+        {
+            foreach (var line in lines)
+            {
+                _dialogues.Add(line);
+                Thread.Sleep((int)line.ShowTime);
+                CloseAllDialogues();
             }
         }
     }
