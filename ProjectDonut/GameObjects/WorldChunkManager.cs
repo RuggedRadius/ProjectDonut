@@ -31,6 +31,8 @@ namespace ProjectDonut.GameObjects
         private ContentManager content;
         private SpriteLibrary spriteLib;
 
+        //private List<(int, int)> ChunksBeingGenerated;
+
         public WorldChunkManager(List<object> dependencies, WorldMapSettings settings)
         {
             Dependencies = dependencies;
@@ -122,18 +124,42 @@ namespace ProjectDonut.GameObjects
                         var chunk = GetChunk((x, y));
                         if (chunk == null)
                         {
-                            chunk = CreateChunk(x, y);
-                            AllChunks.Add((x, y), chunk);
+                            //ChunksBeingGenerated.Add((x, y));
+                            Task.Run(() =>
+                            {
+                                //if (ChunksBeingGenerated.Contains((x, y)))
+                                //{
+                                //    return;
+                                //}
+
+                                chunk = CreateChunk(x, y);
+
+                                if (AllChunks.ContainsKey((x, y)) == false)
+                                {
+                                    AllChunks.Add((x, y), chunk);
+                                }
+                                
+                                //ChunksBeingGenerated.Remove((x, y));
+                            });                            
                         }
                     }
                 }
 
                 CurrentChunks = GetPlayerSurroundingChunks();
             }
+            else
+            {
+                if (CurrentChunks.Count < 9)
+                {
+                    CurrentChunks = GetPlayerSurroundingChunks();
+                }
+            }
         }
 
         public override void Initialize()
         { 
+            //ChunksBeingGenerated = new List<(int, int)>();
+
             //// Player chunk position
             PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
 
@@ -196,7 +222,14 @@ namespace ProjectDonut.GameObjects
                     //var chunk = GetChunk((i, j));
 
                     //playerChunks.Add(GetChunk((i, j)));
-                    playerChunks.Add(AllChunks[(chunkX, chunkY)]);
+                    if (AllChunks.ContainsKey((chunkX, chunkY)))
+                    {
+                        playerChunks.Add(AllChunks[(chunkX, chunkY)]);
+                    }
+                    else
+                    {
+                        continue;
+                    }                    
                 }
             }
 
