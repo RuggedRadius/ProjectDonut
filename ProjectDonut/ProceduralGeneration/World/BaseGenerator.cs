@@ -12,20 +12,21 @@ namespace ProjectDonut.ProceduralGeneration.World
     {
         private WorldMapSettings settings;
         private SpriteLibrary spriteLib;
+        private FastNoiseLite noise;
 
         public BaseGenerator(WorldMapSettings settings, SpriteLibrary spriteLib)
         {
             this.settings = settings;
             this.spriteLib = spriteLib;
+
+            this.noise = new FastNoiseLite();
+            //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
+            noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
         }
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
         {
-            FastNoiseLite noise = new FastNoiseLite();
-            //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
-            noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
-            noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
-
             // Gather noise data
             float[,] noiseData = new float[height, width];
             float minValue = float.MaxValue;
@@ -35,7 +36,13 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseData[x, y] = noise.GetNoise(x + xOffset, y + yOffset);
+                    float sampleX = x + (-xOffset * settings.Width);
+                    float sampleY = y + (-yOffset * settings.Height);
+
+                    //sampleX *= 0.75f;
+                    //sampleY *= 0.75f;
+
+                    noiseData[x, y] = noise.GetNoise(sampleX, sampleY);
 
                     if (noiseData[x, y] < minValue)
                         minValue = noiseData[x, y];

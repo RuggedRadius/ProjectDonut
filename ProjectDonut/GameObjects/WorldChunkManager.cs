@@ -98,15 +98,11 @@ namespace ProjectDonut.GameObjects
             if (player.ChunkPosX != PlayerChunkPosition.Item1)
             {
                 chunkPosChanged = true;
-
-                // Handle horizontal chunk loading/generating
             }
 
             if (player.ChunkPosY != PlayerChunkPosition.Item2) 
             {
                 chunkPosChanged = true;
-
-                // Handle vertical chunk loading/generating
             }
 
             if (chunkPosChanged)
@@ -124,22 +120,14 @@ namespace ProjectDonut.GameObjects
                         var chunk = GetChunk((x, y));
                         if (chunk == null)
                         {
-                            //ChunksBeingGenerated.Add((x, y));
                             Task.Run(() =>
                             {
-                                //if (ChunksBeingGenerated.Contains((x, y)))
-                                //{
-                                //    return;
-                                //}
-
                                 chunk = CreateChunk(x, y);
 
                                 if (AllChunks.ContainsKey((x, y)) == false)
                                 {
                                     AllChunks.Add((x, y), chunk);
                                 }
-                                
-                                //ChunksBeingGenerated.Remove((x, y));
                             });                            
                         }
                     }

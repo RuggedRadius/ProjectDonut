@@ -46,12 +46,29 @@ namespace ProjectDonut.ProceduralGeneration.World
             spriteLib.LoadSpriteLibrary();
         }
 
+        private int[,] TEMPCreateDummyBiomeData(int width, int height)
+        {
+            var data = new int[width, height];
+
+            for (int i = 0; i < width; i++) 
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    data[i, j] = 0;
+                }
+            }
+
+            return data;
+        }
+
         public Tilemap GenerateBaseMap(int width, int height, int xOffset, int yOffset)
         {
-            var debugger = new DebugMapData(settings);
+            //var debugger = new DebugMapData(settings);
 
+
+            //biomeData = TEMPCreateDummyBiomeData(width, height);
             biomeData = biomes.GenerateBiomes(width, height, xOffset, yOffset);
-            foreach (Biome biome in Enum.GetValues(typeof(Biome))) 
+            foreach (Biome biome in Enum.GetValues(typeof(Biome)))
             {
                 biomeData = water.ErodeBiomeBorder(biome, biomeData);
             }
@@ -59,7 +76,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             heightData = baseGen.GenerateHeightMap(width, height, xOffset, yOffset);
             heightData = water.ErodeMountains(heightData);
             //debugger.WriteMapData(heightData, "base");
-            
+
             heightData = water.CarveRivers(heightData);
             heightData = water.ErodeCoast(heightData);
             heightData = water.ErodeDeepWater(heightData);
@@ -69,7 +86,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             tmBase = rules.ApplyBaseRules(tmBase);
 
             // TEMP
-            tmBase = TEMPBorderAroundChunk(tmBase);
+            //tmBase = TEMPBorderAroundChunk(tmBase);
 
             return tmBase;
         }

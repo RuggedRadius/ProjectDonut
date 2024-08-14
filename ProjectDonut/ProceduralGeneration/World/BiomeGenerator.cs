@@ -8,9 +8,10 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class BiomeGenerator
     {
-        public int[,] GenerateBiomes(int width, int height, int xOffset, int yOffset)
+        private FastNoiseLite noise;
+        public BiomeGenerator() 
         {
-            FastNoiseLite noise = new FastNoiseLite();
+            noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
             noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
 
@@ -26,7 +27,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             noise.SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
             noise.SetFractalOctaves(3);
             noise.SetFractalLacunarity(2.0f);
+        }
 
+        public int[,] GenerateBiomes(int width, int height, int xOffset, int yOffset)
+        {
             // Gather noise data
             float[,] noiseData = new float[height, width];
             float minValue = float.MaxValue;
@@ -36,7 +40,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseData[x, y] = noise.GetNoise(x + xOffset, y + yOffset);
+                    noiseData[x, y] = noise.GetNoise(x + (xOffset * 100), y + yOffset * 100); // Should be injected mapsettings in instead of magic numbers
 
                     if (noiseData[x, y] < minValue)
                         minValue = noiseData[x, y];

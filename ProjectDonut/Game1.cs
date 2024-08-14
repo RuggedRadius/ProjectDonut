@@ -44,6 +44,7 @@ namespace ProjectDonut
 
             _graphics.PreferredBackBufferWidth = 1920;
             _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferHeight = 1440;
         }
 
         protected override void Initialize()
@@ -91,11 +92,11 @@ namespace ProjectDonut
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            //Task.Run(() =>
-            //{
-            //    var test = dialogue.CreateTestDialogue();
-            //    dialogue.ExecuteMultipleLines(test);
-            //});
+            Task.Run(() =>
+            {
+                var test = dialogue.CreateTestDialogue();
+                dialogue.ExecuteMultipleLines(test);
+            });
 
 
             // Position player in middle of the map
