@@ -50,7 +50,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var debugger = new DebugMapData(settings);
 
-            biomeData = biomes.GenerateBiomes(width, height);
+            biomeData = biomes.GenerateBiomes(width, height, xOffset, yOffset);
             foreach (Biome biome in Enum.GetValues(typeof(Biome))) 
             {
                 biomeData = water.ErodeBiomeBorder(biome, biomeData);

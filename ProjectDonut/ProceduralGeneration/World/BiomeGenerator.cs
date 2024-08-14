@@ -8,7 +8,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class BiomeGenerator
     {
-        public int[,] GenerateBiomes(int width, int height)
+        public int[,] GenerateBiomes(int width, int height, int xOffset, int yOffset)
         {
             FastNoiseLite noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
@@ -36,7 +36,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseData[x, y] = noise.GetNoise(x, y);
+                    noiseData[x, y] = noise.GetNoise(x + xOffset, y + yOffset);
 
                     if (noiseData[x, y] < minValue)
                         minValue = noiseData[x, y];

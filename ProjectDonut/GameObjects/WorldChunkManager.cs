@@ -110,6 +110,24 @@ namespace ProjectDonut.GameObjects
             if (chunkPosChanged)
             {
                 PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
+                
+
+                for (int i = -1; i < 2; i++) 
+                {
+                    for (int j = -1; j < 2; j++)
+                    {
+                        var x = -player.ChunkPosX + i;
+                        var y = -player.ChunkPosY + j;
+
+                        var chunk = GetChunk((x, y));
+                        if (chunk == null)
+                        {
+                            chunk = CreateChunk(x, y);
+                            AllChunks.Add((x, y), chunk);
+                        }
+                    }
+                }
+
                 CurrentChunks = GetPlayerSurroundingChunks();
             }
         }
@@ -172,9 +190,12 @@ namespace ProjectDonut.GameObjects
                     //var chunkX = PlayerChunkPosition.Item1 + i;
                     //var chunkY = PlayerChunkPosition.Item2 + j;
 
-                    var chunkX = player.ChunkPosX + i;
-                    var chunkY = player.ChunkPosY + j;
+                    var chunkX = -player.ChunkPosX + i;
+                    var chunkY = -player.ChunkPosY + j;
 
+                    //var chunk = GetChunk((i, j));
+
+                    //playerChunks.Add(GetChunk((i, j)));
                     playerChunks.Add(AllChunks[(chunkX, chunkY)]);
                 }
             }
@@ -184,7 +205,17 @@ namespace ProjectDonut.GameObjects
 
         private WorldChunk GetChunk((int, int) chunkCoords)
         {
-            return AllChunks[chunkCoords];
+            if (AllChunks.ContainsKey(chunkCoords))
+            {
+                return AllChunks[chunkCoords];
+            }
+            else
+            {
+                return null;
+                //var newChunk = CreateChunk(chunkCoords.Item1, chunkCoords.Item2);
+                //AllChunks.Add(chunkCoords, newChunk);
+                //return newChunk;
+            }
         }
     }
 }
