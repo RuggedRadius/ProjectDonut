@@ -22,7 +22,9 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.noise = new FastNoiseLite();
             //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
             noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
-            noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
+
+            //noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
+            noise.SetSeed(1337);
         }
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
@@ -36,18 +38,25 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    float sampleX = x + (-xOffset * settings.Width);
-                    float sampleY = y + (-yOffset * settings.Height);
+                    //float sampleX = x + ((-xOffset * settings.Width)/2);
+                    //float sampleY = y + ((-yOffset * settings.Height)/2);
 
-                    //sampleX *= 0.75f;
-                    //sampleY *= 0.75f;
+                    var actualOffsetX = xOffset * settings.Width;// * settings.TileSize;
+                    var actualOffsetY = yOffset * settings.Height;// * settings.TileSize;
 
-                    noiseData[x, y] = noise.GetNoise(sampleX, sampleY);
+                    float sampleX = x + actualOffsetX;
+                    float sampleY = y + actualOffsetY;
+
+                    noiseData[x, y] = noise.GetNoise(-sampleX, -sampleY);
 
                     if (noiseData[x, y] < minValue)
-                        minValue = noiseData[x, y];
+                    { 
+                        minValue = noiseData[x, y]; 
+                    }
                     if (noiseData[x, y] > maxValue)
-                        maxValue = noiseData[x, y];
+                    { 
+                        maxValue = noiseData[x, y]; 
+                    }
                 }
             }
 

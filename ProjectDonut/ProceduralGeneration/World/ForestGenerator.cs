@@ -87,6 +87,12 @@ namespace ProjectDonut.ProceduralGeneration.World
             for (int x = 0; x < settings.ForestCount; x++)
             {
                 var randomIndex = randy.Next(0, possibleCoords.Count);
+
+                if (possibleCoords.Count == 0)
+                {
+                    return forestData;
+                }
+
                 var coords = possibleCoords[randomIndex];
                 var walkLength = randy.Next(settings.MinWalk, settings.MaxWalk);
 

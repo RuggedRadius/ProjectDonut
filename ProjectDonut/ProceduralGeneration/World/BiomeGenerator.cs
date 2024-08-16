@@ -9,8 +9,13 @@ namespace ProjectDonut.ProceduralGeneration.World
     public class BiomeGenerator
     {
         private FastNoiseLite noise;
-        public BiomeGenerator() 
+        private WorldMapSettings worldMapSettings;
+
+
+        public BiomeGenerator(WorldMapSettings settings) 
         {
+            this.worldMapSettings = settings;
+
             noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
             noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
@@ -40,12 +45,19 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    noiseData[x, y] = noise.GetNoise(x + (xOffset * 100), y + yOffset * 100); // Should be injected mapsettings in instead of magic numbers
+                    var sampleX = x + ((xOffset * worldMapSettings.Width)/2);
+                    var sampleY = y + ((yOffset * worldMapSettings.Height)/2);
+
+                    noiseData[x, y] = noise.GetNoise(sampleX, sampleY);
 
                     if (noiseData[x, y] < minValue)
+                    {
                         minValue = noiseData[x, y];
+                    }
                     if (noiseData[x, y] > maxValue)
+                    {
                         maxValue = noiseData[x, y];
+                    }
                 }
             }
 

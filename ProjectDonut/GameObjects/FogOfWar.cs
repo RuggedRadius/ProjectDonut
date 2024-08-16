@@ -8,7 +8,7 @@ namespace ProjectDonut.GameObjects
 {
     public class FogOfWar
     {
-        private bool TEMP_EXPLORE_ALL = false;
+        private bool TEMP_EXPLORE_ALL = true;
 
         private int sightRadius = 20;
         public bool[,] exploredTiles;

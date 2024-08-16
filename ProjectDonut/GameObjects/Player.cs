@@ -49,16 +49,19 @@ namespace ProjectDonut.GameObjects
         private int TileSize = 32;
         private FogOfWar fog;
 
+        private WorldMapSettings worldMapSettings;
+
         public int ChunkPosX { get; set; }
         public int ChunkPosY { get; set; }
 
         public Player(
-            GraphicsDeviceManager graphics, 
-            GraphicsDevice graphicsDevice, 
-            ContentManager content, 
-            SpriteBatch spriteBatch, 
+            GraphicsDeviceManager graphics,
+            GraphicsDevice graphicsDevice,
+            ContentManager content,
+            SpriteBatch spriteBatch,
             Camera camera,
-            FogOfWar fog)
+            FogOfWar fog,
+            WorldMapSettings settings)
         {
             this._graphics = graphics;
             this._graphicsDevice = graphicsDevice;
@@ -66,6 +69,7 @@ namespace ProjectDonut.GameObjects
             this._spriteBatch = spriteBatch;
             this.camera = camera;
             this.fog = fog;
+            this.worldMapSettings = settings;
         }
 
         public override void Initialize()
@@ -234,8 +238,8 @@ namespace ProjectDonut.GameObjects
         public (int, int) GetWorldChunkCoords()
         {
             
-            var x = (int)((position.X / 3200));
-            var y = (int)((position.Y / 3200));
+            var x = (int)((position.X / (worldMapSettings.TileSize * worldMapSettings.Width)));
+            var y = (int)((position.Y / (worldMapSettings.TileSize * worldMapSettings.Height)));
 
             if (position.X < 0)
             {
@@ -245,10 +249,6 @@ namespace ProjectDonut.GameObjects
             if (position.Y < 0)
             {
                 y--;
-            }
-
-            if (x != 0 || y != 0)
-            {
             }
 
             return (x, y);

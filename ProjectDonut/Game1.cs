@@ -34,7 +34,7 @@ namespace ProjectDonut
 
         //private WorldChunk[,] worldChunks;
         private WorldChunkManager worldChunks;
-        private const int ChunkSize = 100;
+        private const int ChunkSize = 50;
 
         public Game1()
         {
@@ -65,7 +65,7 @@ namespace ProjectDonut
             _gameObjects.Add("camera", camera);
 
             // Player
-            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, camera, fog);
+            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, camera, fog, worldMapSettings);
             _gameObjects.Add("player", player);
 
             // World map

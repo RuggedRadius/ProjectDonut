@@ -14,7 +14,7 @@ namespace ProjectDonut.GameObjects
 {
     public class WorldChunkManager : GameObject
     {
-                
+
         public (int, int) PlayerChunkPosition { get; set; }
 
         private int ChunkSize = 100;
@@ -153,13 +153,13 @@ namespace ProjectDonut.GameObjects
 
             // All chunks dictionary - initialised with starting 9 chunks
             AllChunks = new Dictionary<(int, int), WorldChunk>();
-            int testsize = 2;
-            for (int i = -testsize; i <= testsize; i++)
+            int testsize = 1;
+            for (int x = -testsize; x <= testsize; x++)
             {
-                for (int j = -testsize; j <= testsize; j++)
+                for (int y = -testsize; y <= testsize; y++)
                 {
-                    var key = (i, j);
-                    var chunk = CreateChunk(i, j);
+                    var key = (x, y);
+                    var chunk = CreateChunk(x, y);
                     AllChunks.Add(key, chunk);
                 }
             }
@@ -177,10 +177,10 @@ namespace ProjectDonut.GameObjects
             var chunk = new WorldChunk(Dependencies, Settings, chunkX, chunkY);
 
             var tilemapBase = WorldGen.GenerateBaseMap(Settings.Width, Settings.Height, chunkX, chunkY);
-            var tilemapForest = WorldGen.GenerateForestMap(Settings.Width, Settings.Height);
+            //var tilemapForest = WorldGen.GenerateForestMap(Settings.Width, Settings.Height);
 
             chunk.tilemaps.Add("base", tilemapBase);
-            chunk.tilemaps.Add("forest", tilemapForest);
+            //chunk.tilemaps.Add("forest", tilemapForest);
 
             return chunk;
         }

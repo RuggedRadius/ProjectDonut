@@ -37,7 +37,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.settings = settings;
 
             baseGen = new BaseGenerator(settings, spriteLib);
-            biomes = new BiomeGenerator();
+            biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
             forest = new ForestGenerator(spriteLib, settings);
 
@@ -66,24 +66,24 @@ namespace ProjectDonut.ProceduralGeneration.World
             //var debugger = new DebugMapData(settings);
 
 
-            //biomeData = TEMPCreateDummyBiomeData(width, height);
-            biomeData = biomes.GenerateBiomes(width, height, xOffset, yOffset);
-            foreach (Biome biome in Enum.GetValues(typeof(Biome)))
-            {
-                biomeData = water.ErodeBiomeBorder(biome, biomeData);
-            }
+            biomeData = TEMPCreateDummyBiomeData(width, height);
+            //biomeData = biomes.GenerateBiomes(width, height, xOffset, yOffset);
+            //foreach (Biome biome in Enum.GetValues(typeof(Biome)))
+            //{
+            //    biomeData = water.ErodeBiomeBorder(biome, biomeData);
+            //}
 
             heightData = baseGen.GenerateHeightMap(width, height, xOffset, yOffset);
-            heightData = water.ErodeMountains(heightData);
-            //debugger.WriteMapData(heightData, "base");
+            //heightData = water.ErodeMountains(heightData);
+            ////debugger.WriteMapData(heightData, "base");
 
-            heightData = water.CarveRivers(heightData);
-            heightData = water.ErodeCoast(heightData);
-            heightData = water.ErodeDeepWater(heightData);
-            //debugger.WriteMapData(heightData, "rivers");
+            //heightData = water.CarveRivers(heightData);
+            //heightData = water.ErodeCoast(heightData);
+            //heightData = water.ErodeDeepWater(heightData);
+            ////debugger.WriteMapData(heightData, "rivers");
 
             tmBase = baseGen.CreateBaseTilemap(heightData, biomeData);
-            tmBase = rules.ApplyBaseRules(tmBase);
+            //tmBase = rules.ApplyBaseRules(tmBase);
 
             // TEMP
             //tmBase = TEMPBorderAroundChunk(tmBase);
