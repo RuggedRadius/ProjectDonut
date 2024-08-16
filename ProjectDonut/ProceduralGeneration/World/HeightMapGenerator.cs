@@ -5,16 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class BaseGenerator
+    public class HeightMapGenerator
     {
         private WorldMapSettings settings;
         private SpriteLibrary spriteLib;
         private FastNoiseLite noise;
 
-        public BaseGenerator(WorldMapSettings settings, SpriteLibrary spriteLib)
+        public HeightMapGenerator(WorldMapSettings settings, SpriteLibrary spriteLib)
         {
             this.settings = settings;
             this.spriteLib = spriteLib;
@@ -38,16 +39,17 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    //float sampleX = x + ((-xOffset * settings.Width)/2);
-                    //float sampleY = y + ((-yOffset * settings.Height)/2);
+                    var actualOffsetX = (xOffset) * (-settings.Width);
+                    var actualOffsetY = (yOffset) * (-settings.Height);
 
-                    var actualOffsetX = xOffset * settings.Width;// * settings.TileSize;
-                    var actualOffsetY = yOffset * settings.Height;// * settings.TileSize;
+                    //float sampleX = actualOffsetX + x;
+                    //float sampleY = actualOffsetY + y;
 
-                    float sampleX = x + actualOffsetX;
-                    float sampleY = y + actualOffsetY;
+                    float sampleX = -(xOffset * width + x);
+                    float sampleY = -(yOffset * height + y);
 
-                    noiseData[x, y] = noise.GetNoise(-sampleX, -sampleY);
+
+                    noiseData[x, y] = noise.GetNoise(sampleX, sampleY);
 
                     if (noiseData[x, y] < minValue)
                     { 

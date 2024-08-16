@@ -34,7 +34,7 @@ namespace ProjectDonut
 
         //private WorldChunk[,] worldChunks;
         private WorldChunkManager worldChunks;
-        private const int ChunkSize = 50;
+        private const int ChunkSize = 100;
 
         public Game1()
         {

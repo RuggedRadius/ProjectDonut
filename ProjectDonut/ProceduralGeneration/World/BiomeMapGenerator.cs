@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class BiomeGenerator
+    public class BiomeMapGenerator
     {
         private FastNoiseLite noise;
-        private WorldMapSettings worldMapSettings;
+        private WorldMapSettings settings;
 
 
-        public BiomeGenerator(WorldMapSettings settings) 
+        public BiomeMapGenerator(WorldMapSettings settings) 
         {
-            this.worldMapSettings = settings;
+            this.settings = settings;
 
             noise = new FastNoiseLite();
             noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
@@ -45,10 +45,16 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < height; y++)
                 {
-                    var sampleX = x + ((xOffset * worldMapSettings.Width)/2);
-                    var sampleY = y + ((yOffset * worldMapSettings.Height)/2);
+                    var actualOffsetX = (xOffset) * (-settings.Width);
+                    var actualOffsetY = (yOffset) * (-settings.Height);
 
-                    noiseData[x, y] = noise.GetNoise(sampleX, sampleY);
+                    //float sampleX = actualOffsetX + x;
+                    //float sampleY = actualOffsetY + y;
+
+                    float sampleX = -(xOffset * width + x);
+                    float sampleY = -(yOffset * height + y);
+
+                    noiseData[x, y] = noise.GetNoise(sampleX, sampleY);                    
 
                     if (noiseData[x, y] < minValue)
                     {

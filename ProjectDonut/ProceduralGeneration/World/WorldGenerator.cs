@@ -24,8 +24,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         private WorldMapSettings settings;
 
         // Generators
-        private BaseGenerator baseGen;
-        private BiomeGenerator biomes;
+        private HeightMapGenerator heightMapGen;
+        private BiomeMapGenerator biomeMapGen;
         private WaterGenerator water;
         private ForestGenerator forest;
 
@@ -36,8 +36,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.spriteLib = spriteLib;
             this.settings = settings;
 
-            baseGen = new BaseGenerator(settings, spriteLib);
-            biomes = new BiomeGenerator(settings);
+            heightMapGen = new HeightMapGenerator(settings, spriteLib);
+            biomeMapGen = new BiomeMapGenerator(settings);
             water = new WaterGenerator(settings);
             forest = new ForestGenerator(spriteLib, settings);
 
@@ -63,27 +63,24 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Tilemap GenerateBaseMap(int width, int height, int xOffset, int yOffset)
         {
-            //var debugger = new DebugMapData(settings);
+            // TEMP
+            //biomeData = TEMPCreateDummyBiomeData(width, height);
 
-
-            biomeData = TEMPCreateDummyBiomeData(width, height);
-            //biomeData = biomes.GenerateBiomes(width, height, xOffset, yOffset);
+            biomeData = biomeMapGen.GenerateBiomes(width, height, xOffset, yOffset);
             //foreach (Biome biome in Enum.GetValues(typeof(Biome)))
             //{
             //    biomeData = water.ErodeBiomeBorder(biome, biomeData);
             //}
 
-            heightData = baseGen.GenerateHeightMap(width, height, xOffset, yOffset);
-            //heightData = water.ErodeMountains(heightData);
-            ////debugger.WriteMapData(heightData, "base");
+            heightData = heightMapGen.GenerateHeightMap(width, height, xOffset, yOffset);
 
+            //heightData = water.ErodeMountains(heightData);
             //heightData = water.CarveRivers(heightData);
             //heightData = water.ErodeCoast(heightData);
             //heightData = water.ErodeDeepWater(heightData);
-            ////debugger.WriteMapData(heightData, "rivers");
 
-            tmBase = baseGen.CreateBaseTilemap(heightData, biomeData);
-            //tmBase = rules.ApplyBaseRules(tmBase);
+            tmBase = heightMapGen.CreateBaseTilemap(heightData, biomeData);
+            tmBase = rules.ApplyBaseRules(tmBase);
 
             // TEMP
             //tmBase = TEMPBorderAroundChunk(tmBase);
@@ -93,11 +90,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private Tilemap TEMPBorderAroundChunk(Tilemap map)
         {
-            for (int x = 0; x < 100; x++)
+            for (int x = 0; x < settings.Width; x++)
             {
-                for (int y = 0; y < 100; y++)
+                for (int y = 0; y < settings.Height; y++)
                 {
-                    if (x == 0 || x == 99)
+                    if (x == 0 || x == settings.Width - 1)
                     {
                         map.Map[x, y] = new Tile()
                         {
@@ -105,7 +102,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                         };
                     }
 
-                    if (y == 0 || y == 99)
+                    if (y == 0 || y == settings.Height - 1)
                     {
                         map.Map[x, y] = new Tile()
                         {
