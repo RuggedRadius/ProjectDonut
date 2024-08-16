@@ -58,7 +58,7 @@ namespace ProjectDonut
             spriteLib = new SpriteLibrary(Content, GraphicsDevice);
 
             // Fog of ware
-            fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
+            fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height, null, null); // Shouldnt be passing null in here, almost circular referencing
 
             // Camera
             camera = new Camera();
@@ -67,6 +67,7 @@ namespace ProjectDonut
             // Player
             player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, camera, fog, worldMapSettings);
             _gameObjects.Add("player", player);
+            
 
             // World map
             worldChunks = new WorldChunkManager(
@@ -84,6 +85,10 @@ namespace ProjectDonut
                 worldMapSettings
                 );
             _gameObjects.Add("chunkmanager", worldChunks);
+
+            // Late editions - try fix this later
+            fog.player = player;
+            fog.chunksManager = worldChunks;
 
             dialogue = new DialogueSystem(spriteLib, _spriteBatch, camera, Content);
             _gameObjects.Add("dialogue", dialogue);

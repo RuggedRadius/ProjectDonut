@@ -136,30 +136,31 @@ namespace ProjectDonut.GameObjects
 
                         if (viewportRectangle.Contains(new Vector2(newX, newY).X, new Vector2(newX, newY).Y))
                         {
-                            if (player.ChunkPosX == ChunkXPos && player.ChunkPosY == ChunkYPos)
-                            {
-                                var isExplored = fog.IsTileExplored(x, y);
+                            var isExplored = fog.IsTileExplored(x, y);
 
-                                if (!isExplored)
-                                {
-                                    spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Black);
-                                }
-                                else
-                                {
-                                    if (fog.IsTileInSightRadius(x, y, (int)player.position.X, (int)player.position.Y))
-                                    {
-                                        spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.White);
-                                    }
-                                    else
-                                    {
-                                        spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
-                                    }
-                                }
+                            if (!isExplored)
+                            {
+                                spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Black);
                             }
                             else
                             {
-                                spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
+                                if (fog.IsTileInSightRadius(x, y, (int)player.position.X, (int)player.position.Y, ChunkXPos, ChunkYPos))
+                                {
+                                    spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.White);
+                                }
+                                else
+                                {
+                                    spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
+                                }
                             }
+                            //if (player.ChunkPosX == ChunkXPos && player.ChunkPosY == ChunkYPos)
+                            //{
+
+                            //}
+                            //else
+                            //{
+                            //    spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
+                            //}
                         }
                     }
                 }

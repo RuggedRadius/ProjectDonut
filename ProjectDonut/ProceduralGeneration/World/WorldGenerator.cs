@@ -64,9 +64,9 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Tilemap GenerateBaseMap(int width, int height, int xOffset, int yOffset)
         {
             // TEMP
-            //biomeData = TEMPCreateDummyBiomeData(width, height);
+            biomeData = TEMPCreateDummyBiomeData(width, height);
 
-            biomeData = biomeMapGen.GenerateBiomes(width, height, xOffset, yOffset);
+            //biomeData = biomeMapGen.GenerateBiomes(width, height, xOffset, yOffset);
             //foreach (Biome biome in Enum.GetValues(typeof(Biome)))
             //{
             //    biomeData = water.ErodeBiomeBorder(biome, biomeData);
@@ -83,7 +83,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             tmBase = rules.ApplyBaseRules(tmBase);
 
             // TEMP
-            //tmBase = TEMPBorderAroundChunk(tmBase);
+            tmBase = TEMPBorderAroundChunk(tmBase);
 
             return tmBase;
         }

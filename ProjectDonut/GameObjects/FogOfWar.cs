@@ -13,10 +13,20 @@ namespace ProjectDonut.GameObjects
         private int sightRadius = 20;
         public bool[,] exploredTiles;
 
-        public FogOfWar(int width, int height)
+        public WorldChunkManager chunksManager;
+        public Player player;
+
+        public FogOfWar(int width, int height, WorldChunkManager chunksManager, Player player)
         {
             exploredTiles = new bool[width, height];
+            HandleDebugExploreAllTiles(width, height);
 
+            this.chunksManager = chunksManager;
+            this.player = player;
+        }
+
+        private void HandleDebugExploreAllTiles(int width, int height)
+        {
             if (TEMP_EXPLORE_ALL)
             {
                 for (int i = 0; i < width; i++)
@@ -51,7 +61,7 @@ namespace ProjectDonut.GameObjects
             }
         }
 
-        public bool IsTileInSightRadius(int x, int y, int playerX, int playerY)
+        public bool IsTileInSightRadius(int x, int y, int playerX, int playerY, int chunkX, int chunkY)
         {
             playerX /= 32;
             playerY /= 32;

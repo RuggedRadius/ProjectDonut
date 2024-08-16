@@ -46,29 +46,13 @@ namespace ProjectDonut.GameObjects
                         this.content = content;
                         break;
 
-                    //case GraphicsDeviceManager graphicsDeviceManager:
-                    //    this.graphics = graphicsDeviceManager;
-                    //    break;
-
                     case GraphicsDevice graphicsDevice:
                         this.graphicsDevice = graphicsDevice;
                         break;
 
-                    //case SpriteBatch spriteBatch:
-                    //    this.spriteBatch = spriteBatch;
-                    //    break;
-
-                    //case Camera camera:
-                    //    this.camera = camera;
-                    //    break;
-
                     case Player player:
                         this.player = player;
                         break;
-
-                    //case FogOfWar fog:
-                    //    this.fog = fog;
-                    //    break;
 
                     case SpriteLibrary spriteLib:
                         this.spriteLib = spriteLib;
@@ -76,7 +60,6 @@ namespace ProjectDonut.GameObjects
 
                     default:
                         break;
-                        //throw new ArgumentException("Unknown dependency type");
                 }
             }
 
