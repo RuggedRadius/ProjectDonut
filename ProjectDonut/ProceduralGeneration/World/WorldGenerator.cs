@@ -46,7 +46,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             spriteLib.LoadSpriteLibrary();
         }
 
-        private int[,] TEMPCreateDummyBiomeData(int width, int height)
+        public int[,] TEMPCreateDummyBiomeData(int width, int height)
         {
             var data = new int[width, height];
 

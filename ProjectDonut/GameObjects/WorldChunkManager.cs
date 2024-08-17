@@ -24,12 +24,21 @@ namespace ProjectDonut.GameObjects
         private WorldMapSettings Settings;
         private Player player;
 
-        public Dictionary<(int, int), WorldChunk> AllChunks;
+        public Dictionary<(int, int), WorldChunk> _chunks;
         private List<WorldChunk> CurrentChunks;
 
-        private GraphicsDevice graphicsDevice;
+        private GraphicsDevice _graphicsDevice;
         private ContentManager content;
         private SpriteLibrary spriteLib;
+        private SpriteBatch _spriteBatch;
+        private FastNoiseLite _noise;
+
+        private BaseGenerator baseGen;
+
+        private int ChunkWidth = 100;
+        private int ChunkHeight = 100;
+
+        private Texture2D tempTexture;
 
         //private List<(int, int)> ChunksBeingGenerated;
 
@@ -51,12 +60,12 @@ namespace ProjectDonut.GameObjects
                     //    break;
 
                     case GraphicsDevice graphicsDevice:
-                        this.graphicsDevice = graphicsDevice;
+                        this._graphicsDevice = graphicsDevice;
                         break;
 
-                    //case SpriteBatch spriteBatch:
-                    //    this.spriteBatch = spriteBatch;
-                    //    break;
+                    case SpriteBatch spriteBatch:
+                        _spriteBatch = spriteBatch;
+                        break;
 
                     //case Camera camera:
                     //    this.camera = camera;
@@ -80,14 +89,22 @@ namespace ProjectDonut.GameObjects
                 }
             }
 
-            WorldGen = new WorldGenerator(content, graphicsDevice, settings, spriteLib);
+            _noise = new FastNoiseLite();
+            _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            _noise.SetSeed(1337);
+
+            tempTexture = new Texture2D(_graphicsDevice, 1, 1);
+            tempTexture.SetData(new[] { Color.Green });
+
+            WorldGen = new WorldGenerator(content, _graphicsDevice, settings, spriteLib);
+            baseGen = new BaseGenerator(settings, spriteLib);       
         }
 
         public override void Draw(GameTime gameTime)
         {
-            foreach (var chunk in CurrentChunks)
+            for (int i = 0; i < CurrentChunks.Count; i++)
             {
-                chunk.Draw(gameTime);
+                CurrentChunks[i].Draw(gameTime);
             }
         }
 
@@ -114,8 +131,8 @@ namespace ProjectDonut.GameObjects
                 {
                     for (int j = -1; j < 2; j++)
                     {
-                        var x = -player.ChunkPosX + i;
-                        var y = -player.ChunkPosY + j;
+                        var x = player.ChunkPosX + i;
+                        var y = player.ChunkPosY + j;
 
                         var chunk = GetChunk((x, y));
                         if (chunk == null)
@@ -124,9 +141,9 @@ namespace ProjectDonut.GameObjects
                             {
                                 chunk = CreateChunk(x, y);
 
-                                if (AllChunks.ContainsKey((x, y)) == false)
+                                if (_chunks.ContainsKey((x, y)) == false)
                                 {
-                                    AllChunks.Add((x, y), chunk);
+                                    _chunks.Add((x, y), chunk);
                                 }
                             });                            
                         }
@@ -142,6 +159,11 @@ namespace ProjectDonut.GameObjects
                     CurrentChunks = GetPlayerSurroundingChunks();
                 }
             }
+
+            foreach (var chunk in _chunks)
+            {
+                chunk.Value.Update(gameTime);
+            }
         }
 
         public override void Initialize()
@@ -152,7 +174,7 @@ namespace ProjectDonut.GameObjects
             PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
 
             // All chunks dictionary - initialised with starting 9 chunks
-            AllChunks = new Dictionary<(int, int), WorldChunk>();
+            _chunks = new Dictionary<(int, int), WorldChunk>();
             int testsize = 1;
             for (int x = -testsize; x <= testsize; x++)
             {
@@ -160,26 +182,29 @@ namespace ProjectDonut.GameObjects
                 {
                     var key = (x, y);
                     var chunk = CreateChunk(x, y);
-                    AllChunks.Add(key, chunk);
+                    _chunks.Add(key, chunk);
                 }
             }
 
             CurrentChunks = GetPlayerSurroundingChunks();
 
-            foreach (var chunk in CurrentChunks)
+            foreach (var chunk in _chunks)
             {
-                chunk.Initialize();
+                chunk.Value.Initialize();
             }
         }
 
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
-            var chunk = new WorldChunk(Dependencies, Settings, chunkX, chunkY);
+            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch);
 
-            var tilemapBase = WorldGen.GenerateBaseMap(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.HeightData = baseGen.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.BiomeData = WorldGen.TEMPCreateDummyBiomeData(Settings.Width, Settings.Height);
+
+            var tilemapBase = baseGen.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData);
             //var tilemapForest = WorldGen.GenerateForestMap(Settings.Width, Settings.Height);
 
-            chunk.tilemaps.Add("base", tilemapBase);
+            chunk.Tilemaps.Add("base", tilemapBase);
             //chunk.tilemaps.Add("forest", tilemapForest);
 
             return chunk;
@@ -187,9 +212,9 @@ namespace ProjectDonut.GameObjects
 
         public override void LoadContent()
         {
-            foreach (var chunk in CurrentChunks)
+            foreach (var chunk in _chunks)
             {
-                chunk.LoadContent();
+                chunk.Value.LoadContent();
             }
         }
 
@@ -200,19 +225,13 @@ namespace ProjectDonut.GameObjects
             for (int i = -1; i < 2; i++)
             {
                 for(int j = -1; j < 2; j++)
-                {
-                    //var chunkX = PlayerChunkPosition.Item1 + i;
-                    //var chunkY = PlayerChunkPosition.Item2 + j;
+                { 
+                    var chunkX = player.ChunkPosX + i;
+                    var chunkY = player.ChunkPosY + j;
 
-                    var chunkX = -player.ChunkPosX + i;
-                    var chunkY = -player.ChunkPosY + j;
-
-                    //var chunk = GetChunk((i, j));
-
-                    //playerChunks.Add(GetChunk((i, j)));
-                    if (AllChunks.ContainsKey((chunkX, chunkY)))
+                    if (_chunks.ContainsKey((chunkX, chunkY)))
                     {
-                        playerChunks.Add(AllChunks[(chunkX, chunkY)]);
+                        playerChunks.Add(_chunks[(chunkX, chunkY)]);
                     }
                     else
                     {
@@ -226,9 +245,9 @@ namespace ProjectDonut.GameObjects
 
         private WorldChunk GetChunk((int, int) chunkCoords)
         {
-            if (AllChunks.ContainsKey(chunkCoords))
+            if (_chunks.ContainsKey(chunkCoords))
             {
-                return AllChunks[chunkCoords];
+                return _chunks[chunkCoords];
             }
             else
             {

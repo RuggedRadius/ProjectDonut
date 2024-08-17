@@ -12,71 +12,55 @@ namespace ProjectDonut.ProceduralGeneration.World
     {
         private WorldMapSettings settings;
         private SpriteLibrary spriteLib;
-        private FastNoiseLite noise;
+        private FastNoiseLite _noise;
 
         public BaseGenerator(WorldMapSettings settings, SpriteLibrary spriteLib)
         {
             this.settings = settings;
             this.spriteLib = spriteLib;
 
-            this.noise = new FastNoiseLite();
+            this._noise = new FastNoiseLite();
             //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
-            noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
             //noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
-            noise.SetSeed(1337);
+            _noise.SetSeed(1337);
         }
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
         {
             // Gather noise data
-            float[,] noiseData = new float[height, width];
+            int[,] heightData = new int[height, width];
             float minValue = float.MaxValue;
             float maxValue = float.MinValue;
 
-            for (int x = 0; x < width; x++)
+            for (int i = 0; i < width; i++)
             {
-                for (int y = 0; y < height; y++)
+                for (int j = 0; j < height; j++)
                 {
-                    //float sampleX = x + ((-xOffset * settings.Width)/2);
-                    //float sampleY = y + ((-yOffset * settings.Height)/2);
-
-                    var actualOffsetX = xOffset * settings.Width;// * settings.TileSize;
-                    var actualOffsetY = yOffset * settings.Height;// * settings.TileSize;
-
-                    float sampleX = x + actualOffsetX;
-                    float sampleY = y + actualOffsetY;
-
-                    noiseData[x, y] = noise.GetNoise(-sampleX, -sampleY);
-
-                    if (noiseData[x, y] < minValue)
-                    { 
-                        minValue = noiseData[x, y]; 
-                    }
-                    if (noiseData[x, y] > maxValue)
-                    { 
-                        maxValue = noiseData[x, y]; 
-                    }
+                    heightData[i, j] = (int)(_noise.GetNoise((xOffset * settings.Width) + i, (yOffset * settings.Height) + j) * 10);
+                    //heightData[i, j] = (int)(_noise.GetNoise(xOffset + i, yOffset + j));
                 }
             }
 
-            // Normalize and convert to integer
-            int[,] intData = new int[height, width];
-            float range = maxValue - minValue;
+            //// Normalize and convert to integer
+            //int[,] intData = new int[height, width];
+            //float range = maxValue - minValue;
 
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    // Normalize value to the range [0, 1]
-                    float normalizedValue = (noiseData[x, y] - minValue) / range;
+            //for (int x = 0; x < width; x++)
+            //{
+            //    for (int y = 0; y < height; y++)
+            //    {
+            //        // Normalize value to the range [0, 1]
+            //        float normalizedValue = (heightData[x, y] - minValue) / range;
 
-                    // Scale to integer range (e.g., 0 to 255)
-                    intData[x, y] = (int)(normalizedValue * 9);
-                }
-            }
+            //        // Scale to integer range (e.g., 0 to 255)
+            //        intData[x, y] = (int)(normalizedValue * 9);
+            //    }
+            //}
             
-            return intData;
+            return heightData;
+            //return intData;
         }
 
         public Tilemap CreateBaseTilemap(int[,] heightData, int[,] biomeData)

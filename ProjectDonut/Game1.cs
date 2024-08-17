@@ -34,7 +34,7 @@ namespace ProjectDonut
 
         //private WorldChunk[,] worldChunks;
         private WorldChunkManager worldChunks;
-        private const int ChunkSize = 50;
+        private const int ChunkSize = 100;
 
         public Game1()
         {
@@ -92,11 +92,11 @@ namespace ProjectDonut
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            Task.Run(() =>
-            {
-                var test = dialogue.CreateTestDialogue();
-                dialogue.ExecuteMultipleLines(test);
-            });
+            //Task.Run(() =>
+            //{
+            //    var test = dialogue.CreateTestDialogue();
+            //    dialogue.ExecuteMultipleLines(test);
+            //});
 
 
             // Position player in middle of the map

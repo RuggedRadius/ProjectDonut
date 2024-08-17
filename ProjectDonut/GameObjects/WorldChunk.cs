@@ -13,177 +13,120 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.GameObjects
 {
-    public class WorldChunk : GameObject
+    public class WorldChunk : IGameObject
     {
-        private int[,] heightData;
-        private int[,] biomeData; // Switch to these later
+        public int ChunkCoordX { get; set; }
+        public int ChunkCoordY { get; set; }
+        public int WorldCoordX { get; set; }
+        public int WorldCoordY { get; set; }
+        
+        public int[,] HeightData;
+        public int[,] BiomeData;
 
-        public Dictionary<string, Tilemap> tilemaps;
+        private int TileSize = 32;
 
-        //private WorldGenerator worldGen;
-        private WorldMapSettings settings;
+        public Dictionary<string, Tilemap> Tilemaps;
 
-        private ContentManager content;
-        private GraphicsDeviceManager graphics;
-        private GraphicsDevice graphicsDevice;
-        private SpriteBatch spriteBatch;
-        private Camera camera;
-        private SpriteLibrary spriteLib;
+        private int Width 
+        { 
+            get
+            {
+                if (HeightData == null)
+                    return 0;
 
-        private SpriteFont debugFont;
-
-        private int width;
-        private int height;
-
-        private Player player;
-        public FogOfWar fog;
-        Color halfOpacity = new Color(255, 255, 255, 128);
-
-        public int ChunkXPos;
-        public int ChunkYPos;
-
-        public WorldChunk(List<object> dependencies, WorldMapSettings settings, int chunkXPos, int chunkYPos)
+                return HeightData.GetLength(0);
+            }
+            set
+            {
+                Width = value;
+            }
+        }
+        private int Height
         {
-            this.width = settings.Width;
-            this.height = settings.Height;
-            this.settings = settings;
-            this.ChunkXPos = chunkXPos;
-            this.ChunkYPos = chunkYPos;
-
-            foreach (var dependency in dependencies)
+            get
             {
-                switch (dependency)
-                {
-                    case ContentManager content:
-                        this.content = content;
-                        break;
-
-                    case GraphicsDeviceManager graphicsDeviceManager:
-                        this.graphics = graphicsDeviceManager;
-                        break;
-
-                    case GraphicsDevice graphicsDevice:
-                        this.graphicsDevice = graphicsDevice;
-                        break;
-
-                    case SpriteBatch spriteBatch:
-                        this.spriteBatch = spriteBatch;
-                        break;
-
-                    case Camera camera:
-                        this.camera = camera;
-                        break;
-
-                    case Player player:
-                        this.player = player;
-                        break;
-
-                    case FogOfWar fog:
-                        this.fog = fog;
-                        break;
-
-                    case SpriteLibrary spriteLib:
-                        this.spriteLib = spriteLib;
-                        break;
-
-                    default:
-                        throw new ArgumentException("Unknown dependency type");
-                }
+                return HeightData.GetLength(1);
             }
-
-            if (content == null || graphics == null || spriteBatch == null || camera == null)
+            set
             {
-                throw new ArgumentException("WorldMap: Missing dependencies");
+                Height = value;
             }
-
-            tilemaps = new Dictionary<string, Tilemap>();
-
-            //worldGen = new WorldGenerator(content, graphicsDevice, settings, spriteLib);
         }
 
-        public override void Initialize()
+        private Texture2D tempTexture;
+        private GraphicsDevice _graphicsDevice;
+        private SpriteBatch _spriteBatch;
+
+        public WorldChunk(int chunkXPos, int chunkYPos, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
-            ZIndex = 11;
+            ChunkCoordX = chunkXPos;
+            ChunkCoordY = chunkYPos;
+
+            WorldCoordX = chunkXPos * 100 * 32;
+            WorldCoordY = chunkYPos * 100 * 32;
+
+            _graphicsDevice = graphicsDevice;
+            _spriteBatch = spriteBatch;
+
+            Tilemaps = new Dictionary<string, Tilemap>();
+
+            // Create a new Texture2D object with the dimensions 32x32
+            tempTexture = new Texture2D(_graphicsDevice, 32, 32);
+
+            // Create an array to hold the color data
+            Color[] colorData = new Color[32 * 32];
+
+            // Fill the array with Color.White
+            for (int i = 0; i < colorData.Length; i++)
+            {
+                colorData[i] = Color.White;
+            }
+
+            // Set the texture data to the array of colors
+            tempTexture.SetData(colorData);
+
         }
 
-        public override void LoadContent()
+        public void Initialize()
+        {
+        }
+
+        public void LoadContent()
         {
             
+
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            var viewportRectangle = GetViewportRect();
+        }
 
-            var playerChunkCoords = player.GetWorldChunkCoords();
-
-            for (int x = 0; x < width; x++)
+        public void Draw(GameTime gameTime)
+        {
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < Height; y++)
                 {
-                    foreach (var tilemap in tilemaps)
+                    var position = new Vector2(WorldCoordX + (x * 32), WorldCoordY + (y * 32));
+
+                    if (x == 0 || y == 0)
                     {
-                        var tile = tilemap.Value.Map[x, y];
-                        if (tile == null)
-                        {
-                            continue;
-                        }
-
-                        // TEMP
-                        var newX = tile.LocalPosition.X - (settings.Width * settings.TileSize * ChunkXPos);
-                        var newY = tile.LocalPosition.Y - (settings.Height * settings.TileSize * ChunkYPos);
-                        //tile.LocalPosition = new Vector2(newX, newY);
-
-                        if (viewportRectangle.Contains(new Vector2(newX, newY).X, new Vector2(newX, newY).Y))
-                        {
-                            if (player.ChunkPosX == ChunkXPos && player.ChunkPosY == ChunkYPos)
-                            {
-                                var isExplored = fog.IsTileExplored(x, y);
-
-                                if (!isExplored)
-                                {
-                                    spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Black);
-                                }
-                                else
-                                {
-                                    if (fog.IsTileInSightRadius(x, y, (int)player.position.X, (int)player.position.Y))
-                                    {
-                                        spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.White);
-                                    }
-                                    else
-                                    {
-                                        spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                spriteBatch.Draw(tile.Texture, new Vector2(newX, newY), null, Color.Gray);
-                            }
-                        }
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Yellow);
+                    }
+                    else if (x == Width - 1 || y == Height - 1)
+                    {
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Yellow);
+                    }
+                    else if (HeightData[x, y] > 0)
+                    {
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Green);
+                    }
+                    else
+                    {
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Blue);
                     }
                 }
             }
-        }
-
-        private Rectangle GetViewportRect() 
-        {
-            // Adjust position based on the camera's zoom
-            var halfViewportWidth = (int)((graphicsDevice.Viewport.Width / 2) / camera.Zoom);
-            var halfViewportHeight = (int)((graphicsDevice.Viewport.Height / 2) / camera.Zoom);
-
-            var xPosition = (int)camera.Position.X - halfViewportWidth - settings.TileSize;
-            var yPosition = (int)camera.Position.Y - halfViewportHeight - settings.TileSize;
-
-            // Adjust size based on the camera's zoom
-            var width = (int)((graphicsDevice.Viewport.Width + settings.TileSize * 2) / camera.Zoom);
-            var height = (int)((graphicsDevice.Viewport.Height + settings.TileSize * 2) / camera.Zoom);
-
-            return new Rectangle(xPosition, yPosition, width, height);
-        }
-
-        public override void Update(GameTime gameTime)
-        {            
         }
 
         //public void SaveTilemapToFile(string filePath)
