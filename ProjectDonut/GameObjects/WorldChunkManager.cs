@@ -34,6 +34,7 @@ namespace ProjectDonut.GameObjects
         private FastNoiseLite _noise;
 
         private BaseGenerator baseGen;
+        private BiomeGenerator biomes;
 
         private int ChunkWidth = 100;
         private int ChunkHeight = 100;
@@ -97,7 +98,8 @@ namespace ProjectDonut.GameObjects
             tempTexture.SetData(new[] { Color.Green });
 
             WorldGen = new WorldGenerator(content, _graphicsDevice, settings, spriteLib);
-            baseGen = new BaseGenerator(settings, spriteLib);       
+            baseGen = new BaseGenerator(settings, spriteLib);    
+            biomes = new BiomeGenerator(settings);
         }
 
         public override void Draw(GameTime gameTime)
@@ -160,10 +162,11 @@ namespace ProjectDonut.GameObjects
                 }
             }
 
-            foreach (var chunk in _chunks)
-            {
-                chunk.Value.Update(gameTime);
-            }
+            // Disabling for now cos collection kept changing duration iterations
+            //foreach (var chunk in _chunks)
+            //{
+            //    chunk.Value.Update(gameTime);
+            //}
         }
 
         public override void Initialize()
@@ -199,7 +202,8 @@ namespace ProjectDonut.GameObjects
             var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch);
 
             chunk.HeightData = baseGen.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
-            chunk.BiomeData = WorldGen.TEMPCreateDummyBiomeData(Settings.Width, Settings.Height);
+            //chunk.BiomeData = WorldGen.TEMPCreateDummyBiomeData(Settings.Width, Settings.Height);
+            chunk.BiomeData = biomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
             var tilemapBase = baseGen.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData);
             //var tilemapForest = WorldGen.GenerateForestMap(Settings.Width, Settings.Height);

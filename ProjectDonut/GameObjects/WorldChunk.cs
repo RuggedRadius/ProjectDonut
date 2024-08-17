@@ -111,15 +111,32 @@ namespace ProjectDonut.GameObjects
 
                     if (x == 0 || y == 0)
                     {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Yellow);
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
                     }
                     else if (x == Width - 1 || y == Height - 1)
                     {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Yellow);
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
                     }
-                    else if (HeightData[x, y] > 0)
+                    else if (HeightData[x, y] >= 0)
                     {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Green);
+                        switch (BiomeData[x,y])
+                        {
+                            case 0:
+                                _spriteBatch.Draw(tempTexture, position, null, Color.Green);
+                                break;
+
+                            case 1:
+                                _spriteBatch.Draw(tempTexture, position, null, Color.Gray);
+                                break;
+
+                            case 2:
+                                _spriteBatch.Draw(tempTexture, position, null, Color.Yellow);
+                                break;
+
+                            default:
+                                _spriteBatch.Draw(tempTexture, position, null, Color.Red);
+                                break;
+                        }
                     }
                     else
                     {

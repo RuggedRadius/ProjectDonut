@@ -29,38 +29,17 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
         {
-            // Gather noise data
             int[,] heightData = new int[height, width];
-            float minValue = float.MaxValue;
-            float maxValue = float.MinValue;
 
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
                     heightData[i, j] = (int)(_noise.GetNoise((xOffset * settings.Width) + i, (yOffset * settings.Height) + j) * 10);
-                    //heightData[i, j] = (int)(_noise.GetNoise(xOffset + i, yOffset + j));
                 }
             }
-
-            //// Normalize and convert to integer
-            //int[,] intData = new int[height, width];
-            //float range = maxValue - minValue;
-
-            //for (int x = 0; x < width; x++)
-            //{
-            //    for (int y = 0; y < height; y++)
-            //    {
-            //        // Normalize value to the range [0, 1]
-            //        float normalizedValue = (heightData[x, y] - minValue) / range;
-
-            //        // Scale to integer range (e.g., 0 to 255)
-            //        intData[x, y] = (int)(normalizedValue * 9);
-            //    }
-            //}
             
             return heightData;
-            //return intData;
         }
 
         public Tilemap CreateBaseTilemap(int[,] heightData, int[,] biomeData)

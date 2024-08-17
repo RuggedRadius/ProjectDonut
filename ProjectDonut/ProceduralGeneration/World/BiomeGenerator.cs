@@ -8,76 +8,46 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class BiomeGenerator
     {
-        private FastNoiseLite noise;
-        private WorldMapSettings worldMapSettings;
+        private FastNoiseLite _noise;
+        private WorldMapSettings settings;
 
 
         public BiomeGenerator(WorldMapSettings settings) 
         {
-            this.worldMapSettings = settings;
+            this.settings = settings;
 
-            noise = new FastNoiseLite();
-            noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
-            noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
+            _noise = new FastNoiseLite();
+            _noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
+            _noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
 
-            noise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Hybrid);
-            noise.SetCellularJitter(1.0f);
-            noise.SetCellularReturnType(FastNoiseLite.CellularReturnType.CellValue);
+            _noise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Hybrid);
+            _noise.SetCellularJitter(1.0f);
+            _noise.SetCellularReturnType(FastNoiseLite.CellularReturnType.CellValue);
 
-            noise.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
-            noise.SetDomainWarpAmp(100.0f);
-            noise.SetFrequency(0.0075f);
+            _noise.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
+            _noise.SetDomainWarpAmp(100.0f);
+            _noise.SetFrequency(0.0075f);
 
-            noise.SetFractalGain(0.5f);
-            noise.SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
-            noise.SetFractalOctaves(3);
-            noise.SetFractalLacunarity(2.0f);
+            _noise.SetFractalGain(0.5f);
+            _noise.SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
+            _noise.SetFractalOctaves(3);
+            _noise.SetFractalLacunarity(2.0f);
         }
 
         public int[,] GenerateBiomes(int width, int height, int xOffset, int yOffset)
         {
-            // Gather noise data
-            float[,] noiseData = new float[height, width];
-            float minValue = float.MaxValue;
-            float maxValue = float.MinValue;
+            int biomeCount = Enum.GetNames(typeof(Biome)).Length;
+            int[,] heightData = new int[height, width];
 
-            for (int x = 0; x < width; x++)
+            for (int i = 0; i < width; i++)
             {
-                for (int y = 0; y < height; y++)
+                for (int j = 0; j < height; j++)
                 {
-                    var sampleX = x + ((xOffset * worldMapSettings.Width)/2);
-                    var sampleY = y + ((yOffset * worldMapSettings.Height)/2);
-
-                    noiseData[x, y] = noise.GetNoise(sampleX, sampleY);
-
-                    if (noiseData[x, y] < minValue)
-                    {
-                        minValue = noiseData[x, y];
-                    }
-                    if (noiseData[x, y] > maxValue)
-                    {
-                        maxValue = noiseData[x, y];
-                    }
+                    heightData[i, j] = (int)(_noise.GetNoise((xOffset * settings.Width) + i, (yOffset * settings.Height) + j) * biomeCount);
                 }
             }
 
-            // Normalise and convert to integer
-            int[,] intData = new int[height, width];
-            float range = maxValue - minValue;
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    // Normalise value to the range [0, 1]
-                    float normalizedValue = (noiseData[x, y] - minValue) / range;
-
-                    // Scale to integer range (e.g., 0 to 255)
-                    intData[x, y] = (int)(normalizedValue * Enum.GetNames(typeof(Biome)).Length);
-                }
-            }
-
-            return intData;
+            return heightData;
         }
     }
 }
