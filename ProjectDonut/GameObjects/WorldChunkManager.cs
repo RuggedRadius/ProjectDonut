@@ -200,9 +200,7 @@ namespace ProjectDonut.GameObjects
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
             var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch);
-
             chunk.HeightData = baseGen.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
-            //chunk.BiomeData = WorldGen.TEMPCreateDummyBiomeData(Settings.Width, Settings.Height);
             chunk.BiomeData = biomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
             var tilemapBase = baseGen.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData);

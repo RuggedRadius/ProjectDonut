@@ -35,7 +35,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int j = 0; j < height; j++)
                 {
-                    heightData[i, j] = (int)(_noise.GetNoise((xOffset * settings.Width) + i, (yOffset * settings.Height) + j) * 10);
+                    var x = (xOffset * settings.Width) + i;
+                    var y = (yOffset * settings.Height) + j;
+
+                    heightData[i, j] = (int)(_noise.GetNoise(x, y) * 20);
                 }
             }
             
