@@ -12,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.GameObjects
 {
+
+
     public class WorldChunkManager : GameObject
     {
-
         public (int, int) PlayerChunkPosition { get; set; }
 
         private int ChunkSize = 100;
@@ -44,7 +45,7 @@ namespace ProjectDonut.GameObjects
 
         private Texture2D tempTexture;
 
-        //private List<(int, int)> ChunksBeingGenerated;
+        public List<ChunkStructure> StructuresInCenterChunk = new List<ChunkStructure>();
 
         public WorldChunkManager(List<object> dependencies, WorldMapSettings settings)
         {
@@ -59,10 +60,6 @@ namespace ProjectDonut.GameObjects
                         this.content = content;
                         break;
 
-                    //case GraphicsDeviceManager graphicsDeviceManager:
-                    //    this.graphics = graphicsDeviceManager;
-                    //    break;
-
                     case GraphicsDevice graphicsDevice:
                         this._graphicsDevice = graphicsDevice;
                         break;
@@ -71,17 +68,9 @@ namespace ProjectDonut.GameObjects
                         _spriteBatch = spriteBatch;
                         break;
 
-                    //case Camera camera:
-                    //    this.camera = camera;
-                    //    break;
-
                     case Player player:
                         this.player = player;
                         break;
-
-                    //case FogOfWar fog:
-                    //    this.fog = fog;
-                    //    break;
 
                     case SpriteLibrary spriteLib:
                         this.spriteLib = spriteLib;
@@ -89,7 +78,6 @@ namespace ProjectDonut.GameObjects
 
                     default:
                         break;
-                        //throw new ArgumentException("Unknown dependency type");
                 }
             }
 
@@ -116,6 +104,11 @@ namespace ProjectDonut.GameObjects
             for (int i = 0; i < CurrentChunks.Count; i++)
             {
                 CurrentChunks[i].Draw(gameTime);
+            }
+
+            foreach (var structure in StructuresInCenterChunk)
+            {
+                _spriteBatch.Draw(tempTexture, structure.Rectangle, Color.White);
             }
         }
 
@@ -176,6 +169,39 @@ namespace ProjectDonut.GameObjects
             {
                 chunk.Update(gameTime);
             }
+
+            foreach (var structure in StructuresInCenterChunk)
+            {
+                structure.Update(gameTime);
+            }
+        }
+
+        private List<ChunkStructure> GetStructuresInCurrentChunks()
+        {
+            var structures = new List<ChunkStructure>();
+
+            foreach (var chunk in CurrentChunks)
+            {
+                for (int i = 0; i < chunk.Width; i++)
+                {
+                    for (int j = 0; j < chunk.Height; j++)
+                    {
+                        if (chunk.StructureData[i, j] != 0)
+                        {
+                            var structure = new ChunkStructure()
+                            {
+                                StructureName = "test",
+                                StructureType = (Structure)chunk.StructureData[i, j],
+                                Rectangle = new Rectangle(i * ChunkSize, j * ChunkSize, ChunkSize, ChunkSize)
+                            };
+
+                            structures.Add(structure);
+                        }
+                    }
+                }
+            }
+
+            return structures;
         }
 
         public override void Initialize()
