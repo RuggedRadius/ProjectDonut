@@ -15,19 +15,22 @@ namespace ProjectDonut.GameObjects
 {
     public class WorldChunk : IGameObject
     {
-        public int ChunkCoordX { get; set; }
-        public int ChunkCoordY { get; set; }
-        public int WorldCoordX { get; set; }
-        public int WorldCoordY { get; set; }
+        public int ChunkCoordX { get; private set; }
+        public int ChunkCoordY { get; private set; }
+
+        public int WorldCoordX;
+        public int WorldCoordY;
         
         public int[,] HeightData;
         public int[,] BiomeData;
+        public int[,] ForestData;
+        public int[,] RiverData;
 
         private int TileSize = 32;
 
         public Dictionary<string, Tilemap> Tilemaps;
 
-        private int Width 
+        public int Width 
         { 
             get
             {
@@ -41,10 +44,13 @@ namespace ProjectDonut.GameObjects
                 Width = value;
             }
         }
-        private int Height
+        public int Height
         {
             get
             {
+                if (HeightData == null)
+                    return 0;
+
                 return HeightData.GetLength(1);
             }
             set
@@ -93,8 +99,6 @@ namespace ProjectDonut.GameObjects
 
         public void LoadContent()
         {
-            
-
         }
 
         public void Update(GameTime gameTime)
@@ -135,48 +139,6 @@ namespace ProjectDonut.GameObjects
             }
 
             return;
-
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    var position = new Vector2(WorldCoordX + (x * 32), WorldCoordY + (y * 32));
-
-                    if (x == 0 || y == 0)
-                    {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
-                    }
-                    else if (x == Width - 1 || y == Height - 1)
-                    {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
-                    }
-                    else if (HeightData[x, y] >= 0)
-                    {
-                        switch (BiomeData[x,y])
-                        {
-                            case 0:
-                                _spriteBatch.Draw(tempTexture, position, null, Color.Green);
-                                break;
-
-                            case 1:
-                                _spriteBatch.Draw(tempTexture, position, null, Color.Gray);
-                                break;
-
-                            case 2:
-                                _spriteBatch.Draw(tempTexture, position, null, Color.Yellow);
-                                break;
-
-                            default:
-                                _spriteBatch.Draw(tempTexture, position, null, Color.Red);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Blue);
-                    }
-                }
-            }
         }
 
         //public void SaveTilemapToFile(string filePath)

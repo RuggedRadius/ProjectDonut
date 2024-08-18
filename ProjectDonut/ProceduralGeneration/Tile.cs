@@ -16,7 +16,9 @@ namespace ProjectDonut.ProceduralGeneration
     {
         Grasslands,
         Desert,
-        Winterlands
+        Winterlands,
+        Plains,
+        Wetlands
     }
 
     public class Tile

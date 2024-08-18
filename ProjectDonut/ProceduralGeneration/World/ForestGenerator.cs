@@ -1,34 +1,100 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.GameObjects;
 using System;
 using System.Collections.Generic;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
+    public class ForestData
+    {
+        public int[,] HeightData { get; set; }
+        public int[,] BiomeData { get; set; }
+    }
+
     public class ForestGenerator
     {
         private SpriteLibrary spriteLib;
         private WorldMapSettings settings;
 
+        private FastNoiseLite _noise;
+        private WorldTileRuler tileRuler;
+
         public ForestGenerator(SpriteLibrary spriteLib, WorldMapSettings mapSettings)
         {
             this.spriteLib = spriteLib;
             this.settings = mapSettings;
+
+            var random = new Random();
+            var worldSeed = random.Next(int.MinValue, int.MaxValue);
+
+            _noise = new FastNoiseLite();
+            _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            _noise.SetSeed(worldSeed);
+
+            tileRuler = new WorldTileRuler(spriteLib);
         }
 
-        public Tilemap CreateForestTilemap(int[,] forestData, int[,] biomeData)
+        public void GenerateForestData(WorldChunk chunk)
         {
-            var width = forestData.GetLength(0);
-            var height = forestData.GetLength(1);
+            chunk.ForestData = new int[chunk.Width, chunk.Height];
 
-            var tmForest = new Tilemap(forestData.GetLength(0), forestData.GetLength(1));
-
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < chunk.Width; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < chunk.Height; j++)
                 {
-                    if (forestData[i, j] == 0)
+                    var x = (chunk.ChunkCoordX * settings.Width) + i;
+                    var y = (chunk.ChunkCoordY * settings.Height) + j;
+
+                    var isSuitable = IsCellAppropriateForForest(chunk, i, j);
+                    var heightValue = 0;
+
+                    if (isSuitable)
+                    {
+                        heightValue = (int)(_noise.GetNoise(x, y) * 100); // Normalised to 100 max
+                        heightValue += 35; // Brings all values into positive range
+                    }
+
+                    chunk.ForestData[i, j] = heightValue;
+                }
+            }
+        }
+
+        private bool IsCellAppropriateForForest(WorldChunk chunk, int x, int y)
+        {
+            if (chunk.HeightData[x, y] < settings.GroundHeightMin + 10)
+            {
+                return false;
+            }
+
+            if (chunk.HeightData[x, y] > settings.GroundHeightMax)
+            {
+                return false;
+            }
+
+            var biome = (Biome)chunk.BiomeData[x, y];
+            switch (biome)
+            {
+                case Biome.Plains:
+                case Biome.Winterlands:
+                case Biome.Grasslands:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public Tilemap CreateForestTilemap(WorldChunk chunk)
+        {
+            var tmForest = new Tilemap(chunk.Width, chunk.Height);
+
+            for (int i = 0; i < chunk.Width; i++)
+            {
+                for (int j = 0; j < chunk.Height; j++)
+                {
+                    if (chunk.ForestData[i, j] == 0)
                     {
                         continue;
                     }
@@ -39,17 +105,53 @@ namespace ProjectDonut.ProceduralGeneration.World
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = DetermineTexture(i, j, biomeData),
+                        Texture = DetermineTexture(i, j, chunk.BiomeData),
                         TileType = TileType.Forest,
-                        Biome = (Biome)biomeData[i, j]
+                        Biome = (Biome)chunk.BiomeData[i, j]
                     };
 
                     tmForest.Map[i, j] = tile;
                 }
             }
 
+            tmForest = tileRuler.ApplyForestRules(tmForest);
+
             return tmForest;
         }
+
+        //public Tilemap CreateForestTilemap(int[,] forestData, int[,] biomeData)
+        //{
+        //    var width = forestData.GetLength(0);
+        //    var height = forestData.GetLength(1);
+
+        //    var tmForest = new Tilemap(forestData.GetLength(0), forestData.GetLength(1));
+
+        //    for (int i = 0; i < width; i++)
+        //    {
+        //        for (int j = 0; j < height; j++)
+        //        {
+        //            if (forestData[i, j] == 0)
+        //            {
+        //                continue;
+        //            }
+
+        //            var tile = new Tile
+        //            {
+        //                xIndex = i,
+        //                yIndex = j,
+        //                LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
+        //                Size = new Vector2(settings.TileSize, settings.TileSize),
+        //                Texture = DetermineTexture(i, j, biomeData),
+        //                TileType = TileType.Forest,
+        //                Biome = (Biome)biomeData[i, j]
+        //            };
+
+        //            tmForest.Map[i, j] = tile;
+        //        }
+        //    }
+
+        //    return tmForest;
+        //}
 
         private Texture2D DetermineTexture(int x, int y, int[,] biomeData)
         {

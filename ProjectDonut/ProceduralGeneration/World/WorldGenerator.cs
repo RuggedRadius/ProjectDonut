@@ -24,7 +24,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private WorldMapSettings settings;
 
         // Generators
-        private BaseGenerator baseGen;
+        private HeightGenerator baseGen;
         private BiomeGenerator biomes;
         private WaterGenerator water;
         private ForestGenerator forest;
@@ -36,7 +36,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.spriteLib = spriteLib;
             this.settings = settings;
 
-            baseGen = new BaseGenerator(settings, spriteLib);
+            baseGen = new HeightGenerator(settings, spriteLib);
             biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
             forest = new ForestGenerator(spriteLib, settings);
@@ -135,14 +135,14 @@ namespace ProjectDonut.ProceduralGeneration.World
             File.WriteAllLines(filePath, lines);
         }
 
-        public Tilemap GenerateForestMap(int width, int height)
-        {
-            forestData = forest.GenerateForestData(heightData, biomeData);
+        //public Tilemap GenerateForestMap(int width, int height)
+        //{
+        //    forestData = forest.GenerateForestData(heightData, biomeData);
 
-            tmForest = forest.CreateForestTilemap(forestData, biomeData);
-            tmForest = rules.ApplyForestRules(tmForest);
+        //    tmForest = forest.CreateForestTilemap(forestData, biomeData);
+        //    tmForest = rules.ApplyForestRules(tmForest);
 
-            return tmForest;
-        }
+        //    return tmForest;
+        //}
     }
 }

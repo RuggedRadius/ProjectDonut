@@ -33,8 +33,10 @@ namespace ProjectDonut.GameObjects
         private SpriteBatch _spriteBatch;
         private FastNoiseLite _noise;
 
-        private BaseGenerator baseGen;
-        private BiomeGenerator biomes;
+        private HeightGenerator genHeight;
+        private BiomeGenerator genBiomes;
+        private ForestGenerator genForest;
+        private RiverGenerator genRiver;
 
         private int ChunkWidth = 100;
         private int ChunkHeight = 100;
@@ -90,16 +92,21 @@ namespace ProjectDonut.GameObjects
                 }
             }
 
+            var random = new Random();
+            var worldSeed = random.Next(int.MinValue, int.MaxValue);
+
             _noise = new FastNoiseLite();
             _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
-            _noise.SetSeed(1337);
+            _noise.SetSeed(worldSeed);
 
             tempTexture = new Texture2D(_graphicsDevice, 1, 1);
             tempTexture.SetData(new[] { Color.Green });
 
             WorldGen = new WorldGenerator(content, _graphicsDevice, settings, spriteLib);
-            baseGen = new BaseGenerator(settings, spriteLib);    
-            biomes = new BiomeGenerator(settings);
+            genHeight = new HeightGenerator(settings, spriteLib);    
+            genBiomes = new BiomeGenerator(settings);
+            genForest = new ForestGenerator(spriteLib, settings);
+            genRiver = new RiverGenerator(spriteLib, settings);
         }
 
         public override void Draw(GameTime gameTime)
@@ -200,14 +207,18 @@ namespace ProjectDonut.GameObjects
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
             var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch);
-            chunk.HeightData = baseGen.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
-            chunk.BiomeData = biomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
-            var tilemapBase = baseGen.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData);
-            //var tilemapForest = WorldGen.GenerateForestMap(Settings.Width, Settings.Height);
+            genRiver.GenerateRivers(chunk);
+            genForest.GenerateForestData(chunk);
+                       
+
+            var tilemapBase = genHeight.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData);
+            var tilemapForest = genForest.CreateForestTilemap(chunk);
 
             chunk.Tilemaps.Add("base", tilemapBase);
-            //chunk.tilemaps.Add("forest", tilemapForest);
+            chunk.Tilemaps.Add("forest", tilemapForest);
 
             return chunk;
         }

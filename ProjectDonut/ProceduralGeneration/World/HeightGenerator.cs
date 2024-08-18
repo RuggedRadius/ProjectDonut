@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class BaseGenerator
+    public class HeightGenerator
     {
         private WorldMapSettings settings;
         private SpriteLibrary spriteLib;
         private FastNoiseLite _noise;
 
-        public BaseGenerator(WorldMapSettings settings, SpriteLibrary spriteLib)
+        public HeightGenerator(WorldMapSettings settings, SpriteLibrary spriteLib)
         {
             this.settings = settings;
             this.spriteLib = spriteLib;
@@ -23,13 +23,16 @@ namespace ProjectDonut.ProceduralGeneration.World
             //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
             _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
-            //noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
+            _noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
             _noise.SetSeed(1337);
         }
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
         {
             int[,] heightData = new int[height, width];
+
+            int min = 0;
+            int max = 0;
 
             for (int i = 0; i < width; i++)
             {
@@ -38,12 +41,86 @@ namespace ProjectDonut.ProceduralGeneration.World
                     var x = (xOffset * settings.Width) + i;
                     var y = (yOffset * settings.Height) + j;
 
-                    heightData[i, j] = (int)(_noise.GetNoise(x, y) * 20);
+                    var heightValue = (int)(_noise.GetNoise(x, y) * 100) + 35;
+
+                    heightData[i, j] = heightValue;
+
+                    if (heightValue < min)
+                    {
+                        min = heightValue;
+                    }
+                    if (heightValue > max)
+                    {
+                        max = heightValue;
+                    }
                 }
             }
-            
+
             return heightData;
         }
+
+        public void CarveRiver(int[,] heightData, int startX, int startY)
+        {
+            int width = heightData.GetLength(1);
+            int height = heightData.GetLength(0);
+
+            int x = startX;
+            int y = startY;
+
+            while (true)
+            {
+                // Lower the height to carve the river
+                heightData[y, x] = Math.Max(0, heightData[y, x] - 10); // Adjust the depth as needed
+
+                // Determine the lowest neighboring cell
+                int lowestHeight = heightData[y, x];
+                int nextX = x, nextY = y;
+
+                // Check all 4 neighboring cells (you can include diagonals if desired)
+                if (x > 0 && heightData[y, x - 1] < lowestHeight)
+                {
+                    lowestHeight = heightData[y, x - 1];
+                    nextX = x - 1;
+                    nextY = y;
+                }
+                if (x < width - 1 && heightData[y, x + 1] < lowestHeight)
+                {
+                    lowestHeight = heightData[y, x + 1];
+                    nextX = x + 1;
+                    nextY = y;
+                }
+                if (y > 0 && heightData[y - 1, x] < lowestHeight)
+                {
+                    lowestHeight = heightData[y - 1, x];
+                    nextX = x;
+                    nextY = y - 1;
+                }
+                if (y < height - 1 && heightData[y + 1, x] < lowestHeight)
+                {
+                    lowestHeight = heightData[y + 1, x];
+                    nextX = x;
+                    nextY = y + 1;
+                }
+
+                // If the river can't flow lower, end the loop
+                if (nextX == x && nextY == y)
+                {
+                    break;
+                }
+
+                x = nextX;
+                y = nextY;
+
+                // Handle chunk boundaries
+                if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
+                {
+                    // Record exit point to continue river in the neighboring chunk
+                    // ...
+                    break;
+                }
+            }
+        }
+
 
         public Tilemap CreateBaseTilemap(int[,] heightData, int[,] biomeData)
         {

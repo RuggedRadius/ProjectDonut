@@ -116,13 +116,13 @@ namespace ProjectDonut
 
             // Heights
             s.DeepWaterHeightMin = 0;
-            s.DeepWaterHeightMax = 1;
-            s.WaterHeightMin = 2;
-            s.WaterHeightMax = 3;
-            s.GroundHeightMin = 4;
-            s.GroundHeightMax = 7;
-            s.MountainHeightMin = 8;
-            s.MountainHeightMax = 10;
+            s.DeepWaterHeightMax = 19;
+            s.WaterHeightMin = 20;
+            s.WaterHeightMax = 29;
+            s.GroundHeightMin = 30;
+            s.GroundHeightMax = 94;
+            s.MountainHeightMin = 95;
+            s.MountainHeightMax = 100;
 
             // Forest
             s.ForestCount = 250;
