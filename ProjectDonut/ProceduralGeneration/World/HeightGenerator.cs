@@ -135,7 +135,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     var biomeValue = biomeData[i, j];
                     var heightValue = heightData[i, j];
 
-                    var tile = new Tile(_spriteBatch)
+                    var tile = new Tile(_spriteBatch, false)
                     {
                         ChunkX = chunkX,
                         ChunkY = chunkY,

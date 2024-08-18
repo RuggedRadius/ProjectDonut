@@ -101,7 +101,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                         continue;
                     }
 
-                    var tile = new Tile(_spriteBatch)
+                    var tile = new Tile(_spriteBatch, false)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,

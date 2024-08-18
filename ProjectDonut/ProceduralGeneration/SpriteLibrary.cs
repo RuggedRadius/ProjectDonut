@@ -179,30 +179,19 @@ namespace ProjectDonut.ProceduralGeneration
         {
             spriteSheetTown = content.Load<Texture2D>("Sprites/WorldStructures/Town01");
 
-            var frameCount = 4;
-            var directions = new List<string>
+            for (int i = 0; i < 4; i++)
             {
-                "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE"
-            };
+                lib.Add($"town-{i + 1:D2}-NW", ExtractSprite(spriteSheetTown, 0 + (i * 3), 0));
+                lib.Add($"town-{i + 1:D2}-N", ExtractSprite(spriteSheetTown, 1 + (i * 3), 0));
+                lib.Add($"town-{i + 1:D2}-NE", ExtractSprite(spriteSheetTown, 2 + (i * 3), 0));
 
-            for (int i = 0; i < frameCount; i++)
-            {
-                var x = 0;
-                var y = 0;
+                lib.Add($"town-{i + 1:D2}-W", ExtractSprite(spriteSheetTown, 0 + (i * 3), 1));
+                lib.Add($"town-{i + 1:D2}-C", ExtractSprite(spriteSheetTown, 1 + (i * 3), 1));
+                lib.Add($"town-{i + 1:D2}-E", ExtractSprite(spriteSheetTown, 2 + (i * 3), 1));
 
-                for (int j = 0; j < directions.Count; j++)
-                {
-                    var spriteName = $"town-{i + 1:D2}-{directions[j]}";
-                    lib.Add(spriteName, ExtractSprite(spriteSheetTown, x + i, y));
-
-                    x++;
-
-                    if (x >= 3)
-                    {
-                        x = 0;
-                        y++;
-                    }
-                }
+                lib.Add($"town-{i + 1:D2}-SW", ExtractSprite(spriteSheetTown, 0 + (i * 3), 2));
+                lib.Add($"town-{i + 1:D2}-S", ExtractSprite(spriteSheetTown, 1 + (i * 3), 2));
+                lib.Add($"town-{i + 1:D2}-SE", ExtractSprite(spriteSheetTown, 2 + (i * 3), 2));
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite;
@@ -37,9 +38,23 @@ namespace ProjectDonut.ProceduralGeneration
         public Biome Biome { get; set; }
         private SpriteBatch _spriteBatch;
 
-        public Tile(SpriteBatch spriteBatch)
+        public bool IsAnimated { get; set; }
+        public List<Texture2D> Frames { get; set; }
+        private double _frameTimer { get; set; }
+        private double _frameInterval { get; set; }
+        private int _frameIndex { get; set; }
+
+        public Tile(SpriteBatch spriteBatch, bool isAnimated)
         {
             _spriteBatch = spriteBatch;
+            IsAnimated = isAnimated;
+
+            if (IsAnimated)
+            {
+                _frameInterval = 0.5f;
+                _frameIndex = 0;
+                _frameTimer = 0f;
+            }
         }
 
         public void Draw(GameTime gameTime)
@@ -60,29 +75,22 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Update(GameTime gameTime)
         {
-        }
-    }
-
-    public class AnimatedTile : Tile
-    {
-        public int Frame { get; set; }
-        public int FrameCount { get; set; }
-        public int FrameWidth { get; set; }
-        public int FrameHeight { get; set; }
-        public int FrameSpeed { get; set; }
-        public List<Texture2D> Frames { get; set; }
-
-        public AnimatedTile(SpriteBatch spriteBatch) : base(spriteBatch)
-        {
-
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            Frame++;
-            if (Frame >= FrameCount)
+            if (IsAnimated)
             {
-                Frame = 0;
+                _frameTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (_frameTimer >= _frameInterval)
+                {
+                    _frameTimer = 0;
+                    _frameIndex++;
+                    
+                    if (_frameIndex >= Frames.Count)
+                    {
+                        _frameIndex = 0;
+                    }
+
+                    Texture = Frames[_frameIndex];
+                }
             }
         }
     }

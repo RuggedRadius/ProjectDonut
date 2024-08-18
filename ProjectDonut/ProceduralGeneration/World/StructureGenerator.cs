@@ -101,9 +101,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private bool IsCellSuitable(WorldChunk chunk, int i, int j)
         {
-            for (int x = -1; x <= 1; x++)
+            for (int x = -2; x <= 2; x++)
             {
-                for (int y = -1; y <= 1; y++)
+                for (int y = -2; y <= 2; y++)
                 {
                     if (i + x < 0 || j + y < 0 || i + x >= chunk.Width || j + y >= chunk.Height)
                     {
@@ -166,7 +166,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int i = -1; i <= 1; i++)
                 {
-                    var tile = new AnimatedTile(_spriteBatch)
+                    var tile = new Tile(_spriteBatch, true)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,
@@ -177,10 +177,9 @@ namespace ProjectDonut.ProceduralGeneration.World
                         Texture = DetermineTexture(Structure.Town, directions[counter]),
                         TileType = TileType.Forest,
                         Biome = (Biome)chunk.BiomeData[(i + x), (j + y)],
-                        Frames = GetFrames(Structure.Town, directions[counter], 4),
+                        Frames = GetFrames(Structure.Town, directions[counter], 4)
                     };
 
-                    //chunk.StructureData[x + i, y + j] = structureValue;
                     map.Map[i + x, j + y] = tile;
                     counter++;
                 }
@@ -215,7 +214,8 @@ namespace ProjectDonut.ProceduralGeneration.World
                 case Structure.Town:
                     for (int i = 0; i < frameCount; i++)
                     {
-                        results.Add(spriteLib.GetSprite($"town-{i+1:D2}-{direction}"));
+                        var key = $"town-{i + 1:D2}-{direction}";
+                        results.Add(spriteLib.GetSprite(key));
                     }
                     break;
             }

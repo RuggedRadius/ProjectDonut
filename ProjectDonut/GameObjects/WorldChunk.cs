@@ -104,6 +104,16 @@ namespace ProjectDonut.GameObjects
 
         public void Update(GameTime gameTime)
         {
+            foreach (var tilemap in Tilemaps)
+            {
+                foreach (var tile in tilemap.Value.Map)
+                {
+                    if (tile == null)
+                        continue;
+
+                    tile.Update(gameTime);
+                }
+            }
         }
 
         public void Draw(GameTime gameTime)
@@ -116,30 +126,26 @@ namespace ProjectDonut.GameObjects
                         continue;
 
                     tile.Draw(gameTime);
-
-                    //var x = WorldCoordX + (tile.LocalPosition.X);
-                    //var y = WorldCoordY + (tile.LocalPosition.Y);
-                    //var position = new Vector2(x, y);
-                    //_spriteBatch.Draw(tile.Texture, position, null, Color.White);
                 }
             }
 
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    var position = new Vector2(WorldCoordX + (x * 32), WorldCoordY + (y * 32));
+            //for (int x = 0; x < Width; x++)
+            //{
+            //    for (int y = 0; y < Height; y++)
+            //    {
+            //        var position = new Vector2(WorldCoordX + (x * 32), WorldCoordY + (y * 32));
 
-                    if (x == 0 || y == 0)
-                    {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
-                    }
-                    else if (x == Width - 1 || y == Height - 1)
-                    {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
-                    }
-                }
-            }
+            //        if (x == 0 || y == 0)
+            //        {
+            //            _spriteBatch.Draw(tempTexture, position, nu=]
+            //            ll, Color.Magenta);
+            //        }
+            //        else if (x == Width - 1 || y == Height - 1)
+            //        {
+            //            _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+            //        }
+            //    }
+            //}
 
             return;
         }

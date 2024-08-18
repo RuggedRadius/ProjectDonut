@@ -172,10 +172,10 @@ namespace ProjectDonut.GameObjects
             }
 
             // Disabling for now cos collection kept changing duration iterations
-            //foreach (var chunk in _chunks)
-            //{
-            //    chunk.Value.Update(gameTime);
-            //}
+            foreach (var chunk in CurrentChunks)
+            {
+                chunk.Update(gameTime);
+            }
         }
 
         public override void Initialize()
