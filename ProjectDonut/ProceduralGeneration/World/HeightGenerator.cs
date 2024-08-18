@@ -13,8 +13,9 @@ namespace ProjectDonut.ProceduralGeneration.World
         private WorldMapSettings settings;
         private SpriteLibrary spriteLib;
         private FastNoiseLite _noise;
+        private SpriteBatch _spriteBatch;
 
-        public HeightGenerator(WorldMapSettings settings, SpriteLibrary spriteLib)
+        public HeightGenerator(WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
         {
             this.settings = settings;
             this.spriteLib = spriteLib;
@@ -25,6 +26,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             _noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
             _noise.SetSeed(1337);
+            _spriteBatch = spriteBatch;
         }
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
@@ -122,7 +124,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         }
 
 
-        public Tilemap CreateBaseTilemap(int[,] heightData, int[,] biomeData)
+        public Tilemap CreateBaseTilemap(int[,] heightData, int[,] biomeData, int chunkX, int chunkY)
         {
             var tmBase = new Tilemap(heightData.GetLength(0), heightData.GetLength(1));
 
@@ -133,8 +135,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                     var biomeValue = biomeData[i, j];
                     var heightValue = heightData[i, j];
 
-                    var tile = new Tile
+                    var tile = new Tile(_spriteBatch)
                     {
+                        ChunkX = chunkX,
+                        ChunkY = chunkY,
                         xIndex = i,
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),

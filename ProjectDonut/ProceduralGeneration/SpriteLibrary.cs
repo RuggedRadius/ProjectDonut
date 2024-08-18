@@ -18,6 +18,9 @@ namespace ProjectDonut.ProceduralGeneration
         private Texture2D spriteSheetForest;
         private Texture2D spriteSheetWinter;
         private Texture2D spriteSheetMountain;
+        private Texture2D spriteSheetCastle;
+        private Texture2D spriteSheetTown;
+
 
         private Dictionary<string, Texture2D> sheets;
 
@@ -44,31 +47,37 @@ namespace ProjectDonut.ProceduralGeneration
             spriteSheetBiomes = content.Load<Texture2D>("Sprites/Map/World/Biomes");
             spriteSheetForest = content.Load<Texture2D>("Sprites/Map/World/Forest");
             spriteSheetMountain = content.Load<Texture2D>("Sprites/Map/World/Mountain");
+            spriteSheetCastle = content.Load<Texture2D>("Sprites/WorldStructures/Castle");
+            
 
             LoadDialogueSystem();
+            LoadStructureTown();
 
-            
+            // Structures
+            lib.Add("castle", ExtractSprite(spriteSheetCastle, 0, 0));
+
+
 
             // Water
             lib.Add("deepwater-NW", ExtractSprite(spriteSheetTiles, 18, 0));
-            lib.Add("deepwater-N",  ExtractSprite(spriteSheetTiles, 19, 0));
+            lib.Add("deepwater-N", ExtractSprite(spriteSheetTiles, 19, 0));
             lib.Add("deepwater-NE", ExtractSprite(spriteSheetTiles, 20, 0));
             lib.Add("deepwater-W", ExtractSprite(spriteSheetTiles, 18, 1));
             lib.Add("deepwater-C", ExtractSprite(spriteSheetTiles, 19, 1));
             lib.Add("deepwater-E", ExtractSprite(spriteSheetTiles, 20, 1));
             lib.Add("deepwater-SW", ExtractSprite(spriteSheetTiles, 18, 2));
-            lib.Add("deepwater-S",  ExtractSprite(spriteSheetTiles, 19, 2));
+            lib.Add("deepwater-S", ExtractSprite(spriteSheetTiles, 19, 2));
             lib.Add("deepwater-SE", ExtractSprite(spriteSheetTiles, 20, 2));
 
             // Forest
             ExtractSprites("forest", spriteSheetForest, 3, 3);
             lib.Add("forest-inv-NW", ExtractSprite(spriteSheetForest, 3, 0));
-            lib.Add("forest-inv-N",  ExtractSprite(spriteSheetForest, 4, 0));
+            lib.Add("forest-inv-N", ExtractSprite(spriteSheetForest, 4, 0));
             lib.Add("forest-inv-NE", ExtractSprite(spriteSheetForest, 5, 0));
             lib.Add("forest-inv-W", ExtractSprite(spriteSheetForest, 3, 1));
             lib.Add("forest-inv-E", ExtractSprite(spriteSheetForest, 5, 1));
             lib.Add("forest-inv-SW", ExtractSprite(spriteSheetForest, 3, 2));
-            lib.Add("forest-inv-S",  ExtractSprite(spriteSheetForest, 4, 2));
+            lib.Add("forest-inv-S", ExtractSprite(spriteSheetForest, 4, 2));
             lib.Add("forest-inv-SE", ExtractSprite(spriteSheetForest, 5, 2));
 
             lib.Add("forest-frost-NW", ExtractSprite(spriteSheetForest, 0, 3));
@@ -164,6 +173,37 @@ namespace ProjectDonut.ProceduralGeneration
             lib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
             lib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
             lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
+        }
+
+        private void LoadStructureTown()
+        {
+            spriteSheetTown = content.Load<Texture2D>("Sprites/WorldStructures/Town01");
+
+            var frameCount = 4;
+            var directions = new List<string>
+            {
+                "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE"
+            };
+
+            for (int i = 0; i < frameCount; i++)
+            {
+                var x = 0;
+                var y = 0;
+
+                for (int j = 0; j < directions.Count; j++)
+                {
+                    var spriteName = $"town-{i + 1:D2}-{directions[j]}";
+                    lib.Add(spriteName, ExtractSprite(spriteSheetTown, x + i, y));
+
+                    x++;
+
+                    if (x >= 3)
+                    {
+                        x = 0;
+                        y++;
+                    }
+                }
+            }
         }
 
         private void LoadDialogueSystem()

@@ -37,6 +37,7 @@ namespace ProjectDonut.GameObjects
         private BiomeGenerator genBiomes;
         private ForestGenerator genForest;
         private RiverGenerator genRiver;
+        private StructureGenerator genStructure;
 
         private int ChunkWidth = 100;
         private int ChunkHeight = 100;
@@ -102,11 +103,12 @@ namespace ProjectDonut.GameObjects
             tempTexture = new Texture2D(_graphicsDevice, 1, 1);
             tempTexture.SetData(new[] { Color.Green });
 
-            WorldGen = new WorldGenerator(content, _graphicsDevice, settings, spriteLib);
-            genHeight = new HeightGenerator(settings, spriteLib);    
+            WorldGen = new WorldGenerator(content, _graphicsDevice, settings, spriteLib, _spriteBatch);
+            genHeight = new HeightGenerator(settings, spriteLib, _spriteBatch);    
             genBiomes = new BiomeGenerator(settings);
-            genForest = new ForestGenerator(spriteLib, settings);
+            genForest = new ForestGenerator(spriteLib, settings, _spriteBatch);
             genRiver = new RiverGenerator(spriteLib, settings);
+            genStructure = new StructureGenerator(spriteLib, settings, _spriteBatch);
         }
 
         public override void Draw(GameTime gameTime)
@@ -212,13 +214,15 @@ namespace ProjectDonut.GameObjects
 
             genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
-                       
+            genStructure.GenerateStructureData(chunk);
 
-            var tilemapBase = genHeight.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData);
+            var tilemapBase = genHeight.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData, chunkX, chunkY);
             var tilemapForest = genForest.CreateForestTilemap(chunk);
+            var tilemapStructures = genStructure.GenerateChunkStructuresTileMap(chunk);
 
             chunk.Tilemaps.Add("base", tilemapBase);
             chunk.Tilemaps.Add("forest", tilemapForest);
+            chunk.Tilemaps.Add("structures", tilemapStructures);
 
             return chunk;
         }

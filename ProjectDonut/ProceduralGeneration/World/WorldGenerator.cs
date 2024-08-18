@@ -20,6 +20,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private GraphicsDevice graphicsDevice;
         private WorldTileRuler rules;
         private SpriteLibrary spriteLib;
+        private SpriteBatch _spriteBatch;
 
         private WorldMapSettings settings;
 
@@ -29,21 +30,22 @@ namespace ProjectDonut.ProceduralGeneration.World
         private WaterGenerator water;
         private ForestGenerator forest;
 
-        public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice, WorldMapSettings settings, SpriteLibrary spriteLib)
+        public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice, WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
         {
             this.content = content;
             this.graphicsDevice = graphicsDevice;
             this.spriteLib = spriteLib;
             this.settings = settings;
 
-            baseGen = new HeightGenerator(settings, spriteLib);
+            baseGen = new HeightGenerator(settings, spriteLib, spriteBatch);
             biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
-            forest = new ForestGenerator(spriteLib, settings);
+            forest = new ForestGenerator(spriteLib, settings, spriteBatch);
 
             rules = new WorldTileRuler(spriteLib);
 
             spriteLib.LoadSpriteLibrary();
+            _spriteBatch = spriteBatch;
         }
 
         public int[,] TEMPCreateDummyBiomeData(int width, int height)
@@ -82,40 +84,13 @@ namespace ProjectDonut.ProceduralGeneration.World
             //heightData = water.ErodeDeepWater(heightData);
             ////debugger.WriteMapData(heightData, "rivers");
 
-            tmBase = baseGen.CreateBaseTilemap(heightData, biomeData);
+            tmBase = baseGen.CreateBaseTilemap(heightData, biomeData, xOffset, yOffset);
             //tmBase = rules.ApplyBaseRules(tmBase);
 
             // TEMP
             //tmBase = TEMPBorderAroundChunk(tmBase);
 
             return tmBase;
-        }
-
-        private Tilemap TEMPBorderAroundChunk(Tilemap map)
-        {
-            for (int x = 0; x < 100; x++)
-            {
-                for (int y = 0; y < 100; y++)
-                {
-                    if (x == 0 || x == 99)
-                    {
-                        map.Map[x, y] = new Tile()
-                        {
-                            Texture = spriteLib.GetSprite("mountain")
-                        };
-                    }
-
-                    if (y == 0 || y == 99)
-                    {
-                        map.Map[x, y] = new Tile()
-                        {
-                            Texture = spriteLib.GetSprite("mountain")
-                        };
-                    }
-                }
-            }
-
-            return map;
         }
 
         private void WriteMapToFile(int[,] map, string filePath)

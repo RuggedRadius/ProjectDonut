@@ -20,11 +20,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private FastNoiseLite _noise;
         private WorldTileRuler tileRuler;
+        private SpriteBatch _spriteBatch;
 
-        public ForestGenerator(SpriteLibrary spriteLib, WorldMapSettings mapSettings)
+        public ForestGenerator(SpriteLibrary spriteLib, WorldMapSettings mapSettings, SpriteBatch spriteBatch)
         {
             this.spriteLib = spriteLib;
             this.settings = mapSettings;
+            _spriteBatch = spriteBatch;
 
             var random = new Random();
             var worldSeed = random.Next(int.MinValue, int.MaxValue);
@@ -99,8 +101,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                         continue;
                     }
 
-                    var tile = new Tile
+                    var tile = new Tile(_spriteBatch)
                     {
+                        ChunkX = chunk.ChunkCoordX,
+                        ChunkY = chunk.ChunkCoordY,
                         xIndex = i,
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),

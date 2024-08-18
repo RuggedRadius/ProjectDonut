@@ -25,6 +25,7 @@ namespace ProjectDonut.GameObjects
         public int[,] BiomeData;
         public int[,] ForestData;
         public int[,] RiverData;
+        public int[,] StructureData;
 
         private int TileSize = 32;
 
@@ -114,10 +115,12 @@ namespace ProjectDonut.GameObjects
                     if (tile == null)
                         continue;
 
-                    var x = WorldCoordX + (tile.LocalPosition.X);
-                    var y = WorldCoordY + (tile.LocalPosition.Y);
-                    var position = new Vector2(x, y);
-                    _spriteBatch.Draw(tile.Texture, position, null, Color.White);
+                    tile.Draw(gameTime);
+
+                    //var x = WorldCoordX + (tile.LocalPosition.X);
+                    //var y = WorldCoordY + (tile.LocalPosition.Y);
+                    //var position = new Vector2(x, y);
+                    //_spriteBatch.Draw(tile.Texture, position, null, Color.White);
                 }
             }
 
