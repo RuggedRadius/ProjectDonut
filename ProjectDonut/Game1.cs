@@ -36,6 +36,8 @@ namespace ProjectDonut
         private WorldChunkManager worldChunks;
         private const int ChunkSize = 100;
 
+        public static Debugger debugger;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -101,6 +103,9 @@ namespace ProjectDonut
 
             // Position player in middle of the map
             //player.PositionPlayerInMiddleOfMap(worldMapSettings);
+
+            debugger = new Debugger(_spriteBatch, Content, GraphicsDevice,camera);
+            _gameObjects.Add("debugger", debugger);
 
             base.Initialize();
         }

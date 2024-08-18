@@ -44,7 +44,7 @@ namespace ProjectDonut.GameObjects
         private Rectangle rectBottom;
         private Texture2D debugTexture;
 
-        private SpriteFont debugFont;
+        
 
         private int TileSize = 32;
         private FogOfWar fog;
@@ -101,8 +101,7 @@ namespace ProjectDonut.GameObjects
         public override void LoadContent()
         {
             spriteSheet = _content.Load<Texture2D>("Sprites/TestPlayer");
-            currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
-            debugFont = _content.Load<SpriteFont>("Fonts/Default");
+            currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);            
         }
 
         public override void Update(GameTime gameTime)
@@ -205,14 +204,10 @@ namespace ProjectDonut.GameObjects
         {            
             _spriteBatch.Draw(spriteSheet, position, currentFrame, Color.White);
 
-            var debugPos = camera.Position;
-
-            _spriteBatch.DrawString(debugFont, $"Chunk-X:{ChunkPosX}", debugPos + new Vector2(0, 0), Color.Red);
-            _spriteBatch.DrawString(debugFont, $"Chunk-Y:{ChunkPosY}", debugPos + new Vector2(0, 20), Color.Red);
-            _spriteBatch.DrawString(debugFont, $"Tile-X:{(int)(position.X / 32)}", debugPos + new Vector2(0, 40), Color.Red);
-            _spriteBatch.DrawString(debugFont, $"Tile-Y:{(int)(position.Y / 32)}", debugPos + new Vector2(0, 60), Color.Red);
-            _spriteBatch.DrawString(debugFont, $"X:{position.X}", debugPos + new Vector2(0, 80), Color.Red);
-            _spriteBatch.DrawString(debugFont, $"Y:{position.Y}", debugPos + new Vector2(0, 100), Color.Red);
+            Game1.debugger.debug[0] = $"Player Position-X: {position.X}";
+            Game1.debugger.debug[1] = $"Player Position-Y: {position.Y}";
+            Game1.debugger.debug[2] = $"Player Chunk-X: {ChunkPosX}";
+            Game1.debugger.debug[3] = $"Player Chunk-Y: {ChunkPosY}";
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)
