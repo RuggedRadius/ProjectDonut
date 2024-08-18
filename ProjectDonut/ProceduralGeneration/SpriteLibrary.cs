@@ -181,6 +181,15 @@ namespace ProjectDonut.ProceduralGeneration
             lib.Add("cursor", ExtractSprite(sheet, 0, 0));
         }
 
+        private void LoadUIScroll()
+        {
+            var sheet = content.Load<Texture2D>("Sprites/UI/Scroll");
+
+            lib.Add("scroll-left", ExtractSprite(sheet, 0, 0));
+            lib.Add("scroll-middle", ExtractSprite(sheet, 1, 0));
+            lib.Add("scroll-right", ExtractSprite(sheet, 2, 0));
+        }
+
         private void LoadStructureTown()
         {
             spriteSheetTown = content.Load<Texture2D>("Sprites/WorldStructures/Town01");
