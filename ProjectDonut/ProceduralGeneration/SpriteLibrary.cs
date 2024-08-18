@@ -52,10 +52,9 @@ namespace ProjectDonut.ProceduralGeneration
 
             LoadDialogueSystem();
             LoadStructureTown();
-
-            // Structures
-            lib.Add("castle", ExtractSprite(spriteSheetCastle, 0, 0));
-
+            LoadStructureCastle();
+            LoadMouseCursor();
+            
 
 
             // Water
@@ -175,6 +174,13 @@ namespace ProjectDonut.ProceduralGeneration
             lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
         }
 
+        private void LoadMouseCursor()
+        {
+            var sheet = content.Load<Texture2D>("Sprites/UI/MouseCursor");
+
+            lib.Add("cursor", ExtractSprite(sheet, 0, 0));
+        }
+
         private void LoadStructureTown()
         {
             spriteSheetTown = content.Load<Texture2D>("Sprites/WorldStructures/Town01");
@@ -192,6 +198,26 @@ namespace ProjectDonut.ProceduralGeneration
                 lib.Add($"town-{i + 1:D2}-SW", ExtractSprite(spriteSheetTown, 0 + (i * 3), 2));
                 lib.Add($"town-{i + 1:D2}-S", ExtractSprite(spriteSheetTown, 1 + (i * 3), 2));
                 lib.Add($"town-{i + 1:D2}-SE", ExtractSprite(spriteSheetTown, 2 + (i * 3), 2));
+            }
+        }
+
+        private void LoadStructureCastle()
+        {
+            spriteSheetCastle = content.Load<Texture2D>("Sprites/WorldStructures/Castle");
+
+            for (int i = 0; i < 4; i++)
+            {
+                lib.Add($"castle-{i + 1:D2}-NW", ExtractSprite(spriteSheetCastle, 0 + (i * 3), 0));
+                lib.Add($"castle-{i + 1:D2}-N", ExtractSprite(spriteSheetCastle, 1 + (i * 3), 0));
+                lib.Add($"castle-{i + 1:D2}-NE", ExtractSprite(spriteSheetCastle, 2 + (i * 3), 0));
+
+                lib.Add($"castle-{i + 1:D2}-W", ExtractSprite(spriteSheetCastle, 0 + (i * 3), 1));
+                lib.Add($"castle-{i + 1:D2}-C", ExtractSprite(spriteSheetCastle, 1 + (i * 3), 1));
+                lib.Add($"castle-{i + 1:D2}-E", ExtractSprite(spriteSheetCastle, 2 + (i * 3), 1));
+
+                lib.Add($"castle-{i + 1:D2}-SW", ExtractSprite(spriteSheetCastle, 0 + (i * 3), 2));
+                lib.Add($"castle-{i + 1:D2}-S", ExtractSprite(spriteSheetCastle, 1 + (i * 3), 2));
+                lib.Add($"castle-{i + 1:D2}-SE", ExtractSprite(spriteSheetCastle, 2 + (i * 3), 2));
             }
         }
 

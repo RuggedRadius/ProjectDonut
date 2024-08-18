@@ -22,7 +22,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private int CastleCountMax = 2;
 
         private int TownCountMin = 0;
-        private int TownCountMax = 3;
+        private int TownCountMax = 2;
 
         private SpriteLibrary spriteLib;
         private WorldMapSettings settings;
@@ -42,11 +42,19 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             var viableLocations = GetViableStructureLocations(chunk);
 
-            var castleCount = random.Next(CastleCountMin, CastleCountMax);
-            var townCount = random.Next(TownCountMin, TownCountMax);
+            var townChance = random.Next(1, 101);
+            var castleChance = random.Next(1, 101);
+
+            var castleCount = castleChance > 95 ? 1 : 0;
+            var townCount = townChance > 80 ? 1 : 0;
 
             for (int i = 0; i < castleCount; i++)
             {
+                if (viableLocations.Count == 0)
+                {
+                    break;
+                }
+
                 var location = viableLocations[random.Next(0, viableLocations.Count)];
                 viableLocations.Remove(location);
 
@@ -55,6 +63,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             for (int i = 0; i < townCount; i++)
             {
+                if (viableLocations.Count == 0)
+                {
+                    break;
+                }
+
                 var location = viableLocations[random.Next(0, viableLocations.Count)];
                 viableLocations.Remove(location);
 
@@ -162,6 +175,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
             int counter = 0;
 
+            var structure = (Structure)structureValue;
+
             for (int j = -1; j <= 1; j++)
             {
                 for (int i = -1; i <= 1; i++)
@@ -174,10 +189,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                         yIndex = j + y,
                         LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = DetermineTexture(Structure.Town, directions[counter]),
+                        Texture = DetermineTexture(structure, directions[counter]),
                         TileType = TileType.Forest,
                         Biome = (Biome)chunk.BiomeData[(i + x), (j + y)],
-                        Frames = GetFrames(Structure.Town, directions[counter], 4)
+                        Frames = GetFrames(structure, directions[counter], 4)
                     };
 
                     map.Map[i + x, j + y] = tile;
@@ -191,7 +206,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             switch (structure)
             {
                 case Structure.Castle:
-                    return spriteLib.GetSprite("castle");
+                    return spriteLib.GetSprite($"castle-01-{direction}");
 
                 case Structure.Town:
                     return spriteLib.GetSprite($"town-01-{direction}");
@@ -208,7 +223,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             switch (structure)
             {
                 case Structure.Castle:
-                    results.Add(spriteLib.GetSprite("castle"));
+                    for (int i = 0; i < frameCount; i++)
+                    {
+                        var key = $"castle-{i + 1:D2}-{direction}";
+                        results.Add(spriteLib.GetSprite(key));
+                    }
                     break;
 
                 case Structure.Town:

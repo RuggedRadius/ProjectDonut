@@ -58,11 +58,8 @@ namespace ProjectDonut.GameObjects
         {
             base.Update(gameTime);
 
-            var camPos = _camera.Position;
-            var x = (int)camPos.X - (_graphicsDevice.Viewport.Width / 2);
-            var y = (int)camPos.Y - (_graphicsDevice.Viewport.Height / 2);
-
-            var height = 5;
+            // Calculate the height of the debug panel based on the number of debug lines
+            int height = 5;
             for (int i = 0; i < debug.Length; i++)
             {
                 if (debug[i] != null)
@@ -71,12 +68,17 @@ namespace ProjectDonut.GameObjects
                 }
             }
 
+            // Set the position of the debug rectangle to the top-left corner of the screen
+            int x = 10;
+            int y = 10;
+
             debugRect = new Rectangle(x, y, 400, height);
         }
 
+
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
+            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
 
             _spriteBatch.Draw(debugTexture, debugRect, Color.Black);
 
@@ -93,6 +95,10 @@ namespace ProjectDonut.GameObjects
                 var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + (30 * i));
                 _spriteBatch.DrawString(debugFont, debug[i], pos, Color.White);
             }
+
+            _spriteBatch.End();
+
+            base.Draw(gameTime);
         }
     }
 }

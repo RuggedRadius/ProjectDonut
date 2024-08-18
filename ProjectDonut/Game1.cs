@@ -11,6 +11,7 @@ using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.UI;
 using System.Threading.Tasks;
 using System.Threading;
+using ProjectDonut.ProceduralGeneration.Dungeons;
 
 namespace ProjectDonut
 {
@@ -31,6 +32,7 @@ namespace ProjectDonut
         private Camera camera;
         private Player player;
         private DialogueSystem dialogue;
+        private GameObjects.MouseCursor cursor;
 
         //private WorldChunk[,] worldChunks;
         private WorldChunkManager worldChunks;
@@ -90,7 +92,7 @@ namespace ProjectDonut
             dialogue = new DialogueSystem(spriteLib, _spriteBatch, camera, Content);
             _gameObjects.Add("dialogue", dialogue);
 
-            
+            cursor = new GameObjects.MouseCursor(this, spriteLib, _spriteBatch, GraphicsDevice, camera);
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
@@ -105,7 +107,6 @@ namespace ProjectDonut
             //player.PositionPlayerInMiddleOfMap(worldMapSettings);
 
             debugger = new Debugger(_spriteBatch, Content, GraphicsDevice,camera);
-            _gameObjects.Add("debugger", debugger);
 
             base.Initialize();
         }
@@ -163,6 +164,8 @@ namespace ProjectDonut
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
+            debugger.LoadContent();
+            cursor.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
@@ -173,6 +176,9 @@ namespace ProjectDonut
             ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
+
+            debugger.Update(gameTime);
+            cursor.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -189,7 +195,12 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
+            cursor.Draw(gameTime);
+
             _spriteBatch.End();
+
+            debugger.Draw(gameTime);
+            
 
             base.Draw(gameTime);
         }
