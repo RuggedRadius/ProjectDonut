@@ -15,6 +15,8 @@ namespace ProjectDonut.GameObjects
 {
     public class WorldChunk : IGameObject
     {
+        private bool DRAW_DEBUG_OUTLINE = true;
+
         public int ChunkCoordX { get; private set; }
         public int ChunkCoordY { get; private set; }
 
@@ -129,25 +131,32 @@ namespace ProjectDonut.GameObjects
                 }
             }
 
-            //for (int x = 0; x < Width; x++)
-            //{
-            //    for (int y = 0; y < Height; y++)
-            //    {
-            //        var position = new Vector2(WorldCoordX + (x * 32), WorldCoordY + (y * 32));
-
-            //        if (x == 0 || y == 0)
-            //        {
-            //            _spriteBatch.Draw(tempTexture, position, nu=]
-            //            ll, Color.Magenta);
-            //        }
-            //        else if (x == Width - 1 || y == Height - 1)
-            //        {
-            //            _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
-            //        }
-            //    }
-            //}
+            if (DRAW_DEBUG_OUTLINE)
+            {
+                DrawChunkOutline(gameTime);
+            }
 
             return;
+        }
+
+        private void DrawChunkOutline(GameTime gameTime)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    var position = new Vector2(WorldCoordX + (x * 32), WorldCoordY + (y * 32));
+
+                    if (x == 0 || y == 0)
+                    {
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                    }
+                    else if (x == Width - 1 || y == Height - 1)
+                    {
+                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                    }
+                }
+            }
         }
 
         //public void SaveTilemapToFile(string filePath)
