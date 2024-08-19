@@ -78,7 +78,7 @@ namespace ProjectDonut.GameObjects
 
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
+            //_spriteBatch.Begin(transformMatrix: Matrix.Identity);
 
             _spriteBatch.Draw(debugTexture, debugRect, Color.Black);
 
@@ -96,7 +96,7 @@ namespace ProjectDonut.GameObjects
                 _spriteBatch.DrawString(debugFont, debug[i], pos, Color.White);
             }
 
-            _spriteBatch.End();
+            //_spriteBatch.End();
 
             base.Draw(gameTime);
         }

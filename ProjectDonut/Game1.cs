@@ -21,6 +21,7 @@ namespace ProjectDonut
         private SpriteBatch _spriteBatch;
 
         private Dictionary<string, GameObject> _gameObjects;
+        private Dictionary<string, GameObject> _screenObjects;
 
         private SpriteFont _font;
 
@@ -40,6 +41,8 @@ namespace ProjectDonut
 
         public static Debugger debugger;
 
+        private ScrollDisplayer testScroll;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -54,7 +57,9 @@ namespace ProjectDonut
         protected override void Initialize()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
             _gameObjects = new Dictionary<string, GameObject>();
+            _screenObjects = new Dictionary<string, GameObject>();
 
             worldMapSettings = CreateWorldMapSettings();
             //worldChunks = new WorldChunk[3,3];
@@ -94,7 +99,15 @@ namespace ProjectDonut
 
             cursor = new GameObjects.MouseCursor(this, spriteLib, _spriteBatch, GraphicsDevice, camera);
 
+            debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, camera);
+            _screenObjects.Add("debugger", debugger);
+
+            testScroll = new ScrollDisplayer(Content, _spriteBatch, GraphicsDevice);
+            _screenObjects.Add("testScroll", testScroll);
+
+
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
+            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
             Task.Run(() =>
             {
@@ -106,7 +119,7 @@ namespace ProjectDonut
             // Position player in middle of the map
             //player.PositionPlayerInMiddleOfMap(worldMapSettings);
 
-            debugger = new Debugger(_spriteBatch, Content, GraphicsDevice,camera);
+
 
             base.Initialize();
         }
@@ -162,22 +175,36 @@ namespace ProjectDonut
         protected override void LoadContent()
         {
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
-            debugger.LoadContent();
+            //debugger.LoadContent();
             cursor.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            var kbState = Keyboard.GetState();
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbState.IsKeyDown(Keys.Escape))
                 Exit();
+
+            if(kbState.IsKeyDown(Keys.O))
+            {
+                testScroll.DisplayScroll(500, 300, "Flandaria");
+            }
+
+            if (kbState.IsKeyDown(Keys.P))
+            {
+                testScroll.HideScroll();
+            }
 
             ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
+            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
-            debugger.Update(gameTime);
+            //debugger.Update(gameTime);
             cursor.Update(gameTime);
 
             base.Update(gameTime);
@@ -199,8 +226,14 @@ namespace ProjectDonut
 
             _spriteBatch.End();
 
-            debugger.Draw(gameTime);
-            
+            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
+            _screenObjects
+                .Select(x => x.Value)
+                .OrderByDescending(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
+            _spriteBatch.End();
+
 
             base.Draw(gameTime);
         }
