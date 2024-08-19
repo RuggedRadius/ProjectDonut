@@ -12,54 +12,86 @@ namespace ProjectDonut.ProceduralGeneration.World
     {
         private WorldMapSettings settings;
         private SpriteLibrary spriteLib;
-        private FastNoiseLite _noise;
+        private FastNoiseLite[] _noise;
         private SpriteBatch _spriteBatch;
+
+        private float OctaveBlend = 0.125f;
 
         public HeightGenerator(WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
         {
             this.settings = settings;
             this.spriteLib = spriteLib;
 
-            this._noise = new FastNoiseLite();
-            //noise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
-            _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            this._noise = new FastNoiseLite[2];
+            _noise[0] = new FastNoiseLite();
+            //_noise[0].SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
+            _noise[0].SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            _noise[0].SetSeed(new Random().Next(int.MinValue, int.MaxValue));
 
-            _noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
-            _noise.SetSeed(1337);
+            this._noise[1] = new FastNoiseLite();
+            _noise[1].SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
+            //_noise[1].SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            _noise[1].SetSeed(new Random().Next(int.MinValue, int.MaxValue));
+            _noise[1].SetFrequency(0.5f);
+            _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Manhattan);
+
             _spriteBatch = spriteBatch;
         }
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
         {
-            int[,] heightData = new int[height, width];
+            var datas = new List<int[,]>();
 
-            int min = 0;
-            int max = 0;
+            for (int z = 0; z < 2; z++)
+            {
+                int[,] heightData = new int[height, width];
+
+                int min = 0;
+                int max = 0;
+
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < height; j++)
+                    {
+                        var x = (xOffset * settings.Width) + i;
+                        var y = (yOffset * settings.Height) + j;
+
+                        var heightValue = (int)(_noise[z].GetNoise(x, y) * 100) + 35;
+
+                        heightData[i, j] = heightValue;
+
+                        if (heightValue < min)
+                        {
+                            min = heightValue;
+                        }
+                        if (heightValue > max)
+                        {
+                            max = heightValue;
+                        }
+                    }
+                }
+
+                datas.Add(heightData);
+            }
+
+            int[,] result = new int[height, width];
 
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    var x = (xOffset * settings.Width) + i;
-                    var y = (yOffset * settings.Height) + j;
-
-                    var heightValue = (int)(_noise.GetNoise(x, y) * 100) + 35;
-
-                    heightData[i, j] = heightValue;
-
-                    if (heightValue < min)
-                    {
-                        min = heightValue;
-                    }
-                    if (heightValue > max)
-                    {
-                        max = heightValue;
-                    }
+                    result[i, j] = Blend(datas[0][i,j], datas[1][i, j], OctaveBlend);
                 }
             }
 
-            return heightData;
+            return result;
         }
+
+        int Blend(int a, int b, float t)
+        {
+            return (int)(a + t * (b - a));
+        }
+
 
         public void CarveRiver(int[,] heightData, int startX, int startY)
         {

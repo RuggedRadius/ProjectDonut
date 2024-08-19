@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,7 +76,6 @@ namespace ProjectDonut.GameObjects
             debugRect = new Rectangle(x, y, 400, height);
         }
 
-
         public override void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin(transformMatrix: Matrix.Identity);
@@ -99,6 +99,27 @@ namespace ProjectDonut.GameObjects
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public static void PrintDataMap(int[,] map, string filePath)
+        {
+            var height = map.GetLength(0);
+            var width = map.GetLength(1);
+
+            var lines = new List<string>();
+
+            for (int i = 0; i < width; i++)
+            {
+                var sb = new StringBuilder();
+                for (int j = 0; j < height; j++)
+                {
+                    sb.Append(map[i, j]);
+                    sb.Append(",");
+                }
+                lines.Add(sb.ToString());
+            }
+
+            File.WriteAllLines(filePath, lines);
         }
     }
 }
