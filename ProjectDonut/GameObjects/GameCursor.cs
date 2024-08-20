@@ -11,7 +11,7 @@ using ProjectDonut.ProceduralGeneration;
 
 namespace ProjectDonut.GameObjects
 {
-    public class MouseCursor : IGameObject
+    public class GameCursor : IScreenObject
     {
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
@@ -27,7 +27,7 @@ namespace ProjectDonut.GameObjects
         private Vector2 hotspotOffset;
         private Vector2 scaleFactor;
 
-        public MouseCursor(Game1 game, SpriteLibrary spriteLib, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera)
+        public GameCursor(Game1 game, SpriteLibrary spriteLib, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera)
         {
             this._spriteLib = spriteLib;
             this._spriteBatch = spriteBatch;
@@ -54,20 +54,16 @@ namespace ProjectDonut.GameObjects
 
         public void Update(GameTime gameTime)
         {
-            //Position = Mouse.GetState().Position.ToVector2() * scaleFactor;
-            Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(_camera.GetTransformationMatrix(_graphicsDevice, _graphicsDevice.Viewport)));
+            //Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(_camera.GetTransformationMatrix()));
+            Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(Matrix.Identity));
         }
 
         public void Draw(GameTime gameTime)
         {
-            //_spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Matrix.Identity);
-
-            //// Draw the cursor at the mouse position, unaffected by camera transformations
-            //_spriteBatch.Draw(cursorDefault, Position - hotspotOffset, Color.White);
-
-            //_spriteBatch.End();
-
+            //_spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
+            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _spriteBatch.Draw(cursorDefault, Position - hotspotOffset, Color.White);
+            _spriteBatch.End();
         }
     }
 }

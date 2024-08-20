@@ -19,19 +19,24 @@ namespace ProjectDonut.GameObjects
         // States
         private MouseState _previousMouseState;
 
-        public Camera()
+        public GraphicsDevice _graphicsDevice;
+
+
+        public Camera(GraphicsDevice graphicsDevice)
         {
+            _graphicsDevice = graphicsDevice;
+
             Position = Vector2.Zero;
             Zoom = 1f;
             Rotation = 0f;
         }
 
-        public Matrix GetTransformationMatrix(GraphicsDevice graphicsDevice, Viewport viewport)
+        public Matrix GetTransformationMatrix()
         {
             return Matrix.CreateTranslation(new Vector3(-Position, 0)) *
                    Matrix.CreateRotationZ(Rotation) *
                    Matrix.CreateScale(new Vector3(Zoom, Zoom, 1)) *
-                   Matrix.CreateTranslation(new Vector3(viewport.Width * 0.5f, viewport.Height * 0.5f, 0));
+                   Matrix.CreateTranslation(new Vector3(_graphicsDevice.Viewport.Width * 0.5f, _graphicsDevice.Viewport.Height * 0.5f, 0));
         }
 
         public void Update(GameTime gameTime)
