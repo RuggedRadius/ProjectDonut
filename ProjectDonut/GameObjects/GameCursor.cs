@@ -62,7 +62,7 @@ namespace ProjectDonut.GameObjects
         {
             //_spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
             _spriteBatch.Begin(transformMatrix: Matrix.Identity);
-            _spriteBatch.Draw(cursorDefault, Position - hotspotOffset, Color.White);
+            _spriteBatch.Draw(cursorDefault, Position - hotspotOffset, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
             _spriteBatch.End();
         }
     }

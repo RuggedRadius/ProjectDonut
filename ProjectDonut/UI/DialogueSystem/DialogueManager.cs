@@ -50,8 +50,8 @@ namespace ProjectDonut.UI.DialogueSystem
 
         public void LoadContent()
         {
-            //dialogueFont = ContentManager.Load<SpriteFont>("Fonts/Default");
-            dialogueFont = ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
+            dialogueFont = ContentManager.Load<SpriteFont>("Fonts/Default");
+            //dialogueFont = ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
         }
 
         public void Update(GameTime gameTime)
