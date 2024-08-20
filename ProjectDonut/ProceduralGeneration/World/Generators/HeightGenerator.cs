@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public class HeightGenerator
     {
@@ -22,13 +22,13 @@ namespace ProjectDonut.ProceduralGeneration.World
             this.settings = settings;
             this.spriteLib = spriteLib;
 
-            this._noise = new FastNoiseLite[2];
+            _noise = new FastNoiseLite[2];
             _noise[0] = new FastNoiseLite();
             //_noise[0].SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
             _noise[0].SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             _noise[0].SetSeed(new Random().Next(int.MinValue, int.MaxValue));
 
-            this._noise[1] = new FastNoiseLite();
+            _noise[1] = new FastNoiseLite();
             _noise[1].SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
             //_noise[1].SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             _noise[1].SetSeed(new Random().Next(int.MinValue, int.MaxValue));
@@ -53,8 +53,8 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     for (int j = 0; j < height; j++)
                     {
-                        var x = (xOffset * settings.Width) + i;
-                        var y = (yOffset * settings.Height) + j;
+                        var x = xOffset * settings.Width + i;
+                        var y = yOffset * settings.Height + j;
 
                         var heightValue = (int)(_noise[z].GetNoise(x, y) * 100) + 35;
 
@@ -80,7 +80,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int j = 0; j < height; j++)
                 {
-                    result[i, j] = Blend(datas[0][i,j], datas[1][i, j], OctaveBlend);
+                    result[i, j] = Blend(datas[0][i, j], datas[1][i, j], OctaveBlend);
                 }
             }
 

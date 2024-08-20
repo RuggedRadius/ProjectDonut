@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite;
 using ProjectDonut.GameObjects;
+using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.ProceduralGeneration
 {
@@ -43,6 +44,8 @@ namespace ProjectDonut.ProceduralGeneration
         private double _frameTimer { get; set; }
         private double _frameInterval { get; set; }
         private int _frameIndex { get; set; }
+        public Vector2 Position { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int ZIndex { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         public Tile(SpriteBatch spriteBatch, bool isAnimated)
         {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public class WaterGenerator
     {
@@ -200,7 +200,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             var randy = new Random();
 
-            if (randy.NextDouble() <= settings.RiverForkChance && (length - currentLength) > settings.MinForkLength)
+            if (randy.NextDouble() <= settings.RiverForkChance && length - currentLength > settings.MinForkLength)
             {
                 var forkLength = randy.Next(settings.MinForkLength, length - currentLength);
                 var forkDirection = randy.Next(0, 4);
@@ -428,7 +428,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     {
                         heightData[x + i, y + j] = targetValue;
                     }
-                    catch (Exception ex) {}
+                    catch (Exception ex) { }
                 }
             }
         }

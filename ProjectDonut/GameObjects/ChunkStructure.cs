@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration.World.Generators;
 
 namespace ProjectDonut.GameObjects
 {
-    public class ChunkStructure : GameObject
+    public class ChunkStructure : IGameObject
     {
         public string StructureName { get; set; }
         public Structure StructureType { get; set; }
         public Rectangle Rectangle { get; set; }
+        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         //public override void Initialize()
         //{
@@ -22,12 +25,22 @@ namespace ProjectDonut.GameObjects
         //{
         //}
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
+        }
+
+        public void Initialize()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void LoadContent()
+        {
+            //throw new NotImplementedException();
         }
     }
 }

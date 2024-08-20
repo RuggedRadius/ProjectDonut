@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 
 namespace ProjectDonut.GameObjects
 {
-    public class MouseCursor : GameObject
+    public class MouseCursor : IGameObject
     {
         public Vector2 Position { get; set; }
+        public int ZIndex { get; set; }
 
         private Game1 _game;
         private SpriteBatch _spriteBatch;
@@ -34,12 +36,12 @@ namespace ProjectDonut.GameObjects
             this._camera = camera;
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             _game.IsMouseVisible = false;
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             cursorDefault = _spriteLib.GetSprite("cursor");
 
@@ -50,13 +52,13 @@ namespace ProjectDonut.GameObjects
             scaleFactor = new Vector2(xScale, yScale);
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             //Position = Mouse.GetState().Position.ToVector2() * scaleFactor;
             Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(_camera.GetTransformationMatrix(_graphicsDevice, _graphicsDevice.Viewport)));
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
             //_spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Matrix.Identity);
 

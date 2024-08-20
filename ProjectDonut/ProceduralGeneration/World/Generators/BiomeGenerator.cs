@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public class BiomeGenerator
     {
@@ -12,7 +12,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private WorldMapSettings settings;
         private float OctaveBlendAmount = 0.125f;
 
-        public BiomeGenerator(WorldMapSettings settings) 
+        public BiomeGenerator(WorldMapSettings settings)
         {
             this.settings = settings;
 
@@ -63,7 +63,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     for (int j = 0; j < height; j++)
                     {
-                        heightData[i, j] = (int)(_noise[z].GetNoise((xOffset * settings.Width) + i, (yOffset * settings.Height) + j) * biomeCount * 100);
+                        heightData[i, j] = (int)(_noise[z].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * 100);
                     }
                 }
 

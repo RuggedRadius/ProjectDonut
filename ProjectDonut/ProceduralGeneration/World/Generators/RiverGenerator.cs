@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProjectDonut.GameObjects;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public class RiverGenerator
     {
@@ -31,8 +30,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             _noise.SetCellularReturnType(FastNoiseLite.CellularReturnType.Distance2Sub);
             _noise.SetDomainWarpType(FastNoiseLite.DomainWarpType.BasicGrid);
             _noise.SetDomainWarpAmp(27);
-            
-            
+
+
             _noise.SetFractalGain(0.5f);
             _noise.SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
             _noise.SetFractalOctaves(1);
@@ -60,8 +59,8 @@ namespace ProjectDonut.ProceduralGeneration.World
                         continue;
                     }
 
-                    var x = (chunk.ChunkCoordX * settings.Width) + i;
-                    var y = (chunk.ChunkCoordY * settings.Height) + j;
+                    var x = chunk.ChunkCoordX * settings.Width + i;
+                    var y = chunk.ChunkCoordY * settings.Height + j;
                     float sampleValue = _noise.GetNoise(x, y);
 
                     if (sampleValue < heightCutOff)

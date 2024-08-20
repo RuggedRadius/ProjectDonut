@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.GameObjects;
+using ProjectDonut.Interfaces;
 
-namespace ProjectDonut.GameObjects
+namespace ProjectDonut.Debugging
 {
-    public class Debugger : GameObject
+    public class Debugger : IScreenObject
     {
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
@@ -23,6 +22,8 @@ namespace ProjectDonut.GameObjects
 
         public string[] debug;
 
+        public int ZIndex { get; set; }
+
         public Debugger(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphicsDevice, Camera camera)
         {
             _spriteBatch = spriteBatch;
@@ -33,15 +34,12 @@ namespace ProjectDonut.GameObjects
             debug = new string[5];
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
-            base.Initialize();
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
-            base.LoadContent();
-
             debugFont = _content.Load<SpriteFont>("Fonts/Default");
             debugTexture = CreateTexture(_graphicsDevice, 1, 1, Color.Black);
         }
@@ -55,10 +53,8 @@ namespace ProjectDonut.GameObjects
             return texture;
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             // Calculate the height of the debug panel based on the number of debug lines
             int height = 5;
             for (int i = 0; i < debug.Length; i++)
@@ -76,10 +72,8 @@ namespace ProjectDonut.GameObjects
             debugRect = new Rectangle(x, y, 400, height);
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
-            //_spriteBatch.Begin(transformMatrix: Matrix.Identity);
-
             _spriteBatch.Draw(debugTexture, debugRect, Color.Black);
 
             var camPos = _camera.Position;
@@ -92,13 +86,9 @@ namespace ProjectDonut.GameObjects
                 }
 
                 // Debug Text
-                var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + (30 * i));
+                var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + 30 * i);
                 _spriteBatch.DrawString(debugFont, debug[i], pos, Color.White);
             }
-
-            //_spriteBatch.End();
-
-            base.Draw(gameTime);
         }
 
         public static void PrintDataMap(int[,] map, string filePath)

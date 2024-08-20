@@ -4,7 +4,7 @@ using System.IO;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public class WorldGenerator
     {
@@ -12,7 +12,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public int[,] heightData;
         private Tilemap tmBase;
-        
+
         private int[,] forestData;
         private Tilemap tmForest;
 
@@ -52,7 +52,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var data = new int[width, height];
 
-            for (int i = 0; i < width; i++) 
+            for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {

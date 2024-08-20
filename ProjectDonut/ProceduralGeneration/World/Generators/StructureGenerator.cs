@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.GameObjects;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public enum Structure
     {
@@ -29,7 +28,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private SpriteBatch _spriteBatch;
         private Random random = new Random();
 
-        public StructureGenerator(SpriteLibrary spriteLib, WorldMapSettings settings, SpriteBatch spriteBatch) 
+        public StructureGenerator(SpriteLibrary spriteLib, WorldMapSettings settings, SpriteBatch spriteBatch)
         {
             this.spriteLib = spriteLib;
             this.settings = settings;
@@ -72,7 +71,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 viableLocations.Remove(location);
 
                 chunk.StructureData[location.Item1, location.Item2] = 2;
-            }            
+            }
         }
 
         private List<(int, int)> GetViableStructureLocations(WorldChunk chunk)
@@ -146,7 +145,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Tilemap GenerateChunkStructuresTileMap(WorldChunk chunk)
         {
-            var directions = new List<string>{ "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
+            var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
             var tmStructures = new Tilemap(chunk.Width, chunk.Height);
 
             for (int i = 0; i < chunk.Width; i++)
@@ -191,7 +190,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(structure, directions[counter]),
                         TileType = TileType.Forest,
-                        Biome = (Biome)chunk.BiomeData[(i + x), (j + y)],
+                        Biome = (Biome)chunk.BiomeData[i + x, j + y],
                         Frames = GetFrames(structure, directions[counter], 4)
                     };
 

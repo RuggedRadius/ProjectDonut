@@ -2,16 +2,15 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.ProceduralGeneration;
-using ProjectDonut.ProceduralGeneration.World;
-using ProjectDonut.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectDonut.Interfaces;
 
-namespace ProjectDonut.GameObjects
+namespace ProjectDonut.ProceduralGeneration.World
 {
     public class WorldChunk : IGameObject
     {
@@ -22,7 +21,7 @@ namespace ProjectDonut.GameObjects
 
         public int WorldCoordX;
         public int WorldCoordY;
-        
+
         public int[,] HeightData;
         public int[,] BiomeData;
         public int[,] ForestData;
@@ -33,8 +32,8 @@ namespace ProjectDonut.GameObjects
 
         public Dictionary<string, Tilemap> Tilemaps;
 
-        public int Width 
-        { 
+        public int Width
+        {
             get
             {
                 if (HeightData == null)
@@ -61,6 +60,9 @@ namespace ProjectDonut.GameObjects
                 Height = value;
             }
         }
+
+        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private Texture2D tempTexture;
         private GraphicsDevice _graphicsDevice;
@@ -145,7 +147,7 @@ namespace ProjectDonut.GameObjects
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    var position = new Vector2(WorldCoordX + (x * 32), WorldCoordY + (y * 32));
+                    var position = new Vector2(WorldCoordX + x * 32, WorldCoordY + y * 32);
 
                     if (x == 0 || y == 0)
                     {

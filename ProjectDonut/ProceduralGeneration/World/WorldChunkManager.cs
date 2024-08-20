@@ -1,22 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.ProceduralGeneration;
-using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.GameObjects;
+using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration.World.Generators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.GameObjects
+namespace ProjectDonut.ProceduralGeneration.World
 {
-
-
-    public class WorldChunkManager : GameObject
+    public class WorldChunkManager : IGameObject
     {
         public (int, int) PlayerChunkPosition { get; set; }
+        public Vector2 Position { get; set; }
+        public int ZIndex { get; set; }
 
         private int ChunkSize = 100;
         private List<object> Dependencies;
@@ -61,7 +59,7 @@ namespace ProjectDonut.GameObjects
                         break;
 
                     case GraphicsDevice graphicsDevice:
-                        this._graphicsDevice = graphicsDevice;
+                        _graphicsDevice = graphicsDevice;
                         break;
 
                     case SpriteBatch spriteBatch:
@@ -92,14 +90,14 @@ namespace ProjectDonut.GameObjects
             tempTexture.SetData(new[] { Color.Green });
 
             WorldGen = new WorldGenerator(content, _graphicsDevice, settings, spriteLib, _spriteBatch);
-            genHeight = new HeightGenerator(settings, spriteLib, _spriteBatch);    
+            genHeight = new HeightGenerator(settings, spriteLib, _spriteBatch);
             genBiomes = new BiomeGenerator(settings);
             genForest = new ForestGenerator(spriteLib, settings, _spriteBatch);
             genRiver = new RiverGenerator(spriteLib, settings);
             genStructure = new StructureGenerator(spriteLib, settings, _spriteBatch);
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
             for (int i = 0; i < CurrentChunks.Count; i++)
             {
@@ -112,7 +110,7 @@ namespace ProjectDonut.GameObjects
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             var chunkPosChanged = false;
 
@@ -121,7 +119,7 @@ namespace ProjectDonut.GameObjects
                 chunkPosChanged = true;
             }
 
-            if (player.ChunkPosY != PlayerChunkPosition.Item2) 
+            if (player.ChunkPosY != PlayerChunkPosition.Item2)
             {
                 chunkPosChanged = true;
             }
@@ -129,9 +127,9 @@ namespace ProjectDonut.GameObjects
             if (chunkPosChanged)
             {
                 PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
-                
 
-                for (int i = -1; i < 2; i++) 
+
+                for (int i = -1; i < 2; i++)
                 {
                     for (int j = -1; j < 2; j++)
                     {
@@ -149,7 +147,7 @@ namespace ProjectDonut.GameObjects
                                 {
                                     _chunks.Add((x, y), chunk);
                                 }
-                            });                            
+                            });
                         }
                     }
                 }
@@ -204,8 +202,8 @@ namespace ProjectDonut.GameObjects
             return structures;
         }
 
-        public override void Initialize()
-        { 
+        public void Initialize()
+        {
             //ChunksBeingGenerated = new List<(int, int)>();
 
             //// Player chunk position
@@ -253,7 +251,7 @@ namespace ProjectDonut.GameObjects
             return chunk;
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             foreach (var chunk in _chunks)
             {
@@ -267,8 +265,8 @@ namespace ProjectDonut.GameObjects
 
             for (int i = -1; i < 2; i++)
             {
-                for(int j = -1; j < 2; j++)
-                { 
+                for (int j = -1; j < 2; j++)
+                {
                     var chunkX = player.ChunkPosX + i;
                     var chunkY = player.ChunkPosY + j;
 
@@ -279,7 +277,7 @@ namespace ProjectDonut.GameObjects
                     else
                     {
                         continue;
-                    }                    
+                    }
                 }
             }
 

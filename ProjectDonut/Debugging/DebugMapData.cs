@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.ProceduralGeneration
+namespace ProjectDonut.Debugging
 {
     public class DebugMapData
     {
@@ -81,7 +81,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         //    var colData = new Color[width * height];
         //    var targetRect = new Rectangle(0, 0, settings.TileSize, settings.TileSize);
-                        
+
         //    for (int x = 0; x < settings.Width; x++)
         //    {
         //        for (int y = 0; y < settings.Height; y++)

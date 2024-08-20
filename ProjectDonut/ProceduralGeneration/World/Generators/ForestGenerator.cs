@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.GameObjects;
 using System;
 using System.Collections.Generic;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public class ForestData
     {
@@ -25,7 +24,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public ForestGenerator(SpriteLibrary spriteLib, WorldMapSettings mapSettings, SpriteBatch spriteBatch)
         {
             this.spriteLib = spriteLib;
-            this.settings = mapSettings;
+            settings = mapSettings;
             _spriteBatch = spriteBatch;
 
             var random = new Random();
@@ -46,8 +45,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int j = 0; j < chunk.Height; j++)
                 {
-                    var x = (chunk.ChunkCoordX * settings.Width) + i;
-                    var y = (chunk.ChunkCoordY * settings.Height) + j;
+                    var x = chunk.ChunkCoordX * settings.Width + i;
+                    var y = chunk.ChunkCoordY * settings.Height + j;
 
                     var isSuitable = IsCellAppropriateForForest(chunk, i, j);
                     var heightValue = 0;
@@ -175,7 +174,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     return spriteLib.GetSprite("forest-C"); // Change this later?
 
                 case Biome.Winterlands:
-                    return spriteLib.GetSprite("forest-frost-C"); 
+                    return spriteLib.GetSprite("forest-frost-C");
 
                 default:
                     return spriteLib.GetSprite("forest-C");
@@ -210,7 +209,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         //        for (int y = 0; y < walkLength; y++)
         //        {
         //            coords = UpdateCoordinates(coords, width, height);
-                    
+
         //            for (int i = -settings.WalkRadius; i < settings.WalkRadius; i++)
         //            {
         //                for (int j = -settings.WalkRadius; j < settings.WalkRadius; j++)

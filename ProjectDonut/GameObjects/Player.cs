@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using ProjectDonut.GameObjects;
+using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,11 @@ using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
 namespace ProjectDonut.GameObjects
 {
-    public class Player : GameObject
+    public class Player : IGameObject
     {
+        public Vector2 Position { get; set; }
+        public int ZIndex { get; set; }
+
         private Texture2D texture;
         private Texture2D spriteSheet;
 
@@ -72,9 +76,9 @@ namespace ProjectDonut.GameObjects
             this.worldMapSettings = settings;
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
-            position = new Vector2(50, 50);
+            Position = new Vector2(50, 50);
             speed = 2000;
             spriteSize = new Vector2(TileSize, TileSize);
             ZIndex = -100;
@@ -98,13 +102,13 @@ namespace ProjectDonut.GameObjects
             return texture;
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             spriteSheet = _content.Load<Texture2D>("Sprites/TestPlayer");
             currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);            
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             var chunkCoords = GetWorldChunkCoords();
             ChunkPosX = chunkCoords.Item1;
@@ -124,7 +128,7 @@ namespace ProjectDonut.GameObjects
             //    _timer = 0f; // Reset the timer
             //}
 
-            fog.UpdateFogOfWar((int)position.X, (int)position.Y);
+            fog.UpdateFogOfWar((int)Position.X, (int)Position.Y);
 
             HandleInput(gameTime);
         }
@@ -153,7 +157,7 @@ namespace ProjectDonut.GameObjects
 
             UpdateAnimationFrame(movement);
 
-            position += movement;
+            Position += movement;
         }
 
         private void UpdateAnimationFrame(Vector2 movement)
@@ -200,12 +204,12 @@ namespace ProjectDonut.GameObjects
             }
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {            
-            _spriteBatch.Draw(spriteSheet, position, currentFrame, Color.White);
+            _spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
 
-            Game1.debugger.debug[0] = $"Player Position-X: {position.X}";
-            Game1.debugger.debug[1] = $"Player Position-Y: {position.Y}";
+            Game1.debugger.debug[0] = $"Player Position-X: {Position.X}";
+            Game1.debugger.debug[1] = $"Player Position-Y: {Position.Y}";
             Game1.debugger.debug[2] = $"Player Chunk-X: {ChunkPosX}";
             Game1.debugger.debug[3] = $"Player Chunk-Y: {ChunkPosY}";
         }
@@ -227,21 +231,21 @@ namespace ProjectDonut.GameObjects
             var playerStartPosX = (settings.Width * settings.TileSize) / 2;
             var playerStartPosY = (settings.Height * settings.TileSize) / 2;
             
-            position = new Vector2(playerStartPosX, playerStartPosY);
+            Position = new Vector2(playerStartPosX, playerStartPosY);
         }
 
         public (int, int) GetWorldChunkCoords()
         {
             
-            var x = (int)((position.X / (worldMapSettings.TileSize * worldMapSettings.Width)));
-            var y = (int)((position.Y / (worldMapSettings.TileSize * worldMapSettings.Height)));
+            var x = (int)((Position.X / (worldMapSettings.TileSize * worldMapSettings.Width)));
+            var y = (int)((Position.Y / (worldMapSettings.TileSize * worldMapSettings.Height)));
 
-            if (position.X < 0)
+            if (Position.X < 0)
             {
                 x--;
             }
 
-            if (position.Y < 0)
+            if (Position.Y < 0)
             {
                 y--;
             }

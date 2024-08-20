@@ -5,13 +5,12 @@ using ProjectDonut.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
 using ProjectDonut.ProceduralGeneration.World;
-using ProjectDonut.GameObjects;
-using System;
 using ProjectDonut.ProceduralGeneration;
-using ProjectDonut.UI;
 using System.Threading.Tasks;
-using System.Threading;
-using ProjectDonut.ProceduralGeneration.Dungeons;
+using ProjectDonut.Interfaces;
+using ProjectDonut.UI.DialogueSystem;
+using ProjectDonut.UI.ScrollDisplay;
+using ProjectDonut.Debugging;
 
 namespace ProjectDonut
 {
@@ -20,8 +19,8 @@ namespace ProjectDonut
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Dictionary<string, GameObject> _gameObjects;
-        private Dictionary<string, GameObject> _screenObjects;
+        private Dictionary<string, IGameObject> _gameObjects;
+        private Dictionary<string, IScreenObject> _screenObjects;
 
         private SpriteFont _font;
 
@@ -32,7 +31,7 @@ namespace ProjectDonut
 
         private Camera camera;
         private Player player;
-        private DialogueSystem dialogue;
+        private DialogueManager dialogue;
         private GameObjects.MouseCursor cursor;
 
         //private WorldChunk[,] worldChunks;
@@ -58,8 +57,8 @@ namespace ProjectDonut
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _gameObjects = new Dictionary<string, GameObject>();
-            _screenObjects = new Dictionary<string, GameObject>();
+            _gameObjects = new Dictionary<string, IGameObject>();
+            _screenObjects = new Dictionary<string, IScreenObject>();
 
             worldMapSettings = CreateWorldMapSettings();
             //worldChunks = new WorldChunk[3,3];
@@ -94,7 +93,7 @@ namespace ProjectDonut
                 );
             _gameObjects.Add("chunkmanager", worldChunks);
 
-            dialogue = new DialogueSystem(spriteLib, _spriteBatch, camera, Content);
+            dialogue = new DialogueManager(spriteLib, _spriteBatch, camera, Content);
             _gameObjects.Add("dialogue", dialogue);
 
             cursor = new GameObjects.MouseCursor(this, spriteLib, _spriteBatch, GraphicsDevice, camera);
@@ -199,7 +198,7 @@ namespace ProjectDonut
                 testScroll.HideScroll();
             }
 
-            ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].position;
+            ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].Position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));

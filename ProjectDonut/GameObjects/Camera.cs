@@ -3,16 +3,18 @@ using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
 using ProjectDonut.GameObjects;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.GameObjects
 {
-    public class Camera : GameObject
+    public class Camera : IGameObject
     {
         public Vector2 Position { get; set; }
         public float Zoom { get; set; }
         public float ZoomMax = 0.15f;
         public float ZoomMin = 6f;
         public float Rotation { get; set; }
+        public int ZIndex { get; set; }
 
         // States
         private MouseState _previousMouseState;
@@ -32,7 +34,7 @@ namespace ProjectDonut.GameObjects
                    Matrix.CreateTranslation(new Vector3(viewport.Width * 0.5f, viewport.Height * 0.5f, 0));
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
 
@@ -46,8 +48,6 @@ namespace ProjectDonut.GameObjects
             }
 
             Zoom = MathHelper.Clamp(Zoom, ZoomMax, ZoomMin);
-
-            base.Update(gameTime);
         }
 
         private void HandleMouseZoom()
@@ -81,6 +81,21 @@ namespace ProjectDonut.GameObjects
             }
 
             _previousMouseState = mouseState;
+        }
+
+        public void Initialize()
+        {
+            //throw new System.NotImplementedException();
+        }
+
+        public void LoadContent()
+        {
+            //throw new System.NotImplementedException();
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            //throw new System.NotImplementedException();
         }
     }
 }
