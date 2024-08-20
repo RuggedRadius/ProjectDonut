@@ -116,10 +116,10 @@ namespace ProjectDonut.UI.ScrollDisplay
             var startX = DisplayX - curBottomWidth / 2;
             var startY = DisplayY + 32 * scale / 2 - textDimensions.Y / 2;
 
-            _spriteBatch.End();
+            //_spriteBatch.End();
 
             // Draw scroll background parts
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
 
             // Middle section
             int middleWidth = curBottomWidth - 7 * scale + 5;  // Adjust width of the middle section
@@ -149,7 +149,7 @@ namespace ProjectDonut.UI.ScrollDisplay
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _spriteBatch.Draw(scrollTopLeft, new Rectangle(startX, DisplayY, 7 * scale, 32 * scale), Color.White);
             _spriteBatch.Draw(scrollTopRight, new Rectangle(startX + 7 * scale + middleWidth, DisplayY, 7 * scale, 32 * scale), Color.White);
-            //_spriteBatch.End();
+            _spriteBatch.End();
         }
 
 

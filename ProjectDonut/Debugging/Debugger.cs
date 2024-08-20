@@ -74,6 +74,7 @@ namespace ProjectDonut.Debugging
 
         public void Draw(GameTime gameTime)
         {
+            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _spriteBatch.Draw(debugTexture, debugRect, Color.Black);
 
             var camPos = _camera.Position;
@@ -89,6 +90,8 @@ namespace ProjectDonut.Debugging
                 var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + 30 * i);
                 _spriteBatch.DrawString(debugFont, debug[i], pos, Color.White);
             }
+
+            _spriteBatch.End();
         }
 
         public static void PrintDataMap(int[,] map, string filePath)

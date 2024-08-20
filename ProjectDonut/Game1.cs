@@ -29,12 +29,11 @@ namespace ProjectDonut
 
         private SpriteLibrary spriteLib;
 
-        private Camera camera;
+        private Camera _camera;
         private Player player;
         private DialogueManager dialogue;
         private GameObjects.MouseCursor cursor;
 
-        //private WorldChunk[,] worldChunks;
         private WorldChunkManager worldChunks;
         private const int ChunkSize = 100;
 
@@ -69,11 +68,11 @@ namespace ProjectDonut
             fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
 
             // Camera
-            camera = new Camera();
-            _gameObjects.Add("camera", camera);
+            _camera = new Camera();
+            _gameObjects.Add("camera", _camera);
 
             // Player
-            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, camera, fog, worldMapSettings);
+            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, _camera, fog, worldMapSettings);
             _gameObjects.Add("player", player);
 
             // World map
@@ -83,7 +82,7 @@ namespace ProjectDonut
                     Content,
                     _graphics,
                     _spriteBatch,
-                    camera,
+                    _camera,
                     player,
                     fog,
                     GraphicsDevice,
@@ -93,12 +92,13 @@ namespace ProjectDonut
                 );
             _gameObjects.Add("chunkmanager", worldChunks);
 
-            dialogue = new DialogueManager(spriteLib, _spriteBatch, camera, Content);
-            _gameObjects.Add("dialogue", dialogue);
+            dialogue = new DialogueManager(spriteLib, _spriteBatch, _camera, Content);
+            _screenObjects.Add("dialogue", dialogue);
 
-            cursor = new GameObjects.MouseCursor(this, spriteLib, _spriteBatch, GraphicsDevice, camera);
+            cursor = new GameObjects.MouseCursor(this, spriteLib, _spriteBatch, GraphicsDevice, _camera);
+            //_screenObjects.Add("cursor", cursor);
 
-            debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, camera);
+            debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, _camera);
             _screenObjects.Add("debugger", debugger);
 
             testScroll = new ScrollDisplayer(Content, _spriteBatch, GraphicsDevice);
@@ -213,7 +213,7 @@ namespace ProjectDonut
         {
             GraphicsDevice.Clear(Color.Black);
 
-            _spriteBatch.Begin(transformMatrix: ((Camera)_gameObjects["camera"]).GetTransformationMatrix(GraphicsDevice, GraphicsDevice.Viewport));
+            _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix(GraphicsDevice, GraphicsDevice.Viewport));
 
             _gameObjects
                 .Select(x => x.Value)
@@ -225,13 +225,11 @@ namespace ProjectDonut
 
             _spriteBatch.End();
 
-            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _screenObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
-            _spriteBatch.End();
 
 
             base.Draw(gameTime);
