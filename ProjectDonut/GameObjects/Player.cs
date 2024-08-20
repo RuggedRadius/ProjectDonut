@@ -44,19 +44,24 @@ namespace ProjectDonut.GameObjects
         private Rectangle rectBottom;
         private Texture2D debugTexture;
 
-        private SpriteFont debugFont;
+        
 
         private int TileSize = 32;
         private FogOfWar fog;
 
+        private WorldMapSettings worldMapSettings;
+
+        public int ChunkPosX { get; set; }
+        public int ChunkPosY { get; set; }
 
         public Player(
-            GraphicsDeviceManager graphics, 
-            GraphicsDevice graphicsDevice, 
-            ContentManager content, 
-            SpriteBatch spriteBatch, 
+            GraphicsDeviceManager graphics,
+            GraphicsDevice graphicsDevice,
+            ContentManager content,
+            SpriteBatch spriteBatch,
             Camera camera,
-            FogOfWar fog)
+            FogOfWar fog,
+            WorldMapSettings settings)
         {
             this._graphics = graphics;
             this._graphicsDevice = graphicsDevice;
@@ -64,6 +69,7 @@ namespace ProjectDonut.GameObjects
             this._spriteBatch = spriteBatch;
             this.camera = camera;
             this.fog = fog;
+            this.worldMapSettings = settings;
         }
 
         public override void Initialize()
@@ -71,7 +77,7 @@ namespace ProjectDonut.GameObjects
             position = new Vector2(50, 50);
             speed = 2000;
             spriteSize = new Vector2(TileSize, TileSize);
-            ZIndex = 10;
+            ZIndex = -100;
 
             _frameWidth = TileSize; // Width of a single frame
             _frameHeight = TileSize; // Height of a single frame
@@ -95,12 +101,15 @@ namespace ProjectDonut.GameObjects
         public override void LoadContent()
         {
             spriteSheet = _content.Load<Texture2D>("Sprites/TestPlayer");
-            currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
-            debugFont = _content.Load<SpriteFont>("Fonts/Default");
+            currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);            
         }
 
         public override void Update(GameTime gameTime)
         {
+            var chunkCoords = GetWorldChunkCoords();
+            ChunkPosX = chunkCoords.Item1;
+            ChunkPosY = chunkCoords.Item2;
+
             // Update the timer
             _timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -194,8 +203,11 @@ namespace ProjectDonut.GameObjects
         public override void Draw(GameTime gameTime)
         {            
             _spriteBatch.Draw(spriteSheet, position, currentFrame, Color.White);
-            //_spriteBatch.DrawString(debugFont, $"X:{position.X}", new Vector2(0, 0), Color.Green);
-            //_spriteBatch.DrawString(debugFont, $"Y:{position.Y}", new Vector2(0, 20), Color.Green);
+
+            Game1.debugger.debug[0] = $"Player Position-X: {position.X}";
+            Game1.debugger.debug[1] = $"Player Position-Y: {position.Y}";
+            Game1.debugger.debug[2] = $"Player Chunk-X: {ChunkPosX}";
+            Game1.debugger.debug[3] = $"Player Chunk-Y: {ChunkPosY}";
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)
@@ -216,6 +228,25 @@ namespace ProjectDonut.GameObjects
             var playerStartPosY = (settings.Height * settings.TileSize) / 2;
             
             position = new Vector2(playerStartPosX, playerStartPosY);
+        }
+
+        public (int, int) GetWorldChunkCoords()
+        {
+            
+            var x = (int)((position.X / (worldMapSettings.TileSize * worldMapSettings.Width)));
+            var y = (int)((position.Y / (worldMapSettings.TileSize * worldMapSettings.Height)));
+
+            if (position.X < 0)
+            {
+                x--;
+            }
+
+            if (position.Y < 0)
+            {
+                y--;
+            }
+
+            return (x, y);
         }
     }
 }

@@ -11,6 +11,7 @@ using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.UI;
 using System.Threading.Tasks;
 using System.Threading;
+using ProjectDonut.ProceduralGeneration.Dungeons;
 
 namespace ProjectDonut
 {
@@ -20,6 +21,7 @@ namespace ProjectDonut
         private SpriteBatch _spriteBatch;
 
         private Dictionary<string, GameObject> _gameObjects;
+        private Dictionary<string, GameObject> _screenObjects;
 
         private SpriteFont _font;
 
@@ -31,6 +33,15 @@ namespace ProjectDonut
         private Camera camera;
         private Player player;
         private DialogueSystem dialogue;
+        private GameObjects.MouseCursor cursor;
+
+        //private WorldChunk[,] worldChunks;
+        private WorldChunkManager worldChunks;
+        private const int ChunkSize = 100;
+
+        public static Debugger debugger;
+
+        private ScrollDisplayer testScroll;
 
         public Game1()
         {
@@ -40,14 +51,18 @@ namespace ProjectDonut
 
             _graphics.PreferredBackBufferWidth = 1920;
             _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferHeight = 1440;
         }
 
         protected override void Initialize()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
             _gameObjects = new Dictionary<string, GameObject>();
+            _screenObjects = new Dictionary<string, GameObject>();
 
             worldMapSettings = CreateWorldMapSettings();
+            //worldChunks = new WorldChunk[3,3];
 
             spriteLib = new SpriteLibrary(Content, GraphicsDevice);
 
@@ -59,16 +74,16 @@ namespace ProjectDonut
             _gameObjects.Add("camera", camera);
 
             // Player
-            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, camera, fog);
+            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, camera, fog, worldMapSettings);
             _gameObjects.Add("player", player);
 
             // World map
-            _gameObjects.Add("worldmap", new WorldMap(
+            worldChunks = new WorldChunkManager(
                 new List<object>()
-                { 
-                    Content, 
-                    _graphics, 
-                    _spriteBatch, 
+                {
+                    Content,
+                    _graphics,
+                    _spriteBatch,
                     camera,
                     player,
                     fog,
@@ -76,14 +91,23 @@ namespace ProjectDonut
                     spriteLib
                 },
                 worldMapSettings
-                ));
+                );
+            _gameObjects.Add("chunkmanager", worldChunks);
 
             dialogue = new DialogueSystem(spriteLib, _spriteBatch, camera, Content);
             _gameObjects.Add("dialogue", dialogue);
 
-            
+            cursor = new GameObjects.MouseCursor(this, spriteLib, _spriteBatch, GraphicsDevice, camera);
+
+            debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, camera);
+            _screenObjects.Add("debugger", debugger);
+
+            testScroll = new ScrollDisplayer(Content, _spriteBatch, GraphicsDevice);
+            _screenObjects.Add("testScroll", testScroll);
+
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
+            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
             Task.Run(() =>
             {
@@ -93,7 +117,9 @@ namespace ProjectDonut
 
 
             // Position player in middle of the map
-            player.PositionPlayerInMiddleOfMap(worldMapSettings);
+            //player.PositionPlayerInMiddleOfMap(worldMapSettings);
+
+
 
             base.Initialize();
         }
@@ -103,19 +129,19 @@ namespace ProjectDonut
             var s = new WorldMapSettings();
 
             // Dimensions
-            s.Width = 100;
-            s.Height = 100;
+            s.Width = ChunkSize;
+            s.Height = ChunkSize;
             s.TileSize = 32;
 
             // Heights
             s.DeepWaterHeightMin = 0;
-            s.DeepWaterHeightMax = 1;
-            s.WaterHeightMin = 2;
-            s.WaterHeightMax = 3;
-            s.GroundHeightMin = 4;
-            s.GroundHeightMax = 7;
-            s.MountainHeightMin = 8;
-            s.MountainHeightMax = 10;
+            s.DeepWaterHeightMax = 19;
+            s.WaterHeightMin = 20;
+            s.WaterHeightMax = 29;
+            s.GroundHeightMin = 30;
+            s.GroundHeightMax = 94;
+            s.MountainHeightMin = 95;
+            s.MountainHeightMax = 100;
 
             // Forest
             s.ForestCount = 250;
@@ -149,18 +175,37 @@ namespace ProjectDonut
         protected override void LoadContent()
         {
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
+            //debugger.LoadContent();
+            cursor.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            var kbState = Keyboard.GetState();
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbState.IsKeyDown(Keys.Escape))
                 Exit();
+
+            if(kbState.IsKeyDown(Keys.O))
+            {
+                testScroll.DisplayScroll(500, 300, "Flandaria");
+            }
+
+            if (kbState.IsKeyDown(Keys.P))
+            {
+                testScroll.HideScroll();
+            }
 
             ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
+            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
+
+            //debugger.Update(gameTime);
+            cursor.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -177,7 +222,18 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
+            cursor.Draw(gameTime);
+
             _spriteBatch.End();
+
+            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
+            _screenObjects
+                .Select(x => x.Value)
+                .OrderByDescending(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
+            _spriteBatch.End();
+
 
             base.Draw(gameTime);
         }

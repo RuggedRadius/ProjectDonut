@@ -8,60 +8,83 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class BiomeGenerator
     {
-        public int[,] GenerateBiomes(int width, int height)
+        private FastNoiseLite[] _noise;
+        private WorldMapSettings settings;
+        private float OctaveBlendAmount = 0.125f;
+
+        public BiomeGenerator(WorldMapSettings settings) 
         {
-            FastNoiseLite noise = new FastNoiseLite();
-            noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
-            noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
+            this.settings = settings;
 
-            noise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Hybrid);
-            noise.SetCellularJitter(1.0f);
-            noise.SetCellularReturnType(FastNoiseLite.CellularReturnType.CellValue);
+            var random = new Random();
+            _noise = new FastNoiseLite[2];
 
-            noise.SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
-            noise.SetDomainWarpAmp(100.0f);
-            noise.SetFrequency(0.0075f);
+            _noise[0] = new FastNoiseLite();
+            _noise[0].SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            _noise[0].SetSeed(random.Next(int.MinValue, int.MaxValue));
+            _noise[0].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Hybrid);
+            _noise[0].SetCellularJitter(1.0f);
+            _noise[0].SetCellularReturnType(FastNoiseLite.CellularReturnType.CellValue);
+            _noise[0].SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
+            _noise[0].SetDomainWarpAmp(100.0f);
+            _noise[0].SetFrequency(0.0075f);
+            _noise[0].SetFractalGain(0.5f);
+            _noise[0].SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
+            _noise[0].SetFractalOctaves(8);
+            _noise[0].SetFractalLacunarity(2.0f);
 
-            noise.SetFractalGain(0.5f);
-            noise.SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
-            noise.SetFractalOctaves(3);
-            noise.SetFractalLacunarity(2.0f);
+            _noise[1] = new FastNoiseLite();
+            _noise[1].SetNoiseType(FastNoiseLite.NoiseType.Cellular);
+            _noise[1].SetSeed(random.Next(int.MinValue, int.MaxValue));
+            _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Hybrid);
+            _noise[1].SetCellularJitter(1.0f);
+            _noise[1].SetCellularReturnType(FastNoiseLite.CellularReturnType.CellValue);
+            _noise[1].SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
+            _noise[1].SetDomainWarpAmp(100.0f);
+            _noise[1].SetFrequency(0.0075f);
+            _noise[1].SetFractalGain(3.5f);
+            _noise[1].SetFractalType(FastNoiseLite.FractalType.FBm);
+            _noise[1].SetFractalOctaves(3);
+            _noise[1].SetFractalLacunarity(4.0f);
+            _noise[1].SetFractalWeightedStrength(0);
+        }
 
-            // Gather noise data
-            float[,] noiseData = new float[height, width];
-            float minValue = float.MaxValue;
-            float maxValue = float.MinValue;
+        public int[,] GenerateBiomes(int width, int height, int xOffset, int yOffset)
+        {
+            int biomeCount = Enum.GetNames(typeof(Biome)).Length;
 
-            for (int x = 0; x < width; x++)
+            var data = new List<int[,]>();
+
+            for (int z = 0; z < 2; z++)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    noiseData[x, y] = noise.GetNoise(x, y);
+                int[,] heightData = new int[height, width];
 
-                    if (noiseData[x, y] < minValue)
-                        minValue = noiseData[x, y];
-                    if (noiseData[x, y] > maxValue)
-                        maxValue = noiseData[x, y];
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < height; j++)
+                    {
+                        heightData[i, j] = (int)(_noise[z].GetNoise((xOffset * settings.Width) + i, (yOffset * settings.Height) + j) * biomeCount * 100);
+                    }
+                }
+
+                data.Add(heightData);
+            }
+
+            var result = new int[height, width];
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    result[i, j] = Blend(data[0][i, j], data[1][i, j], OctaveBlendAmount) / 100;
                 }
             }
 
-            // Normalise and convert to integer
-            int[,] intData = new int[height, width];
-            float range = maxValue - minValue;
+            return result;
+        }
 
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    // Normalise value to the range [0, 1]
-                    float normalizedValue = (noiseData[x, y] - minValue) / range;
-
-                    // Scale to integer range (e.g., 0 to 255)
-                    intData[x, y] = (int)(normalizedValue * Enum.GetNames(typeof(Biome)).Length);
-                }
-            }
-
-            return intData;
+        int Blend(int a, int b, float t)
+        {
+            return (int)(a + t * (b - a));
         }
     }
 }
