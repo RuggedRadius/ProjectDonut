@@ -36,6 +36,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private BiomeGenerator genBiomes;
         private ForestGenerator genForest;
         private RiverGenerator genRiver;
+        private MountainGenerator genMountain;
         private StructureGenerator genStructure;
 
         private int ChunkWidth = 100;
@@ -94,6 +95,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             genBiomes = new BiomeGenerator(settings);
             genForest = new ForestGenerator(spriteLib, settings, _spriteBatch);
             genRiver = new RiverGenerator(spriteLib, settings);
+            genMountain = new MountainGenerator(settings, spriteLib, _spriteBatch);
             genStructure = new StructureGenerator(spriteLib, settings, _spriteBatch);
         }
 
@@ -240,12 +242,14 @@ namespace ProjectDonut.ProceduralGeneration.World
             genForest.GenerateForestData(chunk);
             genStructure.GenerateStructureData(chunk);
 
-            var tilemapBase = genHeight.CreateBaseTilemap(chunk.HeightData, chunk.BiomeData, chunkX, chunkY);
-            var tilemapForest = genForest.CreateForestTilemap(chunk);
-            var tilemapStructures = genStructure.GenerateChunkStructuresTileMap(chunk);
+            var tilemapBase = genHeight.CreateBaseTilemap(chunk);
+            var tilemapForest = genForest.CreateTileMap(chunk);
+            var tilemapStructures = genStructure.CreateTileMap(chunk);
+            var tilemapMountains = genMountain.CreateTilemap(chunk);
 
             chunk.Tilemaps.Add("base", tilemapBase);
             chunk.Tilemaps.Add("forest", tilemapForest);
+            chunk.Tilemaps.Add("mountains", tilemapMountains);
             chunk.Tilemaps.Add("structures", tilemapStructures);
 
             return chunk;

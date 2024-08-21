@@ -208,10 +208,10 @@ namespace ProjectDonut.GameObjects
         {            
             _spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
 
-            Game1.debugger.debug[0] = $"Player Position-X: {Position.X}";
-            Game1.debugger.debug[1] = $"Player Position-Y: {Position.Y}";
-            Game1.debugger.debug[2] = $"Player Chunk-X: {ChunkPosX}";
-            Game1.debugger.debug[3] = $"Player Chunk-Y: {ChunkPosY}";
+            Game1.Debugger.debug[0] = $"Player Position-X: {Position.X}";
+            Game1.Debugger.debug[1] = $"Player Position-Y: {Position.Y}";
+            Game1.Debugger.debug[2] = $"Player Chunk-X: {ChunkPosX}";
+            Game1.Debugger.debug[3] = $"Player Chunk-Y: {ChunkPosY}";
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)

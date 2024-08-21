@@ -32,12 +32,12 @@ namespace ProjectDonut
         private Camera _camera;
         private Player player;
         private DialogueManager dialogue;
-        private GameObjects.GameCursor cursor;
+        private GameCursor cursor;
 
         private WorldChunkManager worldChunks;
         private const int ChunkSize = 100;
 
-        public static Debugger debugger;
+        public static Debugger Debugger;
 
         private ScrollDisplayer testScroll;
 
@@ -98,8 +98,8 @@ namespace ProjectDonut
             cursor = new GameCursor(this, spriteLib, _spriteBatch, GraphicsDevice, _camera);
             _screenObjects.Add("cursor", cursor);
 
-            debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, _camera);
-            _screenObjects.Add("debugger", debugger);
+            Debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, _camera);
+            _screenObjects.Add("debugger", Debugger);
 
             testScroll = new ScrollDisplayer(Content, _spriteBatch, GraphicsDevice);
             _screenObjects.Add("testScroll", testScroll);

@@ -92,7 +92,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
         }
 
-        public Tilemap CreateForestTilemap(WorldChunk chunk)
+        public Tilemap CreateTileMap(WorldChunk chunk)
         {
             var tmForest = new Tilemap(chunk.Width, chunk.Height);
 
