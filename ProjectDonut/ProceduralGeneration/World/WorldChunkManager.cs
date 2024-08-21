@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
+using ProjectDonut.UI.ScrollDisplay;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -48,6 +50,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public List<ChunkStructure> StructuresInCenterChunk = new List<ChunkStructure>();
 
+        private ScrollDisplayer _scrollDisplayer;
+        private Camera _camera;
+
         public WorldChunkManager(List<object> dependencies, WorldMapSettings settings)
         {
             Dependencies = dependencies;
@@ -75,6 +80,14 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                     case SpriteLibrary spriteLib:
                         this.spriteLib = spriteLib;
+                        break;
+
+                    case ScrollDisplayer scrollDisplay:
+                        this._scrollDisplayer = scrollDisplay;
+                        break;
+
+                    case Camera camera:
+                        this._camera = camera;
                         break;
 
                     default:
@@ -176,35 +189,37 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 structure.Update(gameTime);
             }
+
+            
         }
 
-        private List<ChunkStructure> GetStructuresInCurrentChunks()
-        {
-            var structures = new List<ChunkStructure>();
+        //private List<ChunkStructure> GetStructuresInCurrentChunks()
+        //{
+        //    var structures = new List<ChunkStructure>();
 
-            foreach (var chunk in CurrentChunks)
-            {
-                for (int i = 0; i < chunk.Width; i++)
-                {
-                    for (int j = 0; j < chunk.Height; j++)
-                    {
-                        if (chunk.StructureData[i, j] != 0)
-                        {
-                            var structure = new ChunkStructure()
-                            {
-                                StructureName = "test",
-                                StructureType = (Structure)chunk.StructureData[i, j],
-                                Rectangle = new Rectangle(i * ChunkSize, j * ChunkSize, ChunkSize, ChunkSize)
-                            };
+        //    foreach (var chunk in CurrentChunks)
+        //    {
+        //        for (int i = 0; i < chunk.Width; i++)
+        //        {
+        //            for (int j = 0; j < chunk.Height; j++)
+        //            {
+        //                if (chunk.StructureData[i, j] != 0)
+        //                {
+        //                    var structure = new ChunkStructure()
+        //                    {
+        //                        StructureName = "test",
+        //                        StructureType = (Structure)chunk.StructureData[i, j],
+        //                        Rectangle = new Rectangle(i * ChunkSize, j * ChunkSize, ChunkSize, ChunkSize)
+        //                    };
 
-                            structures.Add(structure);
-                        }
-                    }
-                }
-            }
+        //                    structures.Add(structure);
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return structures;
-        }
+        //    return structures;
+        //}
 
         public void Initialize()
         {
@@ -235,7 +250,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
-            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch);
+            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch, _scrollDisplayer, _camera);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
@@ -253,6 +268,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.Tilemaps.Add("mountains", tilemapMountains);
             chunk.Tilemaps.Add("structures", tilemapStructures);
 
+            //chunk.Structures = genStructure.GetStructuresData(chunk);
+
             return chunk;
         }
 
@@ -262,6 +279,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 chunk.Value.LoadContent();
             }
+        }
+
+        public WorldChunk GetCurrentChunk()
+        {
+            return _chunks[(player.ChunkPosX, player.ChunkPosY)];
         }
 
         private List<WorldChunk> GetPlayerSurroundingChunks()

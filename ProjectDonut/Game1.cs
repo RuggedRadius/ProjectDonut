@@ -11,6 +11,8 @@ using ProjectDonut.Interfaces;
 using ProjectDonut.UI.DialogueSystem;
 using ProjectDonut.UI.ScrollDisplay;
 using ProjectDonut.Debugging;
+using ProjectDonut.Tools;
+using System;
 
 namespace ProjectDonut
 {
@@ -39,7 +41,8 @@ namespace ProjectDonut
 
         public static Debugger Debugger;
 
-        private ScrollDisplayer testScroll;
+        private ScrollDisplayer _scrollDisplay;
+        private Random random;
 
         public Game1()
         {
@@ -50,6 +53,8 @@ namespace ProjectDonut
             _graphics.PreferredBackBufferWidth = 1920;
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.PreferredBackBufferHeight = 1440;
+
+            random = new Random();
         }
 
         protected override void Initialize()
@@ -75,6 +80,9 @@ namespace ProjectDonut
             player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, _camera, fog, worldMapSettings);
             _gameObjects.Add("player", player);
 
+            _scrollDisplay = new ScrollDisplayer(Content, _spriteBatch, GraphicsDevice);
+            _screenObjects.Add("scrollDisplay", _scrollDisplay);
+
             // World map
             worldChunks = new WorldChunkManager(
                 new List<object>()
@@ -86,7 +94,8 @@ namespace ProjectDonut
                     player,
                     fog,
                     GraphicsDevice,
-                    spriteLib
+                    spriteLib,
+                    _scrollDisplay,
                 },
                 worldMapSettings
                 );
@@ -100,9 +109,6 @@ namespace ProjectDonut
 
             Debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, _camera);
             _screenObjects.Add("debugger", Debugger);
-
-            testScroll = new ScrollDisplayer(Content, _spriteBatch, GraphicsDevice);
-            _screenObjects.Add("testScroll", testScroll);
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
@@ -184,18 +190,38 @@ namespace ProjectDonut
 
             if(kbState.IsKeyDown(Keys.O))
             {
-                testScroll.DisplayScroll(500, 300, "Flandaria");
+                //testScroll.DisplayScroll(500, 300, "Flandaria");                
+                _scrollDisplay.DisplayScroll(new ProceduralGeneration.World.Structures.StructureData()
+                {
+                    Name = NameGenerator.GenerateRandomName(random.Next(3, 4)),
+                    //Name = "Flandaria",
+                    Bounds = new Rectangle(800, 100, 100, 100)
+                });
             }
 
             if (kbState.IsKeyDown(Keys.P))
             {
-                testScroll.HideScroll();
+                _scrollDisplay.HideScroll();
             }
 
             ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].Position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
+
+            Debugger.debug[4] = $"Cursor: {cursor.Position}";
+            
+            var structure = worldChunks.GetCurrentChunk().Structures.FirstOrDefault();
+            if (structure != null)
+            {
+                Debugger.debug[5] = $"Structure: {structure.Bounds.X},{structure.Bounds.Y}";
+            }
+            else
+            {
+                Debugger.debug[5] = "Structure: null";
+            }
+
+            Debugger.debug[6] = $"Camera Position: {_camera.Position}";
 
             base.Update(gameTime);
         }

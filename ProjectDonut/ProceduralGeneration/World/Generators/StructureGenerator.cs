@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.ProceduralGeneration.World.Structures;
+using ProjectDonut.Tools;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
@@ -72,6 +74,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                 chunk.StructureData[location.Item1, location.Item2] = 2;
             }
+
+            chunk.Structures = GetStructuresData(chunk);
         }
 
         private List<(int, int)> GetViableStructureLocations(WorldChunk chunk)
@@ -239,6 +243,77 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
 
             return results;
+        }
+
+        public List<StructureData> GetStructuresData(WorldChunk chunk)
+        {
+            var random = new Random();
+            var structures = new List<StructureData>();
+
+            var width = chunk.Width;
+            var height = chunk.Height;
+            var data = chunk.StructureData;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (data[x, y] != 0)
+                    {
+                        structures.Add(new StructureData
+                        {
+                            Bounds = GetStructureBounds(chunk, x, y),
+                            Name = NameGenerator.GenerateRandomName(random.Next(2,5))
+                        });
+                    }
+                }
+            }
+
+            return structures;
+        }
+
+        private Rectangle GetStructureBounds(WorldChunk chunk, int x, int y)
+        {
+            var posX = x;
+            var posY = y;
+
+            int structureWidth = 0;
+            int structureHeight = 0;
+
+            var widthFound = false;
+            while (!widthFound)
+            {
+                if (chunk.StructureData[posX, posY] == 0)
+                {
+                    widthFound = true;
+                }
+                else
+                {
+                    structureWidth++;
+                    posX++;
+                }
+            }
+
+            var heightFound = false;
+            while (!heightFound)
+            {
+                if (chunk.StructureData[posX, posY] == 0)
+                {
+                    heightFound = true;
+                }
+                else
+                {
+                    structureHeight++;
+                    posY++;
+                }
+            }
+
+            var chunkPosX = settings.TileSize * x;
+            var chunkPosY = settings.TileSize * y;
+
+
+
+            return new Rectangle(chunkPosX, chunkPosY, structureWidth, structureHeight);
         }
     }
 }

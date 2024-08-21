@@ -31,7 +31,7 @@ namespace ProjectDonut.Debugging
             _graphicsDevice = graphicsDevice;
             _camera = camera;
 
-            debug = new string[5];
+            debug = new string[10];
         }
 
         public void Initialize()
@@ -114,5 +114,65 @@ namespace ProjectDonut.Debugging
 
             File.WriteAllLines(filePath, lines);
         }
+
+        //public void SaveTilemapToFile(string filePath)
+        //{
+        //    int width = settings.Width * settings.TileSize;
+        //    int height = settings.Height * settings.TileSize;
+
+        //    // Create a RenderTarget2D with the size of the entire tilemap
+        //    using (RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height))
+        //    {
+        //        // Set the RenderTarget
+        //        graphicsDevice.SetRenderTarget(renderTarget);
+
+        //        // Clear the RenderTarget (optional)
+        //        graphicsDevice.Clear(Color.Transparent);
+
+        //        // Create a SpriteBatch to draw the textures
+        //        SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
+
+        //        spriteBatch.Begin();
+
+        //        // Loop through each texture and draw it on the RenderTarget
+        //        for (int x = 0; x < settings.Width; x++)
+        //        {
+        //            for (int y = 0; y < settings.Height; y++)
+        //            {
+        //                // Draw tiles
+        //                foreach (var tilemap in tilemaps)
+        //                {
+        //                    var mapData = tilemap.Value.Map;
+        //                    Tile tile = mapData[x, y];
+
+        //                    if (tile == null)
+        //                    {
+        //                        continue;
+        //                    }
+
+        //                    Texture2D texture = tile.Texture;
+        //                    Vector2 position = new Vector2(x * settings.TileSize, y * settings.TileSize);
+        //                    spriteBatch.Draw(texture, position, Color.White);
+        //                }
+
+        //                // Draw height value
+        //                var heightValue = $"{heightData[x, y]}";
+        //                var textPosition = new Vector2(x * settings.TileSize, y * settings.TileSize);
+        //                spriteBatch.DrawString(debugFont, heightValue, textPosition, Color.Black);
+        //            }
+        //        }
+
+        //        spriteBatch.End();
+
+        //        // Reset the RenderTarget to null
+        //        graphicsDevice.SetRenderTarget(null);
+
+        //        // Save the RenderTarget as a PNG file
+        //        using (FileStream stream = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            renderTarget.SaveAsPng(stream, renderTarget.Width, renderTarget.Height);
+        //        }
+        //    }
+        //}
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration.World.Structures;
 
 namespace ProjectDonut.UI.ScrollDisplay
 {
@@ -39,6 +40,8 @@ namespace ProjectDonut.UI.ScrollDisplay
         private GraphicsDevice _graphicsDevice;
         private RasterizerState rasterizerState;
 
+        public StructureData CurrentStructureData { get; set; }
+
         public ScrollDisplayer(ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
             _content = content;
@@ -46,13 +49,14 @@ namespace ProjectDonut.UI.ScrollDisplay
             _graphicsDevice = graphicsDevice;
         }
 
-        public void DisplayScroll(int x, int y, string text)
+        public void DisplayScroll(StructureData structure)
         {
-            DisplayX = x;
-            DisplayY = y;
-            textDimensions = scrollFont.MeasureString(text);
+            CurrentStructureData = structure;
+            DisplayX = structure.Bounds.X + (structure.Bounds.Width / 2); ;
+            DisplayY = structure.Bounds.Y + 20;
+            textDimensions = scrollFont.MeasureString(structure.Name);
             DisplayWidth = (int)textDimensions.X + 7 * scale;
-            curText = text;
+            curText = structure.Name;
 
             _scrollTimer = 0f;
 
@@ -63,6 +67,7 @@ namespace ProjectDonut.UI.ScrollDisplay
         {
             state = ScrollShowState.Hidden;
             _scrollTimer = 0f;
+            CurrentStructureData = null;
         }
 
         public void Initialize()
