@@ -143,7 +143,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return true;
         }
 
-        public Tilemap GenerateChunkStructuresTileMap(WorldChunk chunk)
+        public Tilemap CreateTileMap(WorldChunk chunk)
         {
             var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
             var tmStructures = new Tilemap(chunk.Width, chunk.Height);

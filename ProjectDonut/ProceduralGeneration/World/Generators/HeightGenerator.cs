@@ -156,28 +156,28 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         }
 
 
-        public Tilemap CreateBaseTilemap(int[,] heightData, int[,] biomeData, int chunkX, int chunkY)
+        public Tilemap CreateBaseTilemap(WorldChunk chunk)
         {
-            var tmBase = new Tilemap(heightData.GetLength(0), heightData.GetLength(1));
+            var tmBase = new Tilemap(chunk.Width, chunk.Height);
 
-            for (int i = 0; i < heightData.GetLength(0); i++)
+            for (int i = 0; i < chunk.Width; i++)
             {
-                for (int j = 0; j < heightData.GetLength(1); j++)
+                for (int j = 0; j < chunk.Height; j++)
                 {
-                    var biomeValue = biomeData[i, j];
-                    var heightValue = heightData[i, j];
+                    var biomeValue = chunk.BiomeData[i, j];
+                    var heightValue = chunk.HeightData[i, j];
 
                     var tile = new Tile(_spriteBatch, false)
                     {
-                        ChunkX = chunkX,
-                        ChunkY = chunkY,
+                        ChunkX = chunk.ChunkCoordX,
+                        ChunkY = chunk.ChunkCoordY,
                         xIndex = i,
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(i, j, biomeValue, heightValue),
                         TileType = DetermineTileType(i, j, heightValue),
-                        Biome = (Biome)biomeData[i, j]
+                        Biome = (Biome)chunk.BiomeData[i, j]
                     };
 
                     tmBase.Map[i, j] = tile;
@@ -191,11 +191,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         {
             var biome = (Biome)biomeValue;
 
-            if (heightValue >= settings.MountainHeightMin)
-            {
-                return spriteLib.GetSprite("mountain");
-            }
-            else if (heightValue >= settings.GroundHeightMin)
+            if (heightValue >= settings.GroundHeightMin)
             {
                 switch (biome)
                 {
