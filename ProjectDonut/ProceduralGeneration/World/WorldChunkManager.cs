@@ -44,6 +44,8 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private Texture2D tempTexture;
 
+        private int surroundChunkCount = 1;
+
         public List<ChunkStructure> StructuresInCenterChunk = new List<ChunkStructure>();
 
         public WorldChunkManager(List<object> dependencies, WorldMapSettings settings)
@@ -213,10 +215,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             // All chunks dictionary - initialised with starting 9 chunks
             _chunks = new Dictionary<(int, int), WorldChunk>();
-            int testsize = 1;
-            for (int x = -testsize; x <= testsize; x++)
+            for (int x = -surroundChunkCount; x <= surroundChunkCount; x++)
             {
-                for (int y = -testsize; y <= testsize; y++)
+                for (int y = -surroundChunkCount; y <= surroundChunkCount; y++)
                 {
                     var key = (x, y);
                     var chunk = CreateChunk(x, y);
@@ -267,9 +268,9 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var playerChunks = new List<WorldChunk>();
 
-            for (int i = -1; i < 2; i++)
+            for (int i = -surroundChunkCount; i <= surroundChunkCount; i++)
             {
-                for (int j = -1; j < 2; j++)
+                for (int j = -surroundChunkCount; j <= surroundChunkCount; j++)
                 {
                     var chunkX = player.ChunkPosX + i;
                     var chunkY = player.ChunkPosY + j;
