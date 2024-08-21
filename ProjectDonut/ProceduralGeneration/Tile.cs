@@ -78,6 +78,11 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Update(GameTime gameTime)
         {
+            if (Frames == null || Frames.Count == 0)
+            {
+                return;
+            }
+
             if (IsAnimated)
             {
                 _frameTimer += gameTime.ElapsedGameTime.TotalSeconds;

@@ -48,11 +48,11 @@ namespace ProjectDonut.ProceduralGeneration
             spriteSheetForest = content.Load<Texture2D>("Sprites/Map/World/Forest");
             spriteSheetMountain = content.Load<Texture2D>("Sprites/Map/World/Mountain");
             spriteSheetCastle = content.Load<Texture2D>("Sprites/WorldStructures/Castle");
-            
 
+            LoadStructureCastle();
             LoadDialogueSystem();
             LoadStructureTown();
-            LoadStructureCastle();
+            
             LoadMouseCursor();
             
 
@@ -214,19 +214,20 @@ namespace ProjectDonut.ProceduralGeneration
         {
             spriteSheetCastle = content.Load<Texture2D>("Sprites/WorldStructures/Castle");
 
-            for (int i = 0; i < 4; i++)
+            var frameCount = 1;
+            var rowCount = 9;
+            var colCount = 9;
+
+            for (int i = 0; i < frameCount; i++)
             {
-                lib.Add($"castle-{i + 1:D2}-NW", ExtractSprite(spriteSheetCastle, 0 + (i * 3), 0));
-                lib.Add($"castle-{i + 1:D2}-N", ExtractSprite(spriteSheetCastle, 1 + (i * 3), 0));
-                lib.Add($"castle-{i + 1:D2}-NE", ExtractSprite(spriteSheetCastle, 2 + (i * 3), 0));
-
-                lib.Add($"castle-{i + 1:D2}-W", ExtractSprite(spriteSheetCastle, 0 + (i * 3), 1));
-                lib.Add($"castle-{i + 1:D2}-C", ExtractSprite(spriteSheetCastle, 1 + (i * 3), 1));
-                lib.Add($"castle-{i + 1:D2}-E", ExtractSprite(spriteSheetCastle, 2 + (i * 3), 1));
-
-                lib.Add($"castle-{i + 1:D2}-SW", ExtractSprite(spriteSheetCastle, 0 + (i * 3), 2));
-                lib.Add($"castle-{i + 1:D2}-S", ExtractSprite(spriteSheetCastle, 1 + (i * 3), 2));
-                lib.Add($"castle-{i + 1:D2}-SE", ExtractSprite(spriteSheetCastle, 2 + (i * 3), 2));
+                for (int j = 0; j < rowCount; j++)
+                {
+                    for (int k = 0; k < colCount; k++)
+                    {
+                        var sprite = ExtractSprite(spriteSheetCastle, j + (i * 3), k);
+                        lib.Add($"castle-{i + 1:D2}-{j}-{k}", sprite);
+                    }
+                }
             }
         }
 

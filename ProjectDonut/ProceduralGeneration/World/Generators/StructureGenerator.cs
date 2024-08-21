@@ -113,9 +113,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
         private bool IsCellSuitable(WorldChunk chunk, int i, int j)
         {
-            for (int x = -2; x <= 2; x++)
+            for (int x = 0; x < 9; x++)
             {
-                for (int y = -2; y <= 2; y++)
+                for (int y = 0; y < 9; y++)
                 {
                     if (i + x < 0 || j + y < 0 || i + x >= chunk.Width || j + y >= chunk.Height)
                     {
@@ -176,9 +176,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
             var structure = (Structure)structureValue;
 
-            for (int j = -1; j <= 1; j++)
+            for (int j = 0; j < 9; j++)
             {
-                for (int i = -1; i <= 1; i++)
+                for (int i = 0; i < 9; i++)
                 {
                     var tile = new Tile(_spriteBatch, true)
                     {
@@ -188,10 +188,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         yIndex = j + y,
                         LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = DetermineTexture(structure, directions[counter]),
+                        Texture = spriteLib.GetSprite($"castle-01-{i}-{j}"), //DetermineTexture(structure, directions[counter]),
                         TileType = TileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i + x, j + y],
-                        Frames = GetFrames(structure, directions[counter], 4)
+                        Frames = new List<Texture2D>()//GetFrames(structure, directions[counter], 4)
                     };
 
                     map.Map[i + x, j + y] = tile;
