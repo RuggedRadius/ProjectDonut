@@ -70,8 +70,16 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
-        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Vector2 Position // TODO: Use this instead of individuals int above
+        { 
+            get => throw new NotImplementedException(); 
+            set => throw new NotImplementedException(); 
+        }
+        public int ZIndex // TODO: Currently not used
+        { 
+            get; 
+            set; 
+        }
 
         private Texture2D tempTexture;
         private GraphicsDevice _graphicsDevice;
@@ -214,6 +222,9 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }        
 
-        
+        public void GrowForest()
+        {
+
+        }        
     }
 }

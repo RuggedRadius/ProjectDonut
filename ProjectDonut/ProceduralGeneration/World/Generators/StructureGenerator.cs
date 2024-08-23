@@ -46,8 +46,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var townChance = random.Next(1, 101);
             var castleChance = random.Next(1, 101);
 
-            var castleCount = castleChance > 95 ? 1 : 0;
-            var townCount = townChance > 80 ? 1 : 0;
+            var castleCount = castleChance > 0 ? 0 : 0;
+            var townCount = townChance > 0 ? 1 : 0;
 
             for (int i = 0; i < castleCount; i++)
             {

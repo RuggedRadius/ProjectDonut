@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
+using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
@@ -28,7 +29,7 @@ namespace ProjectDonut.GameObjects
         private ContentManager _content;
         private SpriteBatch _spriteBatch;
 
-        private Camera camera;
+        private Camera _camera;
 
         private Vector2 spriteSize;
         private Rectangle currentFrame;
@@ -48,12 +49,8 @@ namespace ProjectDonut.GameObjects
         private Rectangle rectBottom;
         private Texture2D debugTexture;
 
-        
-
         private int TileSize = 32;
-        private FogOfWar fog;
-
-        private WorldMapSettings worldMapSettings;
+        private int ChunkSize = 100;
 
         public int ChunkPosX { get; set; }
         public int ChunkPosY { get; set; }
@@ -63,17 +60,13 @@ namespace ProjectDonut.GameObjects
             GraphicsDevice graphicsDevice,
             ContentManager content,
             SpriteBatch spriteBatch,
-            Camera camera,
-            FogOfWar fog,
-            WorldMapSettings settings)
+            Camera camera)
         {
             this._graphics = graphics;
             this._graphicsDevice = graphicsDevice;
             this._content = content;
             this._spriteBatch = spriteBatch;
-            this.camera = camera;
-            this.fog = fog;
-            this.worldMapSettings = settings;
+            this._camera = camera;
         }
 
         public void Initialize()
@@ -128,9 +121,12 @@ namespace ProjectDonut.GameObjects
             //    _timer = 0f; // Reset the timer
             //}
 
-            fog.UpdateFogOfWar((int)Position.X, (int)Position.Y);
-
             HandleInput(gameTime);
+
+            Debugger.Lines[0] = $"Player Position-X: {Position.X}";
+            Debugger.Lines[1] = $"Player Position-Y: {Position.Y}";
+            Debugger.Lines[2] = $"Player Chunk-X: {ChunkPosX}";
+            Debugger.Lines[3] = $"Player Chunk-Y: {ChunkPosY}";
         }
 
         private void HandleInput(GameTime gameTime)
@@ -205,13 +201,11 @@ namespace ProjectDonut.GameObjects
         }
 
         public void Draw(GameTime gameTime)
-        {            
+        {
+            _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
             _spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
+            _spriteBatch.End();
 
-            Game1.Debugger.debug[0] = $"Player Position-X: {Position.X}";
-            Game1.Debugger.debug[1] = $"Player Position-Y: {Position.Y}";
-            Game1.Debugger.debug[2] = $"Player Chunk-X: {ChunkPosX}";
-            Game1.Debugger.debug[3] = $"Player Chunk-Y: {ChunkPosY}";
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)
@@ -237,8 +231,8 @@ namespace ProjectDonut.GameObjects
         public (int, int) GetWorldChunkCoords()
         {
             
-            var x = (int)((Position.X / (worldMapSettings.TileSize * worldMapSettings.Width)));
-            var y = (int)((Position.Y / (worldMapSettings.TileSize * worldMapSettings.Height)));
+            var x = (int)((Position.X / (TileSize * ChunkSize)));
+            var y = (int)((Position.Y / (TileSize * ChunkSize)));
 
             if (Position.X < 0)
             {

@@ -9,42 +9,43 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Debugging
 {
-    public class Debugger : IScreenObject
+    public static class Debugger
     {
-        private SpriteBatch _spriteBatch;
-        private ContentManager _content;
-        private GraphicsDevice _graphicsDevice;
-        private Camera _camera;
+        public static SpriteBatch _spriteBatch;
+        public static ContentManager _content;
+        public static GraphicsDevice _graphicsDevice;
+        public static Camera _camera;
 
-        private SpriteFont debugFont;
-        private Texture2D debugTexture;
-        private Rectangle debugRect;
+        private static SpriteFont debugFont;
+        private static Texture2D debugTexture;
+        private static Rectangle debugRect;
+        private static int maxWindowWidth;
 
-        public string[] debug;
+        public static string[] Lines = new string[10];
 
-        public int ZIndex { get; set; }
+        public static int ZIndex { get; set; }
 
-        public Debugger(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphicsDevice, Camera camera)
+        //public Debugger(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphicsDevice, Camera camera)
+        //{
+        //    _spriteBatch = spriteBatch;
+        //    _content = content;
+        //    _graphicsDevice = graphicsDevice;
+        //    _camera = camera;
+
+        //    Lines = new string[10];
+        //}
+
+        public static void Initialize()
         {
-            _spriteBatch = spriteBatch;
-            _content = content;
-            _graphicsDevice = graphicsDevice;
-            _camera = camera;
-
-            debug = new string[10];
         }
 
-        public void Initialize()
-        {
-        }
-
-        public void LoadContent()
+        public static void LoadContent()
         {
             debugFont = _content.Load<SpriteFont>("Fonts/Default");
             debugTexture = CreateTexture(_graphicsDevice, 1, 1, Color.Black);
         }
 
-        Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
+        private static Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
         {
             Texture2D texture = new Texture2D(graphicsDevice, width, height);
             Color[] colorData = new Color[width * height];
@@ -53,13 +54,13 @@ namespace ProjectDonut.Debugging
             return texture;
         }
 
-        public void Update(GameTime gameTime)
+        public static void Update(GameTime gameTime)
         {
             // Calculate the height of the debug panel based on the number of debug lines
             int height = 5;
-            for (int i = 0; i < debug.Length; i++)
+            for (int i = 0; i < Lines.Length; i++)
             {
-                if (debug[i] != null)
+                if (Lines[i] != null)
                 {
                     height += 30;
                 }
@@ -69,26 +70,40 @@ namespace ProjectDonut.Debugging
             int x = 10;
             int y = 10;
 
-            debugRect = new Rectangle(x, y, 400, height);
-        }
+            foreach (var line in Lines)
+            {
+                if (line == null)
+                {
+                    continue;
+                }
 
-        public void Draw(GameTime gameTime)
+                var length = (int)debugFont.MeasureString(line).X + 10;
+                if (length > maxWindowWidth)
+                {
+                    maxWindowWidth = length;
+                }
+            }
+
+            debugRect = new Rectangle(x, y, maxWindowWidth, height);
+        }
+        
+        public static void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _spriteBatch.Draw(debugTexture, debugRect, Color.Black);
 
             var camPos = _camera.Position;
 
-            for (int i = 0; i < debug.Length; i++)
+            for (int i = 0; i < Lines.Length; i++)
             {
-                if (debug[i] == null)
+                if (Lines[i] == null)
                 {
                     continue;
                 }
 
                 // Debug Text
                 var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + 30 * i);
-                _spriteBatch.DrawString(debugFont, debug[i], pos, Color.White);
+                _spriteBatch.DrawString(debugFont, Lines[i], pos, Color.White);
             }
 
             _spriteBatch.End();
