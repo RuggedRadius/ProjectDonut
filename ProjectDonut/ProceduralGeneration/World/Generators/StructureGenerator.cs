@@ -75,7 +75,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 chunk.StructureData[location.Item1, location.Item2] = 2;
             }
 
-            chunk.Structures = GetStructuresData(chunk);
+            //chunk.Structures = GetStructuresData(chunk);
         }
 
         private List<(int, int)> GetViableStructureLocations(WorldChunk chunk)
@@ -152,6 +152,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
             var tmStructures = new Tilemap(chunk.Width, chunk.Height);
 
+            chunk.Structures = new List<StructureData>();
+
             for (int i = 0; i < chunk.Width; i++)
             {
                 for (int j = 0; j < chunk.Height; j++)
@@ -202,6 +204,12 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     counter++;
                 }
             }
+
+            chunk.Structures.Add(new StructureData
+            {
+                Bounds = new Rectangle(x * settings.TileSize, y * settings.TileSize, 9 * settings.TileSize, 9 * settings.TileSize),
+                Name = NameGenerator.GenerateRandomName(random.Next(2, 5))
+            });
         }
 
         private Texture2D DetermineTexture(Structure structure, string direction)
@@ -311,9 +319,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var chunkPosX = settings.TileSize * x;
             var chunkPosY = settings.TileSize * y;
 
-
-
-            return new Rectangle(chunkPosX, chunkPosY, structureWidth, structureHeight);
+            return new Rectangle(
+                chunkPosX, 
+                chunkPosY, 
+                structureWidth * settings.TileSize, 
+                structureHeight * settings.TileSize);
         }
     }
 }

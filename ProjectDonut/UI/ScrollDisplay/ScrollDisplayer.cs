@@ -52,8 +52,10 @@ namespace ProjectDonut.UI.ScrollDisplay
         public void DisplayScroll(StructureData structure)
         {
             CurrentStructureData = structure;
-            DisplayX = structure.Bounds.X + (structure.Bounds.Width / 2); ;
-            DisplayY = structure.Bounds.Y + 20;
+            //DisplayX = structure.Bounds.X + (structure.Bounds.Width / 2);
+            //DisplayY = structure.Bounds.Y + 20;
+            DisplayX = Game1.MyGraphicsDeviceManager.PreferredBackBufferWidth / 2;
+            DisplayY = Game1.MyGraphicsDeviceManager.PreferredBackBufferHeight - 200;
             textDimensions = scrollFont.MeasureString(structure.Name);
             DisplayWidth = (int)textDimensions.X + 7 * scale;
             curText = structure.Name;

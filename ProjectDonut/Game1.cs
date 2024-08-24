@@ -19,6 +19,10 @@ namespace ProjectDonut
 {
     public class Game1 : Game
     {
+        // Naughty naughty
+        public static GraphicsDeviceManager MyGraphicsDeviceManager;
+        public static GraphicsDevice MyGraphicsDevice;
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -53,7 +57,8 @@ namespace ProjectDonut
 
             random = new Random();
 
-            
+            MyGraphicsDeviceManager = _graphics;
+            MyGraphicsDevice = _graphics.GraphicsDevice;
         }
 
         protected override void Initialize()

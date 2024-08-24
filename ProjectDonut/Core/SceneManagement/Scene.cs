@@ -90,6 +90,8 @@ namespace ProjectDonut.Core.SceneManagement
 
         public void LoadContent()
         {
+            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
         }
 
         public void Update(GameTime gameTime)

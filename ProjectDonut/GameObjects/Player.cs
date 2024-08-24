@@ -19,6 +19,16 @@ namespace ProjectDonut.GameObjects
     public class Player : IGameObject
     {
         public Vector2 Position { get; set; }
+        public Vector2 ChunkPosition
+        {
+            get
+            {
+                var offsetX = ChunkPosX * ChunkSize * TileSize;
+                var offsetY = ChunkPosY * ChunkSize * TileSize;
+                var offset = new Vector2(offsetX, offsetY);
+                return Position - offset;
+            }
+        }
         public int ZIndex { get; set; }
 
         private Texture2D texture;
@@ -123,10 +133,9 @@ namespace ProjectDonut.GameObjects
 
             HandleInput(gameTime);
 
-            Debugger.Lines[0] = $"Player Position-X: {Position.X}";
-            Debugger.Lines[1] = $"Player Position-Y: {Position.Y}";
-            Debugger.Lines[2] = $"Player Chunk-X: {ChunkPosX}";
-            Debugger.Lines[3] = $"Player Chunk-Y: {ChunkPosY}";
+            Debugger.Lines[0] = $"Player Position: [{(int)Position.X}, {(int)Position.Y}]";
+            Debugger.Lines[1] = $"Chunk: [{ChunkPosX}, {ChunkPosY}]";
+            Debugger.Lines[3] = $"ChunkPos = [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";
         }
 
         private void HandleInput(GameTime gameTime)

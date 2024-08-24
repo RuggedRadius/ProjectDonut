@@ -250,7 +250,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
-            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch, _scrollDisplayer, _camera);
+            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch, _scrollDisplayer, _camera, player);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 

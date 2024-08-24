@@ -14,6 +14,7 @@ using ProjectDonut.UI.ScrollDisplay;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.GameObjects;
 using ProjectDonut.ProceduralGeneration.World.Generators;
+using System.Diagnostics;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -87,6 +88,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private ScrollDisplayer _scrollDisplayer;
         private Camera _camera;
+        private Player _player;
 
         public WorldChunk(
             int chunkXPos, 
@@ -94,7 +96,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             GraphicsDevice graphicsDevice, 
             SpriteBatch spriteBatch, 
             ScrollDisplayer scrollDisplayer,
-            Camera camera)
+            Camera camera,
+            Player player)
         {
             ChunkCoordX = chunkXPos;
             ChunkCoordY = chunkYPos;
@@ -106,6 +109,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             _spriteBatch = spriteBatch;
             _scrollDisplayer = scrollDisplayer;
             _camera = camera;
+            _player = player;
 
             Tilemaps = new Dictionary<string, Tilemap>();
 
@@ -150,19 +154,19 @@ namespace ProjectDonut.ProceduralGeneration.World
 
 
             // Check for scroll display
-            HandleScrollDisplay();
+            //HandleScrollDisplay();
         }
 
+        // **** BEWARE: THIS IS VERY BROKEN ***
         private void HandleScrollDisplay()
         {
-            MouseState mouseState = Mouse.GetState();
-            Vector2 mouseScreenPosition = new Vector2(mouseState.X, mouseState.Y);
-
-            Vector2 mouseWorldPosition = Vector2.Transform(mouseScreenPosition, Matrix.Invert(_camera.GetViewMatrix()));
-
+            var playerPos = _player.ChunkPosition;
+            Debugging.Debugger.Lines[7] = $"PlayerChunkPos = {playerPos}";
             foreach (var structure in Structures)
             {
-                if (structure.Bounds.Contains(mouseWorldPosition.ToPoint()))
+                var distance = Vector2.Distance(playerPos, new Vector2(structure.Bounds.X, structure.Bounds.Y));
+                Debugging.Debugger.Lines[2] = $"Distance = {distance}";
+                if (distance <= 100)
                 {
                     // Mouse is hovering over this structure
                     if (_scrollDisplayer.CurrentStructureData == structure)
@@ -178,7 +182,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            //_scrollDisplayer.HideScroll();
+            _scrollDisplayer.HideScroll();
         }
 
         public void Draw(GameTime gameTime)

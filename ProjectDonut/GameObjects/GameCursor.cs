@@ -54,13 +54,14 @@ namespace ProjectDonut.GameObjects
 
         public void Update(GameTime gameTime)
         {
-            //Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(_camera.GetTransformationMatrix()));
             Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(Matrix.Identity));
+
+            // Calculate chunk size
+
         }
 
         public void Draw(GameTime gameTime)
         {
-            //_spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
             _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _spriteBatch.Draw(cursorDefault, Position - hotspotOffset, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
             _spriteBatch.End();
