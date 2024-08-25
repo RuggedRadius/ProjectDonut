@@ -24,18 +24,21 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private Texture2D _baseTexture;
         private Texture2D _slotTexture;
+        private Texture2D _emptySlotTexture;
 
         private Vector2 _position;
 
         public List<PlayerInventorySlot> Slots { get; set; }
 
         private ContentManager _content;
+        private GameCursor _cursor;
 
-        public PlayerInventory(ContentManager content)
+        public PlayerInventory(ContentManager content, GameCursor cursor)
         {
             State = UIComponentState.Shown;
             ZIndex = 100;
             _content = content;
+            _cursor = cursor;
         }
 
         public void Initialize()
@@ -64,6 +67,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             _baseTexture = content.Load<Texture2D>("Sprites/UI/PlayerInventory");
             _slotTexture = content.Load<Texture2D>("Sprites/UI/PlayerInventorySlot");
+            _emptySlotTexture = _content.Load<Texture2D>("Sprites/UI/Items/empty-slot");
 
             var x = 1920 - _baseTexture.Width - 50;
             var y = 1080 - _baseTexture.Height - 50;
@@ -72,9 +76,10 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Update(GameTime gameTime)
         {
-            var state = Keyboard.GetState();
+            var kbState = Keyboard.GetState();
+            var mouseState = Mouse.GetState();
 
-            if (state.IsKeyDown(Keys.I))
+            if (kbState.IsKeyDown(Keys.I))
             {
                 if (State == UIComponentState.Hidden)
                 {
@@ -85,6 +90,15 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                     State = UIComponentState.Hidden;
                 }
             }
+
+            foreach (var slot in Slots)
+            {
+                if (slot.Bounds.Contains(mouseState.Position))
+                {
+
+                }
+            }
+            
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -110,22 +124,25 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var offsetX = 0;
             var offsetY = 0;
 
+            var cellSpacing = 0;
+            var outerSpacing = startWidth;
+
             foreach (var slot in Slots)
             {
                 var x = _position.X + startWidth + offsetX;
                 var y = _position.Y + startHeight + offsetY;
 
                 var drawPos = new Vector2(x, y);
+
+                spriteBatch.Draw(_emptySlotTexture, drawPos, Color.White);
                 slot.Draw(spriteBatch, gameTime, drawPos);
 
-  
+                offsetX += _emptySlotTexture.Width + cellSpacing;
 
-                offsetX += 32 + 3;
-
-                if ((x + 32) > _position.X + _baseTexture.Width - 8)
+                if ((x + _emptySlotTexture.Width) > _position.X + _baseTexture.Width - outerSpacing)
                 {
                     offsetX = 0;
-                    offsetY += 35;
+                    offsetY += _emptySlotTexture.Height + cellSpacing;
                 }
             }
         }
