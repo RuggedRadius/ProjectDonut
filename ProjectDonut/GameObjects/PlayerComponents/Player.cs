@@ -76,13 +76,14 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             GraphicsDeviceManager graphics,
             GraphicsDevice graphicsDevice,
             ContentManager content,
-            Camera camera
+            Camera camera, GameCursor cursor
             )
         {
             _graphics = graphics;
             _graphicsDevice = graphicsDevice;
             _content = content;
             _camera = camera;
+            _cursor = cursor;
         }
 
         public void Initialize()

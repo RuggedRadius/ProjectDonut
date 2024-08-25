@@ -45,11 +45,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             if (Item != null)
             {
-                var itemPos = new Vector2(Bounds.X + 2, Bounds.Y + 2);
-                spriteBatch.Draw(Item.Icon, itemPos, Color.White);
+                spriteBatch.Draw(Item.Icon, Item.Position, Color.White);
             }
         }
-
-
     }
 }

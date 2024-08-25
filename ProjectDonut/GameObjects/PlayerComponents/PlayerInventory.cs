@@ -48,7 +48,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             Slots = new List<PlayerInventorySlot>();
 
-
             for (int i = 0; i < 30; i++)
             {
                 var newSlot = CreateNewSlot();
@@ -76,7 +75,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var choice = new Random().Next(0, 2);
 
             switch (choice)
-            {   
+            {
                 case 0:
                     var item = new InventoryItem();
                     item.ItemID = "health-potion-01";
@@ -121,6 +120,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 if (slot.Item == null)
                 {
                     slot.Item = item;
+                    slot.Item.Position = slot.Position + new Vector2(2, 2);
                     return;
                 }
             }
@@ -184,17 +184,47 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             CalculateSlotsBounds();
 
             Debugging.Debugger.Lines[2] = string.Empty;
+            var currentlyPickedUpOriginalSlot = Slots.Where(x => x.Item?.State == InventoryItemState.PickedUp).FirstOrDefault();
             foreach (var slot in Slots)
             {
-                if (slot.Bounds.Contains(mouseState.Position))
+                if (slot.Bounds.Contains(mouseState.Position)) // Mouse over has occurred
                 {
-                    if (slot.Item == null)
+                    if (mouseState.LeftButton == ButtonState.Pressed) // Mouse button clicked
                     {
-                        Debugging.Debugger.Lines[2] = "Empty slot";
+                        if (slot.Item != null && currentlyPickedUpOriginalSlot == null)
+                        {
+                            slot.Item.State = InventoryItemState.PickedUp;
+                        }
                     }
-                    else
+                    else if (currentlyPickedUpOriginalSlot != null) // Mouse button released
                     {
-                        Debugging.Debugger.Lines[2] = $"{slot.Item.Name} x {slot.Item.Quantity}";
+                        slot.Item = currentlyPickedUpOriginalSlot.Item;
+                        slot.Item.State = InventoryItemState.InInventory;
+
+                        // Get original slot and clear it
+                        currentlyPickedUpOriginalSlot.Item = null;
+                        currentlyPickedUpOriginalSlot = null;
+                    }
+                }
+            }
+
+            if (mouseState.LeftButton == ButtonState.Released)
+            {
+                foreach (var slot in Slots)
+                {
+                    if (slot.Item != null)
+                    {
+                        slot.Item.State = InventoryItemState.InInventory;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var slot in Slots)
+                {
+                    if (slot.Item != null && slot.Item.State == InventoryItemState.PickedUp)
+                    {
+                        slot.Item.Position = _cursor.Position - new Vector2(slot.Item.Icon.Width, slot.Item.Icon.Height);
                     }
                 }
             }
@@ -220,6 +250,10 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             foreach (var slot in Slots)
             {
                 spriteBatch.Draw(_emptySlotTexture, slot.Bounds, Color.White);
+            }
+
+            foreach (var slot in Slots)
+            {
                 slot.Draw(gameTime, spriteBatch);
             }
         }
@@ -235,6 +269,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var cellSpacing = 0;
             var outerSpacing = startWidth;
 
+            var maxPosition = _position.X + _baseTexture.Width - outerSpacing - _emptySlotTexture.Width;
+
             foreach (var slot in Slots)
             {
                 var x = _position.X + startWidth + offsetX;
@@ -248,12 +284,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 offsetX += _emptySlotTexture.Width + cellSpacing;
 
                 var endOfNextSlot = x + _emptySlotTexture.Width + cellSpacing;
-                var maxPosition = _position.X + _baseTexture.Width - outerSpacing;
+                
 
                 if (endOfNextSlot > maxPosition)
                 {
                     offsetX = 0;
                     offsetY += _emptySlotTexture.Height + cellSpacing;
+                }
+
+                if (slot.Item != null)
+                {
+                    slot.Item.Position = new Vector2(slot.Bounds.X + 2, slot.Bounds.Y + 2);
                 }
             }
         }

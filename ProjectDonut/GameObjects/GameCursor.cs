@@ -16,6 +16,8 @@ namespace ProjectDonut.GameObjects
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
+        public bool IsClicked { get; set; }
+
         private Game1 _game;
         private SpriteBatch _spriteBatch;
         private SpriteLibrary _spriteLib;

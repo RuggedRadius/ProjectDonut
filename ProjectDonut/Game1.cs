@@ -40,7 +40,7 @@ namespace ProjectDonut
         private Camera _camera;
         private Player player;
         private DialogueManager dialogue;
-        private GameCursor cursor;
+        private GameCursor _cursor;
 
 
         
@@ -82,14 +82,16 @@ namespace ProjectDonut
             _gameObjects.Add("camera", _camera);
 
             // Player
-            player = new Player(_graphics, GraphicsDevice, Content, _camera);
-            _gameObjects.Add("player", player);
+
 
             dialogue = new DialogueManager(spriteLib, _spriteBatch, _camera, Content);
             _screenObjects.Add("dialogue", dialogue);
 
-            cursor = new GameCursor(this, spriteLib, _spriteBatch, GraphicsDevice, _camera);
-            _screenObjects.Add("cursor", cursor);
+            _cursor = new GameCursor(this, spriteLib, _spriteBatch, GraphicsDevice, _camera);
+            _screenObjects.Add("cursor", _cursor);
+
+            player = new Player(_graphics, GraphicsDevice, Content, _camera, _cursor);
+            _gameObjects.Add("player", player);
 
             // World map
             _sceneManager = new SceneManager(Content, _spriteBatch, GraphicsDevice, player, spriteLib, _camera);
@@ -140,7 +142,7 @@ namespace ProjectDonut
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
-            Debugger.Lines[4] = $"Cursor: {cursor.Position}";
+            Debugger.Lines[4] = $"Cursor: {_cursor.Position}";
             
             Debugger.Update(gameTime);
             base.Update(gameTime);
