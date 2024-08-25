@@ -89,9 +89,9 @@ namespace ProjectDonut.Core.SceneManagement
 
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(content));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
         }
 
@@ -132,14 +132,14 @@ namespace ProjectDonut.Core.SceneManagement
 
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.Draw(gameTime));
+                .ForEach(x => x.Draw(gameTime, spriteBatch));
             _spriteBatch.End();
 
             // ScreenObjects

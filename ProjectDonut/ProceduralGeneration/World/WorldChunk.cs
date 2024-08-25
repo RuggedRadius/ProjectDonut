@@ -135,7 +135,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
         }
 
@@ -186,7 +186,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             _scrollDisplayer.HideScroll();
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             foreach (var tilemap in Tilemaps)
             {
@@ -195,7 +195,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     if (tile == null)
                         continue;
 
-                    tile.Draw(gameTime);
+                    tile.Draw(gameTime, spriteBatch);
                 }
             }
 

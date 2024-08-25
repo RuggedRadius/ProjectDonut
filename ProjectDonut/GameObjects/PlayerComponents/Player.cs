@@ -65,23 +65,24 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         public int ChunkPosX { get; set; }
         public int ChunkPosY { get; set; }
 
-        private SpriteLibrary _spriteLib;
+        //private SpriteLibrary _spriteLib;
 
         private PlayerInventory _inventory;
+        private GameCursor _cursor;
+
+        private Dictionary<string, Texture2D> _textures;
 
         public Player(
             GraphicsDeviceManager graphics,
             GraphicsDevice graphicsDevice,
             ContentManager content,
-            SpriteBatch spriteBatch,
-            Camera camera, SpriteLibrary spriteLib)
+            Camera camera
+            )
         {
             _graphics = graphics;
             _graphicsDevice = graphicsDevice;
             _content = content;
-            _spriteBatch = spriteBatch;
             _camera = camera;
-            _spriteLib = spriteLib;
         }
 
         public void Initialize()
@@ -98,9 +99,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             _frameTime = 0.1f; // Duration of each frame in seconds
             _timer = 0f;
 
+            _textures = new Dictionary<string, Texture2D>();
+
             debugTexture = CreateTexture(_graphicsDevice, 1, 1, Color.White);
 
-            _inventory = new PlayerInventory(_content);
+            _inventory = new PlayerInventory(_content, _cursor);
             _inventory.Initialize();
         }
 
@@ -113,12 +116,18 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             return texture;
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
-            spriteSheet = _content.Load<Texture2D>("Sprites/TestPlayer");
+            spriteSheet = content.Load<Texture2D>("Sprites/TestPlayer");
+
+            _textures.Add("walk-north-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-N-01"));
+            _textures.Add("walk-east-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-E-01"));
+            _textures.Add("walk-south-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-S-01"));
+            _textures.Add("walk-west-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-W-01"));
+
             currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
 
-            _inventory.LoadContent(_content);
+            _inventory.LoadContent(content);
         }
 
         public void Update(GameTime gameTime)
@@ -182,75 +191,35 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             if (movement.X > 0)
             {
-                _texture = _spriteLib.GetSprite("player-E");
+                _texture = _textures["walk-east-01"];
             }
             else if (movement.X < 0)
             {
-                _texture = _spriteLib.GetSprite("player-W");
+                _texture = _textures["walk-west-01"];
             }
             else if (movement.Y < 0)
             {
-                _texture = _spriteLib.GetSprite("player-N");
+                _texture = _textures["walk-north-01"];
             }
             else
             {
-                _texture = _spriteLib.GetSprite("player-S");
+                _texture = _textures["walk-south-01"];
             }
 
             if (_texture != null)
             {
                 _textureOrigin = new Vector2(_texture.Width / 2f, _texture.Height / 2f);
             }
-            //if (movement.X > 0 && movement.Y > 0)
-            //{
-            //    currentFrame = new Rectangle(TileSize * 2, TileSize * 2, TileSize, TileSize);
-            //    return;
-            //}
-            //if (movement.X < 0 && movement.Y > 0)
-            //{
-            //    currentFrame = new Rectangle(0, TileSize * 2, TileSize, TileSize);
-            //    return;
-            //}
-            //if (movement.X < 0 && movement.Y < 0)
-            //{
-            //    currentFrame = new Rectangle(0, 0, TileSize, TileSize);
-            //    return;
-            //}
-            //if (movement.X > 0 && movement.Y < 0)
-            //{
-            //    currentFrame = new Rectangle(TileSize * 2, 0, TileSize, TileSize);
-            //    return;
-            //}
-            //if (movement.Y < 0)
-            //{
-            //    currentFrame = new Rectangle(TileSize, 0, TileSize, TileSize);
-            //    return;
-            //}
-            //if (movement.Y > 0)
-            //{
-            //    currentFrame = new Rectangle(TileSize, TileSize * 2, TileSize, TileSize);
-            //    return;
-            //}
-            //if (movement.X < 0)
-            //{
-            //    currentFrame = new Rectangle(0, TileSize, TileSize, TileSize);
-            //    return;
-            //}
-            //if (movement.X > 0)
-            //{
-            //    currentFrame = new Rectangle(TileSize * 2, TileSize, TileSize, TileSize);
-            //    return;
-            //}
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
+            spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
             //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
-            _spriteBatch.Draw(_texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
-            _spriteBatch.End();
+            spriteBatch.Draw(_texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
+            spriteBatch.End();
 
-            _inventory.Draw(_spriteBatch, gameTime);
+            _inventory.Draw(spriteBatch, gameTime);
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)

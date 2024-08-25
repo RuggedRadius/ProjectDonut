@@ -82,13 +82,8 @@ namespace ProjectDonut
             _gameObjects.Add("camera", _camera);
 
             // Player
-            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, _camera, spriteLib);
+            player = new Player(_graphics, GraphicsDevice, Content, _camera);
             _gameObjects.Add("player", player);
-
-
-
-            
-
 
             dialogue = new DialogueManager(spriteLib, _spriteBatch, _camera, Content);
             _screenObjects.Add("dialogue", dialogue);
@@ -129,9 +124,9 @@ namespace ProjectDonut
         {
             Debugger.LoadContent();
 
-            _sceneManager.LoadContent();
+            _sceneManager.LoadContent(Content);
 
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(Content));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
@@ -155,7 +150,7 @@ namespace ProjectDonut
         {
             GraphicsDevice.Clear(Color.Black);
 
-            _sceneManager.Draw(gameTime);
+            _sceneManager.Draw(gameTime, _spriteBatch);
 
             // GameObjects
             //_spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
@@ -163,7 +158,7 @@ namespace ProjectDonut
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.Draw(gameTime));
+                .ForEach(x => x.Draw(gameTime, _spriteBatch));
             //_spriteBatch.End();
 
             // ScreenObjects

@@ -120,11 +120,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             rulesGrasslands = new GrasslandsRules(spriteLib);
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             for (int i = 0; i < CurrentChunks.Count; i++)
             {
-                CurrentChunks[i].Draw(gameTime);
+                CurrentChunks[i].Draw(gameTime, spriteBatch);
             }
 
             foreach (var structure in StructuresInCenterChunk)
@@ -281,11 +281,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             return chunk;
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
             foreach (var chunk in _chunks)
             {
-                chunk.Value.LoadContent();
+                chunk.Value.LoadContent(content);
             }
         }
 

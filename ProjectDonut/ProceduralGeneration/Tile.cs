@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Transactions;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite;
 using ProjectDonut.GameObjects;
@@ -60,7 +61,7 @@ namespace ProjectDonut.ProceduralGeneration
             }
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             var x = (ChunkX * 100 * 32) + (LocalPosition.X);
             var y = (ChunkY * 100 * 32) + (LocalPosition.Y);
@@ -72,7 +73,7 @@ namespace ProjectDonut.ProceduralGeneration
         {
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
         }
 

@@ -45,7 +45,7 @@ namespace ProjectDonut.Characters
             throw new NotImplementedException();
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
             throw new NotImplementedException();
         }
@@ -55,7 +55,7 @@ namespace ProjectDonut.Characters
             throw new NotImplementedException();
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             throw new NotImplementedException();
         }

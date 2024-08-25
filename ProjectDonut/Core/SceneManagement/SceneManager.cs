@@ -45,9 +45,9 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Initialize();
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
-            CurrentScene.LoadContent();
+            CurrentScene.LoadContent(content);
         }
 
         public void Update(GameTime gameTime)
@@ -55,9 +55,9 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            CurrentScene.Draw(gameTime);
+            CurrentScene.Draw(gameTime, spriteBatch);
         }
 
         public void CreateWorldScene()
