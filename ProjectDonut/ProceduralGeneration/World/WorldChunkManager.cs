@@ -3,8 +3,10 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
+using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
+using ProjectDonut.ProceduralGeneration.World.TileRules;
 using ProjectDonut.UI.ScrollDisplay;
 using System;
 using System.Collections.Generic;
@@ -40,6 +42,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         private RiverGenerator genRiver;
         private MountainGenerator genMountain;
         private StructureGenerator genStructure;
+
+        private GrasslandsRules rulesGrasslands;
 
         private int ChunkWidth = 100;
         private int ChunkHeight = 100;
@@ -112,6 +116,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             genRiver = new RiverGenerator(spriteLib, settings);
             genMountain = new MountainGenerator(settings, spriteLib, _spriteBatch);
             genStructure = new StructureGenerator(spriteLib, settings, _spriteBatch);
+
+            rulesGrasslands = new GrasslandsRules(spriteLib);
         }
 
         public void Draw(GameTime gameTime)
@@ -262,6 +268,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             var tilemapForest = genForest.CreateTileMap(chunk);
             var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);
+
+            tilemapBase = rulesGrasslands.ApplyRules(tilemapBase);
 
             chunk.Tilemaps.Add("base", tilemapBase);
             chunk.Tilemaps.Add("forest", tilemapForest);

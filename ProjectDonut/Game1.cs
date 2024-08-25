@@ -14,6 +14,7 @@ using ProjectDonut.Debugging;
 using ProjectDonut.Tools;
 using System;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.GameObjects.PlayerComponents;
 
 namespace ProjectDonut
 {
@@ -81,7 +82,7 @@ namespace ProjectDonut
             _gameObjects.Add("camera", _camera);
 
             // Player
-            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, _camera);
+            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, _camera, spriteLib);
             _gameObjects.Add("player", player);
 
 

@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using ProjectDonut.Debugging;
-using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
-namespace ProjectDonut.GameObjects
+namespace ProjectDonut.GameObjects.PlayerComponents
 {
     public class Player : IGameObject
     {
@@ -31,7 +31,7 @@ namespace ProjectDonut.GameObjects
         }
         public int ZIndex { get; set; }
 
-        private Texture2D texture;
+        private Texture2D _texture;
         private Texture2D spriteSheet;
 
         private GraphicsDeviceManager _graphics;
@@ -43,7 +43,7 @@ namespace ProjectDonut.GameObjects
 
         private Vector2 spriteSize;
         private Rectangle currentFrame;
-        
+
         private int speed;
 
         private int _frameWidth;
@@ -65,24 +65,29 @@ namespace ProjectDonut.GameObjects
         public int ChunkPosX { get; set; }
         public int ChunkPosY { get; set; }
 
+        private SpriteLibrary _spriteLib;
+
+        private PlayerInventory _inventory;
+
         public Player(
             GraphicsDeviceManager graphics,
             GraphicsDevice graphicsDevice,
             ContentManager content,
             SpriteBatch spriteBatch,
-            Camera camera)
+            Camera camera, SpriteLibrary spriteLib)
         {
-            this._graphics = graphics;
-            this._graphicsDevice = graphicsDevice;
-            this._content = content;
-            this._spriteBatch = spriteBatch;
-            this._camera = camera;
+            _graphics = graphics;
+            _graphicsDevice = graphicsDevice;
+            _content = content;
+            _spriteBatch = spriteBatch;
+            _camera = camera;
+            _spriteLib = spriteLib;
         }
 
         public void Initialize()
         {
             Position = new Vector2(50, 50);
-            speed = 2000;
+            speed = 150;
             spriteSize = new Vector2(TileSize, TileSize);
             ZIndex = -100;
 
@@ -94,6 +99,9 @@ namespace ProjectDonut.GameObjects
             _timer = 0f;
 
             debugTexture = CreateTexture(_graphicsDevice, 1, 1, Color.White);
+
+            _inventory = new PlayerInventory(_content);
+            _inventory.Initialize();
         }
 
         Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
@@ -108,7 +116,9 @@ namespace ProjectDonut.GameObjects
         public void LoadContent()
         {
             spriteSheet = _content.Load<Texture2D>("Sprites/TestPlayer");
-            currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);            
+            currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
+
+            _inventory.LoadContent(_content);
         }
 
         public void Update(GameTime gameTime)
@@ -136,6 +146,8 @@ namespace ProjectDonut.GameObjects
             Debugger.Lines[0] = $"Player Position: [{(int)Position.X}, {(int)Position.Y}]";
             Debugger.Lines[1] = $"Chunk: [{ChunkPosX}, {ChunkPosY}]";
             Debugger.Lines[3] = $"ChunkPos = [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";
+
+            _inventory.Update(gameTime);
         }
 
         private void HandleInput(GameTime gameTime)
@@ -165,56 +177,80 @@ namespace ProjectDonut.GameObjects
             Position += movement;
         }
 
+        private Vector2 _textureOrigin;
         private void UpdateAnimationFrame(Vector2 movement)
         {
-            if (movement.X > 0 && movement.Y > 0)
-            {
-                currentFrame = new Rectangle(TileSize * 2, TileSize * 2, TileSize, TileSize);
-                return;
-            }
-            if (movement.X < 0 && movement.Y > 0)
-            {
-                currentFrame = new Rectangle(0, TileSize * 2, TileSize, TileSize);
-                return;
-            }
-            if (movement.X < 0 && movement.Y < 0)
-            {
-                currentFrame = new Rectangle(0, 0, TileSize, TileSize);
-                return;
-            }
-            if (movement.X > 0 && movement.Y < 0)
-            {
-                currentFrame = new Rectangle(TileSize * 2, 0, TileSize, TileSize);
-                return;
-            }
-            if (movement.Y < 0)
-            {
-                currentFrame = new Rectangle(TileSize, 0, TileSize, TileSize);
-                return;
-            }
-            if (movement.Y > 0)
-            {
-                currentFrame = new Rectangle(TileSize, TileSize * 2, TileSize, TileSize);
-                return;
-            }
-            if (movement.X < 0)
-            {
-                currentFrame = new Rectangle(0, TileSize, TileSize, TileSize);
-                return;
-            }
             if (movement.X > 0)
             {
-                currentFrame = new Rectangle(TileSize * 2, TileSize, TileSize, TileSize);
-                return;
+                _texture = _spriteLib.GetSprite("player-E");
             }
+            else if (movement.X < 0)
+            {
+                _texture = _spriteLib.GetSprite("player-W");
+            }
+            else if (movement.Y < 0)
+            {
+                _texture = _spriteLib.GetSprite("player-N");
+            }
+            else
+            {
+                _texture = _spriteLib.GetSprite("player-S");
+            }
+
+            if (_texture != null)
+            {
+                _textureOrigin = new Vector2(_texture.Width / 2f, _texture.Height / 2f);
+            }
+            //if (movement.X > 0 && movement.Y > 0)
+            //{
+            //    currentFrame = new Rectangle(TileSize * 2, TileSize * 2, TileSize, TileSize);
+            //    return;
+            //}
+            //if (movement.X < 0 && movement.Y > 0)
+            //{
+            //    currentFrame = new Rectangle(0, TileSize * 2, TileSize, TileSize);
+            //    return;
+            //}
+            //if (movement.X < 0 && movement.Y < 0)
+            //{
+            //    currentFrame = new Rectangle(0, 0, TileSize, TileSize);
+            //    return;
+            //}
+            //if (movement.X > 0 && movement.Y < 0)
+            //{
+            //    currentFrame = new Rectangle(TileSize * 2, 0, TileSize, TileSize);
+            //    return;
+            //}
+            //if (movement.Y < 0)
+            //{
+            //    currentFrame = new Rectangle(TileSize, 0, TileSize, TileSize);
+            //    return;
+            //}
+            //if (movement.Y > 0)
+            //{
+            //    currentFrame = new Rectangle(TileSize, TileSize * 2, TileSize, TileSize);
+            //    return;
+            //}
+            //if (movement.X < 0)
+            //{
+            //    currentFrame = new Rectangle(0, TileSize, TileSize, TileSize);
+            //    return;
+            //}
+            //if (movement.X > 0)
+            //{
+            //    currentFrame = new Rectangle(TileSize * 2, TileSize, TileSize, TileSize);
+            //    return;
+            //}
         }
 
         public void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
-            _spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
+            //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
+            _spriteBatch.Draw(_texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
             _spriteBatch.End();
 
+            _inventory.Draw(_spriteBatch, gameTime);
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)
@@ -231,17 +267,17 @@ namespace ProjectDonut.GameObjects
 
         public void PositionPlayerInMiddleOfMap(WorldMapSettings settings)
         {
-            var playerStartPosX = (settings.Width * settings.TileSize) / 2;
-            var playerStartPosY = (settings.Height * settings.TileSize) / 2;
-            
+            var playerStartPosX = settings.Width * settings.TileSize / 2;
+            var playerStartPosY = settings.Height * settings.TileSize / 2;
+
             Position = new Vector2(playerStartPosX, playerStartPosY);
         }
 
         public (int, int) GetWorldChunkCoords()
         {
-            
-            var x = (int)((Position.X / (TileSize * ChunkSize)));
-            var y = (int)((Position.Y / (TileSize * ChunkSize)));
+
+            var x = (int)(Position.X / (TileSize * ChunkSize));
+            var y = (int)(Position.Y / (TileSize * ChunkSize));
 
             if (Position.X < 0)
             {

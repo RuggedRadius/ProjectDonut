@@ -43,31 +43,148 @@ namespace ProjectDonut.ProceduralGeneration
             sheets = new Dictionary<string, Texture2D>();
             lib = new Dictionary<string, Texture2D>();
 
+            LoadSpriteSheets();
+
+            LoadStructureCastle();
+            LoadDialogueSystem();
+            LoadStructureTown();
+
+            LoadWater();
+            LoadCoast();
+            LoadForest();
+            LoadMountain();
+
+            LoadBiomeGrasslands();
+
+            LoadPlayerNEW();
+
+            LoadMouseCursor();
+            
+            // Biomes
+            lib.Add("grasslands", ExtractBiomeSprite(0, 0));
+            lib.Add("desert", ExtractBiomeSprite(1, 0));
+            lib.Add("winterlands", ExtractBiomeSprite(2, 0));
+
+            // Grass
+            lib.Add("grass-NW", ExtractTileSprite(6, 0));
+            lib.Add("grass-N", ExtractTileSprite(7, 0));
+            lib.Add("grass-NE", ExtractTileSprite(8, 0));
+            lib.Add("grass-W", ExtractTileSprite(6, 1));
+            lib.Add("grass", ExtractTileSprite(7, 1));
+            lib.Add("grass-E", ExtractTileSprite(8, 1));
+            lib.Add("grass-SW", ExtractTileSprite(6, 2));
+            lib.Add("grass-S", ExtractTileSprite(7, 2));
+            lib.Add("grass-SE", ExtractTileSprite(8, 2));
+
+            // Inverted grass
+            lib.Add("grass-inv-NW", ExtractTileSprite(9, 0));
+            lib.Add("grass-inv-N", ExtractTileSprite(10, 0));
+            lib.Add("grass-inv-NE", ExtractTileSprite(11, 0));
+            lib.Add("grass-inv-W", ExtractTileSprite(9, 1));
+            lib.Add("grass-inv", ExtractTileSprite(10, 1));
+            lib.Add("grass-inv-E", ExtractTileSprite(11, 1));
+            lib.Add("grass-inv-SW", ExtractTileSprite(9, 2));
+            lib.Add("grass-inv-S", ExtractTileSprite(10, 2));
+            lib.Add("grass-inv-SE", ExtractTileSprite(11, 2));
+        }
+
+        private void LoadSpriteSheets()
+        {
             spriteSheetTiles = content.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
             spriteSheetBiomes = content.Load<Texture2D>("Sprites/Map/World/Biomes");
             spriteSheetForest = content.Load<Texture2D>("Sprites/Map/World/Forest");
             spriteSheetMountain = content.Load<Texture2D>("Sprites/Map/World/Mountain");
             spriteSheetCastle = content.Load<Texture2D>("Sprites/WorldStructures/Castle");
 
-            LoadStructureCastle();
-            LoadDialogueSystem();
-            LoadStructureTown();
-            
-            LoadMouseCursor();
-            
+            sheets.Add("biome-grasslands", content.Load<Texture2D>("Sprites/Map/World/BiomeGrasslands"));
+            sheets.Add("player", content.Load<Texture2D>("Sprites/Player/Player"));
+        }
 
+        private void LoadBiomeGrasslands()
+        {
+            var sheet = sheets["biome-grasslands"];
 
-            // Water
-            lib.Add("deepwater-NW", ExtractSprite(spriteSheetTiles, 18, 0));
-            lib.Add("deepwater-N", ExtractSprite(spriteSheetTiles, 19, 0));
-            lib.Add("deepwater-NE", ExtractSprite(spriteSheetTiles, 20, 0));
-            lib.Add("deepwater-W", ExtractSprite(spriteSheetTiles, 18, 1));
-            lib.Add("deepwater-C", ExtractSprite(spriteSheetTiles, 19, 1));
-            lib.Add("deepwater-E", ExtractSprite(spriteSheetTiles, 20, 1));
-            lib.Add("deepwater-SW", ExtractSprite(spriteSheetTiles, 18, 2));
-            lib.Add("deepwater-S", ExtractSprite(spriteSheetTiles, 19, 2));
-            lib.Add("deepwater-SE", ExtractSprite(spriteSheetTiles, 20, 2));
+            lib.Add("grasslands-ext-NW", ExtractSprite(sheet, 0, 0));
+            lib.Add("grasslands-ext-N", ExtractSprite(sheet, 1, 0));
+            lib.Add("grasslands-ext-NE", ExtractSprite(sheet, 2, 0));
+            lib.Add("grasslands-ext-W", ExtractSprite(sheet, 0, 1));
+            lib.Add("grasslands-ext-C", ExtractSprite(sheet, 1, 1));
+            lib.Add("grasslands-ext-E", ExtractSprite(sheet, 2, 1));
+            lib.Add("grasslands-ext-SW", ExtractSprite(sheet, 0, 2));
+            lib.Add("grasslands-ext-S", ExtractSprite(sheet, 1, 2));
+            lib.Add("grasslands-ext-SE", ExtractSprite(sheet, 2, 2));
 
+            lib.Add("grasslands-int-NW", ExtractSprite(sheet, 3, 0));
+            lib.Add("grasslands-int-N", ExtractSprite(sheet, 4, 0));
+            lib.Add("grasslands-int-NE", ExtractSprite(sheet, 5, 0));
+            lib.Add("grasslands-int-W", ExtractSprite(sheet, 3, 1));
+            lib.Add("grasslands-int-C", ExtractSprite(sheet, 4, 1));
+            lib.Add("grasslands-int-E", ExtractSprite(sheet, 5, 1));
+            lib.Add("grasslands-int-SW", ExtractSprite(sheet, 3, 2));
+            lib.Add("grasslands-int-S", ExtractSprite(sheet, 4, 2));
+            lib.Add("grasslands-int-SE", ExtractSprite(sheet, 5, 2));
+
+            lib["grasslands-ext-NW"].Name = "grasslands-ext-NW";
+            lib["grasslands-ext-N"].Name = "grasslands-ext-N";
+            lib["grasslands-ext-NE"].Name = "grasslands-ext-NE";
+            lib["grasslands-ext-W"].Name = "grasslands-ext-W";
+            lib["grasslands-ext-C"].Name = "grasslands-ext-C";
+            lib["grasslands-ext-E"].Name = "grasslands-ext-E";
+            lib["grasslands-ext-SW"].Name = "grasslands-ext-SW";
+            lib["grasslands-ext-S"].Name = "grasslands-ext-S";
+            lib["grasslands-ext-SE"].Name = "grasslands-ext-SE";
+
+            lib["grasslands-int-NW"].Name = "grasslands-int-NW";
+            lib["grasslands-int-N"].Name = "grasslands-int-N";
+            lib["grasslands-int-NE"].Name = "grasslands-int-NE";
+            lib["grasslands-int-W"].Name = "grasslands-int-W";
+            lib["grasslands-int-C"].Name = "grasslands-int-C";
+            lib["grasslands-int-E"].Name = "grasslands-int-E";
+            lib["grasslands-int-SW"].Name = "grasslands-int-SW";
+            lib["grasslands-int-S"].Name = "grasslands-int-S";
+            lib["grasslands-int-SE"].Name = "grasslands-int-SE";
+        }
+
+        private void LoadPlayerNEW()
+        {
+            var sheet = sheets["player"];
+
+            lib.Add("player-N", ExtractSprite(sheet, 1, 0));
+            lib.Add("player-E", ExtractSprite(sheet, 2, 1));
+            lib.Add("player-S", ExtractSprite(sheet, 1, 2));
+            lib.Add("player-W", ExtractSprite(sheet, 0, 1));
+        }
+
+        private void LoadMountain()
+        {
+            // Mountain
+            lib.Add("mountain-NW", ExtractTileSprite(12, 0));
+            lib.Add("mountain-N", ExtractTileSprite(13, 0));
+            lib.Add("mountain-NE", ExtractTileSprite(14, 0));
+            lib.Add("mountain-W", ExtractTileSprite(12, 1));
+
+            //spriteLib.Add("mountain", ExtractTileSprite(13, 1));
+            lib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
+
+            lib.Add("mountain-E", ExtractTileSprite(14, 1));
+            lib.Add("mountain-SW", ExtractTileSprite(12, 2));
+            lib.Add("mountain-S", ExtractTileSprite(13, 2));
+            lib.Add("mountain-SE", ExtractTileSprite(14, 2));
+
+            // Inverted mountain
+            lib.Add("mountain-inv-NW", ExtractTileSprite(15, 0));
+            lib.Add("mountain-inv-N", ExtractTileSprite(16, 0));
+            lib.Add("mountain-inv-NE", ExtractTileSprite(17, 0));
+            lib.Add("mountain-inv-W", ExtractTileSprite(15, 1));
+            lib.Add("mountain-inv", ExtractTileSprite(16, 1));
+            lib.Add("mountain-inv-E", ExtractTileSprite(17, 1));
+            lib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
+            lib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
+            lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
+        }
+
+        private void LoadForest()
+        {
             // Forest
             ExtractSprites("forest", spriteSheetForest, 3, 3);
             lib.Add("forest-inv-NW", ExtractSprite(spriteSheetForest, 3, 0));
@@ -98,12 +215,10 @@ namespace ProjectDonut.ProceduralGeneration
             lib.Add("forest-frost-inv-SW", ExtractSprite(spriteSheetForest, 3, 5));
             lib.Add("forest-frost-inv-S", ExtractSprite(spriteSheetForest, 4, 5));
             lib.Add("forest-frost-inv-SE", ExtractSprite(spriteSheetForest, 5, 5));
+        }
 
-            // Biomes
-            lib.Add("grasslands", ExtractBiomeSprite(0, 0));
-            lib.Add("desert", ExtractBiomeSprite(1, 0));
-            lib.Add("winterlands", ExtractBiomeSprite(2, 0));
-
+        private void LoadCoast()
+        {
             // Coast
             lib.Add("coast-NW", ExtractTileSprite(0, 0));
             lib.Add("coast-N", ExtractTileSprite(1, 0));
@@ -125,53 +240,19 @@ namespace ProjectDonut.ProceduralGeneration
             lib.Add("coast-inv-SW", ExtractTileSprite(3, 2));
             lib.Add("coast-inv-S", ExtractTileSprite(4, 2));
             lib.Add("coast-inv-SE", ExtractTileSprite(5, 2));
+        }
 
-            // Grass
-            lib.Add("grass-NW", ExtractTileSprite(6, 0));
-            lib.Add("grass-N", ExtractTileSprite(7, 0));
-            lib.Add("grass-NE", ExtractTileSprite(8, 0));
-            lib.Add("grass-W", ExtractTileSprite(6, 1));
-            lib.Add("grass", ExtractTileSprite(7, 1));
-            lib.Add("grass-E", ExtractTileSprite(8, 1));
-            lib.Add("grass-SW", ExtractTileSprite(6, 2));
-            lib.Add("grass-S", ExtractTileSprite(7, 2));
-            lib.Add("grass-SE", ExtractTileSprite(8, 2));
-
-            // Inverted grass
-            lib.Add("grass-inv-NW", ExtractTileSprite(9, 0));
-            lib.Add("grass-inv-N", ExtractTileSprite(10, 0));
-            lib.Add("grass-inv-NE", ExtractTileSprite(11, 0));
-            lib.Add("grass-inv-W", ExtractTileSprite(9, 1));
-            lib.Add("grass-inv", ExtractTileSprite(10, 1));
-            lib.Add("grass-inv-E", ExtractTileSprite(11, 1));
-            lib.Add("grass-inv-SW", ExtractTileSprite(9, 2));
-            lib.Add("grass-inv-S", ExtractTileSprite(10, 2));
-            lib.Add("grass-inv-SE", ExtractTileSprite(11, 2));
-
-            // Mountain
-            lib.Add("mountain-NW", ExtractTileSprite(12, 0));
-            lib.Add("mountain-N", ExtractTileSprite(13, 0));
-            lib.Add("mountain-NE", ExtractTileSprite(14, 0));
-            lib.Add("mountain-W", ExtractTileSprite(12, 1));
-
-            //spriteLib.Add("mountain", ExtractTileSprite(13, 1));
-            lib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
-
-            lib.Add("mountain-E", ExtractTileSprite(14, 1));
-            lib.Add("mountain-SW", ExtractTileSprite(12, 2));
-            lib.Add("mountain-S", ExtractTileSprite(13, 2));
-            lib.Add("mountain-SE", ExtractTileSprite(14, 2));
-
-            // Inverted mountain
-            lib.Add("mountain-inv-NW", ExtractTileSprite(15, 0));
-            lib.Add("mountain-inv-N", ExtractTileSprite(16, 0));
-            lib.Add("mountain-inv-NE", ExtractTileSprite(17, 0));
-            lib.Add("mountain-inv-W", ExtractTileSprite(15, 1));
-            lib.Add("mountain-inv", ExtractTileSprite(16, 1));
-            lib.Add("mountain-inv-E", ExtractTileSprite(17, 1));
-            lib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
-            lib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
-            lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
+        private void LoadWater()
+        {
+            lib.Add("deepwater-NW", ExtractSprite(spriteSheetTiles, 18, 0));
+            lib.Add("deepwater-N", ExtractSprite(spriteSheetTiles, 19, 0));
+            lib.Add("deepwater-NE", ExtractSprite(spriteSheetTiles, 20, 0));
+            lib.Add("deepwater-W", ExtractSprite(spriteSheetTiles, 18, 1));
+            lib.Add("deepwater-C", ExtractSprite(spriteSheetTiles, 19, 1));
+            lib.Add("deepwater-E", ExtractSprite(spriteSheetTiles, 20, 1));
+            lib.Add("deepwater-SW", ExtractSprite(spriteSheetTiles, 18, 2));
+            lib.Add("deepwater-S", ExtractSprite(spriteSheetTiles, 19, 2));
+            lib.Add("deepwater-SE", ExtractSprite(spriteSheetTiles, 20, 2));
         }
 
         private void LoadMouseCursor()

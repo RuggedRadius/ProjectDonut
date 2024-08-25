@@ -21,7 +21,7 @@ namespace ProjectDonut.Debugging
         private static Rectangle debugRect;
         private static int maxWindowWidth;
 
-        public static string[] Lines = new string[10];
+        public static string[] Lines = new string[15];
 
         public static int ZIndex { get; set; }
 

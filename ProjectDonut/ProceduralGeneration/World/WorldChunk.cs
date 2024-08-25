@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.GameObjects;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using System.Diagnostics;
+using ProjectDonut.GameObjects.PlayerComponents;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
