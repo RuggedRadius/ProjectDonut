@@ -11,8 +11,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
     {
         private Dictionary<int, List<Room>> _roomsGenerations = new Dictionary<int, List<Room>>();
         private List<Room> _rooms = new List<Room>();
-        private Vector2 _roomMinSize = new Vector2(20, 10);
-        private Vector2 _room2MinSize = new Vector2(10, 5);
+        private Vector2 _roomMinSize = new Vector2(10, 10);
+        private Vector2 _room2MinSize = new Vector2(5, 5);
         private Random _random = new Random();
 
         private int _roomCounter = 0;
@@ -30,6 +30,139 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                 var newY = _random.Next(b.Top, b.Bottom - newHeight);
 
                 room.Bounds = new Rectangle(newX, newY, newWidth, newHeight);
+            }
+
+            return rooms;
+        }
+
+        public List<Room> SquashRooms(List<Room> rooms, int width, int height)
+        {
+            int counter = 0;
+
+            while (counter < 1000)
+            {
+                foreach (var room in rooms)
+                {
+                    if (room.Bounds.X >= 0)
+                    {
+                        var tempRect = new Rectangle(room.Bounds.X - 1, room.Bounds.Y, room.Bounds.Width, room.Bounds.Height);
+                        var intersects = false;
+
+                        foreach (var otherRoom in rooms)
+                        {
+                            if (otherRoom == room)
+                            {
+                                continue;
+                            }
+
+                            if (otherRoom.Bounds.Intersects(tempRect))
+                            {
+                                intersects = true;
+                                break;
+                            }
+
+                            if (tempRect.X < 0 || tempRect.X > width - 1 || tempRect.Y < 0 || tempRect.Y > height - 1)
+                            {
+                                intersects = true;
+                            }
+                        }
+
+                        if (!intersects)
+                        {
+                            room.Bounds = tempRect;
+                        }
+                    }
+                    else if (room.Bounds.X < 0)
+                    {
+                        var tempRect = new Rectangle(room.Bounds.X + 1, room.Bounds.Y, room.Bounds.Width, room.Bounds.Height);
+                        var intersects = false;
+
+                        foreach (var otherRoom in rooms)
+                        {
+                            if (otherRoom == room)
+                            {
+                                continue;
+                            }
+
+                            if (otherRoom.Bounds.Intersects(tempRect))
+                            {
+                                intersects = true;
+                                break;
+                            }
+
+                            if (tempRect.X < 0 || tempRect.X > width - 1 || tempRect.Y < 0 || tempRect.Y > height - 1)
+                            {
+                                intersects = true;
+                            }
+                        }
+
+                        if (!intersects)
+                        {
+                            room.Bounds = tempRect;
+                        }
+                    }
+
+                    if (room.Bounds.Y >= 0)
+                    {
+                        var tempRect = new Rectangle(room.Bounds.X, room.Bounds.Y - 1, room.Bounds.Width, room.Bounds.Height);
+                        var intersects = false;
+
+                        foreach (var otherRoom in rooms)
+                        {
+                            if (otherRoom == room)
+                            {
+                                continue;
+                            }
+
+                            if (otherRoom.Bounds.Intersects(tempRect))
+                            {
+                                intersects = true;
+                                break;
+                            }
+
+                            if (tempRect.X < 0 || tempRect.X > width - 1 || tempRect.Y < 0 || tempRect.Y > height - 1)
+                            {
+                                intersects = true;
+                            }
+                        }
+
+                        if (!intersects)
+                        {
+                            room.Bounds = tempRect;
+                        }
+                    }
+                    else if (room.Bounds.Y < 0)
+                    {
+                        var tempRect = new Rectangle(room.Bounds.X, room.Bounds.Y + 1, room.Bounds.Width, room.Bounds.Height);
+                        var intersects = false;
+
+                        foreach (var otherRoom in rooms)
+                        {
+                            if (otherRoom == room)
+                            {
+                                continue;
+                            }
+
+                            if (otherRoom.Bounds.Intersects(tempRect))
+                            {
+                                intersects = true;
+                                break;
+                            }
+
+                            if (tempRect.X < 0 || tempRect.X > width - 1 || tempRect.Y < 0 || tempRect.Y > height - 1)
+                            {
+                                intersects = true;
+                            }
+                        }
+
+                        if (!intersects)
+                        {
+                            room.Bounds = tempRect;
+                        }
+                    }
+                }
+
+                counter++;
             }
 
             return rooms;
@@ -145,97 +278,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
 
             return roomsList;
         }
-
-        //private List<Room> SplitVertically(Room room)
-        //{
-        //    var minValue = (int)_roomMinSize.Y;
-        //    var maxValue = room.Bounds.Height;
-
-        //    if (maxValue <= minValue)
-        //    {
-        //        return new List<Room>() { room };
-        //    }
-
-        //    var split = _random.Next(minValue, maxValue);
-
-        //    var roomA = new Room()
-        //    {
-        //        RoomID = _roomCounter++,
-        //        Bounds = new Rectangle(room.Bounds.X, room.Bounds.Y, room.Bounds.Width, split),
-        //    };
-
-        //    var roomB = new Room()
-        //    {
-        //        RoomID = _roomCounter++,
-        //        Bounds = new Rectangle(room.Bounds.X, room.Bounds.Y + split, room.Bounds.Width, room.Bounds.Height - split),
-        //    };
-
-        //    roomA.Sibling = roomB;
-        //    roomB.Sibling = roomA;
-
-        //    return new List<Room>() { roomA, roomB };
-        //}
-
-        ////private List<Room> SplitHorizontally(Room room)
-        ////{
-        ////    var minValue = (int)_roomMinSize.X;
-        ////    var maxValue = room.Bounds.Width;
-
-        ////    if (maxValue <= minValue)
-        ////    {
-        ////        return new List<Room>() { room };
-        ////    }
-
-        ////    var split = _random.Next(minValue, maxValue);
-
-        ////    var roomA = new Room()
-        ////    {
-        ////        RoomID = _roomCounter++,
-        ////        Bounds = new Rectangle(room.Bounds.X, room.Bounds.Y, split, room.Bounds.Height),
-        ////    };
-
-        ////    var roomB = new Room()
-        ////    {
-        ////        RoomID = _roomCounter++,
-        ////        Bounds = new Rectangle(room.Bounds.X + split, room.Bounds.Y, room.Bounds.Width - split, room.Bounds.Height),
-        ////    };
-
-        ////    roomA.Sibling = roomB;
-        ////    roomB.Sibling = roomA;
-
-        ////    return new List<Room>() { roomA, roomB };
-        ////}
-
-        //private List<Room> SplitHorizontally(Room room)
-        //{
-        //    var minValue = (int)_roomMinSize.X;
-        //    var maxValue = room.Bounds.Width - minValue;
-
-        //    if (maxValue <= minValue)
-        //    {
-        //        return new List<Room>() { room };
-        //    }
-
-        //    var split = _random.Next(minValue, maxValue);
-
-        //    var roomA = new Room()
-        //    {
-        //        RoomID = _roomCounter++,
-        //        Bounds = new Rectangle(room.Bounds.X, room.Bounds.Y, split, room.Bounds.Height),
-        //    };
-
-        //    var roomB = new Room()
-        //    {
-        //        RoomID = _roomCounter++,
-        //        Bounds = new Rectangle(room.Bounds.X + split, room.Bounds.Y, room.Bounds.Width - split, room.Bounds.Height),
-        //    };
-
-        //    roomA.Sibling = roomB;
-        //    roomB.Sibling = roomA;
-
-        //    return new List<Room>() { roomA, roomB };
-        //}
-
 
         private List<Room> SplitVertically(Room room)
         {
@@ -356,6 +398,68 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
 
             return canvas;
         }
+
+        public int[,] LinkAllRooms2(List<(Rectangle, Rectangle)> rooms, int width, int height)
+        {
+            var canvas = new int[width, height];
+
+            foreach (var roomPair in rooms)
+            {
+                var curRoomLink = LinkRooms2(roomPair, width, height);
+                canvas = MergeArrays(canvas, curRoomLink);
+            }
+
+            return canvas;
+        }
+
+        private int[,] LinkRooms2((Rectangle, Rectangle) rooms, int width, int height)
+        {
+            var canvas = new int[width, height];
+
+            var aX = _random.Next(rooms.Item1.X + 1, rooms.Item1.X + rooms.Item1.Width - 1);
+            var aY = _random.Next(rooms.Item1.Y + 1, rooms.Item1.Y + rooms.Item1.Height - 1);
+            var bX = _random.Next(rooms.Item2.X + 1, rooms.Item2.X + rooms.Item2.Width - 1);
+            var bY = _random.Next(rooms.Item2.Y + 1, rooms.Item2.Y + rooms.Item2.Height - 1);
+
+            var deltaX = bX - aX;
+            var deltaY = bY - aY;
+
+            // Draw horizontal corridor
+            if (deltaX != 0)
+            {
+                int stepX = deltaX > 0 ? 1 : -1;
+                for (int x = 0; x != deltaX; x += stepX)
+                {
+                    if (rooms.Item1.Contains(aX + x, aY) || rooms.Item2.Contains(aX + x, aY))
+                    {
+                        continue;
+                    }
+
+                    canvas[aX + x, aY] = 4;
+                }
+            }
+
+            // Draw vertical corridor
+            if (deltaY != 0)
+            {
+                int stepY = deltaY > 0 ? 1 : -1;
+                for (int y = 0; y != deltaY; y += stepY)
+                {
+                    if (rooms.Item1.Contains(aX + deltaX, aY + y) || rooms.Item2.Contains(aX + deltaX, aY + y))
+                    {
+                        continue;
+                    }
+
+                    canvas[aX + deltaX, aY + y] = 4;
+                }
+            }
+
+            // Set the final position of bX, bY
+            //canvas[bX, bY] = 1;
+
+            return canvas;
+        }
+
 
         private int[,] LinkRooms(Room roomA, Room roomB, int width, int height)
         {

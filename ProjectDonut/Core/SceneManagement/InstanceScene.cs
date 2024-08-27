@@ -66,14 +66,29 @@ namespace ProjectDonut.Core.SceneManagement
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            var width = 50;
-            var height = 50;
+            GenerateDungeon(500, 500);
+        }
+
+        private void GenerateDungeon(int width, int height)
+        {
+            // Generate rooms
             var rooms = _bsp.GenerateRooms(width, height);
             rooms[rooms.Count - 1] = _bsp.CreateRoomsWithinAreas(rooms[rooms.Count - 1]);
+
+            // Squash rooms in
+            //rooms[rooms.Count - 1] = _bsp.SquashRooms(rooms[rooms.Count - 1], width, height);
+
+            // Generate data map
             var dataMap = _bsp.CreateDataMap(rooms[rooms.Count - 1], width, height);
-            var linkages = _bsp.LinkAllRooms(rooms[rooms.Count - 1], width, height);
-            var dungeon = BSP.MergeArrays(dataMap, linkages);
-            Debugging.Debugger.PrintDataMap(dungeon, @"C:\Dungeon.txt");
+
+            // Link rooms
+            var rects = rooms[rooms.Count - 1].Select(x => x.Bounds).ToList();
+            var rectLinker = new RectangleLinker();
+            var links = rectLinker.LinkRectangles(rects);
+            var linkages = _bsp.LinkAllRooms2(links, width, height);
+            dataMap = BSP.MergeArrays(dataMap, linkages);
+
+            Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
         }
 
         public void LoadContent(ContentManager content)
