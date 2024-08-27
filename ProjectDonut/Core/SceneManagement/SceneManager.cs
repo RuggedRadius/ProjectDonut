@@ -11,7 +11,8 @@ namespace ProjectDonut.Core.SceneManagement
 {
     public class SceneManager : IGameObject
     {
-        public Scene CurrentScene { get; set; }
+        public WorldScene CurrentScene { get; set; }
+        public InstanceScene InstanceScene { get; set; }
 
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
@@ -42,27 +43,31 @@ namespace ProjectDonut.Core.SceneManagement
 
         public void Initialize()
         {
-            CurrentScene.Initialize();
+            //CurrentScene.Initialize();
+            InstanceScene.Initialize();
         }
 
         public void LoadContent(ContentManager content)
         {
-            CurrentScene.LoadContent(content);
+            //CurrentScene.LoadContent(content);
+            InstanceScene.LoadContent(content);
         }
 
         public void Update(GameTime gameTime)
         {
-            CurrentScene.Update(gameTime);
+            //CurrentScene.Update(gameTime);
+            InstanceScene.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            CurrentScene.Draw(gameTime, spriteBatch);
+            //CurrentScene.Draw(gameTime, spriteBatch);
+            InstanceScene.Draw(gameTime, spriteBatch);
         }
 
         public void CreateWorldScene()
         {
-            var scene = new Scene(
+            var scene = new WorldScene(
                 SceneType.World, 
                 _player, 
                 _content, 
@@ -72,7 +77,20 @@ namespace ProjectDonut.Core.SceneManagement
                 _spriteLib);
 
             CurrentScene = scene;
+        }
 
+        public void CreateInstanceScene()
+        {
+            var scene = new InstanceScene(
+                SceneType.Instance,
+                _player,
+                _content,
+                _spriteBatch,
+                _graphicsDevice,
+                _camera,
+                _spriteLib);
+
+            InstanceScene = scene;
         }
     }
 }

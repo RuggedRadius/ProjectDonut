@@ -20,7 +20,7 @@ using ProjectDonut.UI.ScrollDisplay;
 namespace ProjectDonut.Core.SceneManagement
 {
 
-    public class Scene : IGameObject
+    public class WorldScene : IGameObject
     {
         private ContentManager _content;
         private SpriteBatch _spriteBatch;
@@ -45,7 +45,7 @@ namespace ProjectDonut.Core.SceneManagement
         public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public Scene(SceneType sceneType, Player player, ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera, SpriteLibrary spriteLibray)
+        public WorldScene(SceneType sceneType, Player player, ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera, SpriteLibrary spriteLibray)
         {
             SceneType = sceneType;
             random = new Random();

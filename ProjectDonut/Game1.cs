@@ -74,6 +74,7 @@ namespace ProjectDonut
             //worldChunks = new WorldChunk[3,3];
 
             spriteLib = new SpriteLibrary(Content, GraphicsDevice);
+            spriteLib.LoadSpriteLibrary();
 
             // Fog of ware
 
@@ -95,7 +96,8 @@ namespace ProjectDonut
 
             // World map
             _sceneManager = new SceneManager(Content, _spriteBatch, GraphicsDevice, player, spriteLib, _camera);
-            _sceneManager.CreateWorldScene();
+            //_sceneManager.CreateWorldScene();
+            _sceneManager.CreateInstanceScene();
             _sceneManager.Initialize();
             _gameObjects.Add("sceneManager", _sceneManager);
 

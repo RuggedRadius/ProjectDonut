@@ -111,8 +111,8 @@ namespace ProjectDonut.Debugging
 
         public static void PrintDataMap(int[,] map, string filePath)
         {
-            var height = map.GetLength(0);
-            var width = map.GetLength(1);
+            var height = map.GetLength(1);
+            var width = map.GetLength(0);
 
             var lines = new List<string>();
 
@@ -121,8 +121,14 @@ namespace ProjectDonut.Debugging
                 var sb = new StringBuilder();
                 for (int j = 0; j < height; j++)
                 {
-                    sb.Append(map[i, j]);
-                    sb.Append(",");
+                    if (map[i, j] != 1 && map[i, j] != 4)
+                    {
+                        sb.Append("   ");
+                    }
+                    else
+                    {
+                        sb.Append($"{map[i, j]}  ");
+                    }
                 }
                 lines.Add(sb.ToString());
             }
