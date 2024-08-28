@@ -435,7 +435,9 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                         continue;
                     }
 
+                    canvas[aX + x, aY - 1] = 4;
                     canvas[aX + x, aY] = 4;
+                    canvas[aX + x, aY + 1] = 4;
                 }
             }
 
@@ -450,7 +452,9 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                         continue;
                     }
 
+                    canvas[aX + deltaX - 1, aY + y] = 4;
                     canvas[aX + deltaX, aY + y] = 4;
+                    canvas[aX + deltaX + 1, aY + y] = 4;
                 }
             }
 

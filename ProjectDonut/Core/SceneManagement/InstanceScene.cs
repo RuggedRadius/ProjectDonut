@@ -16,6 +16,7 @@ using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
 using ProjectDonut.ProceduralGeneration.Dungeons.BSP;
 using System.Diagnostics;
+using ProjectDonut.ProceduralGeneration.Dungeons;
 
 namespace ProjectDonut.Core.SceneManagement
 {
@@ -43,6 +44,8 @@ namespace ProjectDonut.Core.SceneManagement
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
+        private Tilemap _tilemap;
+
         public InstanceScene(SceneType sceneType, Player player, ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera, SpriteLibrary spriteLibray)
         {
             SceneType = sceneType;
@@ -66,10 +69,10 @@ namespace ProjectDonut.Core.SceneManagement
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            GenerateDungeon(500, 500);
+            _tilemap = GenerateDungeon(250, 250);
         }
 
-        private void GenerateDungeon(int width, int height)
+        private Tilemap GenerateDungeon(int width, int height)
         {
             // Generate rooms
             var rooms = _bsp.GenerateRooms(width, height);
@@ -88,7 +91,10 @@ namespace ProjectDonut.Core.SceneManagement
             var linkages = _bsp.LinkAllRooms2(links, width, height);
             dataMap = BSP.MergeArrays(dataMap, linkages);
 
-            Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
+            var generator = new DungeonGenerator(_spriteBatch, _content, _graphicsDevice);
+            return generator.CreateTileMap(dataMap);
+
+            //Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
         }
 
         public void LoadContent(ContentManager content)
@@ -108,6 +114,15 @@ namespace ProjectDonut.Core.SceneManagement
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
+
+            foreach (var tile in _tilemap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.Draw(gameTime, spriteBatch);
+            }
+
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
