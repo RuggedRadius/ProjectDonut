@@ -69,7 +69,7 @@ namespace ProjectDonut.Core.SceneManagement
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            _tilemap = GenerateDungeon(250, 250);
+            _tilemap = GenerateDungeon(100, 100);
         }
 
         private Tilemap GenerateDungeon(int width, int height)

@@ -11,8 +11,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
     {
         private Dictionary<int, List<Room>> _roomsGenerations = new Dictionary<int, List<Room>>();
         private List<Room> _rooms = new List<Room>();
-        private Vector2 _roomMinSize = new Vector2(10, 10);
-        private Vector2 _room2MinSize = new Vector2(5, 5);
+        private Vector2 _roomMinSize = new Vector2(20, 20);
+        private Vector2 _room2MinSize = new Vector2(10, 10);
         private Random _random = new Random();
 
         private int _roomCounter = 0;
