@@ -386,8 +386,10 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             return canvas;
         }
     
+        private List<List<(int, int)>> _paths;
         public int[,] LinkAllRooms(List<(Rectangle, Rectangle)> rooms, int[,] datamap)
         {
+            _paths = new List<List<(int, int)>>();
             int width = datamap.GetLength(0);
             int height = datamap.GetLength(1);
             var canvas = new int[width, height];
@@ -396,6 +398,15 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             {
                 var curRoomLink = LinkRooms(roomPair, datamap);
                 canvas = MergeArrays(canvas, curRoomLink);
+            }
+
+            // Carve all paths
+            foreach (var path in _paths)
+            {
+                foreach (var step in path)
+                {
+                    canvas[step.Item1, step.Item2] = 2;
+                }
             }
 
             return canvas;
@@ -446,8 +457,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             // Wall around path
             foreach (var step in path)
             {
-                if (step == path[0] || step == path[path.Count - 1])
-                    continue;
+                //if (step == path[0] || step == path[path.Count - 1])
+                //    continue;
 
                 for (int x = -1; x <= 1; x++)
                 {
@@ -470,6 +481,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                 canvas[step.Item1, step.Item2] = 2;
             }
 
+            _paths.Add(path);
             return canvas;
         }
 

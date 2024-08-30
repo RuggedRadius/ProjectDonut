@@ -74,27 +74,42 @@ namespace ProjectDonut.Core.SceneManagement
 
         private Tilemap GenerateDungeon(int width, int height)
         {
-            // Generate rooms
-            var rooms = _bsp.GenerateRooms(width, height);
-            rooms[rooms.Count - 1] = _bsp.CreateRoomsWithinAreas(rooms[rooms.Count - 1]);
+            var path = @"C:\DungeonData.txt";
+            var dataMap = new int[width, height];
+            if (System.IO.File.Exists(path))
+            {
+                dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+            }
+            else
+            {
+                // Generate rooms
+                var rooms = _bsp.GenerateRooms(width, height);
+                rooms[rooms.Count - 1] = _bsp.CreateRoomsWithinAreas(rooms[rooms.Count - 1]);
 
-            // Squash rooms in
-            //rooms[rooms.Count - 1] = _bsp.SquashRooms(rooms[rooms.Count - 1], width, height);
+                // Squash rooms in
+                //rooms[rooms.Count - 1] = _bsp.SquashRooms(rooms[rooms.Count - 1], width, height);
 
-            // Generate data map
-            var dataMap = _bsp.CreateDataMap(rooms[rooms.Count - 1], width, height);
+                // Generate data map
+                dataMap = _bsp.CreateDataMap(rooms[rooms.Count - 1], width, height);
 
-            // Link rooms
-            var rects = rooms[rooms.Count - 1].Select(x => x.Bounds).ToList();
-            var rectLinker = new RectangleLinker();
-            var links = rectLinker.LinkRectangles(rects);
-            var linkages = _bsp.LinkAllRooms(links, dataMap);
-            dataMap = BSP.MergeArrays(dataMap, linkages);
+                // Link rooms
+                var rects = rooms[rooms.Count - 1].Select(x => x.Bounds).ToList();
+                var rectLinker = new RectangleLinker();
+                var links = rectLinker.LinkRectangles(rects);
+                var linkages = _bsp.LinkAllRooms(links, dataMap);
+                dataMap = BSP.MergeArrays(dataMap, linkages);
+            }
 
-            //Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
+            Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
+            Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
 
             var generator = new DungeonGenerator(_spriteBatch, _content, _graphicsDevice);
             return generator.CreateTileMap(dataMap);
+        }
+
+        public void SlowBuild(int width, int height)
+        {
+
         }
 
         public void LoadContent(ContentManager content)

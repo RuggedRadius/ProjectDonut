@@ -114,77 +114,67 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             return sprite;
         }
 
+
+        public enum TileType
+        {
+            Empty = 0,
+            Wall = 1,
+            Floor = 2
+        }
         private Texture2D DetermineTexture(int[,] map, int x, int y)
         {
-            var cell = map[x, y];
+            var width  = map.GetLength(0);
+            var height = map.GetLength(1);
+            var cell = (TileType)map[x, y];
 
-            var n = 0;
-            var e = 0;
-            var s = 0;
-            var w = 0;
+            var z = GetNeighbours(map, x, y);
+            var n = z["n"];
+            var e = z["e"];
+            var s = z["s"];
+            var w = z["w"];
+            var ne = z["ne"];
+            var nw = z["nw"];
+            var se = z["se"];
+            var sw = z["sw"];
 
-            if (y > 0)
-            {
-                n = map[x, y - 1];
-            }
-
-            if (x < map.GetLength(0) - 1)
-            {
-                e = map[x + 1, y];
-            }
-
-            if (y < map.GetLength(1) - 1)
-            {
-                s = map[x, y + 1];
-            }
-
-            if (x > 0)
-            {
-                w = map[x - 1, y];
-            }
-
-            if (cell == 0)
-            {
-                return GetRandomTextureFor("floor-01");
-            }
-            else if (cell == 1 || cell == 4) 
+            if (cell == TileType.Wall)
             {
                 // Wall internal
-                if (n == 0 && e == 1 && s == 1 && w == 0) 
+                if (n != TileType.Floor && e == TileType.Wall && s == TileType.Wall && w != TileType.Floor && se == TileType.Floor)
                     return GetRandomTextureFor("wall-nw");
 
-                if (n == 0 && e == 1 && s == 2 && w == 1) 
+                if (n != TileType.Floor && e == TileType.Wall && s == TileType.Floor && w == TileType.Wall) 
                     return GetRandomTextureFor("wall-n");
 
-                if (n == 0 && e == 0 && s == 1 && w == 1) 
+                if (n != TileType.Floor && e != TileType.Floor && s == TileType.Wall && w == TileType.Wall && sw == TileType.Floor) 
                     return GetRandomTextureFor("wall-ne");
 
-                if (n == 1 && e == 2 && s == 1 && w == 0) 
+                if (n == TileType.Wall && e == TileType.Floor && s == TileType.Wall && w != TileType.Floor) 
                     return GetRandomTextureFor("wall-w");
 
-                if (n == 1 && e == 0 && s == 1 && w == 2) 
+                if (n == TileType.Wall && e != TileType.Floor && s == TileType.Wall && w == TileType.Floor) 
                     return GetRandomTextureFor("wall-e");
 
-                if (n == 1 && e == 1 && s == 0 && w == 0) 
+                if (n == TileType.Wall && e == TileType.Wall && s != TileType.Floor && w != TileType.Floor && ne == TileType.Floor) 
                     return GetRandomTextureFor("wall-sw");
 
-                if (n == 2 && e == 1 && s == 0 && w == 1) 
+                if (n == TileType.Floor && e == TileType.Wall && s != TileType.Floor && w == TileType.Wall) 
                     return GetRandomTextureFor("wall-s");
 
-                if (n == 1 && e == 0 && s == 0 && w == 1) 
+                if (n == TileType.Wall && e != TileType.Floor && s != TileType.Floor && w == TileType.Wall && nw == TileType.Floor) 
                     return GetRandomTextureFor("wall-se");
 
                 // Walls external
-                if (n == 2 && e == 1 && s == 1 && w == 2)
+                if (n == TileType.Floor && e == TileType.Wall && s == TileType.Wall && w == TileType.Floor)
                     return GetRandomTextureFor("wall-ext-nw");
 
-                if (n == 2 && e == 2 && s == 1 && w == 1)
+                if (n == TileType.Floor && e == TileType.Floor && s == TileType.Wall && w == TileType.Wall)
                     return GetRandomTextureFor("wall-ext-ne");
 
-                if (n == 1 && e == 1 && s == 2 && w == 2)
+                if (n == TileType.Wall && e == TileType.Wall && s == TileType.Floor && w == TileType.Floor)
                     return GetRandomTextureFor("wall-ext-sw");
 
-                if (n == 1 && e == 2 && s == 2 && w == 1)
+                if (n == TileType.Wall && e == TileType.Floor && s == TileType.Floor && w == TileType.Wall)
                     return GetRandomTextureFor("wall-ext-se");
 
                 // No walls found, return floor
@@ -194,6 +184,73 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             {
                 return GetRandomTextureFor("floor-01");
             }
+        }
+
+        private Dictionary<string, TileType> GetNeighbours(int[,] map, int x, int y)
+        {
+            var width = map.GetLength(0);
+            var height = map.GetLength(1);
+            var neighbours = new Dictionary<string, TileType>();
+
+            var nw = (TileType)0;
+            var n = (TileType)0;
+            var ne = (TileType)0;
+            var w = (TileType)0;
+            var e = (TileType)0;
+            var sw = (TileType)0;
+            var s = (TileType)0;
+            var se = (TileType)0;
+
+            if (y > 0 && x > 0)
+            {
+                nw = (TileType)map[x - 1, y - 1];
+            }
+
+            if (y > 0)
+            {
+                n = (TileType)map[x, y - 1];
+            }
+
+            if (y > 0 && x < width - 1)
+            {
+                ne = (TileType)map[x + 1, y - 1];
+            }
+
+            if (x > 0)
+            {
+                w = (TileType)map[x - 1, y];
+            }
+
+            if (x < width - 1)
+            {
+                e = (TileType)map[x + 1, y];
+            }
+
+            if (y < height - 1)
+            {
+                s = (TileType)map[x, y + 1];
+            }
+
+            if (y < height - 1 && x > 0)
+            {
+                sw = (TileType)map[x - 1, y + 1];
+            }
+
+            if (y < height - 1 && x < width - 1)
+            {
+                se = (TileType)map[x + 1, y + 1];
+            }
+
+            neighbours.Add("nw", nw);
+            neighbours.Add("n", n);
+            neighbours.Add("ne", ne);
+            neighbours.Add("w", w);
+            neighbours.Add("e", e);
+            neighbours.Add("sw", sw);
+            neighbours.Add("s", s);
+            neighbours.Add("se", se);
+
+            return neighbours;
         }
 
         private Texture2D GetRandomTextureFor(string key)

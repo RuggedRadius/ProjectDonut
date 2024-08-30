@@ -136,6 +136,52 @@ namespace ProjectDonut.Debugging
             File.WriteAllLines(filePath, lines);
         }
 
+        public static void SaveIntArrayToFile(int[,] array, string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                int rows = array.GetLength(0);
+                int cols = array.GetLength(1);
+
+                writer.WriteLine(rows);
+                writer.WriteLine(cols);
+
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        writer.Write(array[i, j]);
+                        if (j < cols - 1)
+                            writer.Write(",");  // Separate elements with a comma
+                    }
+                    writer.WriteLine();  // New line for each row
+                }
+            }
+        }
+
+        public static int[,] LoadIntArrayFromFile(string filePath)
+        {
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                int rows = int.Parse(reader.ReadLine());
+                int cols = int.Parse(reader.ReadLine());
+
+                int[,] array = new int[rows, cols];
+
+                for (int i = 0; i < rows; i++)
+                {
+                    string[] line = reader.ReadLine().Split(',');
+
+                    for (int j = 0; j < cols; j++)
+                    {
+                        array[i, j] = int.Parse(line[j]);
+                    }
+                }
+
+                return array;
+            }
+        }
+
         //public void SaveTilemapToFile(string filePath)
         //{
         //    int width = settings.Width * settings.TileSize;
