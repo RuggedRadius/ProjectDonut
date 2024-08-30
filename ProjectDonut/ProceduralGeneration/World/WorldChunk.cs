@@ -147,7 +147,11 @@ namespace ProjectDonut.ProceduralGeneration.World
                     if (structure.Bounds.Contains(Global.Player.ChunkPosition.X, Global.Player.ChunkPosition.Y))
                     {
                         // TODO: TEMP CODE TO TEST SCENE SWITCHING
+                        var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+                        worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, 32, 32);
+
                         Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
                     }
                 }
             }

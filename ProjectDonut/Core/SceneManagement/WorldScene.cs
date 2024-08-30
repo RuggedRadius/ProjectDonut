@@ -25,7 +25,8 @@ namespace ProjectDonut.Core.SceneManagement
         private WorldMapSettings worldMapSettings;
         private FogOfWar _fog;
         private Random random = new Random();
-        
+
+        public Rectangle LastExitLocation;
 
         public WorldScene(SceneType sceneType, SpriteLibrary spriteLibray)
         {
@@ -148,6 +149,13 @@ namespace ProjectDonut.Core.SceneManagement
             s.DeepWaterErosionWidthMax = 20;
 
             return s;
+        }
+
+        public override void PrepareForPlayerEntry()
+        {
+            base.PrepareForPlayerEntry();
+
+            Global.Player.Position = new Vector2(LastExitLocation.X, LastExitLocation.Y);
         }
     }
 }

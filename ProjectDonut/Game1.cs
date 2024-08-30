@@ -117,11 +117,15 @@ namespace ProjectDonut
             if (kbState.IsKeyDown(Keys.F8))
             {
                 Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
             if (kbState.IsKeyDown(Keys.F9))
             {
+                var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, 32, 32);
                 Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
             Global.SceneManager.Update(gameTime);

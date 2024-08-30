@@ -18,6 +18,7 @@ using ProjectDonut.ProceduralGeneration.Dungeons.BSP;
 using System.Diagnostics;
 using ProjectDonut.ProceduralGeneration.Dungeons;
 using System.IO;
+using ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation;
 
 namespace ProjectDonut.Core.SceneManagement
 {
@@ -30,8 +31,13 @@ namespace ProjectDonut.Core.SceneManagement
         // Instance-related 
         private BSP _bsp;
         private Tilemap _tilemap;
+        private Tilemap _populationMap;
 
         private const int Dimension = 100;
+
+        private Rectangle EntryLocation;
+
+        private Dictionary<string, Rectangle> ExitLocations;
 
         public InstanceScene(SceneType sceneType, SpriteLibrary spriteLibray)
         {
@@ -46,11 +52,31 @@ namespace ProjectDonut.Core.SceneManagement
         {
             base.Initialize();
 
-            _tilemap = GenerateDungeon(Dimension, Dimension, true, false);
+            GenerateDungeon(true, false);
         }
 
-        private int[,] dataMap;
-        private Tilemap GenerateDungeon(int width, int height, bool loadLast, bool squashRooms)
+        private void GenerateDungeon(bool loadLast, bool SquashRooms)
+        {
+            _tilemap = GenerateDungeonTileMap(Dimension, Dimension, loadLast, SquashRooms);
+
+            var dungeonPopulater = new DungeonPopulater(_dataMap);
+            dungeonPopulater.PopulateDungeon();
+            _populationMap = dungeonPopulater.CreateTileMap();
+
+            var stairsLocation = dungeonPopulater.GetStairsLocation();
+            EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, 32, 32);
+            Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
+
+            ExitLocations = new Dictionary<string, Rectangle>();
+            var exitPoints = dungeonPopulater.GetExitLocations();
+            foreach (var point in exitPoints)
+            {
+                ExitLocations.Add("world-exit", new Rectangle(point.Item1, point.Item2, 32, 32));
+            }
+        }
+
+        private int[,] _dataMap;
+        private Tilemap GenerateDungeonTileMap(int width, int height, bool loadLast, bool squashRooms)
         {
             var path = @"C:\DungeonData.txt";
             var dataMap = new int[width, height];
@@ -81,8 +107,10 @@ namespace ProjectDonut.Core.SceneManagement
                 dataMap = BSP.MergeArrays(dataMap, linkages);
             }
 
-            Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
-            Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
+            _dataMap = dataMap;
+
+            //Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
+            //Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
 
             var generator = new DungeonGenerator();
             return generator.CreateTileMap(dataMap);
@@ -95,32 +123,40 @@ namespace ProjectDonut.Core.SceneManagement
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             var kbState = Keyboard.GetState();
 
             if (kbState.IsKeyDown(Keys.F1))
             {
-                _tilemap = GenerateDungeon(Dimension, Dimension, false, false);
+                GenerateDungeon(false, false);
             }
 
             if (kbState.IsKeyDown(Keys.F2))
             {
-                _tilemap = GenerateDungeon(Dimension, Dimension, false, true);
+                GenerateDungeon(false, true);
             }
 
             if (kbState.IsKeyDown(Keys.F4))
             {
                 var path = @"C:\DungeonData.txt";
-                dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
-                _tilemap = GenerateDungeon(Dimension, Dimension, true, true);
+                _dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
             }
 
             if (kbState.IsKeyDown(Keys.F5))
             {
                 var path = @"C:\DungeonData.txt";
-                Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
+                Debugging.Debugger.SaveIntArrayToFile(_dataMap, path);
             }
 
-            base.Update(gameTime);
+            foreach (var exitPoint in ExitLocations)
+            {
+                if (exitPoint.Value.Contains(Global.Player.ChunkPosition))
+                {
+                    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                }
+            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -128,6 +164,14 @@ namespace ProjectDonut.Core.SceneManagement
             spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
 
             foreach (var tile in _tilemap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.Draw(gameTime, spriteBatch);
+            }
+
+            foreach (var tile in _populationMap.Map)
             {
                 if (tile == null)
                     continue;
@@ -148,6 +192,13 @@ namespace ProjectDonut.Core.SceneManagement
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
+        }
+
+        public override void PrepareForPlayerEntry()
+        {
+            base.PrepareForPlayerEntry();
+
+            Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
         }
     }
 }

@@ -56,5 +56,10 @@ namespace ProjectDonut.Core.SceneManagement
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
         }
+
+        public virtual void PrepareForPlayerEntry()
+        {
+
+        }
     }
 }
