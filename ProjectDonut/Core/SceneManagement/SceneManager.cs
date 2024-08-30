@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,86 +12,68 @@ namespace ProjectDonut.Core.SceneManagement
 {
     public class SceneManager : IGameObject
     {
-        public WorldScene CurrentScene { get; set; }
-        public InstanceScene InstanceScene { get; set; }
+        public Scene CurrentScene { get; set; }
 
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
-        private ContentManager _content;
-        private SpriteBatch _spriteBatch;
-        private GraphicsDevice _graphicsDevice;
-        private Player _player;
         private SpriteLibrary _spriteLib;
-        private Camera _camera;
 
-        public SceneManager(
-            ContentManager content, 
-            SpriteBatch spriteBatch, 
-            GraphicsDevice graphicsDevice, 
-            Player player,
-            SpriteLibrary spriteLib,
-            Camera camera)
+        public Dictionary<string, Scene> Scenes;
+
+        public SceneManager(SpriteLibrary spriteLib)
         {
-            _content = content;
-            _spriteBatch = spriteBatch;
-            _graphicsDevice = graphicsDevice;
-            _player = player;
-            _spriteBatch = spriteBatch;
             _spriteLib = spriteLib;
-            _camera = camera;
+            Scenes = new Dictionary<string, Scene>()
+            {
+                { "world", CreateWorldScene() },
+                { "instance", CreateInstanceScene() }
+            };
+
+            CurrentScene = Scenes["world"];
         }
 
         public void Initialize()
         {
-            //CurrentScene.Initialize();
-            InstanceScene.Initialize();
+            CurrentScene.Initialize();
         }
 
         public void LoadContent(ContentManager content)
         {
-            //CurrentScene.LoadContent(content);
-            InstanceScene.LoadContent(content);
+            CurrentScene.LoadContent(content);
         }
 
         public void Update(GameTime gameTime)
         {
-            //CurrentScene.Update(gameTime);
-            InstanceScene.Update(gameTime);
+            CurrentScene.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            //CurrentScene.Draw(gameTime, spriteBatch);
-            InstanceScene.Draw(gameTime, spriteBatch);
+            CurrentScene.Draw(gameTime, spriteBatch);
         }
 
-        public void CreateWorldScene()
+        public void SetCurrentScene(Scene scene)
         {
-            var scene = new WorldScene(
-                SceneType.World, 
-                _player, 
-                _content, 
-                _spriteBatch, 
-                _graphicsDevice,
-                _camera,
-                _spriteLib);
-
             CurrentScene = scene;
         }
 
-        public void CreateInstanceScene()
+        public WorldScene CreateWorldScene()
         {
-            var scene = new InstanceScene(
-                SceneType.Instance,
-                _player,
-                _content,
-                _spriteBatch,
-                _graphicsDevice,
-                _camera,
-                _spriteLib);
+            var scene = new WorldScene(SceneType.World, _spriteLib);
+            scene.Initialize();
+            scene.LoadContent(Global.ContentManager);
 
-            InstanceScene = scene;
+            return scene;
+        }
+
+        public InstanceScene CreateInstanceScene()
+        {
+            var scene = new InstanceScene(SceneType.Instance, _spriteLib);
+            scene.Initialize();
+            scene.LoadContent(Global.ContentManager);
+
+            return scene;
         }
     }
 }
