@@ -89,7 +89,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         public void Initialize()
         {
             Position = new Vector2(50, 50);
-            speed = 150;
+            speed = 500;
             spriteSize = new Vector2(TileSize, TileSize);
             ZIndex = -100;
 

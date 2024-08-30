@@ -73,24 +73,52 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
 
         private void LoadTextures()
         {
-            var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/Tileset_Dungeon02");
+            var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/sheet");
+            //var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/Tileset_Dungeon02");
 
-            _textures = new Dictionary<string, List<Texture2D>>();
-            _textures.Add("wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) });
-            _textures.Add("wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) });
-            _textures.Add("wall-ne", new List<Texture2D> { ExtractSprite(sheet, 2, 0) });
-            _textures.Add("wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) });
-            _textures.Add("wall-e", new List<Texture2D> { ExtractSprite(sheet, 2, 1) });
-            _textures.Add("wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 2) });
-            _textures.Add("wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 2) });
-            _textures.Add("wall-se", new List<Texture2D> { ExtractSprite(sheet, 2, 2) });
+            _textures = new Dictionary<string, List<Texture2D>>
+            {
+                { "wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) } },
+                { "wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) } },
+                { "wall-ne", new List<Texture2D> { ExtractSprite(sheet, 2, 0) } },
+                { "wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) } },
+                { "wall-e", new List<Texture2D> { ExtractSprite(sheet, 2, 1) } },
+                { "wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 2) } },
+                { "wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 2) } },
+                { "wall-se", new List<Texture2D> { ExtractSprite(sheet, 2, 2) } },
+                { "wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 3, 0) } },
+                { "wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 4, 0) } },
+                { "wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 3, 1) } },
+                { "wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 4, 1) } },
+                { "floor-01", new List<Texture2D>() }
+            };
 
-            _textures.Add("wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 5, 1) });
-            _textures.Add("wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 6, 1) });
-            _textures.Add("wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 5, 2) });
-            _textures.Add("wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 6, 2) });
+            for (int i = 0; i < 7; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    _textures["floor-01"].Add(ExtractSprite(sheet, i + 6, j));
+                }
+            }
 
-            _textures.Add("floor-01", new List<Texture2D> { ExtractSprite(sheet, 1, 1) });
+
+            //_textures.Add("wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) });
+            //_textures.Add("wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) });
+            //_textures.Add("wall-ne", new List<Texture2D> { ExtractSprite(sheet, 2, 0) });
+            //_textures.Add("wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) });
+            //_textures.Add("wall-e", new List<Texture2D> { ExtractSprite(sheet, 2, 1) });
+            //_textures.Add("wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 2) });
+            //_textures.Add("wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 2) });
+            //_textures.Add("wall-se", new List<Texture2D> { ExtractSprite(sheet, 2, 2) });
+
+            //_textures.Add("wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 5, 1) });
+            //_textures.Add("wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 6, 1) });
+            //_textures.Add("wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 5, 2) });
+            //_textures.Add("wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 6, 2) });
+
+            //_textures.Add("floor-01", new List<Texture2D> { ExtractSprite(sheet, 1, 1) });
+
+
         }
 
         private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)

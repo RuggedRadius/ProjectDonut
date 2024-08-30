@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 using Microsoft.Xna.Framework;
 
 namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
@@ -417,12 +418,53 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             int width = datamap.GetLength(0);
             int height = datamap.GetLength(1);
             var canvas = new int[width, height];
+            var path = new List<(int, int)>();
+            var attemptCounter = 0;
 
-            var aX = _random.Next(rooms.Item1.X + 1, rooms.Item1.X + rooms.Item1.Width - 1);
-            var aY = _random.Next(rooms.Item1.Y + 1, rooms.Item1.Y + rooms.Item1.Height - 1);
-            var bX = _random.Next(rooms.Item2.X + 1, rooms.Item2.X + rooms.Item2.Width - 1);
-            var bY = _random.Next(rooms.Item2.Y + 1, rooms.Item2.Y + rooms.Item2.Height - 1);
+            do
+            {
+                var aX = _random.Next(rooms.Item1.X + 1, rooms.Item1.X + rooms.Item1.Width - 1);
+                var aY = _random.Next(rooms.Item1.Y + 1, rooms.Item1.Y + rooms.Item1.Height - 1);
+                var bX = _random.Next(rooms.Item2.X + 1, rooms.Item2.X + rooms.Item2.Width - 1);
+                var bY = _random.Next(rooms.Item2.Y + 1, rooms.Item2.Y + rooms.Item2.Height - 1);
 
+                path = CalculatePath(datamap, aX, aY, bX, bY);
+                attemptCounter++;
+
+                if (attemptCounter > 100)
+                {
+                    break;
+                }
+            } 
+            while (!TestPathDoesntCollide(datamap, path));
+
+            canvas = WallAroundPath(datamap, canvas, path);
+
+            _paths.Add(path);
+            return canvas;
+        }
+
+        private bool TestPathDoesntCollide(int[,] datamap, List<(int, int)> path)
+        {
+            foreach (var step in path)
+            {
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        if (datamap[step.Item1 + x, step.Item2 + y] != 0)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private List<(int, int)> CalculatePath(int[,] datamap, int aX, int aY, int bX, int bY)
+        {
             var deltaX = bX - aX;
             var deltaY = bY - aY;
 
@@ -454,12 +496,13 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                 }
             }
 
-            // Wall around path
+            return path;
+        }
+
+        private int[,] WallAroundPath(int[,] datamap, int[,] canvas, List<(int, int)> path)
+        {
             foreach (var step in path)
             {
-                //if (step == path[0] || step == path[path.Count - 1])
-                //    continue;
-
                 for (int x = -1; x <= 1; x++)
                 {
                     for (int y = -1; y <= 1; y++)
@@ -467,7 +510,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                         var xCoord = step.Item1 + x;
                         var yCoord = step.Item2 + y;
 
-                        if (datamap[xCoord, yCoord] != 2)
+                        if (datamap[xCoord, yCoord] == 0)
                         {
                             canvas[xCoord, yCoord] = 1;
                         }
@@ -475,13 +518,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                 }
             }
 
-            // Carve path
-            foreach (var step in path)
-            {
-                canvas[step.Item1, step.Item2] = 2;
-            }
-
-            _paths.Add(path);
             return canvas;
         }
 

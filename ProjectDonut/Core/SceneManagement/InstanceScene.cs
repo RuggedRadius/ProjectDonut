@@ -17,6 +17,7 @@ using ProjectDonut.UI.ScrollDisplay;
 using ProjectDonut.ProceduralGeneration.Dungeons.BSP;
 using System.Diagnostics;
 using ProjectDonut.ProceduralGeneration.Dungeons;
+using System.IO;
 
 namespace ProjectDonut.Core.SceneManagement
 {
@@ -46,6 +47,8 @@ namespace ProjectDonut.Core.SceneManagement
 
         private Tilemap _tilemap;
 
+        private const int Dimension = 100;
+
         public InstanceScene(SceneType sceneType, Player player, ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera, SpriteLibrary spriteLibray)
         {
             SceneType = sceneType;
@@ -69,14 +72,15 @@ namespace ProjectDonut.Core.SceneManagement
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            _tilemap = GenerateDungeon(100, 100);
+            _tilemap = GenerateDungeon(Dimension, Dimension, true, false);
         }
 
-        private Tilemap GenerateDungeon(int width, int height)
+        private int[,] dataMap;
+        private Tilemap GenerateDungeon(int width, int height, bool loadLast, bool squashRooms)
         {
             var path = @"C:\DungeonData.txt";
             var dataMap = new int[width, height];
-            if (System.IO.File.Exists(path))
+            if (File.Exists(path) && loadLast)
             {
                 dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
             }
@@ -87,7 +91,10 @@ namespace ProjectDonut.Core.SceneManagement
                 rooms[rooms.Count - 1] = _bsp.CreateRoomsWithinAreas(rooms[rooms.Count - 1]);
 
                 // Squash rooms in
-                //rooms[rooms.Count - 1] = _bsp.SquashRooms(rooms[rooms.Count - 1], width, height);
+                if (squashRooms)
+                {
+                    rooms[rooms.Count - 1] = _bsp.SquashRooms(rooms[rooms.Count - 1], width, height);
+                }
 
                 // Generate data map
                 dataMap = _bsp.CreateDataMap(rooms[rooms.Count - 1], width, height);
@@ -121,6 +128,29 @@ namespace ProjectDonut.Core.SceneManagement
         public void Update(GameTime gameTime)
         {
             var kbState = Keyboard.GetState();
+
+            if (kbState.IsKeyDown(Keys.F1))
+            {
+                _tilemap = GenerateDungeon(Dimension, Dimension, false, false);
+            }
+
+            if (kbState.IsKeyDown(Keys.F2))
+            {
+                _tilemap = GenerateDungeon(Dimension, Dimension, false, true);
+            }
+
+            if (kbState.IsKeyDown(Keys.F4))
+            {
+                var path = @"C:\DungeonData.txt";
+                dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                _tilemap = GenerateDungeon(Dimension, Dimension, true, true);
+            }
+
+            if (kbState.IsKeyDown(Keys.F5))
+            {
+                var path = @"C:\DungeonData.txt";
+                Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
+            }
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
