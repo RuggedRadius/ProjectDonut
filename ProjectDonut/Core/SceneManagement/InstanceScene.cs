@@ -88,13 +88,13 @@ namespace ProjectDonut.Core.SceneManagement
             var rects = rooms[rooms.Count - 1].Select(x => x.Bounds).ToList();
             var rectLinker = new RectangleLinker();
             var links = rectLinker.LinkRectangles(rects);
-            var linkages = _bsp.LinkAllRooms2(links, width, height);
+            var linkages = _bsp.LinkAllRooms(links, dataMap);
             dataMap = BSP.MergeArrays(dataMap, linkages);
+
+            //Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
 
             var generator = new DungeonGenerator(_spriteBatch, _content, _graphicsDevice);
             return generator.CreateTileMap(dataMap);
-
-            //Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
         }
 
         public void LoadContent(ContentManager content)

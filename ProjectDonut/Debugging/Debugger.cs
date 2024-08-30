@@ -121,14 +121,14 @@ namespace ProjectDonut.Debugging
                 var sb = new StringBuilder();
                 for (int j = 0; j < height; j++)
                 {
-                    if (map[i, j] != 1 && map[i, j] != 4)
-                    {
-                        sb.Append("   ");
-                    }
-                    else
-                    {
-                        sb.Append($"{map[i, j]}  ");
-                    }
+                    if (map[j, i] == 0)
+                        sb.Append("  ");
+
+                    if (map[j, i] == 1)
+                        sb.Append("▓▓");
+
+                    if (map[j, i] == 2)
+                        sb.Append("░░");
                 }
                 lines.Add(sb.ToString());
             }

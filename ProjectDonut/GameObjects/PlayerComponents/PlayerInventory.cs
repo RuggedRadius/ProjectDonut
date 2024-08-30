@@ -38,7 +38,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public PlayerInventory(ContentManager content, GameCursor cursor)
         {
-            State = UIComponentState.Shown;
+            State = UIComponentState.Hidden;
             ZIndex = 100;
             _content = content;
             _cursor = cursor;

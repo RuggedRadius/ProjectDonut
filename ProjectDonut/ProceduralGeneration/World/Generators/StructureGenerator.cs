@@ -195,7 +195,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = spriteLib.GetSprite($"castle-01-{i}-{j}"), //DetermineTexture(structure, directions[counter]),
-                        TileType = TileType.Forest,
+                        WorldTileType = WorldTileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i + x, j + y],
                         Frames = new List<Texture2D>()//GetFrames(structure, directions[counter], 4)
                     };

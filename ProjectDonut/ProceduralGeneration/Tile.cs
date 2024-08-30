@@ -9,7 +9,7 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.ProceduralGeneration
 {
-    public enum TileType
+    public enum WorldTileType
     {        
         Coast,
         Water,
@@ -36,7 +36,7 @@ namespace ProjectDonut.ProceduralGeneration
         public Vector2 LocalPosition { get; set; }
         public Vector2 Size { get; set; }
         public Texture2D Texture { get; set; }
-        public TileType TileType { get; set; }
+        public WorldTileType WorldTileType { get; set; }
         public Biome Biome { get; set; }
         private SpriteBatch _spriteBatch;
 

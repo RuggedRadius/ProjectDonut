@@ -22,7 +22,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
         private static List<Area> areas;
         private static List<Room> rooms2;
 
-        private Dictionary<string, Texture2D> _textures;
+        private Dictionary<string, List<Texture2D>> _textures;
 
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
@@ -75,17 +75,22 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
         {
             var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/Tileset_Dungeon02");
 
-            _textures = new Dictionary<string, Texture2D>();
-            _textures.Add("wall-nw", ExtractSprite(sheet, 0, 0));
-            _textures.Add("wall-n", ExtractSprite(sheet, 1, 0));
-            _textures.Add("wall-ne", ExtractSprite(sheet, 2, 0));
-            _textures.Add("wall-w", ExtractSprite(sheet, 0, 1));
-            _textures.Add("wall-e", ExtractSprite(sheet, 2, 1));
-            _textures.Add("wall-sw", ExtractSprite(sheet, 0, 2));
-            _textures.Add("wall-s", ExtractSprite(sheet, 1, 2));
-            _textures.Add("wall-se", ExtractSprite(sheet, 2, 2));
+            _textures = new Dictionary<string, List<Texture2D>>();
+            _textures.Add("wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) });
+            _textures.Add("wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) });
+            _textures.Add("wall-ne", new List<Texture2D> { ExtractSprite(sheet, 2, 0) });
+            _textures.Add("wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) });
+            _textures.Add("wall-e", new List<Texture2D> { ExtractSprite(sheet, 2, 1) });
+            _textures.Add("wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 2) });
+            _textures.Add("wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 2) });
+            _textures.Add("wall-se", new List<Texture2D> { ExtractSprite(sheet, 2, 2) });
 
-            _textures.Add("floor", ExtractSprite(sheet, 1, 1));
+            _textures.Add("wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 6, 1) });
+            _textures.Add("wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 7, 1) });
+            _textures.Add("wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 6, 2) });
+            _textures.Add("wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 7, 2) });
+
+            _textures.Add("floor-01", new List<Texture2D> { ExtractSprite(sheet, 1, 1) });
         }
 
         private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
@@ -140,83 +145,121 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
 
             if (cell == 0)
             {
-                return _textures["floor"];
+                return GetRandomTextureFor("floor-01");
             }
             else if (cell == 1 || cell == 4) 
             {
-                if (n != 1 && e == 1 && s == 1 && w != 1) return _textures["wall-nw"];
-                if (n != 1 && e == 1 && s == 2 && w == 1) return _textures["wall-n"];
-                if (n != 1 && e != 1 && s == 1 && w == 1) return _textures["wall-ne"];
-                if (n == 1 && e == 2 && s == 1 && w != 1) return _textures["wall-w"];
-                if (n == 1 && e != 1 && s == 1 && w == 2) return _textures["wall-e"];
-                if (n == 1 && e == 1 && s != 1 && w != 1) return _textures["wall-sw"];
-                if (n == 2 && e == 1 && s != 1 && w == 1) return _textures["wall-s"];
-                if (n == 1 && e != 1 && s != 1 && w == 1) return _textures["wall-se"];
-                else return _textures["floor"];
+                // Wall internal
+                if (n == 0 && e == 1 && s == 1 && w == 0) 
+                    return GetRandomTextureFor("wall-nw");
+
+                if (n == 0 && e == 1 && s == 2 && w == 1) 
+                    return GetRandomTextureFor("wall-n");
+
+                if (n == 0 && e == 0 && s == 1 && w == 1) 
+                    return GetRandomTextureFor("wall-ne");
+
+                if (n == 1 && e == 2 && s == 1 && w == 0) 
+                    return GetRandomTextureFor("wall-w");
+
+                if (n == 1 && e == 0 && s == 1 && w == 2) 
+                    return GetRandomTextureFor("wall-e");
+
+                if (n == 1 && e == 1 && s == 0 && w == 0) 
+                    return GetRandomTextureFor("wall-sw");
+
+                if (n == 2 && e == 1 && s == 0 && w == 1) 
+                    return GetRandomTextureFor("wall-s");
+
+                if (n == 1 && e == 0 && s == 0 && w == 1) 
+                    return GetRandomTextureFor("wall-se");
+
+                // Walls external
+                if (n == 2 && e == 1 && s == 1 && w == 2)
+                    return GetRandomTextureFor("wall-ext-ne");
+
+                if (n == 2 && e == 2 && s == 1 && w == 1)
+                    return GetRandomTextureFor("wall-ext-ne");
+
+                if (n == 1 && e == 1 && s == 2 && w == 2)
+                    return GetRandomTextureFor("wall-ext-sw");
+
+                if (n == 1 && e == 2 && s == 2 && w == 1)
+                    return GetRandomTextureFor("wall-ext-se");
+
+                // No walls found, return floor
+                return GetRandomTextureFor("floor-01");
             }
             else
             {
-                return _textures["floor"];
+                return GetRandomTextureFor("floor-01");
             }
         }
 
-
-        public enum TileType
+        private Texture2D GetRandomTextureFor(string key)
         {
-            Empty = 0,
-            Wall = 1
+            var random = new Random();
+            var textures = _textures[key];
+            return textures[random.Next(textures.Count)];
         }
 
-        public enum WallSprite
-        {
-            None = 0,     // 0000
-            North = 1,    // 0001
-            East = 2,     // 0010
-            South = 4,    // 0100
-            West = 8,     // 1000
-            NorthEast = North | East,    // 0011
-            NorthWest = North | West,    // 1001
-            SouthEast = South | East,    // 0110
-            SouthWest = South | West,    // 1100
-            AllSides = North | East | South | West  // 1111
-        }
 
-        public WallSprite[,] DetermineWallSprites(int[,] data)
-        {
-            int rows = data.GetLength(0);
-            int cols = data.GetLength(1);
-            WallSprite[,] spriteMap = new WallSprite[rows, cols];
+        //public enum TileType
+        //{
+        //    Empty = 0,
+        //    Wall = 1
+        //}
 
-            for (int row = 0; row < rows; row++)
-            {
-                for (int col = 0; col < cols; col++)
-                {
-                    if (data[row, col] == 0)
-                    {
-                        spriteMap[row, col] = WallSprite.None;
-                        continue;
-                    }
+        //public enum WallSprite
+        //{
+        //    None = 0,     // 0000
+        //    North = 1,    // 0001
+        //    East = 2,     // 0010
+        //    South = 4,    // 0100
+        //    West = 8,     // 1000
+        //    NorthEast = North | East,    // 0011
+        //    NorthWest = North | West,    // 1001
+        //    SouthEast = South | East,    // 0110
+        //    SouthWest = South | West,    // 1100
+        //    AllSides = North | East | South | West  // 1111
+        //}
 
-                    int bitmask = 0;
+        //public WallSprite[,] DetermineWallSprites(int[,] data)
+        //{
+        //    int rows = data.GetLength(0);
+        //    int cols = data.GetLength(1);
+        //    WallSprite[,] spriteMap = new WallSprite[rows, cols];
 
-                    if (row > 0 && data[row - 1, col] == 1) // North
-                        bitmask |= (int)WallSprite.North;
+        //    for (int row = 0; row < rows; row++)
+        //    {
+        //        for (int col = 0; col < cols; col++)
+        //        {
+        //            if (data[row, col] == 0)
+        //            {
+        //                spriteMap[row, col] = WallSprite.None;
+        //                continue;
+        //            }
 
-                    if (col < cols - 1 && data[row, col + 1] == 1) // East
-                        bitmask |= (int)WallSprite.East;
+        //            int bitmask = 0;
 
-                    if (row < rows - 1 && data[row + 1, col] == 1) // South
-                        bitmask |= (int)WallSprite.South;
+        //            if (row > 0 && data[row - 1, col] == 1) // North
+        //                bitmask |= (int)WallSprite.North;
 
-                    if (col > 0 && data[row, col - 1] == 1) // West
-                        bitmask |= (int)WallSprite.West;
+        //            if (col < cols - 1 && data[row, col + 1] == 1) // East
+        //                bitmask |= (int)WallSprite.East;
 
-                    spriteMap[row, col] = (WallSprite)bitmask;
-                }
-            }
+        //            if (row < rows - 1 && data[row + 1, col] == 1) // South
+        //                bitmask |= (int)WallSprite.South;
 
-            return spriteMap;
-        }
+        //            if (col > 0 && data[row, col - 1] == 1) // West
+        //                bitmask |= (int)WallSprite.West;
+
+        //            spriteMap[row, col] = (WallSprite)bitmask;
+        //        }
+        //    }
+
+        //    return spriteMap;
+        //}
 
 
 

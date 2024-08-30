@@ -339,7 +339,12 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             return new List<Room>() { roomA, roomB };
         }
 
-
+        /* Tile Values:
+         * ============
+         * 0 = Empty
+         * 1 = Wall
+         * 2 = Floor
+         */
         public int[,] CreateDataMap(List<Room> rooms, int width, int height)
         {
             // Initialise canvas
@@ -381,39 +386,25 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             return canvas;
         }
     
-        public int[,] LinkAllRooms(List<Room> rooms, int width, int height)
+        public int[,] LinkAllRooms(List<(Rectangle, Rectangle)> rooms, int[,] datamap)
         {
-            var canvas = new int[width, height];
-
-            foreach (var room in rooms)
-            {
-                if (room.CorridorDrawn)
-                {
-                    continue;
-                }
-
-                var curRoomLink = LinkRooms(room, room.Sibling, width, height);
-                canvas = MergeArrays(canvas, curRoomLink); 
-            }
-
-            return canvas;
-        }
-
-        public int[,] LinkAllRooms2(List<(Rectangle, Rectangle)> rooms, int width, int height)
-        {
+            int width = datamap.GetLength(0);
+            int height = datamap.GetLength(1);
             var canvas = new int[width, height];
 
             foreach (var roomPair in rooms)
             {
-                var curRoomLink = LinkRooms2(roomPair, width, height);
+                var curRoomLink = LinkRooms(roomPair, datamap);
                 canvas = MergeArrays(canvas, curRoomLink);
             }
 
             return canvas;
         }
 
-        private int[,] LinkRooms2((Rectangle, Rectangle) rooms, int width, int height)
+        private int[,] LinkRooms((Rectangle, Rectangle) rooms, int[,] datamap)
         {
+            int width = datamap.GetLength(0);
+            int height = datamap.GetLength(1);
             var canvas = new int[width, height];
 
             var aX = _random.Next(rooms.Item1.X + 1, rooms.Item1.X + rooms.Item1.Width - 1);
@@ -424,94 +415,60 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             var deltaX = bX - aX;
             var deltaY = bY - aY;
 
-            // Draw horizontal corridor
+            var path = new List<(int, int)>();
+
+            // Gather path horizontal corridor
             if (deltaX != 0)
             {
                 int stepX = deltaX > 0 ? 1 : -1;
                 for (int x = 0; x != deltaX; x += stepX)
                 {
-                    if (rooms.Item1.Contains(aX + x, aY) || rooms.Item2.Contains(aX + x, aY))
-                    {
+                    if (datamap[aX + x, aY] == 2)
                         continue;
-                    }
 
-                    canvas[aX + x, aY - 1] = 4;
-                    canvas[aX + x, aY] = 4;
-                    canvas[aX + x, aY + 1] = 4;
+                    path.Add((aX + x, aY));
                 }
             }
 
-            // Draw vertical corridor
+            // Gather path vertical corridor
             if (deltaY != 0)
             {
                 int stepY = deltaY > 0 ? 1 : -1;
                 for (int y = 0; y != deltaY; y += stepY)
                 {
-                    if (rooms.Item1.Contains(aX + deltaX, aY + y) || rooms.Item2.Contains(aX + deltaX, aY + y))
-                    {
+                    if (datamap[aX + deltaX, aY + y] == 2)
                         continue;
-                    }
 
-                    canvas[aX + deltaX - 1, aY + y] = 4;
-                    canvas[aX + deltaX, aY + y] = 4;
-                    canvas[aX + deltaX + 1, aY + y] = 4;
+                    path.Add((aX + deltaX, aY + y));
                 }
             }
 
-            // Set the final position of bX, bY
-            //canvas[bX, bY] = 1;
-
-            return canvas;
-        }
-
-
-        private int[,] LinkRooms(Room roomA, Room roomB, int width, int height)
-        {
-            var canvas = new int[width, height];
-
-            var aX = _random.Next(roomA.Bounds.X + 1, roomA.Bounds.X + roomA.Bounds.Width - 1);
-            var aY = _random.Next(roomA.Bounds.Y + 1, roomA.Bounds.Y + roomA.Bounds.Height - 1);
-            var bX = _random.Next(roomB.Bounds.X + 1, roomB.Bounds.X + roomB.Bounds.Width - 1);
-            var bY = _random.Next(roomB.Bounds.Y + 1, roomB.Bounds.Y + roomB.Bounds.Height - 1);
-
-            var deltaX = bX - aX;
-            var deltaY = bY - aY;
-
-            // Draw horizontal corridor
-            if (deltaX != 0)
+            // Wall around path
+            foreach (var step in path)
             {
-                int stepX = deltaX > 0 ? 1 : -1;
-                for (int x = 0; x != deltaX; x += stepX)
-                {
-                    if(roomA.Bounds.Contains(aX + x, aY) || roomB.Bounds.Contains(aX + x, aY))
-                    {
-                        continue;
-                    }
+                if (step == path[0] || step == path[path.Count - 1])
+                    continue;
 
-                    canvas[aX + x, aY] = 4;
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        var xCoord = step.Item1 + x;
+                        var yCoord = step.Item2 + y;
+
+                        if (datamap[xCoord, yCoord] != 2)
+                        {
+                            canvas[xCoord, yCoord] = 1;
+                        }
+                    }
                 }
             }
 
-            // Draw vertical corridor
-            if (deltaY != 0)
+            // Carve path
+            foreach (var step in path)
             {
-                int stepY = deltaY > 0 ? 1 : -1;
-                for (int y = 0; y != deltaY; y += stepY)
-                {
-                    if (roomA.Bounds.Contains(aX + deltaX, aY + y) || roomB.Bounds.Contains(aX + deltaX, aY + y))
-                    {
-                        continue;
-                    }
-
-                    canvas[aX + deltaX, aY + y] = 4;
-                }
+                canvas[step.Item1, step.Item2] = 2;
             }
-
-            // Set the final position of bX, bY
-            canvas[bX, bY] = 1;
-
-            roomA.CorridorDrawn = true;
-            roomB.CorridorDrawn = true;
 
             return canvas;
         }
@@ -532,13 +489,35 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    result[i, j] = array2[i, j] != 0 ? array2[i, j] : array1[i, j];
+                    //if (array2[i, j] == 0)
+                    //{
+                    //    result[i, j] = array1[i, j];
+                    //    continue;
+                    //}
+
+                    //if (array1[i, j] == 1)
+                    //{
+                    //    result[i, j] = array1[i, j];
+                    //    continue;
+                    //}
+
+                    //if (array1[i, j] == 2)
+                    //{
+                    //    result[i, j] = array1[i, j];
+                    //    continue;
+                    //}
+                    if (array2[i, j] == 0)
+                    {
+                        result[i, j] = array1[i, j];
+                    }
+                    else
+                    {
+                        result[i, j] = array2[i, j];
+                    }
                 }
             }
 
             return result;
         }
-
-
     }
 }
