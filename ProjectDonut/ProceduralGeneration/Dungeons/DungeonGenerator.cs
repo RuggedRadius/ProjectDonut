@@ -85,10 +85,10 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             _textures.Add("wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 2) });
             _textures.Add("wall-se", new List<Texture2D> { ExtractSprite(sheet, 2, 2) });
 
-            _textures.Add("wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 6, 1) });
-            _textures.Add("wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 7, 1) });
-            _textures.Add("wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 6, 2) });
-            _textures.Add("wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 7, 2) });
+            _textures.Add("wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 5, 1) });
+            _textures.Add("wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 6, 1) });
+            _textures.Add("wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 5, 2) });
+            _textures.Add("wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 6, 2) });
 
             _textures.Add("floor-01", new List<Texture2D> { ExtractSprite(sheet, 1, 1) });
         }
@@ -176,7 +176,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
 
                 // Walls external
                 if (n == 2 && e == 1 && s == 1 && w == 2)
-                    return GetRandomTextureFor("wall-ext-ne");
+                    return GetRandomTextureFor("wall-ext-nw");
 
                 if (n == 2 && e == 2 && s == 1 && w == 1)
                     return GetRandomTextureFor("wall-ext-ne");
