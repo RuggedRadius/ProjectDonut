@@ -9,42 +9,43 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Debugging
 {
-    public class Debugger : IScreenObject
+    public static class Debugger
     {
-        private SpriteBatch _spriteBatch;
-        private ContentManager _content;
-        private GraphicsDevice _graphicsDevice;
-        private Camera _camera;
+        public static SpriteBatch _spriteBatch;
+        public static ContentManager _content;
+        public static GraphicsDevice _graphicsDevice;
+        public static Camera _camera;
 
-        private SpriteFont debugFont;
-        private Texture2D debugTexture;
-        private Rectangle debugRect;
+        private static SpriteFont debugFont;
+        private static Texture2D debugTexture;
+        private static Rectangle debugRect;
+        private static int maxWindowWidth;
 
-        public string[] debug;
+        public static string[] Lines = new string[15];
 
-        public int ZIndex { get; set; }
+        public static int ZIndex { get; set; }
 
-        public Debugger(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphicsDevice, Camera camera)
+        //public Debugger(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphicsDevice, Camera camera)
+        //{
+        //    _spriteBatch = spriteBatch;
+        //    _content = content;
+        //    _graphicsDevice = graphicsDevice;
+        //    _camera = camera;
+
+        //    Lines = new string[10];
+        //}
+
+        public static void Initialize()
         {
-            _spriteBatch = spriteBatch;
-            _content = content;
-            _graphicsDevice = graphicsDevice;
-            _camera = camera;
-
-            debug = new string[5];
         }
 
-        public void Initialize()
-        {
-        }
-
-        public void LoadContent()
+        public static void LoadContent()
         {
             debugFont = _content.Load<SpriteFont>("Fonts/Default");
             debugTexture = CreateTexture(_graphicsDevice, 1, 1, Color.Black);
         }
 
-        Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
+        private static Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
         {
             Texture2D texture = new Texture2D(graphicsDevice, width, height);
             Color[] colorData = new Color[width * height];
@@ -53,13 +54,13 @@ namespace ProjectDonut.Debugging
             return texture;
         }
 
-        public void Update(GameTime gameTime)
+        public static void Update(GameTime gameTime)
         {
             // Calculate the height of the debug panel based on the number of debug lines
             int height = 5;
-            for (int i = 0; i < debug.Length; i++)
+            for (int i = 0; i < Lines.Length; i++)
             {
-                if (debug[i] != null)
+                if (Lines[i] != null)
                 {
                     height += 30;
                 }
@@ -69,26 +70,40 @@ namespace ProjectDonut.Debugging
             int x = 10;
             int y = 10;
 
-            debugRect = new Rectangle(x, y, 400, height);
-        }
+            foreach (var line in Lines)
+            {
+                if (line == null)
+                {
+                    continue;
+                }
 
-        public void Draw(GameTime gameTime)
+                var length = (int)debugFont.MeasureString(line).X + 10;
+                if (length > maxWindowWidth)
+                {
+                    maxWindowWidth = length;
+                }
+            }
+
+            debugRect = new Rectangle(x, y, maxWindowWidth, height);
+        }
+        
+        public static void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _spriteBatch.Draw(debugTexture, debugRect, Color.Black);
 
             var camPos = _camera.Position;
 
-            for (int i = 0; i < debug.Length; i++)
+            for (int i = 0; i < Lines.Length; i++)
             {
-                if (debug[i] == null)
+                if (Lines[i] == null)
                 {
                     continue;
                 }
 
                 // Debug Text
                 var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + 30 * i);
-                _spriteBatch.DrawString(debugFont, debug[i], pos, Color.White);
+                _spriteBatch.DrawString(debugFont, Lines[i], pos, Color.White);
             }
 
             _spriteBatch.End();
@@ -96,8 +111,8 @@ namespace ProjectDonut.Debugging
 
         public static void PrintDataMap(int[,] map, string filePath)
         {
-            var height = map.GetLength(0);
-            var width = map.GetLength(1);
+            var height = map.GetLength(1);
+            var width = map.GetLength(0);
 
             var lines = new List<string>();
 
@@ -106,13 +121,125 @@ namespace ProjectDonut.Debugging
                 var sb = new StringBuilder();
                 for (int j = 0; j < height; j++)
                 {
-                    sb.Append(map[i, j]);
-                    sb.Append(",");
+                    if (map[j, i] == 0)
+                        sb.Append("  ");
+
+                    if (map[j, i] == 1)
+                        sb.Append("▓▓");
+
+                    if (map[j, i] == 2)
+                        sb.Append("░░");
                 }
                 lines.Add(sb.ToString());
             }
 
             File.WriteAllLines(filePath, lines);
         }
+
+        public static void SaveIntArrayToFile(int[,] array, string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                int rows = array.GetLength(0);
+                int cols = array.GetLength(1);
+
+                writer.WriteLine(rows);
+                writer.WriteLine(cols);
+
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        writer.Write(array[i, j]);
+                        if (j < cols - 1)
+                            writer.Write(",");  // Separate elements with a comma
+                    }
+                    writer.WriteLine();  // New line for each row
+                }
+            }
+        }
+
+        public static int[,] LoadIntArrayFromFile(string filePath)
+        {
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                int rows = int.Parse(reader.ReadLine());
+                int cols = int.Parse(reader.ReadLine());
+
+                int[,] array = new int[rows, cols];
+
+                for (int i = 0; i < rows; i++)
+                {
+                    string[] line = reader.ReadLine().Split(',');
+
+                    for (int j = 0; j < cols; j++)
+                    {
+                        array[i, j] = int.Parse(line[j]);
+                    }
+                }
+
+                return array;
+            }
+        }
+
+        //public void SaveTilemapToFile(string filePath)
+        //{
+        //    int width = settings.Width * settings.TileSize;
+        //    int height = settings.Height * settings.TileSize;
+
+        //    // Create a RenderTarget2D with the size of the entire tilemap
+        //    using (RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height))
+        //    {
+        //        // Set the RenderTarget
+        //        graphicsDevice.SetRenderTarget(renderTarget);
+
+        //        // Clear the RenderTarget (optional)
+        //        graphicsDevice.Clear(Color.Transparent);
+
+        //        // Create a SpriteBatch to draw the textures
+        //        SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
+
+        //        spriteBatch.Begin();
+
+        //        // Loop through each texture and draw it on the RenderTarget
+        //        for (int x = 0; x < settings.Width; x++)
+        //        {
+        //            for (int y = 0; y < settings.Height; y++)
+        //            {
+        //                // Draw tiles
+        //                foreach (var tilemap in tilemaps)
+        //                {
+        //                    var mapData = tilemap.Value.Map;
+        //                    Tile tile = mapData[x, y];
+
+        //                    if (tile == null)
+        //                    {
+        //                        continue;
+        //                    }
+
+        //                    Texture2D texture = tile.Texture;
+        //                    Vector2 position = new Vector2(x * settings.TileSize, y * settings.TileSize);
+        //                    spriteBatch.Draw(texture, position, Color.White);
+        //                }
+
+        //                // Draw height value
+        //                var heightValue = $"{heightData[x, y]}";
+        //                var textPosition = new Vector2(x * settings.TileSize, y * settings.TileSize);
+        //                spriteBatch.DrawString(debugFont, heightValue, textPosition, Color.Black);
+        //            }
+        //        }
+
+        //        spriteBatch.End();
+
+        //        // Reset the RenderTarget to null
+        //        graphicsDevice.SetRenderTarget(null);
+
+        //        // Save the RenderTarget as a PNG file
+        //        using (FileStream stream = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            renderTarget.SaveAsPng(stream, renderTarget.Width, renderTarget.Height);
+        //        }
+        //    }
+        //}
     }
 }

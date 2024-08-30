@@ -16,6 +16,8 @@ namespace ProjectDonut.GameObjects
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
+        public bool IsClicked { get; set; }
+
         private Game1 _game;
         private SpriteBatch _spriteBatch;
         private SpriteLibrary _spriteLib;
@@ -54,13 +56,14 @@ namespace ProjectDonut.GameObjects
 
         public void Update(GameTime gameTime)
         {
-            //Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(_camera.GetTransformationMatrix()));
             Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(Matrix.Identity));
+
+            // Calculate chunk size
+
         }
 
         public void Draw(GameTime gameTime)
         {
-            //_spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
             _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _spriteBatch.Draw(cursorDefault, Position - hotspotOffset, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
             _spriteBatch.End();

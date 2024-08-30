@@ -1,9 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
+using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
+using ProjectDonut.ProceduralGeneration.World.TileRules;
+using ProjectDonut.UI.ScrollDisplay;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,12 +43,19 @@ namespace ProjectDonut.ProceduralGeneration.World
         private MountainGenerator genMountain;
         private StructureGenerator genStructure;
 
+        private GrasslandsRules rulesGrasslands;
+
         private int ChunkWidth = 100;
         private int ChunkHeight = 100;
 
         private Texture2D tempTexture;
 
+        private int surroundChunkCount = 1;
+
         public List<ChunkStructure> StructuresInCenterChunk = new List<ChunkStructure>();
+
+        private ScrollDisplayer _scrollDisplayer;
+        private Camera _camera;
 
         public WorldChunkManager(List<object> dependencies, WorldMapSettings settings)
         {
@@ -75,6 +86,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                         this.spriteLib = spriteLib;
                         break;
 
+                    case ScrollDisplayer scrollDisplay:
+                        this._scrollDisplayer = scrollDisplay;
+                        break;
+
+                    case Camera camera:
+                        this._camera = camera;
+                        break;
+
                     default:
                         break;
                 }
@@ -97,13 +116,15 @@ namespace ProjectDonut.ProceduralGeneration.World
             genRiver = new RiverGenerator(spriteLib, settings);
             genMountain = new MountainGenerator(settings, spriteLib, _spriteBatch);
             genStructure = new StructureGenerator(spriteLib, settings, _spriteBatch);
+
+            rulesGrasslands = new GrasslandsRules(spriteLib);
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             for (int i = 0; i < CurrentChunks.Count; i++)
             {
-                CurrentChunks[i].Draw(gameTime);
+                CurrentChunks[i].Draw(gameTime, spriteBatch);
             }
 
             foreach (var structure in StructuresInCenterChunk)
@@ -174,35 +195,37 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 structure.Update(gameTime);
             }
+
+            
         }
 
-        private List<ChunkStructure> GetStructuresInCurrentChunks()
-        {
-            var structures = new List<ChunkStructure>();
+        //private List<ChunkStructure> GetStructuresInCurrentChunks()
+        //{
+        //    var structures = new List<ChunkStructure>();
 
-            foreach (var chunk in CurrentChunks)
-            {
-                for (int i = 0; i < chunk.Width; i++)
-                {
-                    for (int j = 0; j < chunk.Height; j++)
-                    {
-                        if (chunk.StructureData[i, j] != 0)
-                        {
-                            var structure = new ChunkStructure()
-                            {
-                                StructureName = "test",
-                                StructureType = (Structure)chunk.StructureData[i, j],
-                                Rectangle = new Rectangle(i * ChunkSize, j * ChunkSize, ChunkSize, ChunkSize)
-                            };
+        //    foreach (var chunk in CurrentChunks)
+        //    {
+        //        for (int i = 0; i < chunk.Width; i++)
+        //        {
+        //            for (int j = 0; j < chunk.Height; j++)
+        //            {
+        //                if (chunk.StructureData[i, j] != 0)
+        //                {
+        //                    var structure = new ChunkStructure()
+        //                    {
+        //                        StructureName = "test",
+        //                        StructureType = (Structure)chunk.StructureData[i, j],
+        //                        Rectangle = new Rectangle(i * ChunkSize, j * ChunkSize, ChunkSize, ChunkSize)
+        //                    };
 
-                            structures.Add(structure);
-                        }
-                    }
-                }
-            }
+        //                    structures.Add(structure);
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return structures;
-        }
+        //    return structures;
+        //}
 
         public void Initialize()
         {
@@ -213,10 +236,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             // All chunks dictionary - initialised with starting 9 chunks
             _chunks = new Dictionary<(int, int), WorldChunk>();
-            int testsize = 1;
-            for (int x = -testsize; x <= testsize; x++)
+            for (int x = -surroundChunkCount; x <= surroundChunkCount; x++)
             {
-                for (int y = -testsize; y <= testsize; y++)
+                for (int y = -surroundChunkCount; y <= surroundChunkCount; y++)
                 {
                     var key = (x, y);
                     var chunk = CreateChunk(x, y);
@@ -234,7 +256,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
-            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch);
+            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch, _scrollDisplayer, _camera, player);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
@@ -247,29 +269,38 @@ namespace ProjectDonut.ProceduralGeneration.World
             var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);
 
+            tilemapBase = rulesGrasslands.ApplyRules(tilemapBase);
+
             chunk.Tilemaps.Add("base", tilemapBase);
             chunk.Tilemaps.Add("forest", tilemapForest);
             chunk.Tilemaps.Add("mountains", tilemapMountains);
             chunk.Tilemaps.Add("structures", tilemapStructures);
 
+            //chunk.Structures = genStructure.GetStructuresData(chunk);
+
             return chunk;
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
             foreach (var chunk in _chunks)
             {
-                chunk.Value.LoadContent();
+                chunk.Value.LoadContent(content);
             }
+        }
+
+        public WorldChunk GetCurrentChunk()
+        {
+            return _chunks[(player.ChunkPosX, player.ChunkPosY)];
         }
 
         private List<WorldChunk> GetPlayerSurroundingChunks()
         {
             var playerChunks = new List<WorldChunk>();
 
-            for (int i = -1; i < 2; i++)
+            for (int i = -surroundChunkCount; i <= surroundChunkCount; i++)
             {
-                for (int j = -1; j < 2; j++)
+                for (int j = -surroundChunkCount; j <= surroundChunkCount; j++)
                 {
                     var chunkX = player.ChunkPosX + i;
                     var chunkY = player.ChunkPosY + j;

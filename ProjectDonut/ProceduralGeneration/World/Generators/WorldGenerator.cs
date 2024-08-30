@@ -44,7 +44,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
             rules = new WorldTileRuler(spriteLib);
 
-            spriteLib.LoadSpriteLibrary();
+            //spriteLib.LoadSpriteLibrary();
             _spriteBatch = spriteBatch;
         }
 

@@ -11,35 +11,40 @@ using ProjectDonut.Interfaces;
 using ProjectDonut.UI.DialogueSystem;
 using ProjectDonut.UI.ScrollDisplay;
 using ProjectDonut.Debugging;
+using ProjectDonut.Tools;
+using System;
+using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.GameObjects.PlayerComponents;
 
 namespace ProjectDonut
 {
     public class Game1 : Game
     {
+        // Naughty naughty
+        public static GraphicsDeviceManager MyGraphicsDeviceManager;
+        public static GraphicsDevice MyGraphicsDevice;
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Dictionary<string, IGameObject> _gameObjects;
-        private Dictionary<string, IScreenObject> _screenObjects;
+        private SceneManager _sceneManager;
+
 
         private SpriteFont _font;
 
-        private WorldMapSettings worldMapSettings;
-        private FogOfWar fog;
+        private Dictionary<string, IGameObject> _gameObjects;
+        private Dictionary<string, IScreenObject> _screenObjects;
 
         private SpriteLibrary spriteLib;
 
         private Camera _camera;
         private Player player;
         private DialogueManager dialogue;
-        private GameCursor cursor;
+        private GameCursor _cursor;
 
-        private WorldChunkManager worldChunks;
-        private const int ChunkSize = 100;
 
-        public static Debugger Debugger;
-
-        private ScrollDisplayer testScroll;
+        
+        private Random random;
 
         public Game1()
         {
@@ -50,6 +55,11 @@ namespace ProjectDonut
             _graphics.PreferredBackBufferWidth = 1920;
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.PreferredBackBufferHeight = 1440;
+
+            random = new Random();
+
+            MyGraphicsDeviceManager = _graphics;
+            MyGraphicsDevice = _graphics.GraphicsDevice;
         }
 
         protected override void Initialize()
@@ -59,50 +69,43 @@ namespace ProjectDonut
             _gameObjects = new Dictionary<string, IGameObject>();
             _screenObjects = new Dictionary<string, IScreenObject>();
 
-            worldMapSettings = CreateWorldMapSettings();
+
+
             //worldChunks = new WorldChunk[3,3];
 
             spriteLib = new SpriteLibrary(Content, GraphicsDevice);
+            spriteLib.LoadSpriteLibrary();
 
             // Fog of ware
-            fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
 
             // Camera
             _camera = new Camera(GraphicsDevice);
             _gameObjects.Add("camera", _camera);
 
             // Player
-            player = new Player(_graphics, GraphicsDevice, Content, _spriteBatch, _camera, fog, worldMapSettings);
-            _gameObjects.Add("player", player);
 
-            // World map
-            worldChunks = new WorldChunkManager(
-                new List<object>()
-                {
-                    Content,
-                    _graphics,
-                    _spriteBatch,
-                    _camera,
-                    player,
-                    fog,
-                    GraphicsDevice,
-                    spriteLib
-                },
-                worldMapSettings
-                );
-            _gameObjects.Add("chunkmanager", worldChunks);
 
             dialogue = new DialogueManager(spriteLib, _spriteBatch, _camera, Content);
             _screenObjects.Add("dialogue", dialogue);
 
-            cursor = new GameCursor(this, spriteLib, _spriteBatch, GraphicsDevice, _camera);
-            _screenObjects.Add("cursor", cursor);
+            _cursor = new GameCursor(this, spriteLib, _spriteBatch, GraphicsDevice, _camera);
+            _screenObjects.Add("cursor", _cursor);
 
-            Debugger = new Debugger(_spriteBatch, Content, GraphicsDevice, _camera);
-            _screenObjects.Add("debugger", Debugger);
+            player = new Player(_graphics, GraphicsDevice, Content, _camera, _cursor);
+            _gameObjects.Add("player", player);
 
-            testScroll = new ScrollDisplayer(Content, _spriteBatch, GraphicsDevice);
-            _screenObjects.Add("testScroll", testScroll);
+            // World map
+            _sceneManager = new SceneManager(Content, _spriteBatch, GraphicsDevice, player, spriteLib, _camera);
+            //_sceneManager.CreateWorldScene();
+            _sceneManager.CreateInstanceScene();
+            _sceneManager.Initialize();
+            _gameObjects.Add("sceneManager", _sceneManager);
+
+            Debugger._spriteBatch = _spriteBatch;
+            Debugger._content = Content;
+            Debugger._graphicsDevice = GraphicsDevice;
+            Debugger._camera = _camera;
+            Debugger.Initialize();
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
@@ -119,57 +122,15 @@ namespace ProjectDonut
             base.Initialize();
         }
 
-        private WorldMapSettings CreateWorldMapSettings()
-        {
-            var s = new WorldMapSettings();
-
-            // Dimensions
-            s.Width = ChunkSize;
-            s.Height = ChunkSize;
-            s.TileSize = 32;
-
-            // Heights
-            s.DeepWaterHeightMin = 0;
-            s.DeepWaterHeightMax = 19;
-            s.WaterHeightMin = 20;
-            s.WaterHeightMax = 29;
-            s.GroundHeightMin = 30;
-            s.GroundHeightMax = 94;
-            s.MountainHeightMin = 95;
-            s.MountainHeightMax = 100;
-
-            // Forest
-            s.ForestCount = 250;
-            s.MinWalk = 250;
-            s.MaxWalk = 1000;
-            s.WalkRadius = 5;
-
-            // Rivers
-            //s.RiverCount = 50;
-            s.MinLength = 50;
-            s.MaxLength = 500;
-            s.RiverForkChance = 0.0025f;
-            s.MinForkLength = 5;
-            s.MinRiverRadius = 1;
-            s.MaxRiverRadius = 3;
-            s.RiverRadiusDegradationChance = 0.1f;
-
-            // Erosion
-            s.CoastErosionMin = 2;
-            s.CoastErosionMax = 10;
-            s.BiomeErosionMin = 100;
-            s.BiomeErosionMax = 500;
-            s.DeepWaterErosionMin = 30;
-            s.DeepWaterErosionMax = 80;
-            s.DeepWaterErosionWidthMin = 10;
-            s.DeepWaterErosionWidthMax = 20;
-            
-            return s;
-        }
+        
 
         protected override void LoadContent()
         {
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            Debugger.LoadContent();
+
+            _sceneManager.LoadContent(Content);
+
+            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(Content));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
@@ -177,26 +138,15 @@ namespace ProjectDonut
 
         protected override void Update(GameTime gameTime)
         {
-            var kbState = Keyboard.GetState();
-
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbState.IsKeyDown(Keys.Escape))
-                Exit();
-
-            if(kbState.IsKeyDown(Keys.O))
-            {
-                testScroll.DisplayScroll(500, 300, "Flandaria");
-            }
-
-            if (kbState.IsKeyDown(Keys.P))
-            {
-                testScroll.HideScroll();
-            }
-
-            ((Camera)_gameObjects["camera"]).Position = _gameObjects["player"].Position;
+            _sceneManager.Update(gameTime);
+            _camera.Position = _gameObjects["player"].Position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
+            Debugger.Lines[4] = $"Cursor: {_cursor.Position}";
+            
+            Debugger.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -204,14 +154,16 @@ namespace ProjectDonut
         {
             GraphicsDevice.Clear(Color.Black);
 
+            _sceneManager.Draw(gameTime, _spriteBatch);
+
             // GameObjects
-            _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
+            //_spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.Draw(gameTime));
-            _spriteBatch.End();
+                .ForEach(x => x.Draw(gameTime, _spriteBatch));
+            //_spriteBatch.End();
 
             // ScreenObjects
             _screenObjects
@@ -220,6 +172,7 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
+            Debugger.Draw(gameTime);
             base.Draw(gameTime);
         }
     }

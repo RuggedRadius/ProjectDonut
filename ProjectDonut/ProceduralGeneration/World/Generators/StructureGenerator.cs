@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.ProceduralGeneration.World.Structures;
+using ProjectDonut.Tools;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
@@ -44,8 +46,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var townChance = random.Next(1, 101);
             var castleChance = random.Next(1, 101);
 
-            var castleCount = castleChance > 95 ? 1 : 0;
-            var townCount = townChance > 80 ? 1 : 0;
+            var castleCount = castleChance > 0 ? 0 : 0;
+            var townCount = townChance > 0 ? 1 : 0;
 
             for (int i = 0; i < castleCount; i++)
             {
@@ -72,6 +74,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                 chunk.StructureData[location.Item1, location.Item2] = 2;
             }
+
+            //chunk.Structures = GetStructuresData(chunk);
         }
 
         private List<(int, int)> GetViableStructureLocations(WorldChunk chunk)
@@ -113,9 +117,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
         private bool IsCellSuitable(WorldChunk chunk, int i, int j)
         {
-            for (int x = -2; x <= 2; x++)
+            for (int x = 0; x < 9; x++)
             {
-                for (int y = -2; y <= 2; y++)
+                for (int y = 0; y < 9; y++)
                 {
                     if (i + x < 0 || j + y < 0 || i + x >= chunk.Width || j + y >= chunk.Height)
                     {
@@ -148,6 +152,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
             var tmStructures = new Tilemap(chunk.Width, chunk.Height);
 
+            chunk.Structures = new List<StructureData>();
+
             for (int i = 0; i < chunk.Width; i++)
             {
                 for (int j = 0; j < chunk.Height; j++)
@@ -176,9 +182,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
             var structure = (Structure)structureValue;
 
-            for (int j = -1; j <= 1; j++)
+            for (int j = 0; j < 9; j++)
             {
-                for (int i = -1; i <= 1; i++)
+                for (int i = 0; i < 9; i++)
                 {
                     var tile = new Tile(_spriteBatch, true)
                     {
@@ -188,16 +194,22 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         yIndex = j + y,
                         LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = DetermineTexture(structure, directions[counter]),
-                        TileType = TileType.Forest,
+                        Texture = spriteLib.GetSprite($"castle-01-{i}-{j}"), //DetermineTexture(structure, directions[counter]),
+                        WorldTileType = WorldTileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i + x, j + y],
-                        Frames = GetFrames(structure, directions[counter], 4)
+                        Frames = new List<Texture2D>()//GetFrames(structure, directions[counter], 4)
                     };
 
                     map.Map[i + x, j + y] = tile;
                     counter++;
                 }
             }
+
+            chunk.Structures.Add(new StructureData
+            {
+                Bounds = new Rectangle(x * settings.TileSize, y * settings.TileSize, 9 * settings.TileSize, 9 * settings.TileSize),
+                Name = NameGenerator.GenerateRandomName(random.Next(2, 5))
+            });
         }
 
         private Texture2D DetermineTexture(Structure structure, string direction)
@@ -239,6 +251,79 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
 
             return results;
+        }
+
+        public List<StructureData> GetStructuresData(WorldChunk chunk)
+        {
+            var random = new Random();
+            var structures = new List<StructureData>();
+
+            var width = chunk.Width;
+            var height = chunk.Height;
+            var data = chunk.StructureData;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (data[x, y] != 0)
+                    {
+                        structures.Add(new StructureData
+                        {
+                            Bounds = GetStructureBounds(chunk, x, y),
+                            Name = NameGenerator.GenerateRandomName(random.Next(2,5))
+                        });
+                    }
+                }
+            }
+
+            return structures;
+        }
+
+        private Rectangle GetStructureBounds(WorldChunk chunk, int x, int y)
+        {
+            var posX = x;
+            var posY = y;
+
+            int structureWidth = 0;
+            int structureHeight = 0;
+
+            var widthFound = false;
+            while (!widthFound)
+            {
+                if (chunk.StructureData[posX, posY] == 0)
+                {
+                    widthFound = true;
+                }
+                else
+                {
+                    structureWidth++;
+                    posX++;
+                }
+            }
+
+            var heightFound = false;
+            while (!heightFound)
+            {
+                if (chunk.StructureData[posX, posY] == 0)
+                {
+                    heightFound = true;
+                }
+                else
+                {
+                    structureHeight++;
+                    posY++;
+                }
+            }
+
+            var chunkPosX = settings.TileSize * x;
+            var chunkPosY = settings.TileSize * y;
+
+            return new Rectangle(
+                chunkPosX, 
+                chunkPosY, 
+                structureWidth * settings.TileSize, 
+                structureHeight * settings.TileSize);
         }
     }
 }

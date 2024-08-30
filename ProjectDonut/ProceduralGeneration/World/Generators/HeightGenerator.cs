@@ -176,7 +176,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(i, j, biomeValue, heightValue),
-                        TileType = DetermineTileType(i, j, heightValue),
+                        WorldTileType = DetermineTileType(i, j, heightValue),
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };
 
@@ -221,19 +221,19 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
         }
 
-        private TileType DetermineTileType(int x, int y, int heightValue)
+        private WorldTileType DetermineTileType(int x, int y, int heightValue)
         {
             if (heightValue >= settings.MountainHeightMin)
             {
-                return TileType.Mountain;
+                return WorldTileType.Mountain;
             }
             else if (heightValue >= settings.GroundHeightMin)
             {
-                return TileType.Ground;
+                return WorldTileType.Ground;
             }
             else
             {
-                return TileType.Water;
+                return WorldTileType.Water;
             }
         }
     }

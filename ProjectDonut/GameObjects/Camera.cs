@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using ProjectDonut.GameObjects;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Interfaces;
+using Microsoft.Xna.Framework.Content;
 
 namespace ProjectDonut.GameObjects
 {
@@ -38,6 +39,27 @@ namespace ProjectDonut.GameObjects
                    Matrix.CreateScale(new Vector3(Zoom, Zoom, 1)) *
                    Matrix.CreateTranslation(new Vector3(_graphicsDevice.Viewport.Width * 0.5f, _graphicsDevice.Viewport.Height * 0.5f, 0));
         }
+
+        public Matrix GetViewMatrix()
+        {
+            // Translation moves the camera to its position
+            Matrix translationMatrix = Matrix.CreateTranslation(-Position.X, -Position.Y, 0);
+
+            // Rotation applies any rotation to the camera view
+            Matrix rotationMatrix = Matrix.CreateRotationZ(Rotation);
+
+            // Scale applies zoom to the camera view
+            Matrix scaleMatrix = Matrix.CreateScale(Zoom, Zoom, 1);
+
+            // Combine the transformations
+            Matrix transform = translationMatrix * rotationMatrix * scaleMatrix;
+
+            // Translate back by half the viewport to keep the camera centered
+            Matrix centerMatrix = Matrix.CreateTranslation(_graphicsDevice.Viewport.Width / 2f, _graphicsDevice.Viewport.Height / 2f, 0);
+
+            return transform * centerMatrix;
+        }
+
 
         public void Update(GameTime gameTime)
         {
@@ -93,12 +115,12 @@ namespace ProjectDonut.GameObjects
             //throw new System.NotImplementedException();
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
             //throw new System.NotImplementedException();
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             //throw new System.NotImplementedException();
         }

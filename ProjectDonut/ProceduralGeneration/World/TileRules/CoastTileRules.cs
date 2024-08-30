@@ -74,24 +74,24 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                 return false;
             }
 
-            var northWestTile = neighbours[0].TileType;
-            var westTile = neighbours[1].TileType;
-            var southWestTile = neighbours[2].TileType;
-            var northTile = neighbours[3].TileType;
-            var currentTile = neighbours[4].TileType;
-            var southTile = neighbours[5].TileType;
-            var northEastTile = neighbours[6].TileType;
-            var eastTile = neighbours[7].TileType;
-            var southEastTile = neighbours[8].TileType;
+            var northWestTile = neighbours[0].WorldTileType;
+            var westTile = neighbours[1].WorldTileType;
+            var southWestTile = neighbours[2].WorldTileType;
+            var northTile = neighbours[3].WorldTileType;
+            var currentTile = neighbours[4].WorldTileType;
+            var southTile = neighbours[5].WorldTileType;
+            var northEastTile = neighbours[6].WorldTileType;
+            var eastTile = neighbours[7].WorldTileType;
+            var southEastTile = neighbours[8].WorldTileType;
 
-            if (northWestTile == TileType.Water &&
-                northTile == TileType.Water &&
-                westTile == TileType.Water &&
-                southWestTile == TileType.Coast &&
-                northEastTile == TileType.Coast &&
-                eastTile == TileType.Coast &&
-                southEastTile == TileType.Coast &&
-                southTile == TileType.Coast)
+            if (northWestTile == WorldTileType.Water &&
+                northTile == WorldTileType.Water &&
+                westTile == WorldTileType.Water &&
+                southWestTile == WorldTileType.Coast &&
+                northEastTile == WorldTileType.Coast &&
+                eastTile == WorldTileType.Coast &&
+                southEastTile == WorldTileType.Coast &&
+                southTile == WorldTileType.Coast)
             {
                 return true;
             }
@@ -110,24 +110,24 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                 return false;
             }
 
-            var northWestTile = neighbours[0].TileType;
-            var westTile = neighbours[1].TileType;
-            var southWestTile = neighbours[2].TileType;
-            var northTile = neighbours[3].TileType;
-            var currentTile = neighbours[4].TileType;
-            var southTile = neighbours[5].TileType;
-            var northEastTile = neighbours[6].TileType;
-            var eastTile = neighbours[7].TileType;
-            var southEastTile = neighbours[8].TileType;
+            var northWestTile = neighbours[0].WorldTileType;
+            var westTile = neighbours[1].WorldTileType;
+            var southWestTile = neighbours[2].WorldTileType;
+            var northTile = neighbours[3].WorldTileType;
+            var currentTile = neighbours[4].WorldTileType;
+            var southTile = neighbours[5].WorldTileType;
+            var northEastTile = neighbours[6].WorldTileType;
+            var eastTile = neighbours[7].WorldTileType;
+            var southEastTile = neighbours[8].WorldTileType;
 
-            if (northWestTile == TileType.Coast &&
-                northTile == TileType.Coast &&
-                westTile == TileType.Water &&
-                southWestTile == TileType.Water &&
-                northEastTile == TileType.Coast &&
-                eastTile == TileType.Coast &&
-                southEastTile == TileType.Coast &&
-                southTile == TileType.Water)
+            if (northWestTile == WorldTileType.Coast &&
+                northTile == WorldTileType.Coast &&
+                westTile == WorldTileType.Water &&
+                southWestTile == WorldTileType.Water &&
+                northEastTile == WorldTileType.Coast &&
+                eastTile == WorldTileType.Coast &&
+                southEastTile == WorldTileType.Coast &&
+                southTile == WorldTileType.Water)
             {
                 return true;
             }
@@ -146,24 +146,24 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                 return false;
             }
 
-            var northWestTile = neighbours[0].TileType;
-            var westTile = neighbours[1].TileType;
-            var southWestTile = neighbours[2].TileType;
-            var northTile = neighbours[3].TileType;
-            var currentTile = neighbours[4].TileType;
-            var southTile = neighbours[5].TileType;
-            var northEastTile = neighbours[6].TileType;
-            var eastTile = neighbours[7].TileType;
-            var southEastTile = neighbours[8].TileType;
+            var northWestTile = neighbours[0].WorldTileType;
+            var westTile = neighbours[1].WorldTileType;
+            var southWestTile = neighbours[2].WorldTileType;
+            var northTile = neighbours[3].WorldTileType;
+            var currentTile = neighbours[4].WorldTileType;
+            var southTile = neighbours[5].WorldTileType;
+            var northEastTile = neighbours[6].WorldTileType;
+            var eastTile = neighbours[7].WorldTileType;
+            var southEastTile = neighbours[8].WorldTileType;
 
-            if (northWestTile == TileType.Coast &&
-                northTile == TileType.Water &&
-                westTile == TileType.Coast &&
-                southWestTile == TileType.Coast &&
-                northEastTile == TileType.Water &&
-                eastTile == TileType.Water &&
-                southEastTile == TileType.Coast &&
-                southTile == TileType.Coast)
+            if (northWestTile == WorldTileType.Coast &&
+                northTile == WorldTileType.Water &&
+                westTile == WorldTileType.Coast &&
+                southWestTile == WorldTileType.Coast &&
+                northEastTile == WorldTileType.Water &&
+                eastTile == WorldTileType.Water &&
+                southEastTile == WorldTileType.Coast &&
+                southTile == WorldTileType.Coast)
             {
                 return true;
             }
@@ -182,24 +182,24 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                 return false;
             }
 
-            var northWestTile = neighbours[0].TileType;
-            var westTile = neighbours[1].TileType;
-            var southWestTile = neighbours[2].TileType;
-            var northTile = neighbours[3].TileType;
-            var currentTile = neighbours[4].TileType;
-            var southTile = neighbours[5].TileType;
-            var northEastTile = neighbours[6].TileType;
-            var eastTile = neighbours[7].TileType;
-            var southEastTile = neighbours[8].TileType;
+            var northWestTile = neighbours[0].WorldTileType;
+            var westTile = neighbours[1].WorldTileType;
+            var southWestTile = neighbours[2].WorldTileType;
+            var northTile = neighbours[3].WorldTileType;
+            var currentTile = neighbours[4].WorldTileType;
+            var southTile = neighbours[5].WorldTileType;
+            var northEastTile = neighbours[6].WorldTileType;
+            var eastTile = neighbours[7].WorldTileType;
+            var southEastTile = neighbours[8].WorldTileType;
 
-            if (northWestTile == TileType.Coast &&
-                northTile == TileType.Coast &&
-                westTile == TileType.Coast &&
-                southWestTile == TileType.Coast &&
-                northEastTile == TileType.Coast &&
-                eastTile == TileType.Water &&
-                southEastTile == TileType.Water &&
-                southTile == TileType.Water)
+            if (northWestTile == WorldTileType.Coast &&
+                northTile == WorldTileType.Coast &&
+                westTile == WorldTileType.Coast &&
+                southWestTile == WorldTileType.Coast &&
+                northEastTile == WorldTileType.Coast &&
+                eastTile == WorldTileType.Water &&
+                southEastTile == WorldTileType.Water &&
+                southTile == WorldTileType.Water)
             {
                 return true;
             }

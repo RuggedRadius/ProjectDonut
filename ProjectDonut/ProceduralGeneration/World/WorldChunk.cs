@@ -9,6 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration.World.Structures;
+using ProjectDonut.UI.ScrollDisplay;
+using Microsoft.Xna.Framework.Input;
+using ProjectDonut.GameObjects;
+using ProjectDonut.ProceduralGeneration.World.Generators;
+using System.Diagnostics;
+using ProjectDonut.GameObjects.PlayerComponents;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -31,6 +38,10 @@ namespace ProjectDonut.ProceduralGeneration.World
         private int TileSize = 32;
 
         public Dictionary<string, Tilemap> Tilemaps;
+
+        public List<Rectangle> StructureBounds;
+
+        public List<StructureData> Structures;
 
         public int Width
         {
@@ -61,14 +72,33 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
-        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Vector2 Position // TODO: Use this instead of individuals int above
+        { 
+            get => throw new NotImplementedException(); 
+            set => throw new NotImplementedException(); 
+        }
+        public int ZIndex // TODO: Currently not used
+        { 
+            get; 
+            set; 
+        }
 
         private Texture2D tempTexture;
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
 
-        public WorldChunk(int chunkXPos, int chunkYPos, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+        private ScrollDisplayer _scrollDisplayer;
+        private Camera _camera;
+        private Player _player;
+
+        public WorldChunk(
+            int chunkXPos, 
+            int chunkYPos, 
+            GraphicsDevice graphicsDevice, 
+            SpriteBatch spriteBatch, 
+            ScrollDisplayer scrollDisplayer,
+            Camera camera,
+            Player player)
         {
             ChunkCoordX = chunkXPos;
             ChunkCoordY = chunkYPos;
@@ -78,6 +108,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             _graphicsDevice = graphicsDevice;
             _spriteBatch = spriteBatch;
+            _scrollDisplayer = scrollDisplayer;
+            _camera = camera;
+            _player = player;
 
             Tilemaps = new Dictionary<string, Tilemap>();
 
@@ -102,12 +135,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
         }
 
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
         }
 
         public void Update(GameTime gameTime)
         {
+            // Update each tile
             foreach (var tilemap in Tilemaps)
             {
                 foreach (var tile in tilemap.Value.Map)
@@ -118,9 +152,41 @@ namespace ProjectDonut.ProceduralGeneration.World
                     tile.Update(gameTime);
                 }
             }
+
+
+            // Check for scroll display
+            //HandleScrollDisplay();
         }
 
-        public void Draw(GameTime gameTime)
+        // **** BEWARE: THIS IS VERY BROKEN ***
+        private void HandleScrollDisplay()
+        {
+            var playerPos = _player.ChunkPosition;
+            Debugging.Debugger.Lines[7] = $"PlayerChunkPos = {playerPos}";
+            foreach (var structure in Structures)
+            {
+                var distance = Vector2.Distance(playerPos, new Vector2(structure.Bounds.X, structure.Bounds.Y));
+                Debugging.Debugger.Lines[2] = $"Distance = {distance}";
+                if (distance <= 100)
+                {
+                    // Mouse is hovering over this structure
+                    if (_scrollDisplayer.CurrentStructureData == structure)
+                    {
+                        return;
+                    }
+
+                    var x = structure.Bounds.X + (structure.Bounds.Width / 2);
+                    var y = 50;
+
+                    _scrollDisplayer.DisplayScroll(structure);
+                    return;
+                }
+            }
+
+            _scrollDisplayer.HideScroll();
+        }
+
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             foreach (var tilemap in Tilemaps)
             {
@@ -129,7 +195,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     if (tile == null)
                         continue;
 
-                    tile.Draw(gameTime);
+                    tile.Draw(gameTime, spriteBatch);
                 }
             }
 
@@ -159,66 +225,11 @@ namespace ProjectDonut.ProceduralGeneration.World
                     }
                 }
             }
-        }
+        }        
 
-        //public void SaveTilemapToFile(string filePath)
-        //{
-        //    int width = settings.Width * settings.TileSize;
-        //    int height = settings.Height * settings.TileSize;
+        public void GrowForest()
+        {
 
-        //    // Create a RenderTarget2D with the size of the entire tilemap
-        //    using (RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height))
-        //    {
-        //        // Set the RenderTarget
-        //        graphicsDevice.SetRenderTarget(renderTarget);
-
-        //        // Clear the RenderTarget (optional)
-        //        graphicsDevice.Clear(Color.Transparent);
-
-        //        // Create a SpriteBatch to draw the textures
-        //        SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
-
-        //        spriteBatch.Begin();
-
-        //        // Loop through each texture and draw it on the RenderTarget
-        //        for (int x = 0; x < settings.Width; x++)
-        //        {
-        //            for (int y = 0; y < settings.Height; y++)
-        //            {
-        //                // Draw tiles
-        //                foreach (var tilemap in tilemaps)
-        //                {
-        //                    var mapData = tilemap.Value.Map;
-        //                    Tile tile = mapData[x, y];
-
-        //                    if (tile == null)
-        //                    {
-        //                        continue;
-        //                    }
-
-        //                    Texture2D texture = tile.Texture;
-        //                    Vector2 position = new Vector2(x * settings.TileSize, y * settings.TileSize);
-        //                    spriteBatch.Draw(texture, position, Color.White);
-        //                }
-
-        //                // Draw height value
-        //                var heightValue = $"{heightData[x, y]}";
-        //                var textPosition = new Vector2(x * settings.TileSize, y * settings.TileSize);
-        //                spriteBatch.DrawString(debugFont, heightValue, textPosition, Color.Black);
-        //            }
-        //        }
-
-        //        spriteBatch.End();
-
-        //        // Reset the RenderTarget to null
-        //        graphicsDevice.SetRenderTarget(null);
-
-        //        // Save the RenderTarget as a PNG file
-        //        using (FileStream stream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            renderTarget.SaveAsPng(stream, renderTarget.Width, renderTarget.Height);
-        //        }
-        //    }
-        //}
+        }        
     }
 }
