@@ -11,29 +11,14 @@ namespace ProjectDonut.Debugging
 {
     public static class Debugger
     {
-        public static SpriteBatch _spriteBatch;
-        public static ContentManager _content;
-        public static GraphicsDevice _graphicsDevice;
-        public static Camera _camera;
-
         private static SpriteFont debugFont;
         private static Texture2D debugTexture;
         private static Rectangle debugRect;
         private static int maxWindowWidth;
 
         public static string[] Lines = new string[15];
-
         public static int ZIndex { get; set; }
 
-        //public Debugger(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphicsDevice, Camera camera)
-        //{
-        //    _spriteBatch = spriteBatch;
-        //    _content = content;
-        //    _graphicsDevice = graphicsDevice;
-        //    _camera = camera;
-
-        //    Lines = new string[10];
-        //}
 
         public static void Initialize()
         {
@@ -41,8 +26,8 @@ namespace ProjectDonut.Debugging
 
         public static void LoadContent()
         {
-            debugFont = _content.Load<SpriteFont>("Fonts/Default");
-            debugTexture = CreateTexture(_graphicsDevice, 1, 1, Color.Black);
+            debugFont = Global.ContentManager.Load<SpriteFont>("Fonts/Default");
+            debugTexture = CreateTexture(Global.GraphicsDevice, 1, 1, Color.Black);
         }
 
         private static Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
@@ -89,10 +74,10 @@ namespace ProjectDonut.Debugging
         
         public static void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
-            _spriteBatch.Draw(debugTexture, debugRect, Color.Black);
+            Global.SpriteBatch.Begin(transformMatrix: Matrix.Identity);
+            Global.SpriteBatch.Draw(debugTexture, debugRect, Color.Black);
 
-            var camPos = _camera.Position;
+            var camPos = Global.Camera.Position;
 
             for (int i = 0; i < Lines.Length; i++)
             {
@@ -103,10 +88,10 @@ namespace ProjectDonut.Debugging
 
                 // Debug Text
                 var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + 30 * i);
-                _spriteBatch.DrawString(debugFont, Lines[i], pos, Color.White);
+                Global.SpriteBatch.DrawString(debugFont, Lines[i], pos, Color.White);
             }
 
-            _spriteBatch.End();
+            Global.SpriteBatch.End();
         }
 
         public static void PrintDataMap(int[,] map, string filePath)

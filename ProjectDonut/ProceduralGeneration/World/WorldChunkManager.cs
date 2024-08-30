@@ -25,15 +25,12 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private WorldGenerator WorldGen;
         private WorldMapSettings Settings;
-        private Player player;
 
         public Dictionary<(int, int), WorldChunk> _chunks;
         private List<WorldChunk> CurrentChunks;
+        public WorldChunk PlayerChunk;
 
-        private GraphicsDevice _graphicsDevice;
-        private ContentManager content;
         private SpriteLibrary spriteLib;
-        private SpriteBatch _spriteBatch;
         private FastNoiseLite _noise;
 
         private HeightGenerator genHeight;
@@ -55,49 +52,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         public List<ChunkStructure> StructuresInCenterChunk = new List<ChunkStructure>();
 
         private ScrollDisplayer _scrollDisplayer;
-        private Camera _camera;
 
-        public WorldChunkManager(List<object> dependencies, WorldMapSettings settings)
+        public WorldChunkManager(SpriteLibrary spriteLib, ScrollDisplayer scrollDisplayer, WorldMapSettings settings)
         {
-            Dependencies = dependencies;
             Settings = settings;
 
-            foreach (var dependency in dependencies)
-            {
-                switch (dependency)
-                {
-                    case ContentManager content:
-                        this.content = content;
-                        break;
-
-                    case GraphicsDevice graphicsDevice:
-                        _graphicsDevice = graphicsDevice;
-                        break;
-
-                    case SpriteBatch spriteBatch:
-                        _spriteBatch = spriteBatch;
-                        break;
-
-                    case Player player:
-                        this.player = player;
-                        break;
-
-                    case SpriteLibrary spriteLib:
-                        this.spriteLib = spriteLib;
-                        break;
-
-                    case ScrollDisplayer scrollDisplay:
-                        this._scrollDisplayer = scrollDisplay;
-                        break;
-
-                    case Camera camera:
-                        this._camera = camera;
-                        break;
-
-                    default:
-                        break;
-                }
-            }
+            this.spriteLib = spriteLib;
+            this._scrollDisplayer = scrollDisplayer;
 
             var random = new Random();
             var worldSeed = random.Next(int.MinValue, int.MaxValue);
@@ -106,16 +67,16 @@ namespace ProjectDonut.ProceduralGeneration.World
             _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             _noise.SetSeed(worldSeed);
 
-            tempTexture = new Texture2D(_graphicsDevice, 1, 1);
+            tempTexture = new Texture2D(Global.GraphicsDevice, 1, 1);
             tempTexture.SetData(new[] { Color.Green });
 
-            WorldGen = new WorldGenerator(content, _graphicsDevice, settings, spriteLib, _spriteBatch);
-            genHeight = new HeightGenerator(settings, spriteLib, _spriteBatch);
+            WorldGen = new WorldGenerator(Global.ContentManager, Global.GraphicsDevice, settings, spriteLib, Global.SpriteBatch);
+            genHeight = new HeightGenerator(settings, spriteLib, Global.SpriteBatch);
             genBiomes = new BiomeGenerator(settings);
-            genForest = new ForestGenerator(spriteLib, settings, _spriteBatch);
+            genForest = new ForestGenerator(spriteLib, settings, Global.SpriteBatch);
             genRiver = new RiverGenerator(spriteLib, settings);
-            genMountain = new MountainGenerator(settings, spriteLib, _spriteBatch);
-            genStructure = new StructureGenerator(spriteLib, settings, _spriteBatch);
+            genMountain = new MountainGenerator(settings, spriteLib, Global.SpriteBatch);
+            genStructure = new StructureGenerator(spriteLib, settings, Global.SpriteBatch);
 
             rulesGrasslands = new GrasslandsRules(spriteLib);
         }
@@ -129,7 +90,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var structure in StructuresInCenterChunk)
             {
-                _spriteBatch.Draw(tempTexture, structure.Rectangle, Color.White);
+                Global.SpriteBatch.Draw(tempTexture, structure.Rectangle, Color.White);
             }
         }
 
@@ -137,27 +98,27 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var chunkPosChanged = false;
 
-            if (player.ChunkPosX != PlayerChunkPosition.Item1)
+            if (Global.Player.ChunkPosX != PlayerChunkPosition.Item1)
             {
                 chunkPosChanged = true;
             }
 
-            if (player.ChunkPosY != PlayerChunkPosition.Item2)
+            if (Global.Player.ChunkPosY != PlayerChunkPosition.Item2)
             {
                 chunkPosChanged = true;
             }
 
             if (chunkPosChanged)
             {
-                PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
+                PlayerChunkPosition = (Global.Player.ChunkPosX, Global.Player.ChunkPosY);
 
 
                 for (int i = -1; i < 2; i++)
                 {
                     for (int j = -1; j < 2; j++)
                     {
-                        var x = player.ChunkPosX + i;
-                        var y = player.ChunkPosY + j;
+                        var x = Global.Player.ChunkPosX + i;
+                        var y = Global.Player.ChunkPosY + j;
 
                         var chunk = GetChunk((x, y));
                         if (chunk == null)
@@ -196,7 +157,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 structure.Update(gameTime);
             }
 
-            
+            PlayerChunk = GetCurrentChunk();
         }
 
         //private List<ChunkStructure> GetStructuresInCurrentChunks()
@@ -232,7 +193,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             //ChunksBeingGenerated = new List<(int, int)>();
 
             //// Player chunk position
-            PlayerChunkPosition = (player.ChunkPosX, player.ChunkPosY);
+            PlayerChunkPosition = (Global.Player.ChunkPosX, Global.Player.ChunkPosY);
 
             // All chunks dictionary - initialised with starting 9 chunks
             _chunks = new Dictionary<(int, int), WorldChunk>();
@@ -256,7 +217,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
-            var chunk = new WorldChunk(chunkX, chunkY, _graphicsDevice, _spriteBatch, _scrollDisplayer, _camera, player);
+            var chunk = new WorldChunk(chunkX, chunkY, _scrollDisplayer, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
@@ -291,7 +252,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public WorldChunk GetCurrentChunk()
         {
-            return _chunks[(player.ChunkPosX, player.ChunkPosY)];
+            return _chunks[(Global.Player.ChunkPosX, Global.Player.ChunkPosY)];
         }
 
         private List<WorldChunk> GetPlayerSurroundingChunks()
@@ -302,8 +263,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int j = -surroundChunkCount; j <= surroundChunkCount; j++)
                 {
-                    var chunkX = player.ChunkPosX + i;
-                    var chunkY = player.ChunkPosY + j;
+                    var chunkX = Global.Player.ChunkPosX + i;
+                    var chunkY = Global.Player.ChunkPosY + j;
 
                     if (_chunks.ContainsKey((chunkX, chunkY)))
                     {

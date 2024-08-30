@@ -20,51 +20,32 @@ namespace ProjectDonut
 {
     public class Game1 : Game
     {
-        // Naughty naughty
-        public static GraphicsDeviceManager MyGraphicsDeviceManager;
-        public static GraphicsDevice MyGraphicsDevice;
-
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
-
-        private SceneManager _sceneManager;
-
-
         private SpriteFont _font;
 
         private Dictionary<string, IGameObject> _gameObjects;
         private Dictionary<string, IScreenObject> _screenObjects;
 
         private SpriteLibrary spriteLib;
+        private DialogueManager dialogue;        
+        private Random random = new Random();
 
-        private Camera _camera;
-        private Player player;
-        private DialogueManager dialogue;
-        private GameCursor _cursor;
-
-
-        
-        private Random random;
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            Global.GraphicsDeviceManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
-            _graphics.PreferredBackBufferHeight = 1440;
-
-            random = new Random();
-
-            MyGraphicsDeviceManager = _graphics;
-            MyGraphicsDevice = _graphics.GraphicsDevice;
+            Global.GraphicsDeviceManager.PreferredBackBufferWidth = 1920;
+            Global.GraphicsDeviceManager.PreferredBackBufferHeight = 1080;
+            //Global.GraphicsDeviceManager.PreferredBackBufferHeight = 1440;
         }
 
         protected override void Initialize()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            Global.GraphicsDevice = Global.GraphicsDeviceManager.GraphicsDevice;
+            Global.SpriteBatch = new SpriteBatch(GraphicsDevice);
+            Global.ContentManager = Content;
 
             _gameObjects = new Dictionary<string, IGameObject>();
             _screenObjects = new Dictionary<string, IScreenObject>();
@@ -79,42 +60,35 @@ namespace ProjectDonut
             // Fog of ware
 
             // Camera
-            _camera = new Camera(GraphicsDevice);
-            _gameObjects.Add("camera", _camera);
+            Global.Camera = new Camera(GraphicsDevice);
+            _gameObjects.Add("camera", Global.Camera);
 
             // Player
 
 
-            dialogue = new DialogueManager(spriteLib, _spriteBatch, _camera, Content);
+            dialogue = new DialogueManager(spriteLib);
             _screenObjects.Add("dialogue", dialogue);
 
-            _cursor = new GameCursor(this, spriteLib, _spriteBatch, GraphicsDevice, _camera);
-            _screenObjects.Add("cursor", _cursor);
+            Global.GameCursor = new GameCursor(this, spriteLib);
+            _screenObjects.Add("cursor", Global.GameCursor);
 
-            player = new Player(_graphics, GraphicsDevice, Content, _camera, _cursor);
-            _gameObjects.Add("player", player);
+            Global.Player = new Player();
+            _gameObjects.Add("player", Global.Player);
 
             // World map
-            _sceneManager = new SceneManager(Content, _spriteBatch, GraphicsDevice, player, spriteLib, _camera);
-            //_sceneManager.CreateWorldScene();
-            _sceneManager.CreateInstanceScene();
-            _sceneManager.Initialize();
-            _gameObjects.Add("sceneManager", _sceneManager);
+            Global.SceneManager = new SceneManager(spriteLib);
+            _gameObjects.Add("sceneManager", Global.SceneManager);
 
-            Debugger._spriteBatch = _spriteBatch;
-            Debugger._content = Content;
-            Debugger._graphicsDevice = GraphicsDevice;
-            Debugger._camera = _camera;
             Debugger.Initialize();
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
-            Task.Run(() =>
-            {
-                var test = dialogue.CreateTestDialogue();
-                dialogue.ExecuteMultipleLines(test);
-            });
+            //Task.Run(() =>
+            //{
+            //    var test = dialogue.CreateTestDialogue();
+            //    dialogue.ExecuteMultipleLines(test);
+            //});
 
             // Position player in middle of the map
             //player.PositionPlayerInMiddleOfMap(worldMapSettings);
@@ -128,7 +102,7 @@ namespace ProjectDonut
         {
             Debugger.LoadContent();
 
-            _sceneManager.LoadContent(Content);
+            Global.SceneManager.LoadContent(Content);
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(Content));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
@@ -138,13 +112,25 @@ namespace ProjectDonut
 
         protected override void Update(GameTime gameTime)
         {
-            _sceneManager.Update(gameTime);
-            _camera.Position = _gameObjects["player"].Position;
+            var kbState = Keyboard.GetState();
+
+            if (kbState.IsKeyDown(Keys.F8))
+            {
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+            }
+
+            if (kbState.IsKeyDown(Keys.F9))
+            {
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+            }
+
+            Global.SceneManager.Update(gameTime);
+            Global.Camera.Position = _gameObjects["player"].Position;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
-            Debugger.Lines[4] = $"Cursor: {_cursor.Position}";
+            Debugger.Lines[4] = $"Cursor: {Global.GameCursor.Position}";
             
             Debugger.Update(gameTime);
             base.Update(gameTime);
@@ -154,16 +140,16 @@ namespace ProjectDonut
         {
             GraphicsDevice.Clear(Color.Black);
 
-            _sceneManager.Draw(gameTime, _spriteBatch);
+            Global.SceneManager.Draw(gameTime, Global.SpriteBatch);
 
             // GameObjects
-            //_spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.Draw(gameTime, _spriteBatch));
-            //_spriteBatch.End();
+                .ForEach(x => x.Draw(gameTime, Global.SpriteBatch));
+            //Global.SpriteBatch.End();
 
             // ScreenObjects
             _screenObjects

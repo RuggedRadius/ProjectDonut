@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
-using ProjectDonut.GameObjects.PlayerComponents;
-using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;
@@ -19,86 +13,57 @@ using ProjectDonut.UI.ScrollDisplay;
 
 namespace ProjectDonut.Core.SceneManagement
 {
-
-    public class WorldScene : IGameObject
+    public class WorldScene : Scene
     {
-        private ContentManager _content;
-        private SpriteBatch _spriteBatch;
-        private GraphicsDevice _graphicsDevice;
-
-        private Dictionary<string, IGameObject> _gameObjects;
-        private Dictionary<string, IScreenObject> _screenObjects;
+        public static WorldScene Instance;
 
         private SpriteLibrary _spriteLib;
-        private Camera _camera;
         private ScrollDisplayer _scrollDisplay;
         private WorldChunkManager worldChunks;
         private const int ChunkSize = 100;
 
         private WorldMapSettings worldMapSettings;
         private FogOfWar _fog;
-        private Random random;
+        private Random random = new Random();
+        
 
-        private Player _player;
-
-        public SceneType SceneType { get; private set; }
-        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public WorldScene(SceneType sceneType, Player player, ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera, SpriteLibrary spriteLibray)
+        public WorldScene(SceneType sceneType, SpriteLibrary spriteLibray)
         {
-            SceneType = sceneType;
-            random = new Random();
-            _player = player;
+            if (Instance == null)
+            {
+                Instance = this;
+            }
 
-            _content = content;
-            _spriteBatch = spriteBatch;
-            _graphicsDevice = graphicsDevice;
-            _camera = camera;
+            base.SceneType = sceneType;
+
             _spriteLib = spriteLibray;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
-            _gameObjects = new Dictionary<string, IGameObject>();
-            _screenObjects = new Dictionary<string, IScreenObject>();
+            base.Initialize();
 
             worldMapSettings = CreateWorldMapSettings();
-            _fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height, _player);
+            _fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height, Global.Player);
 
-            _scrollDisplay = new ScrollDisplayer(_content, _spriteBatch, _graphicsDevice);
+            _scrollDisplay = new ScrollDisplayer(Global.ContentManager, Global.SpriteBatch, Global.GraphicsDevice);
             _screenObjects.Add("scrollDisplay", _scrollDisplay);
 
-            worldChunks = new WorldChunkManager(
-                new List<object>()
-                {
-                                _content,
-                                _spriteBatch,
-                                _camera,
-                                _player,
-                                _graphicsDevice,
-                                _spriteLib,
-                                _scrollDisplay,
-                },
-                worldMapSettings
-                );
+            worldChunks = new WorldChunkManager(_spriteLib, _scrollDisplay, worldMapSettings);
             _gameObjects.Add("chunkmanager", worldChunks);
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
-
         }
 
-        public void LoadContent(ContentManager content)
+        public override void LoadContent(ContentManager content)
         {
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(content));
-            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            base.LoadContent(content);
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
-            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
+            base.Update(gameTime);
 
 
             var kbState = Keyboard.GetState();
@@ -121,33 +86,20 @@ namespace ProjectDonut.Core.SceneManagement
             var structure = worldChunks.GetCurrentChunk().Structures.FirstOrDefault();
             if (structure != null)
             {
-                Debugger.Lines[5] = $"Structure: {structure.Bounds.X},{structure.Bounds.Y}";
+                Debugger.Lines[5] = $"Structure: {structure.Bounds}";
             }
             else
             {
                 Debugger.Lines[5] = "Structure: null";
             }
 
-            Debugger.Lines[6] = $"Camera Position: {_camera.Position}";
+            Debugger.Lines[6] = $"Camera Position: {Global.Camera.Position}";
 
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
-            _gameObjects
-                .Select(x => x.Value)
-                .OrderByDescending(x => x.ZIndex)
-                .ToList()
-                .ForEach(x => x.Draw(gameTime, spriteBatch));
-            _spriteBatch.End();
-
-            // ScreenObjects
-            _screenObjects
-                .Select(x => x.Value)
-                .OrderByDescending(x => x.ZIndex)
-                .ToList()
-                .ForEach(x => x.Draw(gameTime));
+            base.Draw(gameTime, spriteBatch);
         }
 
         private WorldMapSettings CreateWorldMapSettings()

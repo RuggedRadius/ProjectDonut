@@ -24,16 +24,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
 
         private Dictionary<string, List<Texture2D>> _textures;
 
-        private SpriteBatch _spriteBatch;
-        private ContentManager _content;
-        private GraphicsDevice _graphicsDevice;
-
-        public DungeonGenerator(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphics)
+        public DungeonGenerator()
         {
-            _spriteBatch = spriteBatch;
-            _content = content;
-            _graphicsDevice = graphics;
-
             LoadTextures();
         }
 
@@ -53,7 +45,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
                         continue;
                     }
 
-                    var tile = new Tile(_spriteBatch, false)
+                    var tile = new Tile(Global.SpriteBatch, false)
                     {
                         ChunkX = 0,
                         ChunkY = 0,
@@ -73,7 +65,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
 
         private void LoadTextures()
         {
-            var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/sheet");
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/sheet");
             //var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/Tileset_Dungeon02");
 
             _textures = new Dictionary<string, List<Texture2D>>
@@ -136,7 +128,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             spriteSheet.GetData(0, sourceRectangle, data, 0, data.Length);
 
             // Create a new texture for the sprite and set the pixel data
-            Texture2D sprite = new Texture2D(_graphicsDevice, width, height);
+            Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
             sprite.SetData(data);
 
             return sprite;

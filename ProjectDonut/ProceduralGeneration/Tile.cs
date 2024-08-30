@@ -45,8 +45,8 @@ namespace ProjectDonut.ProceduralGeneration
         private double _frameTimer { get; set; }
         private double _frameInterval { get; set; }
         private int _frameIndex { get; set; }
-        public Vector2 Position { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public int ZIndex { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public Vector2 Position { get; set; }
+        public int ZIndex { get; set; }
 
         public Tile(SpriteBatch spriteBatch, bool isAnimated)
         {

@@ -21,56 +21,30 @@ using System.IO;
 
 namespace ProjectDonut.Core.SceneManagement
 {
-    public class InstanceScene
+    public class InstanceScene : Scene
     {
-        private ContentManager _content;
-        private SpriteBatch _spriteBatch;
-        private GraphicsDevice _graphicsDevice;
-
-        private Dictionary<string, IGameObject> _gameObjects;
-        private Dictionary<string, IScreenObject> _screenObjects;
-
         private SpriteLibrary _spriteLib;
-        private Camera _camera;
-
-        private FogOfWar _fog;
-        private Random random;
-
-        private Player _player;
+        //private FogOfWar _fog;
+        private Random random = new Random();
 
         // Instance-related 
         private BSP _bsp;
-
-        public SceneType SceneType { get; private set; }
-        public Vector2 Position { get; set; }
-        public int ZIndex { get; set; }
-
         private Tilemap _tilemap;
 
         private const int Dimension = 100;
 
-        public InstanceScene(SceneType sceneType, Player player, ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Camera camera, SpriteLibrary spriteLibray)
+        public InstanceScene(SceneType sceneType, SpriteLibrary spriteLibray)
         {
             SceneType = sceneType;
-            random = new Random();
-            _player = player;
-
-            _content = content;
-            _spriteBatch = spriteBatch;
-            _graphicsDevice = graphicsDevice;
-            _camera = camera;
+            
             _spriteLib = spriteLibray;
 
             _bsp = new BSP();
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
-            _gameObjects = new Dictionary<string, IGameObject>();
-            _screenObjects = new Dictionary<string, IScreenObject>();
-
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
-            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
+            base.Initialize();
 
             _tilemap = GenerateDungeon(Dimension, Dimension, true, false);
         }
@@ -110,22 +84,16 @@ namespace ProjectDonut.Core.SceneManagement
             Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
             Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
 
-            var generator = new DungeonGenerator(_spriteBatch, _content, _graphicsDevice);
+            var generator = new DungeonGenerator();
             return generator.CreateTileMap(dataMap);
         }
 
-        public void SlowBuild(int width, int height)
+        public override void LoadContent(ContentManager content)
         {
-
+            base.LoadContent(content);
         }
 
-        public void LoadContent(ContentManager content)
-        {
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(content));
-            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
-        }
-
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             var kbState = Keyboard.GetState();
 
@@ -152,13 +120,12 @@ namespace ProjectDonut.Core.SceneManagement
                 Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
             }
 
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
-            _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
+            base.Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            _spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
+            spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
 
             foreach (var tile in _tilemap.Map)
             {
@@ -173,7 +140,7 @@ namespace ProjectDonut.Core.SceneManagement
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime, spriteBatch));
-            _spriteBatch.End();
+            spriteBatch.End();
 
             // ScreenObjects
             _screenObjects

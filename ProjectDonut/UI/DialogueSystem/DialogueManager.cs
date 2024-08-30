@@ -13,14 +13,10 @@ using ProjectDonut.ProceduralGeneration;
 
 namespace ProjectDonut.UI.DialogueSystem
 {
-    internal class DialogueManager : IScreenObject
+    public class DialogueManager : IScreenObject
     {
         private List<Dialogue> _dialogues;
-
-        private SpriteBatch _spriteBatch;
         private SpriteLibrary spriteLib;
-        private Camera camera;
-        private ContentManager ContentManager;
 
         private SpriteFont dialogueFont;
 
@@ -33,12 +29,9 @@ namespace ProjectDonut.UI.DialogueSystem
         public int ZIndex { get; set; }
         public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public DialogueManager(SpriteLibrary spriteLib, SpriteBatch spriteBatch, Camera camera, ContentManager content)
+        public DialogueManager(SpriteLibrary spriteLib)
         {
             this.spriteLib = spriteLib;
-            this._spriteBatch = spriteBatch;
-            this.camera = camera;
-            ContentManager = content;
 
             ZIndex = -500;
         }
@@ -50,7 +43,7 @@ namespace ProjectDonut.UI.DialogueSystem
 
         public void LoadContent()
         {
-            dialogueFont = ContentManager.Load<SpriteFont>("Fonts/Default");
+            dialogueFont = Global.ContentManager.Load<SpriteFont>("Fonts/Default");
             //dialogueFont = ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
         }
 
@@ -78,7 +71,7 @@ namespace ProjectDonut.UI.DialogueSystem
 
         public void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
+            Global.SpriteBatch.Begin(transformMatrix: Matrix.Identity);
 
             for (int i = 0; i < _dialogues.Count; i++)
             {
@@ -89,7 +82,7 @@ namespace ProjectDonut.UI.DialogueSystem
                     DrawDialogueText(dialogue);
                 }
             }
-            _spriteBatch.End();
+            Global.SpriteBatch.End();
         }
 
         public void CloseAllDialogues()
@@ -122,60 +115,60 @@ namespace ProjectDonut.UI.DialogueSystem
                     // Top Left
                     var x = dialogue.X;
                     var y = dialogue.Y;
-                    _spriteBatch.Draw(spriteLib.GetSprite("dialogue-NW"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-NW"), new Vector2(x, y), Color.White);
 
                     // Top-Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        _spriteBatch.Draw(spriteLib.GetSprite("dialogue-N"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-N"), new Vector2(x, y), Color.White);
                     }
 
                     // Top-Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i);
-                    _spriteBatch.Draw(spriteLib.GetSprite("dialogue-NE"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-NE"), new Vector2(x, y), Color.White);
                 }
                 else if (i == dialogue.Height - 1)
                 {
                     // Bottom Left
                     var x = dialogue.X;
                     var y = (dialogue.Y + i * TileSize);
-                    _spriteBatch.Draw(spriteLib.GetSprite("dialogue-SW"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-SW"), new Vector2(x, y), Color.White);
 
                     // Bottom-Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        _spriteBatch.Draw(spriteLib.GetSprite("dialogue-S"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-S"), new Vector2(x, y), Color.White);
                     }
 
                     // Bottom-Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i * TileSize);
-                    _spriteBatch.Draw(spriteLib.GetSprite("dialogue-SE"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-SE"), new Vector2(x, y), Color.White);
                 }
                 else
                 {
                     // Middle Left
                     var x = dialogue.X;
                     var y = (dialogue.Y + i * TileSize);
-                    _spriteBatch.Draw(spriteLib.GetSprite("dialogue-W"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-W"), new Vector2(x, y), Color.White);
 
                     // Middle Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        _spriteBatch.Draw(spriteLib.GetSprite("dialogue-C"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-C"), new Vector2(x, y), Color.White);
                     }
 
                     // Middle Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i * TileSize);
-                    _spriteBatch.Draw(spriteLib.GetSprite("dialogue-E"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(spriteLib.GetSprite("dialogue-E"), new Vector2(x, y), Color.White);
                 }
             }
         }
@@ -195,7 +188,7 @@ namespace ProjectDonut.UI.DialogueSystem
                         y += 25;
                     }
 
-                    _spriteBatch.DrawString(dialogueFont, dialogue.Text[j].ToString(), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.DrawString(dialogueFont, dialogue.Text[j].ToString(), new Vector2(x, y), Color.White);
                     x += TileSize / 2;
                 }
             }
@@ -207,8 +200,8 @@ namespace ProjectDonut.UI.DialogueSystem
             var height = 3;
             var startX = -(width * 32) / 2;
             var startY = -(height * 32) / 2;
-            startX += (camera._graphicsDevice.Viewport.Width / 2);
-            startY += (camera._graphicsDevice.Viewport.Height / 2);
+            startX += (Global.GraphicsDevice.Viewport.Width / 2);
+            startY += (Global.GraphicsDevice.Viewport.Height / 2);
             var rect = new Rectangle(startX, startY, width, height);
 
             var lines = new List<Dialogue>()

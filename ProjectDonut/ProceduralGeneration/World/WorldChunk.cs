@@ -16,6 +16,7 @@ using ProjectDonut.GameObjects;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using System.Diagnostics;
 using ProjectDonut.GameObjects.PlayerComponents;
+using ProjectDonut.Core.SceneManagement;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -39,9 +40,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Dictionary<string, Tilemap> Tilemaps;
 
-        public List<Rectangle> StructureBounds;
-
+        public List<Rectangle> StructureBounds;// TODO: NOT SURE THIS SHOULD EXIST...
         public List<StructureData> Structures;
+        private WorldChunkManager _manager;
 
         public int Width
         {
@@ -74,8 +75,8 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Vector2 Position // TODO: Use this instead of individuals int above
         { 
-            get => throw new NotImplementedException(); 
-            set => throw new NotImplementedException(); 
+            get; 
+            set; 
         }
         public int ZIndex // TODO: Currently not used
         { 
@@ -84,38 +85,24 @@ namespace ProjectDonut.ProceduralGeneration.World
         }
 
         private Texture2D tempTexture;
-        private GraphicsDevice _graphicsDevice;
-        private SpriteBatch _spriteBatch;
 
         private ScrollDisplayer _scrollDisplayer;
-        private Camera _camera;
-        private Player _player;
 
-        public WorldChunk(
-            int chunkXPos, 
-            int chunkYPos, 
-            GraphicsDevice graphicsDevice, 
-            SpriteBatch spriteBatch, 
-            ScrollDisplayer scrollDisplayer,
-            Camera camera,
-            Player player)
+        public WorldChunk(int chunkXPos, int chunkYPos, ScrollDisplayer scrollDisplayer, WorldChunkManager manager)
         {
+            _manager = manager;
             ChunkCoordX = chunkXPos;
             ChunkCoordY = chunkYPos;
 
             WorldCoordX = chunkXPos * 100 * 32;
             WorldCoordY = chunkYPos * 100 * 32;
 
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = spriteBatch;
             _scrollDisplayer = scrollDisplayer;
-            _camera = camera;
-            _player = player;
 
             Tilemaps = new Dictionary<string, Tilemap>();
 
             // Create a new Texture2D object with the dimensions 32x32
-            tempTexture = new Texture2D(_graphicsDevice, 32, 32);
+            tempTexture = new Texture2D(Global.GraphicsDevice, 32, 32);
 
             // Create an array to hold the color data
             Color[] colorData = new Color[32 * 32];
@@ -153,7 +140,17 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-
+            if (_manager.PlayerChunk == this)
+            {
+                foreach (var structure in Structures)
+                {
+                    if (structure.Bounds.Contains(Global.Player.ChunkPosition.X, Global.Player.ChunkPosition.Y))
+                    {
+                        // TODO: TEMP CODE TO TEST SCENE SWITCHING
+                        Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                    }
+                }
+            }
             // Check for scroll display
             //HandleScrollDisplay();
         }
@@ -161,7 +158,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         // **** BEWARE: THIS IS VERY BROKEN ***
         private void HandleScrollDisplay()
         {
-            var playerPos = _player.ChunkPosition;
+            var playerPos = Global.Player.ChunkPosition;
             Debugging.Debugger.Lines[7] = $"PlayerChunkPos = {playerPos}";
             foreach (var structure in Structures)
             {
@@ -217,11 +214,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                     if (x == 0 || y == 0)
                     {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
                     }
                     else if (x == Width - 1 || y == Height - 1)
                     {
-                        _spriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
                     }
                 }
             }

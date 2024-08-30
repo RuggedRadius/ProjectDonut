@@ -34,12 +34,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Texture2D _texture;
         private Texture2D spriteSheet;
 
-        private GraphicsDeviceManager _graphics;
-        private GraphicsDevice _graphicsDevice;
-        private ContentManager _content;
-        private SpriteBatch _spriteBatch;
-
-        private Camera _camera;
 
         private Vector2 spriteSize;
         private Rectangle currentFrame;
@@ -72,18 +66,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private Dictionary<string, Texture2D> _textures;
 
-        public Player(
-            GraphicsDeviceManager graphics,
-            GraphicsDevice graphicsDevice,
-            ContentManager content,
-            Camera camera, GameCursor cursor
-            )
+        public Player()
         {
-            _graphics = graphics;
-            _graphicsDevice = graphicsDevice;
-            _content = content;
-            _camera = camera;
-            _cursor = cursor;
         }
 
         public void Initialize()
@@ -102,9 +86,9 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             _textures = new Dictionary<string, Texture2D>();
 
-            debugTexture = CreateTexture(_graphicsDevice, 1, 1, Color.White);
+            debugTexture = CreateTexture(Global.GraphicsDevice, 1, 1, Color.White);
 
-            _inventory = new PlayerInventory(_content, _cursor);
+            _inventory = new PlayerInventory(Global.ContentManager, _cursor);
             _inventory.Initialize();
         }
 
@@ -215,7 +199,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: _camera.GetTransformationMatrix());
+            spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
             spriteBatch.Draw(_texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
             spriteBatch.End();
