@@ -19,16 +19,14 @@ namespace ProjectDonut.GameObjects
         public bool IsClicked { get; set; }
 
         private Game1 _game;
-        private SpriteLibrary _spriteLib;
 
         private Texture2D cursorDefault;
 
         private Vector2 hotspotOffset;
         private Vector2 scaleFactor;
 
-        public GameCursor(Game1 game, SpriteLibrary spriteLib)
+        public GameCursor(Game1 game)
         {
-            this._spriteLib = spriteLib;
             this._game = game;
         }
 
@@ -39,7 +37,7 @@ namespace ProjectDonut.GameObjects
 
         public void LoadContent()
         {
-            cursorDefault = _spriteLib.GetSprite("cursor");
+            cursorDefault = Global.SpriteLibrary.GetSprite("cursor");
 
             hotspotOffset = new Vector2(cursorDefault.Width / 2, cursorDefault.Height / 2);
 

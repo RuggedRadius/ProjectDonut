@@ -20,13 +20,9 @@ namespace ProjectDonut.GameObjects
         // States
         private MouseState _previousMouseState;
 
-        public GraphicsDevice _graphicsDevice;
 
-
-        public Camera(GraphicsDevice graphicsDevice)
+        public Camera()
         {
-            _graphicsDevice = graphicsDevice;
-
             Position = Vector2.Zero;
             Zoom = 1f;
             Rotation = 0f;
@@ -37,7 +33,7 @@ namespace ProjectDonut.GameObjects
             return Matrix.CreateTranslation(new Vector3(-Position, 0)) *
                    Matrix.CreateRotationZ(Rotation) *
                    Matrix.CreateScale(new Vector3(Zoom, Zoom, 1)) *
-                   Matrix.CreateTranslation(new Vector3(_graphicsDevice.Viewport.Width * 0.5f, _graphicsDevice.Viewport.Height * 0.5f, 0));
+                   Matrix.CreateTranslation(new Vector3(Global.GraphicsDevice.Viewport.Width * 0.5f, Global.GraphicsDevice.Viewport.Height * 0.5f, 0));
         }
 
         public Matrix GetViewMatrix()
@@ -55,7 +51,7 @@ namespace ProjectDonut.GameObjects
             Matrix transform = translationMatrix * rotationMatrix * scaleMatrix;
 
             // Translate back by half the viewport to keep the camera centered
-            Matrix centerMatrix = Matrix.CreateTranslation(_graphicsDevice.Viewport.Width / 2f, _graphicsDevice.Viewport.Height / 2f, 0);
+            Matrix centerMatrix = Matrix.CreateTranslation(Global.GraphicsDevice.Viewport.Width / 2f, Global.GraphicsDevice.Viewport.Height / 2f, 0);
 
             return transform * centerMatrix;
         }
@@ -63,6 +59,8 @@ namespace ProjectDonut.GameObjects
 
         public void Update(GameTime gameTime)
         {
+            Position = Global.Player.Position;
+
             var keyboardState = Keyboard.GetState();
 
             if (keyboardState.IsKeyDown(Keys.Z))

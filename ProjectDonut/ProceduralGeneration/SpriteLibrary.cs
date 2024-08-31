@@ -25,17 +25,13 @@ namespace ProjectDonut.ProceduralGeneration
         private Dictionary<string, Texture2D> sheets;
 
 
-        private ContentManager content;
-        private GraphicsDevice graphicsDevice;
-
         private Dictionary<string, Texture2D> lib;
 
         private int TileSize = 32;
 
-        public SpriteLibrary(ContentManager content, GraphicsDevice graphicsDevice)
+        public SpriteLibrary()
         {
-            this.content = content;
-            this.graphicsDevice = graphicsDevice;
+            LoadSpriteLibrary();
         }
 
         public void LoadSpriteLibrary()
@@ -90,14 +86,14 @@ namespace ProjectDonut.ProceduralGeneration
 
         private void LoadSpriteSheets()
         {
-            spriteSheetTiles = content.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
-            spriteSheetBiomes = content.Load<Texture2D>("Sprites/Map/World/Biomes");
-            spriteSheetForest = content.Load<Texture2D>("Sprites/Map/World/Forest");
-            spriteSheetMountain = content.Load<Texture2D>("Sprites/Map/World/Mountain");
-            spriteSheetCastle = content.Load<Texture2D>("Sprites/WorldStructures/Castle");
+            spriteSheetTiles = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
+            spriteSheetBiomes = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Biomes");
+            spriteSheetForest = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Forest");
+            spriteSheetMountain = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Mountain");
+            spriteSheetCastle = Global.ContentManager.Load<Texture2D>("Sprites/WorldStructures/Castle");
 
-            sheets.Add("biome-grasslands", content.Load<Texture2D>("Sprites/Map/World/BiomeGrasslands"));
-            sheets.Add("player", content.Load<Texture2D>("Sprites/Player/Player"));
+            sheets.Add("biome-grasslands", Global.ContentManager.Load<Texture2D>("Sprites/Map/World/BiomeGrasslands"));
+            sheets.Add("player", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player"));
         }
 
         private void LoadBiomeGrasslands()
@@ -257,14 +253,14 @@ namespace ProjectDonut.ProceduralGeneration
 
         private void LoadMouseCursor()
         {
-            var sheet = content.Load<Texture2D>("Sprites/UI/MouseCursor");
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/UI/MouseCursor");
 
             lib.Add("cursor", ExtractSprite(sheet, 0, 0));
         }
 
         private void LoadUIScroll()
         {
-            var sheet = content.Load<Texture2D>("Sprites/UI/Scroll");
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll");
 
             lib.Add("scroll-left", ExtractSprite(sheet, 0, 0));
             lib.Add("scroll-middle", ExtractSprite(sheet, 1, 0));
@@ -273,7 +269,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         private void LoadStructureTown()
         {
-            spriteSheetTown = content.Load<Texture2D>("Sprites/WorldStructures/Town01");
+            spriteSheetTown = Global.ContentManager.Load<Texture2D>("Sprites/WorldStructures/Town01");
 
             for (int i = 0; i < 4; i++)
             {
@@ -293,7 +289,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         private void LoadStructureCastle()
         {
-            spriteSheetCastle = content.Load<Texture2D>("Sprites/WorldStructures/Castle");
+            spriteSheetCastle = Global.ContentManager.Load<Texture2D>("Sprites/WorldStructures/Castle");
 
             var frameCount = 1;
             var rowCount = 9;
@@ -314,7 +310,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         private void LoadDialogueSystem()
         {
-            sheets.Add("dialogue", content.Load<Texture2D>("Sprites/UI/Dialogue"));
+            sheets.Add("dialogue", Global.ContentManager.Load<Texture2D>("Sprites/UI/Dialogue"));
 
             lib.Add("dialogue-NW", ExtractSprite(sheets["dialogue"], 0, 0));
             lib.Add("dialogue-N", ExtractSprite(sheets["dialogue"], 1, 0));
@@ -376,7 +372,7 @@ namespace ProjectDonut.ProceduralGeneration
             spriteSheet.GetData(0, sourceRectangle, data, 0, data.Length);
 
             // Create a new texture for the sprite and set the pixel data
-            Texture2D sprite = new Texture2D(graphicsDevice, width, height);
+            Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
             sprite.SetData(data);
 
             return sprite;
@@ -402,7 +398,7 @@ namespace ProjectDonut.ProceduralGeneration
             spriteSheetBiomes.GetData(0, sourceRectangle, data, 0, data.Length);
 
             // Create a new texture for the sprite and set the pixel data
-            Texture2D sprite = new Texture2D(graphicsDevice, width, height);
+            Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
             sprite.SetData(data);
 
             // Store the new texture in the array
@@ -424,7 +420,7 @@ namespace ProjectDonut.ProceduralGeneration
             spriteSheetTiles.GetData(0, sourceRectangle, data, 0, data.Length);
 
             // Create a new texture for the sprite and set the pixel data
-            Texture2D sprite = new Texture2D(graphicsDevice, width, height);
+            Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
             sprite.SetData(data);
 
             // Store the new texture in the array
@@ -446,7 +442,7 @@ namespace ProjectDonut.ProceduralGeneration
             spriteSheetForest.GetData(0, sourceRectangle, data, 0, data.Length);
 
             // Create a new texture for the sprite and set the pixel data
-            Texture2D sprite = new Texture2D(graphicsDevice, width, height);
+            Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
             sprite.SetData(data);
 
             // Store the new texture in the array

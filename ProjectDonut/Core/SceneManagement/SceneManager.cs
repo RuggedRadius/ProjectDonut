@@ -17,13 +17,10 @@ namespace ProjectDonut.Core.SceneManagement
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
-        private SpriteLibrary _spriteLib;
-
         public Dictionary<string, Scene> Scenes;
 
-        public SceneManager(SpriteLibrary spriteLib)
+        public SceneManager()
         {
-            _spriteLib = spriteLib;
             Scenes = new Dictionary<string, Scene>()
             {
                 { "world", CreateWorldScene() },
@@ -60,7 +57,7 @@ namespace ProjectDonut.Core.SceneManagement
 
         public WorldScene CreateWorldScene()
         {
-            var scene = new WorldScene(SceneType.World, _spriteLib);
+            var scene = new WorldScene(SceneType.World, Global.SpriteLibrary);
             scene.Initialize();
             scene.LoadContent(Global.ContentManager);
 
@@ -69,7 +66,7 @@ namespace ProjectDonut.Core.SceneManagement
 
         public InstanceScene CreateInstanceScene()
         {
-            var scene = new InstanceScene(SceneType.Instance, _spriteLib);
+            var scene = new InstanceScene(SceneType.Instance, Global.SpriteLibrary);
             scene.Initialize();
             scene.LoadContent(Global.ContentManager);
 
