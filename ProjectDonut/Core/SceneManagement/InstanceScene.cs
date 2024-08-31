@@ -59,9 +59,26 @@ namespace ProjectDonut.Core.SceneManagement
         {
             _tilemap = GenerateDungeonTileMap(Dimension, Dimension, loadLast, SquashRooms);
 
+            var popSettings = new DungeonLevelSettings()
+            {
+                EnemyCount = 50,
+                PossibleEnemies = new Dictionary<string, int>()
+                {
+                    { "goblin", 10 },
+                    { "orc", 5 }
+                },
+                HasSubsequentLevel = true
+            };
+
             var dungeonPopulater = new DungeonPopulater(_dataMap);
-            dungeonPopulater.PopulateDungeon();
+            dungeonPopulater.PopulateDungeon(popSettings);
             _populationMap = dungeonPopulater.CreateTileMap();
+
+            var enemies = dungeonPopulater.CreateEnemies(popSettings);
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                _gameObjects.Add($"enemy-{i + 1}", enemies[i]);
+            }            
 
             var stairsLocation = dungeonPopulater.GetStairsLocation();
             EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, 32, 32);

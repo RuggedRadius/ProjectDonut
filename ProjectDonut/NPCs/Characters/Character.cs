@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Interfaces;
-using static ProjectDonut.Characters.CharacterEnums;
+using static ProjectDonut.NPCs.Characters.CharacterEnums;
 
-namespace ProjectDonut.Characters
+namespace ProjectDonut.NPCs.Characters
 {
     public class Character : IGameObject
     {
@@ -17,8 +17,8 @@ namespace ProjectDonut.Characters
         public CharacterRace Race;
         public CharacterProfession Profession;
         public CharacterAttributes Attributes { get; set; }
-        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Vector2 Position { get; set; }
+        public int ZIndex { get; set; }
 
         private Texture2D spriteHead;
         private Texture2D spriteFeet;

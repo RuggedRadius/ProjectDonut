@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Interfaces;
+using ProjectDonut.NPCs.Enemy;
 using ProjectDonut.Tools;
 using System;
 using System.Collections.Generic;
@@ -46,12 +48,36 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             _textures.Add("stairs-se", SpriteTools.ExtractSprite(sheet, 2, 2));
         }
 
-        public void PopulateDungeon()
+        public void PopulateDungeon(DungeonLevelSettings settings)
         {
             _popData = new string[MapWidth, MapHeight];
 
             // Populate the dungeon with enemies, items, etc
             PlaceStairs();
+        }
+
+        public List<IGameObject> CreateEnemies(DungeonLevelSettings settings)
+        {
+            var enemies = new List<IGameObject>();
+            var allFloorCoords = GetAllFloorCoords();
+
+            for (int i = 0; i < settings.EnemyCount; i++)
+            {
+                var randomIndex = _random.Next(0, allFloorCoords.Count);
+                var randomCoord = allFloorCoords[randomIndex];
+
+                var enemy = new Enemy()
+                {
+                    Position = new Vector2(randomCoord.x * 32, randomCoord.y * 32),
+                    ZIndex = 0
+                };
+
+                enemies.Add(enemy);
+
+                allFloorCoords.RemoveAt(randomIndex);
+            }
+
+            return enemies;
         }
 
         private void PlaceStairs()
@@ -69,14 +95,24 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             _popData[startLocation.Item1 - 1, startLocation.Item2 + 1] = "stairs-sw";
             _popData[startLocation.Item1 - 0, startLocation.Item2 + 1] = "stairs-s";
             _popData[startLocation.Item1 + 1, startLocation.Item2 + 1] = "stairs-se";
+        }
 
-            for (int i = -1; i < 2; i++)
+        private List<(int x, int y)> GetAllFloorCoords()
+        {
+            var floorCoords = new List<(int x, int y)>();
+
+            for (int i = 0; i < MapWidth; i++)
             {
-                for (int j = -1; j < 2; j++)
+                for (int j = 0; j < MapHeight; j++)
                 {
-
+                    if (_datamap[i, j] == 2)
+                    {
+                        floorCoords.Add((i, j));
+                    }
                 }
             }
+
+            return floorCoords;
         }
 
         private (int, int) FindSuitableStairLocation()

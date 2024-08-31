@@ -137,9 +137,9 @@ namespace ProjectDonut.Debugging
                     {
                         writer.Write(array[i, j]);
                         if (j < cols - 1)
-                            writer.Write(",");  // Separate elements with a comma
+                            writer.Write(",");
                     }
-                    writer.WriteLine();  // New line for each row
+                    writer.WriteLine();
                 }
             }
         }
