@@ -54,6 +54,7 @@ namespace ProjectDonut
             Global.GameCursor = new GameCursor(this);
             Global.Player = new Player();
             Global.SceneManager = new SceneManager();
+            //Global.Pathfinding = new Pathfinding.Astar();
 
             _gameObjects.Add("camera", Global.Camera);            
             _screenObjects.Add("dialogue", Global.DialogueManager);            

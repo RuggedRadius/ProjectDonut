@@ -13,29 +13,30 @@ namespace ProjectDonut.NPCs.Enemy
 {
     public class Enemy : IGameObject
     {
+        public EnemyState State { get; set; }
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
-        private Texture2D _sprite;
-        private Vector2 _textureOrigin => new Vector2(_sprite.Width / 2f, _sprite.Height / 2f);
+        public Texture2D _sprite;
+        public Vector2 _textureOrigin => new Vector2(_sprite.Width / 2f, _sprite.Height / 2f);
 
 
-        public void Initialize()
+        public virtual void Initialize()
         {
         }
 
-        public void LoadContent(ContentManager content)
+        public virtual void LoadContent(ContentManager content)
         {
-            _sprite = Global.ContentManager.Load<Texture2D>("Sprites/Enemy/Test_Grunt");
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
         }
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+
+        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             //spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            spriteBatch.Draw(_sprite, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
+            spriteBatch.Draw(_sprite, Position, null, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
             //spriteBatch.End();
         }
     }

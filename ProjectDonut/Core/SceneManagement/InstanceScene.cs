@@ -29,6 +29,7 @@ namespace ProjectDonut.Core.SceneManagement
         private Random random = new Random();
 
         // Instance-related 
+        public int[,] DataMap;
         private BSP _bsp;
         private Tilemap _tilemap;
         private Tilemap _populationMap;
@@ -70,7 +71,7 @@ namespace ProjectDonut.Core.SceneManagement
                 HasSubsequentLevel = true
             };
 
-            var dungeonPopulater = new DungeonPopulater(_dataMap);
+            var dungeonPopulater = new DungeonPopulater(DataMap);
             dungeonPopulater.PopulateDungeon(popSettings);
             _populationMap = dungeonPopulater.CreateTileMap();
 
@@ -92,7 +93,7 @@ namespace ProjectDonut.Core.SceneManagement
             }
         }
 
-        private int[,] _dataMap;
+        
         private Tilemap GenerateDungeonTileMap(int width, int height, bool loadLast, bool squashRooms)
         {
             var path = @"C:\DungeonData.txt";
@@ -124,7 +125,7 @@ namespace ProjectDonut.Core.SceneManagement
                 dataMap = BSP.MergeArrays(dataMap, linkages);
             }
 
-            _dataMap = dataMap;
+            DataMap = dataMap;
 
             //Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
             //Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
@@ -157,14 +158,14 @@ namespace ProjectDonut.Core.SceneManagement
             if (kbState.IsKeyDown(Keys.F4))
             {
                 var path = @"C:\DungeonData.txt";
-                _dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                DataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
                 _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
             }
 
             if (kbState.IsKeyDown(Keys.F5))
             {
                 var path = @"C:\DungeonData.txt";
-                Debugging.Debugger.SaveIntArrayToFile(_dataMap, path);
+                Debugging.Debugger.SaveIntArrayToFile(DataMap, path);
             }
 
             foreach (var exitPoint in ExitLocations)

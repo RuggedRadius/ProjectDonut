@@ -5,6 +5,7 @@ using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects;
 using ProjectDonut.GameObjects.PlayerComponents;
+using ProjectDonut.Pathfinding;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.UI.DialogueSystem;
 using System;
@@ -26,6 +27,7 @@ namespace ProjectDonut
         public static Camera Camera;
         public static GameCursor GameCursor;
         public static SpriteLibrary SpriteLibrary;
+        //public static Astar Pathfinding;
 
         public static InputManager InputManager;
         public static SceneManager SceneManager;

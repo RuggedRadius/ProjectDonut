@@ -66,7 +66,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                 var randomIndex = _random.Next(0, allFloorCoords.Count);
                 var randomCoord = allFloorCoords[randomIndex];
 
-                var enemy = new Enemy()
+                var enemy = new OrcGrunt()
                 {
                     Position = new Vector2(randomCoord.x * 32, randomCoord.y * 32),
                     ZIndex = 0
@@ -76,6 +76,9 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 
                 allFloorCoords.RemoveAt(randomIndex);
             }
+
+            enemies.ForEach(x => x.Initialize());
+            enemies.ForEach(x => x.LoadContent(Global.ContentManager));
 
             return enemies;
         }
