@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
+using ProjectDonut.Pathfinding;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using System;
@@ -142,6 +143,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             Debugger.Lines[3] = $"ChunkPos = [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";
 
             _inventory.Update(gameTime);
+
+            
         }
 
         private void HandleInput(GameTime gameTime)
@@ -168,7 +171,19 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             UpdateAnimationFrame(movement);
 
+            //if (Global.SceneManager.CurrentScene.SceneType == Core.SceneManagement.SceneType.Instance)
+            //{
+            //    Astar.SetOccupiedCell((int)Position.X / TileSize, (int)Position.Y / TileSize, false);
+
+            //}
+
             Position += movement;
+
+            //if (Global.SceneManager.CurrentScene.SceneType == Core.SceneManagement.SceneType.Instance)
+            //{
+            //    Astar.SetOccupiedCell((int)Position.X / TileSize, (int)Position.Y / TileSize, true);
+
+            //}
         }
 
         private Vector2 _textureOrigin;

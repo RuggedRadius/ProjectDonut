@@ -148,7 +148,11 @@ namespace ProjectDonut.ProceduralGeneration.World
                     {
                         // TODO: TEMP CODE TO TEST SCENE SWITCHING
                         var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-                        worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, 32, 32);
+
+                        var worldExitPointX = (structure.Bounds.Width/2) + structure.Bounds.X + (Global.Player.ChunkPosX * 32 * Width); 
+                        var worldExitPointY = structure.Bounds.Bottom + 10 + (Global.Player.ChunkPosY * 32 * Height); 
+                        
+                        worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, 32, 32);
 
                         Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
                         Global.SceneManager.CurrentScene.PrepareForPlayerEntry();

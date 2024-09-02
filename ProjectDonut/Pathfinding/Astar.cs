@@ -9,6 +9,8 @@ namespace ProjectDonut.Pathfinding
 {
     public static class Astar
     {
+        //public static bool[,] occupiedCells;
+
         public static List<Node> FindPath(int[,] grid, Node start, Node end)
         {
             var openList = new List<Node>();
@@ -21,7 +23,7 @@ namespace ProjectDonut.Pathfinding
 
             openList.Add(start);
 
-            var maxCount = 1000;
+            var maxCount = 50;
             int counter = 0;
 
             while (openList.Count > 0)
@@ -41,7 +43,9 @@ namespace ProjectDonut.Pathfinding
                 // Check each neighboring cell
                 foreach (var neighbor in GetNeighbors(grid, currentNode))
                 {
-                    if (closedList.Contains(neighbor) || grid[neighbor.X, neighbor.Y] != 2)
+                    if (closedList.Contains(neighbor) || 
+                        grid[neighbor.X, neighbor.Y] != 2)// ||
+                        //occupiedCells[neighbor.X, neighbor.Y] == true)
                     {
                         continue;
                     }
@@ -114,5 +118,15 @@ namespace ProjectDonut.Pathfinding
 
             return path;
         }
+    
+        //public static void InitialiseOccupiedCells(int width, int height)
+        //{
+        //    occupiedCells = new bool[width, height];
+        //}
+
+        //public static void SetOccupiedCell(int x, int y, bool occupied)
+        //{
+        //    occupiedCells[x, y] = occupied;
+        //}
     }
 }

@@ -30,7 +30,7 @@ namespace ProjectDonut.NPCs.Enemy
             MoveTime = 5;
             MoveTimer = 0;
 
-            DetectionDistance = 10;
+            DetectionDistance = 1000;
         }
 
         public override void LoadContent(ContentManager content)
@@ -42,8 +42,6 @@ namespace ProjectDonut.NPCs.Enemy
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             DistanceToPlayer = Distance(Position, Global.Player.Position) / 32;
 
             switch (State)
@@ -57,6 +55,7 @@ namespace ProjectDonut.NPCs.Enemy
                         var curPlayerNode = new Node((int)Global.Player.Position.X / 32, (int)Global.Player.Position.Y / 32);
                         var curNode = new Node((int)Position.X / 32, (int)Position.Y / 32);
                         CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
+                        
 
                         if (CurrentPath != null)
                         {
@@ -72,7 +71,13 @@ namespace ProjectDonut.NPCs.Enemy
                     {
                         if (Position.X == NextPosition?.X && Position.Y == NextPosition?.Y)
                         {
+                            //    if (CurrentPosition != null)
+                            //    {
+                            //        Astar.SetOccupiedCell(CurrentPosition.X / 32, CurrentPosition.Y / 32, false);
+                            //    }
+
                             CurrentPosition = NextPosition;
+                            //Astar.SetOccupiedCell(CurrentPosition.X / 32, CurrentPosition.Y / 32, true);
                             NextPosition = CurrentPath.FirstOrDefault();
                             CurrentPath.Remove(CurrentPosition);
                         }
@@ -101,6 +106,8 @@ namespace ProjectDonut.NPCs.Enemy
                 case EnemyState.Attacking: 
                     break;
             }
+
+            base.Update(gameTime);
         }
 
         private float Distance(Vector2 a, Vector2 b)

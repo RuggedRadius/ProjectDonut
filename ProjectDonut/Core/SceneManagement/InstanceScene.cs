@@ -19,6 +19,7 @@ using System.Diagnostics;
 using ProjectDonut.ProceduralGeneration.Dungeons;
 using System.IO;
 using ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation;
+using ProjectDonut.NPCs.Enemy;
 
 namespace ProjectDonut.Core.SceneManagement
 {
@@ -39,6 +40,7 @@ namespace ProjectDonut.Core.SceneManagement
         private Rectangle EntryLocation;
 
         private Dictionary<string, Rectangle> ExitLocations;
+        public List<IGameObject> Enemies { get; set; }
 
         public InstanceScene(SceneType sceneType, SpriteLibrary spriteLibray)
         {
@@ -75,10 +77,12 @@ namespace ProjectDonut.Core.SceneManagement
             dungeonPopulater.PopulateDungeon(popSettings);
             _populationMap = dungeonPopulater.CreateTileMap();
 
+            Enemies = new List<IGameObject>();
             var enemies = dungeonPopulater.CreateEnemies(popSettings);
             for (int i = 0; i < enemies.Count; i++)
             {
                 _gameObjects.Add($"enemy-{i + 1}", enemies[i]);
+                Enemies.Add(enemies[i]);
             }            
 
             var stairsLocation = dungeonPopulater.GetStairsLocation();
@@ -172,7 +176,9 @@ namespace ProjectDonut.Core.SceneManagement
             {
                 if (exitPoint.Value.Contains(Global.Player.ChunkPosition))
                 {
+
                     Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                    ((WorldScene)Global.SceneManager.CurrentScene).PrepareForPlayerEntry();
                 }
             }
         }

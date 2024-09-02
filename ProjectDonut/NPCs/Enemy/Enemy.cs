@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Interfaces;
+using ProjectDonut.Pathfinding;
 
 namespace ProjectDonut.NPCs.Enemy
 {
@@ -15,6 +16,7 @@ namespace ProjectDonut.NPCs.Enemy
     {
         public EnemyState State { get; set; }
         public Vector2 Position { get; set; }
+        public Rectangle Bounds { get; set; }
         public int ZIndex { get; set; }
 
         public Texture2D _sprite;
@@ -31,13 +33,12 @@ namespace ProjectDonut.NPCs.Enemy
 
         public virtual void Update(GameTime gameTime)
         {
+            Bounds = new Rectangle((int)Position.X, (int)Position.Y, _sprite.Width, _sprite.Height);
         }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            //spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             spriteBatch.Draw(_sprite, Position, null, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
-            //spriteBatch.End();
         }
     }
 }
