@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut
+namespace ProjectDonut.Core
 {
     public static class Global
     {

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Pathfinding;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Core;
 
 namespace ProjectDonut.NPCs.Enemy
 {

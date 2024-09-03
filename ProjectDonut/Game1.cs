@@ -5,7 +5,6 @@ using ProjectDonut.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
 using ProjectDonut.ProceduralGeneration.World;
-using ProjectDonut.ProceduralGeneration;
 using System.Threading.Tasks;
 using ProjectDonut.Interfaces;
 using ProjectDonut.UI.DialogueSystem;
@@ -15,14 +14,18 @@ using ProjectDonut.Tools;
 using System;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects.PlayerComponents;
+using ProjectDonut.Core;
 
 namespace ProjectDonut
 {
     public class Game1 : Game
     {
+        private SpriteFont _font;
+
         private Dictionary<string, IGameObject> _gameObjects;
         private Dictionary<string, IScreenObject> _screenObjects;
-    
+
+        private DialogueManager dialogue;        
         private Random random = new Random();
 
 
@@ -34,32 +37,45 @@ namespace ProjectDonut
 
             Global.GraphicsDeviceManager.PreferredBackBufferWidth = 1920;
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = 1080;
-
-            _gameObjects = new Dictionary<string, IGameObject>();
-            _screenObjects = new Dictionary<string, IScreenObject>();
-
-            Global.InputManager = new Core.Input.InputManager();
-            _gameObjects.Add("inputManager", Global.InputManager);
+            //Global.GraphicsDeviceManager.PreferredBackBufferHeight = 1440;
         }
 
         protected override void Initialize()
         {
             Global.GraphicsDevice = Global.GraphicsDeviceManager.GraphicsDevice;
-            Global.SpriteBatch = new SpriteBatch(Global.GraphicsDevice);
+            Global.SpriteBatch = new SpriteBatch(GraphicsDevice);
             Global.ContentManager = Content;
 
-            Global.SpriteLibrary = new SpriteLibrary();
-            Global.Camera = new Camera();
-            Global.DialogueManager = new DialogueManager();
-            Global.GameCursor = new GameCursor(this);
-            Global.Player = new Player();
-            Global.SceneManager = new SceneManager();
-            //Global.Pathfinding = new Pathfinding.Astar();
+            _gameObjects = new Dictionary<string, IGameObject>();
+            _screenObjects = new Dictionary<string, IScreenObject>();
 
-            _gameObjects.Add("camera", Global.Camera);            
-            _screenObjects.Add("dialogue", Global.DialogueManager);            
-            _screenObjects.Add("cursor", Global.GameCursor);            
-            _gameObjects.Add("player", Global.Player);            
+
+
+            //worldChunks = new WorldChunk[3,3];
+
+            Global.SpriteLibrary = new SpriteLibrary();
+            Global.SpriteLibrary.LoadSpriteLibrary();
+
+            // Fog of ware
+
+            // Camera
+            Global.Camera = new Camera();
+            _gameObjects.Add("camera", Global.Camera);
+
+            // Player
+
+
+            dialogue = new DialogueManager();
+            _screenObjects.Add("dialogue", dialogue);
+
+            Global.GameCursor = new GameCursor(this);
+            _screenObjects.Add("cursor", Global.GameCursor);
+
+            Global.Player = new Player();
+            _gameObjects.Add("player", Global.Player);
+
+            // World map
+            Global.SceneManager = new SceneManager();
             _gameObjects.Add("sceneManager", Global.SceneManager);
 
             Debugger.Initialize();
@@ -69,26 +85,51 @@ namespace ProjectDonut
 
             //Task.Run(() =>
             //{
-            //    var test = Global.DialogueManager.CreateTestDialogue();
-            //    Global.DialogueManager.ExecuteMultipleLines(test);
+            //    var test = dialogue.CreateTestDialogue();
+            //    dialogue.ExecuteMultipleLines(test);
             //});
 
             // Position player in middle of the map
-            //Global.Player.PositionPlayerInMiddleOfMap(worldMapSettings);
+            //player.PositionPlayerInMiddleOfMap(worldMapSettings);
 
             base.Initialize();
         }
+
+        
 
         protected override void LoadContent()
         {
             Debugger.LoadContent();
 
+            Global.SceneManager.LoadContent(Content);
+
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(Content));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+
+            _font = Content.Load<SpriteFont>("Fonts/Default");
         }
 
         protected override void Update(GameTime gameTime)
         {
+            var kbState = Keyboard.GetState();
+
+            if (kbState.IsKeyDown(Keys.F8))
+            {
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+            }
+
+            if (kbState.IsKeyDown(Keys.F9))
+            {
+                var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, 32, 32);
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+            }
+
+            Global.SceneManager.Update(gameTime);
+            Global.Camera.Position = _gameObjects["player"].Position;
+
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 

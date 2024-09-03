@@ -25,7 +25,6 @@ namespace ProjectDonut.Core.SceneManagement
 {
     public class InstanceScene : Scene
     {
-        private SpriteLibrary _spriteLib;
         //private FogOfWar _fog;
         private Random random = new Random();
 
@@ -42,12 +41,9 @@ namespace ProjectDonut.Core.SceneManagement
         private Dictionary<string, Rectangle> ExitLocations;
         public List<IGameObject> Enemies { get; set; }
 
-        public InstanceScene(SceneType sceneType, SpriteLibrary spriteLibray)
+        public InstanceScene(SceneType sceneType)
         {
             SceneType = sceneType;
-            
-            _spriteLib = spriteLibray;
-
             _bsp = new BSP();
         }
 
@@ -87,7 +83,7 @@ namespace ProjectDonut.Core.SceneManagement
 
             var stairsLocation = dungeonPopulater.GetStairsLocation();
             EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, 32, 32);
-            Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
+            //Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
 
             ExitLocations = new Dictionary<string, Rectangle>();
             var exitPoints = dungeonPopulater.GetExitLocations();

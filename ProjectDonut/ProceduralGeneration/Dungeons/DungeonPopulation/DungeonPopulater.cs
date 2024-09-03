@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
 using ProjectDonut.NPCs.Enemy;
 using ProjectDonut.Tools;
@@ -20,7 +21,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
         private string[,] _popData;
 
         private Random _random = new Random();
-        private Dictionary<string, Texture2D> _textures;
 
         public DungeonPopulater(int[,] datamap)
         {
@@ -28,24 +28,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 
             MapWidth = _datamap.GetLength(0);
             MapHeight = _datamap.GetLength(1);
-
-            LoadTextures();
-        }
-
-        private void LoadTextures()
-        {
-            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/stairs");
-            _textures = new Dictionary<string, Texture2D>();
-
-            _textures.Add("stairs-nw", SpriteTools.ExtractSprite(sheet, 0, 0));
-            _textures.Add("stairs-n", SpriteTools.ExtractSprite(sheet, 1, 0));
-            _textures.Add("stairs-ne", SpriteTools.ExtractSprite(sheet, 2, 0));
-            _textures.Add("stairs-w", SpriteTools.ExtractSprite(sheet, 0, 1));
-            _textures.Add("stairs-c", SpriteTools.ExtractSprite(sheet, 1, 1));
-            _textures.Add("stairs-e", SpriteTools.ExtractSprite(sheet, 2, 1));
-            _textures.Add("stairs-sw", SpriteTools.ExtractSprite(sheet, 0, 2));
-            _textures.Add("stairs-s", SpriteTools.ExtractSprite(sheet, 1, 2));
-            _textures.Add("stairs-se", SpriteTools.ExtractSprite(sheet, 2, 2));
         }
 
         public void PopulateDungeon(DungeonLevelSettings settings)
@@ -83,23 +65,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             return enemies;
         }
 
-        private void PlaceStairs()
-        {
-            var startLocation = FindSuitableStairLocation();
-
-            _popData[startLocation.Item1 - 1, startLocation.Item2 - 1] = "stairs-nw";
-            _popData[startLocation.Item1 - 0, startLocation.Item2 - 1] = "stairs-n";
-            _popData[startLocation.Item1 + 1, startLocation.Item2 - 1] = "stairs-ne";
-
-            _popData[startLocation.Item1 - 1, startLocation.Item2 - 0] = "stairs-w";
-            _popData[startLocation.Item1 - 0, startLocation.Item2 - 0] = "stairs-c";
-            _popData[startLocation.Item1 + 1, startLocation.Item2 - 0] = "stairs-e";
-
-            _popData[startLocation.Item1 - 1, startLocation.Item2 + 1] = "stairs-sw";
-            _popData[startLocation.Item1 - 0, startLocation.Item2 + 1] = "stairs-s";
-            _popData[startLocation.Item1 + 1, startLocation.Item2 + 1] = "stairs-se";
-        }
-
         private List<(int x, int y)> GetAllFloorCoords()
         {
             var floorCoords = new List<(int x, int y)>();
@@ -116,6 +81,31 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             }
 
             return floorCoords;
+        }
+
+        private void PlaceStairs()
+        {
+            var startLocation = FindSuitableStairLocation();
+
+            _popData[startLocation.Item1 - 1, startLocation.Item2 - 1] = "stairs-nw";
+            _popData[startLocation.Item1 - 0, startLocation.Item2 - 1] = "stairs-n";
+            _popData[startLocation.Item1 + 1, startLocation.Item2 - 1] = "stairs-ne";
+
+            _popData[startLocation.Item1 - 1, startLocation.Item2 - 0] = "stairs-w";
+            _popData[startLocation.Item1 - 0, startLocation.Item2 - 0] = "stairs-c";
+            _popData[startLocation.Item1 + 1, startLocation.Item2 - 0] = "stairs-e";
+
+            _popData[startLocation.Item1 - 1, startLocation.Item2 + 1] = "stairs-sw";
+            _popData[startLocation.Item1 - 0, startLocation.Item2 + 1] = "stairs-s";
+            _popData[startLocation.Item1 + 1, startLocation.Item2 + 1] = "stairs-se";
+
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+
+                }
+            }
         }
 
         private (int, int) FindSuitableStairLocation()
@@ -196,31 +186,31 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             switch (popValue)
             {
                 case "stairs-nw":
-                    return _textures["stairs-nw"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-nw"][0];
 
                 case "stairs-n":
-                    return _textures["stairs-n"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-n"][0];
 
                 case "stairs-ne":
-                    return _textures["stairs-ne"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-ne"][0];
 
                 case "stairs-w":
-                    return _textures["stairs-w"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-w"][0];
 
                 case "stairs-c":
-                    return _textures["stairs-c"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-c"][0];
 
                 case "stairs-e":
-                    return _textures["stairs-e"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-e"][0];
 
                 case "stairs-sw":
-                    return _textures["stairs-sw"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-sw"][0];
 
                 case "stairs-s":
-                    return _textures["stairs-s"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-s"][0];
 
                 case "stairs-se":
-                    return _textures["stairs-se"];
+                    return Global.SpriteLibrary.DungeonSprites["stairs-se"][0];
 
                 default:
                     return null;

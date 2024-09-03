@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.ProceduralGeneration.World;
 using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;
 
@@ -22,13 +23,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
 
         private static List<Area> areas;
         private static List<Room> rooms2;
-
-        private Dictionary<string, List<Texture2D>> _textures;
-
-        public DungeonGenerator()
-        {
-            LoadTextures();
-        }
 
         public Tilemap CreateTileMap(int[,] data)
         {
@@ -62,37 +56,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             }
 
             return tilemap;
-        }
-
-        private void LoadTextures()
-        {
-            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/sheet");
-            //var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/Tileset_Dungeon02");
-
-            _textures = new Dictionary<string, List<Texture2D>>
-            {
-                { "wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) } },
-                { "wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) } },
-                { "wall-ne", new List<Texture2D> { ExtractSprite(sheet, 2, 0) } },
-                { "wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) } },
-                { "wall-e", new List<Texture2D> { ExtractSprite(sheet, 2, 1) } },
-                { "wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 2) } },
-                { "wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 2) } },
-                { "wall-se", new List<Texture2D> { ExtractSprite(sheet, 2, 2) } },
-                { "wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 3, 0) } },
-                { "wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 4, 0) } },
-                { "wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 3, 1) } },
-                { "wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 4, 1) } },
-                { "floor-01", new List<Texture2D>() }
-            };
-
-            for (int i = 0; i < 7; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    _textures["floor-01"].Add(ExtractSprite(sheet, i + 6, j));
-                }
-            }
         }
 
         private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
@@ -262,7 +225,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
         private Texture2D GetRandomTextureFor(string key)
         {
             var random = new Random();
-            var textures = _textures[key];
+            var textures = Global.SpriteLibrary.DungeonSprites[key];
             return textures[random.Next(textures.Count)];
         }
     }

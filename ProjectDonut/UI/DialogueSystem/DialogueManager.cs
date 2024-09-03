@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
-using ProjectDonut.ProceduralGeneration;
 
 namespace ProjectDonut.UI.DialogueSystem
 {
@@ -26,7 +26,7 @@ namespace ProjectDonut.UI.DialogueSystem
         private float charInterval = 0.0125f;
 
         public int ZIndex { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public DialogueManager()
         {

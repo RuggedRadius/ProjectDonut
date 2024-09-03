@@ -6,8 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.GameObjects;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
-using ProjectDonut.Pathfinding;
-using ProjectDonut.ProceduralGeneration;
 
 namespace ProjectDonut.Core.SceneManagement
 {
@@ -54,24 +52,11 @@ namespace ProjectDonut.Core.SceneManagement
         public void SetCurrentScene(Scene scene)
         {
             CurrentScene = scene;
-
-            if (scene.GetType() == typeof(InstanceScene))
-            {
-                var instance = ((InstanceScene)scene);
-
-                // Initialise occupancy grid for pathfinding
-                //Astar.InitialiseOccupiedCells(instance.DataMap.GetLength(0), instance.DataMap.GetLength(1));
-                //foreach (var enemy in instance.Enemies)
-                //{
-                //    var dataMapCoords = new Vector2(enemy.Position.X / 32, enemy.Position.Y / 32);
-                //    Astar.SetOccupiedCell((int)dataMapCoords.X, (int)dataMapCoords.Y, true);
-                //}
-            }
         }
 
         public WorldScene CreateWorldScene()
         {
-            var scene = new WorldScene(SceneType.World, Global.SpriteLibrary);
+            var scene = new WorldScene(SceneType.World);
             scene.Initialize();
             scene.LoadContent(Global.ContentManager);
 
@@ -80,7 +65,7 @@ namespace ProjectDonut.Core.SceneManagement
 
         public InstanceScene CreateInstanceScene()
         {
-            var scene = new InstanceScene(SceneType.Instance, Global.SpriteLibrary);
+            var scene = new InstanceScene(SceneType.Instance);
             scene.Initialize();
             scene.LoadContent(Global.ContentManager);
 

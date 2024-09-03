@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.Tools;
@@ -210,7 +211,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 Bounds = new Rectangle(x * settings.TileSize, y * settings.TileSize, 9 * settings.TileSize, 9 * settings.TileSize),
                 Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
-                Instance = new InstanceScene(SceneType.Instance, spriteLib)
+                Instance = new InstanceScene(SceneType.Instance)
             };
 
             structureData.Instance.Initialize();

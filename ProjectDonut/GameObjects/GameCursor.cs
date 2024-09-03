@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
-using ProjectDonut.ProceduralGeneration;
 
 namespace ProjectDonut.GameObjects
 {

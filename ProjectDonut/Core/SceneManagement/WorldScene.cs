@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
-using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
@@ -17,7 +16,6 @@ namespace ProjectDonut.Core.SceneManagement
     {
         public static WorldScene Instance;
 
-        private SpriteLibrary _spriteLib;
         private ScrollDisplayer _scrollDisplay;
         private WorldChunkManager worldChunks;
         private const int ChunkSize = 100;
@@ -28,7 +26,7 @@ namespace ProjectDonut.Core.SceneManagement
 
         public Rectangle LastExitLocation;
 
-        public WorldScene(SceneType sceneType, SpriteLibrary spriteLibray)
+        public WorldScene(SceneType sceneType)
         {
             if (Instance == null)
             {
@@ -36,8 +34,6 @@ namespace ProjectDonut.Core.SceneManagement
             }
 
             base.SceneType = sceneType;
-
-            _spriteLib = spriteLibray;
         }
 
         public override void Initialize()
@@ -50,7 +46,7 @@ namespace ProjectDonut.Core.SceneManagement
             _scrollDisplay = new ScrollDisplayer(Global.ContentManager, Global.SpriteBatch, Global.GraphicsDevice);
             _screenObjects.Add("scrollDisplay", _scrollDisplay);
 
-            worldChunks = new WorldChunkManager(_spriteLib, _scrollDisplay, worldMapSettings);
+            worldChunks = new WorldChunkManager(Global.SpriteLibrary, _scrollDisplay, worldMapSettings);
             _gameObjects.Add("chunkmanager", worldChunks);
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());

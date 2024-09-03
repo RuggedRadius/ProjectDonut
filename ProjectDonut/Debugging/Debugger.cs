@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 
@@ -137,9 +138,9 @@ namespace ProjectDonut.Debugging
                     {
                         writer.Write(array[i, j]);
                         if (j < cols - 1)
-                            writer.Write(",");
+                            writer.Write(",");  // Separate elements with a comma
                     }
-                    writer.WriteLine();
+                    writer.WriteLine();  // New line for each row
                 }
             }
         }

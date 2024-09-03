@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AsepriteDotNet;
 using MonoGame.Aseprite;
+using ProjectDonut.Core;
 
 namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {

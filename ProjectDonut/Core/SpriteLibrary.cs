@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.ProceduralGeneration
+namespace ProjectDonut.Core
 {
     public class SpriteLibrary
     {
@@ -23,6 +24,7 @@ namespace ProjectDonut.ProceduralGeneration
 
 
         private Dictionary<string, Texture2D> sheets;
+        public Dictionary<string, List<Texture2D>> DungeonSprites;
 
 
         private Dictionary<string, Texture2D> lib;
@@ -55,7 +57,7 @@ namespace ProjectDonut.ProceduralGeneration
             LoadPlayerNEW();
 
             LoadMouseCursor();
-            
+
             // Biomes
             lib.Add("grasslands", ExtractBiomeSprite(0, 0));
             lib.Add("desert", ExtractBiomeSprite(1, 0));
@@ -82,6 +84,9 @@ namespace ProjectDonut.ProceduralGeneration
             lib.Add("grass-inv-SW", ExtractTileSprite(9, 2));
             lib.Add("grass-inv-S", ExtractTileSprite(10, 2));
             lib.Add("grass-inv-SE", ExtractTileSprite(11, 2));
+
+            LoadDungeonSprites();
+            LoadDungeonPopulationSprites();
         }
 
         private void LoadSpriteSheets()
@@ -94,6 +99,53 @@ namespace ProjectDonut.ProceduralGeneration
 
             sheets.Add("biome-grasslands", Global.ContentManager.Load<Texture2D>("Sprites/Map/World/BiomeGrasslands"));
             sheets.Add("player", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player"));
+        }
+
+        private void LoadDungeonSprites()
+        {
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/sheet");
+            sheets.Add("dungeon-layout", sheet);
+            //var sheet = _content.Load<Texture2D>("Sprites/Map/Dungeon/Tileset_Dungeon02");
+
+            DungeonSprites = new Dictionary<string, List<Texture2D>>
+            {
+                { "wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) } },
+                { "wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) } },
+                { "wall-ne", new List<Texture2D> { ExtractSprite(sheet, 2, 0) } },
+                { "wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) } },
+                { "wall-e", new List<Texture2D> { ExtractSprite(sheet, 2, 1) } },
+                { "wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 2) } },
+                { "wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 2) } },
+                { "wall-se", new List<Texture2D> { ExtractSprite(sheet, 2, 2) } },
+                { "wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 3, 0) } },
+                { "wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 4, 0) } },
+                { "wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 3, 1) } },
+                { "wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 4, 1) } },
+                { "floor-01", new List<Texture2D>() }
+            };
+
+            for (int i = 0; i < 7; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    DungeonSprites["floor-01"].Add(ExtractSprite(sheet, i + 6, j));
+                }
+            }
+        }
+
+        private void LoadDungeonPopulationSprites()
+        {
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/stairs");
+
+            DungeonSprites.Add("stairs-nw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 0) } );
+            DungeonSprites.Add("stairs-n", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 0) } );
+            DungeonSprites.Add("stairs-ne", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 0) } );
+            DungeonSprites.Add("stairs-w", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 1) } );
+            DungeonSprites.Add("stairs-c", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 1) } );
+            DungeonSprites.Add("stairs-e", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 1) } );
+            DungeonSprites.Add("stairs-sw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 2) } );
+            DungeonSprites.Add("stairs-s", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 2) } );
+            DungeonSprites.Add("stairs-se", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 2) } );
         }
 
         private void LoadBiomeGrasslands()
@@ -273,17 +325,17 @@ namespace ProjectDonut.ProceduralGeneration
 
             for (int i = 0; i < 4; i++)
             {
-                lib.Add($"town-{i + 1:D2}-NW", ExtractSprite(spriteSheetTown, 0 + (i * 3), 0));
-                lib.Add($"town-{i + 1:D2}-N", ExtractSprite(spriteSheetTown, 1 + (i * 3), 0));
-                lib.Add($"town-{i + 1:D2}-NE", ExtractSprite(spriteSheetTown, 2 + (i * 3), 0));
+                lib.Add($"town-{i + 1:D2}-NW", ExtractSprite(spriteSheetTown, 0 + i * 3, 0));
+                lib.Add($"town-{i + 1:D2}-N", ExtractSprite(spriteSheetTown, 1 + i * 3, 0));
+                lib.Add($"town-{i + 1:D2}-NE", ExtractSprite(spriteSheetTown, 2 + i * 3, 0));
 
-                lib.Add($"town-{i + 1:D2}-W", ExtractSprite(spriteSheetTown, 0 + (i * 3), 1));
-                lib.Add($"town-{i + 1:D2}-C", ExtractSprite(spriteSheetTown, 1 + (i * 3), 1));
-                lib.Add($"town-{i + 1:D2}-E", ExtractSprite(spriteSheetTown, 2 + (i * 3), 1));
+                lib.Add($"town-{i + 1:D2}-W", ExtractSprite(spriteSheetTown, 0 + i * 3, 1));
+                lib.Add($"town-{i + 1:D2}-C", ExtractSprite(spriteSheetTown, 1 + i * 3, 1));
+                lib.Add($"town-{i + 1:D2}-E", ExtractSprite(spriteSheetTown, 2 + i * 3, 1));
 
-                lib.Add($"town-{i + 1:D2}-SW", ExtractSprite(spriteSheetTown, 0 + (i * 3), 2));
-                lib.Add($"town-{i + 1:D2}-S", ExtractSprite(spriteSheetTown, 1 + (i * 3), 2));
-                lib.Add($"town-{i + 1:D2}-SE", ExtractSprite(spriteSheetTown, 2 + (i * 3), 2));
+                lib.Add($"town-{i + 1:D2}-SW", ExtractSprite(spriteSheetTown, 0 + i * 3, 2));
+                lib.Add($"town-{i + 1:D2}-S", ExtractSprite(spriteSheetTown, 1 + i * 3, 2));
+                lib.Add($"town-{i + 1:D2}-SE", ExtractSprite(spriteSheetTown, 2 + i * 3, 2));
             }
         }
 
@@ -301,7 +353,7 @@ namespace ProjectDonut.ProceduralGeneration
                 {
                     for (int k = 0; k < colCount; k++)
                     {
-                        var sprite = ExtractSprite(spriteSheetCastle, j + (i * 3), k);
+                        var sprite = ExtractSprite(spriteSheetCastle, j + i * 3, k);
                         lib.Add($"castle-{i + 1:D2}-{j}-{k}", sprite);
                     }
                 }
@@ -357,7 +409,7 @@ namespace ProjectDonut.ProceduralGeneration
                 return "C";
         }
 
-        private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y) 
+        private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
         {
             var width = TileSize;
             var height = TileSize;
