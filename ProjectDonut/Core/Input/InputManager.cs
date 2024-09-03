@@ -44,6 +44,7 @@ namespace ProjectDonut.Core.Input
             KeyboardState = Keyboard.GetState();
             MouseState = Mouse.GetState();
 
+
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
