@@ -57,7 +57,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var x = xOffset * settings.Width + i;
                         var y = yOffset * settings.Height + j;
 
-                        var heightValue = (int)(_noise[z].GetNoise(x, y) * 100) + 35;
+                        var heightValue = (int)(_noise[z].GetNoise(x, y) * Global.ChunkSize) + 35;
 
                         heightData[i, j] = heightValue;
 

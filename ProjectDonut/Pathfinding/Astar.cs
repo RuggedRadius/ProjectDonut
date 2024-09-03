@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ProjectDonut.Core;
 
 namespace ProjectDonut.Pathfinding
 {
@@ -113,7 +114,7 @@ namespace ProjectDonut.Pathfinding
 
             for (int i = 0; i < path.Count; i++)
             {
-                path[i] = new Node(path[i].X * 32, path[i].Y * 32);
+                path[i] = new Node(path[i].X * Global.TileSize, path[i].Y * Global.TileSize);
             }
 
             return path;

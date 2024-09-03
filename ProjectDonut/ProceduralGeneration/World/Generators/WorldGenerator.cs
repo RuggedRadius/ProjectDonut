@@ -41,7 +41,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             baseGen = new HeightGenerator(settings, spriteLib, spriteBatch);
             biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
-            forest = new ForestGenerator(spriteLib, settings, spriteBatch);
+            forest = new ForestGenerator(settings);
 
             rules = new WorldTileRuler(spriteLib);
 

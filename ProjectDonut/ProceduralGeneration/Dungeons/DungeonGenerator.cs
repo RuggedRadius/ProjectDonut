@@ -46,8 +46,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
                         ChunkY = 0,
                         xIndex = i,
                         yIndex = j,
-                        LocalPosition = new Vector2(i * 32, j * 32),
-                        Size = new Vector2(32, 32),
+                        LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
+                        Size = new Vector2(Global.TileSize, Global.TileSize),
                         Texture = DetermineTexture(data, i, j)
                     };
 
@@ -60,8 +60,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
 
         private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
         {
-            var width = 32;
-            var height = 32;
+            var width = Global.TileSize;
+            var height = Global.TileSize;
 
             x *= width;
             y *= height;

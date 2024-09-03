@@ -43,7 +43,7 @@ namespace ProjectDonut.NPCs.Enemy
 
         public override void Update(GameTime gameTime)
         {
-            DistanceToPlayer = Distance(Position, Global.Player.Position) / 32;
+            DistanceToPlayer = Distance(Position, Global.Player.Position) / Global.TileSize;
 
             switch (State)
             {
@@ -53,8 +53,8 @@ namespace ProjectDonut.NPCs.Enemy
                     if (DistanceToPlayer <= DetectionDistance)
                     {                        
                         var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
-                        var curPlayerNode = new Node((int)Global.Player.Position.X / 32, (int)Global.Player.Position.Y / 32);
-                        var curNode = new Node((int)Position.X / 32, (int)Position.Y / 32);
+                        var curPlayerNode = new Node((int)Global.Player.Position.X / Global.TileSize, (int)Global.Player.Position.Y / Global.TileSize);
+                        var curNode = new Node((int)Position.X / Global.TileSize, (int)Position.Y / Global.TileSize);
                         CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
                         
 
@@ -74,11 +74,11 @@ namespace ProjectDonut.NPCs.Enemy
                         {
                             //    if (CurrentPosition != null)
                             //    {
-                            //        Astar.SetOccupiedCell(CurrentPosition.X / 32, CurrentPosition.Y / 32, false);
+                            //        Astar.SetOccupiedCell(CurrentPosition.X / Global.TileSize, CurrentPosition.Y / Global.TileSize, false);
                             //    }
 
                             CurrentPosition = NextPosition;
-                            //Astar.SetOccupiedCell(CurrentPosition.X / 32, CurrentPosition.Y / 32, true);
+                            //Astar.SetOccupiedCell(CurrentPosition.X / Global.TileSize, CurrentPosition.Y / Global.TileSize, true);
                             NextPosition = CurrentPath.FirstOrDefault();
                             CurrentPath.Remove(CurrentPosition);
                         }
@@ -89,8 +89,8 @@ namespace ProjectDonut.NPCs.Enemy
                             Position = new Vector2(NextPosition.X, NextPosition.Y);
 
                             var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
-                            var curPlayerNode = new Node((int)Global.Player.Position.X / 32, (int)Global.Player.Position.Y / 32);
-                            var curNode = new Node((int)Position.X / 32, (int)Position.Y / 32);
+                            var curPlayerNode = new Node((int)Global.Player.Position.X / Global.TileSize, (int)Global.Player.Position.Y / Global.TileSize);
+                            var curNode = new Node((int)Position.X / Global.TileSize, (int)Position.Y / Global.TileSize);
                             CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
                         }
                         else

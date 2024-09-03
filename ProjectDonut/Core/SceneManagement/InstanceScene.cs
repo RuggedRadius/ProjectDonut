@@ -41,6 +41,8 @@ namespace ProjectDonut.Core.SceneManagement
         private Dictionary<string, Rectangle> ExitLocations;
         public List<IGameObject> Enemies { get; set; }
 
+        private Texture2D _debugTexture;
+
         public InstanceScene(SceneType sceneType)
         {
             SceneType = sceneType;
@@ -50,6 +52,9 @@ namespace ProjectDonut.Core.SceneManagement
         public override void Initialize()
         {
             base.Initialize();
+
+            _debugTexture = new Texture2D(Global.GraphicsDevice, 1, 1);
+            _debugTexture.SetData(new[] { Color.Magenta });
 
             GenerateDungeon(true, false);
         }
@@ -82,14 +87,14 @@ namespace ProjectDonut.Core.SceneManagement
             }            
 
             var stairsLocation = dungeonPopulater.GetStairsLocation();
-            EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, 32, 32);
+            EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, Global.TileSize, Global.TileSize);
             //Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
 
             ExitLocations = new Dictionary<string, Rectangle>();
             var exitPoints = dungeonPopulater.GetExitLocations();
             foreach (var point in exitPoints)
             {
-                ExitLocations.Add("world-exit", new Rectangle(point.Item1, point.Item2, 32, 32));
+                ExitLocations.Add("world-exit", new Rectangle(point.Item1, point.Item2, Global.TileSize, Global.TileSize));
             }
         }
 
@@ -170,10 +175,11 @@ namespace ProjectDonut.Core.SceneManagement
 
             foreach (var exitPoint in ExitLocations)
             {
-                if (exitPoint.Value.Contains(Global.Player.ChunkPosition))
+                //if (exitPoint.Value.Contains(Global.Player.ChunkPosition))
+                if (exitPoint.Value.Contains(Global.Player.Position))
                 {
 
-                    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
                     ((WorldScene)Global.SceneManager.CurrentScene).PrepareForPlayerEntry();
                 }
             }
@@ -205,6 +211,16 @@ namespace ProjectDonut.Core.SceneManagement
                 .ToList()
                 .ForEach(x => x.Draw(gameTime, spriteBatch));
             spriteBatch.End();
+
+            if (Global.DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE)
+            {
+                foreach (var exitPoint in ExitLocations)
+                {
+                    spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+                    spriteBatch.Draw(_debugTexture, exitPoint.Value, Color.White);
+                    spriteBatch.End();
+                }
+            }
 
             // ScreenObjects
             _screenObjects

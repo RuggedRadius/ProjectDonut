@@ -23,8 +23,6 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class WorldChunk : IGameObject
     {
-        private bool DRAW_DEBUG_OUTLINE = true;
-
         public int ChunkCoordX { get; private set; }
         public int ChunkCoordY { get; private set; }
 
@@ -37,13 +35,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int[,] RiverData;
         public int[,] StructureData;
 
-        private int TileSize = 32;
-
         public Dictionary<string, Tilemap> Tilemaps;
 
         public List<Rectangle> StructureBounds;// TODO: NOT SURE THIS SHOULD EXIST...
         public List<StructureData> Structures;
         private WorldChunkManager _manager;
+
+        public Dictionary<string, List<ISceneObject>> SceneObjects;
 
         public int Width
         {
@@ -95,18 +93,18 @@ namespace ProjectDonut.ProceduralGeneration.World
             ChunkCoordX = chunkXPos;
             ChunkCoordY = chunkYPos;
 
-            WorldCoordX = chunkXPos * 100 * 32;
-            WorldCoordY = chunkYPos * 100 * 32;
+            WorldCoordX = chunkXPos * Global.ChunkSize * Global.TileSize;
+            WorldCoordY = chunkYPos * Global.ChunkSize * Global.TileSize;
 
             _scrollDisplayer = scrollDisplayer;
 
             Tilemaps = new Dictionary<string, Tilemap>();
 
-            // Create a new Texture2D object with the dimensions 32x32
-            tempTexture = new Texture2D(Global.GraphicsDevice, 32, 32);
+            // Create a new Texture2D object with the dimensions Global.TileSizexGlobal.TileSize
+            tempTexture = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
 
             // Create an array to hold the color data
-            Color[] colorData = new Color[32 * 32];
+            Color[] colorData = new Color[Global.TileSize * Global.TileSize];
 
             // Fill the array with Color.White
             for (int i = 0; i < colorData.Length; i++)
@@ -116,11 +114,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             // Set the texture data to the array of colors
             tempTexture.SetData(colorData);
-
         }
 
         public void Initialize()
         {
+
         }
 
         public void LoadContent(ContentManager content)
@@ -150,16 +148,20 @@ namespace ProjectDonut.ProceduralGeneration.World
                         // TODO: TEMP CODE TO TEST SCENE SWITCHING
                         var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                        var worldExitPointX = (structure.Bounds.Width/2) + structure.Bounds.X + (Global.Player.ChunkPosX * 32 * Width); 
-                        var worldExitPointY = structure.Bounds.Bottom + 10 + (Global.Player.ChunkPosY * 32 * Height); 
+                        var worldExitPointX = (structure.Bounds.Width/2) + structure.Bounds.X + (Global.Player.ChunkPosX * Global.TileSize * Width); 
+                        var worldExitPointY = structure.Bounds.Bottom + Global.TileSize + (Global.Player.ChunkPosY * Global.TileSize * Height); 
                         
-                        worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, 32, 32);
+                        worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, Global.TileSize, Global.TileSize);
 
-                        Global.SceneManager.SetCurrentScene(structure.Instance);
+                        Global.SceneManager.SetCurrentScene(structure.Instance, SceneType.Instance);
                         Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
                     }
                 }
             }
+
+            if (SceneObjects != null && SceneObjects.ContainsKey("trees") && SceneObjects["trees"].Count > 0)
+                Debugging.Debugger.Lines[2] = $"Tree Z-Index: {SceneObjects["trees"][0].ZIndex}";
+
             // Check for scroll display
             //HandleScrollDisplay();
         }
@@ -205,12 +207,48 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            if (DRAW_DEBUG_OUTLINE)
+            if (Global.DRAW_WORLD_CHUNK_OUTLINE)
             {
                 DrawChunkOutline(gameTime);
             }
 
+            if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
+            {
+                foreach (var structure in Structures)
+                {
+                    spriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
+                }
+            }
+
             return;
+        }
+
+        public void DrawSceneObjectsBelowPlayer()
+        {
+            foreach (var sceneObject in SceneObjects)
+            {
+                foreach (var obj in sceneObject.Value)
+                {
+                    if (obj.ZIndex <= Global.Player.Position.Y)
+                    {
+                        obj.Draw();
+                    }
+                }
+            }
+        }
+
+        public void DrawSceneObjectsAbovePlayer()
+        {
+            foreach (var sceneObject in SceneObjects)
+            {
+                foreach (var obj in sceneObject.Value)
+                {
+                    if (obj.ZIndex >= Global.Player.Position.Y)
+                    {
+                        obj.Draw();
+                    }
+                }
+            }
         }
 
         private void DrawChunkOutline(GameTime gameTime)
@@ -219,7 +257,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    var position = new Vector2(WorldCoordX + x * 32, WorldCoordY + y * 32);
+                    var position = new Vector2(WorldCoordX + x * Global.TileSize, WorldCoordY + y * Global.TileSize);
 
                     if (x == 0 || y == 0)
                     {

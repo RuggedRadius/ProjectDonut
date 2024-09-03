@@ -12,6 +12,7 @@ namespace ProjectDonut.Core.SceneManagement
     public class SceneManager : IGameObject
     {
         public Scene CurrentScene { get; set; }
+        public SceneType CurrentSceneType { get; set; }
 
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
@@ -49,9 +50,10 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Draw(gameTime, spriteBatch);
         }
 
-        public void SetCurrentScene(Scene scene)
+        public void SetCurrentScene(Scene scene, SceneType sceneType)
         {
             CurrentScene = scene;
+            CurrentSceneType = sceneType;
         }
 
         public WorldScene CreateWorldScene()

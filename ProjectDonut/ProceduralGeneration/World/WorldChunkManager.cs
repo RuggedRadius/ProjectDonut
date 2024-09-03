@@ -21,14 +21,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
-        private int ChunkSize = 100;
         private List<object> Dependencies;
 
         private WorldGenerator WorldGen;
         private WorldMapSettings Settings;
 
         public Dictionary<(int, int), WorldChunk> _chunks;
-        private List<WorldChunk> CurrentChunks;
+        public List<WorldChunk> CurrentChunks;
         public WorldChunk PlayerChunk;
 
         private SpriteLibrary spriteLib;
@@ -42,9 +41,6 @@ namespace ProjectDonut.ProceduralGeneration.World
         private StructureGenerator genStructure;
 
         private GrasslandsRules rulesGrasslands;
-
-        private int ChunkWidth = 100;
-        private int ChunkHeight = 100;
 
         private Texture2D tempTexture;
 
@@ -74,7 +70,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             WorldGen = new WorldGenerator(Global.ContentManager, Global.GraphicsDevice, settings, spriteLib, Global.SpriteBatch);
             genHeight = new HeightGenerator(settings, spriteLib, Global.SpriteBatch);
             genBiomes = new BiomeGenerator(settings);
-            genForest = new ForestGenerator(spriteLib, settings, Global.SpriteBatch);
+            genForest = new ForestGenerator(settings);
             genRiver = new RiverGenerator(spriteLib, settings);
             genMountain = new MountainGenerator(settings, spriteLib, Global.SpriteBatch);
             genStructure = new StructureGenerator(spriteLib, settings, Global.SpriteBatch);
@@ -216,6 +212,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
+
+        //private bool tempONETREEONLY = false;
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
             var chunk = new WorldChunk(chunkX, chunkY, _scrollDisplayer, this);
@@ -227,16 +225,25 @@ namespace ProjectDonut.ProceduralGeneration.World
             genStructure.GenerateStructureData(chunk);
 
             var tilemapBase = genHeight.CreateBaseTilemap(chunk);
-            var tilemapForest = genForest.CreateTileMap(chunk);
+            //var tilemapForest = genForest.CreateTileMap(chunk);
             var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);
 
             tilemapBase = rulesGrasslands.ApplyRules(tilemapBase);
 
             chunk.Tilemaps.Add("base", tilemapBase);
-            chunk.Tilemaps.Add("forest", tilemapForest);
+            //chunk.Tilemaps.Add("forest", tilemapForest);
             chunk.Tilemaps.Add("mountains", tilemapMountains);
             chunk.Tilemaps.Add("structures", tilemapStructures);
+
+            chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
+
+            // TEMP CODE FOR DEBUGGING
+            //if (!tempONETREEONLY)
+            //{
+                chunk.SceneObjects.Add("trees", genForest.GenerateFreeStandingTrees(chunk));
+            //    tempONETREEONLY = true;
+            //}
 
             //chunk.Structures = genStructure.GetStructuresData(chunk);
 

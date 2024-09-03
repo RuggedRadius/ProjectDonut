@@ -49,7 +49,8 @@ namespace ProjectDonut
             _gameObjects = new Dictionary<string, IGameObject>();
             _screenObjects = new Dictionary<string, IScreenObject>();
 
-
+            Global.DEBUG_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
+            Global.DEBUG_TEXTURE.SetData(new[] { Color.Magenta });
 
             //worldChunks = new WorldChunk[3,3];
 
@@ -72,14 +73,16 @@ namespace ProjectDonut
             _screenObjects.Add("cursor", Global.GameCursor);
 
             Global.Player = new Player();
-            _gameObjects.Add("player", Global.Player);
+            //_gameObjects.Add("player", Global.Player);
 
             // World map
             Global.SceneManager = new SceneManager();
+            Global.SceneManager.CurrentSceneType = SceneType.World;
             _gameObjects.Add("sceneManager", Global.SceneManager);
 
             Debugger.Initialize();
 
+            Global.Player.Initialize();
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
@@ -103,6 +106,7 @@ namespace ProjectDonut
 
             Global.SceneManager.LoadContent(Content);
 
+            Global.Player.LoadContent(Content);
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(Content));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
@@ -115,21 +119,22 @@ namespace ProjectDonut
 
             if (kbState.IsKeyDown(Keys.F8))
             {
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
             if (kbState.IsKeyDown(Keys.F9))
             {
                 var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, 32, 32);
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, Global.TileSize, Global.TileSize);
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
             Global.SceneManager.Update(gameTime);
-            Global.Camera.Position = _gameObjects["player"].Position;
+            Global.Camera.Position = Global.Player.Position;
 
+            Global.Player.Update(gameTime);
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
@@ -139,22 +144,37 @@ namespace ProjectDonut
             base.Update(gameTime);
         }
 
+        //private Dictionary<object, int> _gameObjectsToDraw = new Dictionary<object, int>();
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
             Global.SceneManager.Draw(gameTime, Global.SpriteBatch);
 
-            // GameObjects
-            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime, Global.SpriteBatch));
-            //Global.SpriteBatch.End();
 
-            // ScreenObjects
+            if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            {
+                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+                {
+                    chunk.DrawSceneObjectsBelowPlayer();
+                }
+            }
+
+            Global.Player.Draw(gameTime, Global.SpriteBatch);
+
+            if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            {
+                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+                {
+                    chunk.DrawSceneObjectsAbovePlayer();
+                }
+            }
+
             _screenObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)

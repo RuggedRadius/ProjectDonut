@@ -18,7 +18,6 @@ namespace ProjectDonut.Core.SceneManagement
 
         private ScrollDisplayer _scrollDisplay;
         private WorldChunkManager worldChunks;
-        private const int ChunkSize = 100;
 
         private WorldMapSettings worldMapSettings;
         private FogOfWar _fog;
@@ -48,6 +47,7 @@ namespace ProjectDonut.Core.SceneManagement
 
             worldChunks = new WorldChunkManager(Global.SpriteLibrary, _scrollDisplay, worldMapSettings);
             _gameObjects.Add("chunkmanager", worldChunks);
+            Global.WorldChunkManager = worldChunks;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
@@ -104,9 +104,9 @@ namespace ProjectDonut.Core.SceneManagement
             var s = new WorldMapSettings();
 
             // Dimensions
-            s.Width = ChunkSize;
-            s.Height = ChunkSize;
-            s.TileSize = 32;
+            s.Width = Global.ChunkSize;
+            s.Height = Global.ChunkSize;
+            s.TileSize = Global.TileSize;
 
             // Heights
             s.DeepWaterHeightMin = 0;

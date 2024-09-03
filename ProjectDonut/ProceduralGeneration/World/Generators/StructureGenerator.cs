@@ -207,9 +207,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 }
             }
 
+            var entryRectX = x * Global.TileSize + (4 * Global.TileSize);// + (Global.Player.ChunkPosX * Global.ChunkSize * Global.TileSize);
+            var entryRectY = y * Global.TileSize + (8 * Global.TileSize);// + (Global.Player.ChunkPosY * Global.ChunkSize * Global.TileSize);
+
             var structureData = new StructureData
             {
-                Bounds = new Rectangle(x * settings.TileSize, y * settings.TileSize, 9 * settings.TileSize, 9 * settings.TileSize),
+                //Bounds = new Rectangle(x * Global.TileSize, y * Global.TileSize, 9 * Global.TileSize, 9 * Global.TileSize),
+                Bounds = new Rectangle(entryRectX, entryRectY, Global.TileSize, Global.TileSize),
                 Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
                 Instance = new InstanceScene(SceneType.Instance)
             };

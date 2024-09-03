@@ -50,7 +50,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 
                 var enemy = new OrcGrunt()
                 {
-                    Position = new Vector2(randomCoord.x * 32, randomCoord.y * 32),
+                    Position = new Vector2(randomCoord.x * Global.TileSize, randomCoord.y * Global.TileSize),
                     ZIndex = 0
                 };
 
@@ -169,8 +169,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                         ChunkY = 0,
                         xIndex = i,
                         yIndex = j,
-                        LocalPosition = new Vector2(i * 32, j * 32),
-                        Size = new Vector2(32, 32),
+                        LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
+                        Size = new Vector2(Global.TileSize, Global.TileSize),
                         Texture = DetermineTexture(_popData[i, j])
                     };
 
@@ -223,9 +223,9 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             {
                 for (int j = 0; j < MapHeight; j++)
                 {
-                    if (_popData[i, j] == "stairs-c")
+                    if (_popData[i, j] == "stairs-s")
                     {
-                        return (i * 32, j * 32);
+                        return (i * Global.TileSize, j * Global.TileSize);
                     }
                 }
             }
@@ -241,7 +241,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                 {
                     if (_popData[i, j] == "stairs-n")
                     {
-                        return new List<(int, int)> { (i * 32, j * 32)};
+                        return new List<(int, int)> { (i * Global.TileSize, j * Global.TileSize)};
                     }
                 }
             }

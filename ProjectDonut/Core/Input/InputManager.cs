@@ -55,15 +55,15 @@ namespace ProjectDonut.Core.Input
         {
             if (KeyboardState.IsKeyDown(Keys.F8))
             {
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
             if (KeyboardState.IsKeyDown(Keys.F9))
             {
                 var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, 32, 32);
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, Global.TileSize, Global.TileSize);
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
         }

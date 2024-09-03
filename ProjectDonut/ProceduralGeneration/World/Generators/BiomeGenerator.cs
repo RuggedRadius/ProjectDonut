@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectDonut.Core;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
@@ -63,7 +64,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 {
                     for (int j = 0; j < height; j++)
                     {
-                        heightData[i, j] = (int)(_noise[z].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * 100);
+                        heightData[i, j] = (int)(_noise[z].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * Global.ChunkSize);
                     }
                 }
 
@@ -75,7 +76,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 for (int j = 0; j < height; j++)
                 {
-                    result[i, j] = Blend(data[0][i, j], data[1][i, j], OctaveBlendAmount) / 100;
+                    result[i, j] = Blend(data[0][i, j], data[1][i, j], OctaveBlendAmount) / Global.ChunkSize;
                 }
             }
 

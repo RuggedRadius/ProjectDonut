@@ -13,8 +13,8 @@ namespace ProjectDonut.Tools
     {
         public static Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
         {
-            var width = 32;
-            var height = 32;
+            var width = Global.TileSize;
+            var height = Global.TileSize;
 
             x *= width;
             y *= height;

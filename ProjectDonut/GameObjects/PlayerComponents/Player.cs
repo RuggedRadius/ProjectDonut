@@ -24,8 +24,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             get
             {
-                var offsetX = ChunkPosX * ChunkSize * TileSize;
-                var offsetY = ChunkPosY * ChunkSize * TileSize;
+                var offsetX = ChunkPosX * Global.ChunkSize * Global.TileSize;
+                var offsetY = ChunkPosY * Global.ChunkSize * Global.TileSize;
                 var offset = new Vector2(offsetX, offsetY);
                 return Position - offset;
             }
@@ -54,9 +54,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Rectangle rectBottom;
         private Texture2D debugTexture;
 
-        private int TileSize = 32;
-        private int ChunkSize = 100;
-
         public int ChunkPosX { get; set; }
         public int ChunkPosY { get; set; }
 
@@ -74,12 +71,12 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         public void Initialize()
         {
             Position = new Vector2(50, 50);
-            speed = 500;
-            spriteSize = new Vector2(TileSize, TileSize);
-            ZIndex = -100;
+            speed = 200;
+            spriteSize = new Vector2(Global.TileSize, Global.TileSize);
+            ZIndex = 0;
 
-            _frameWidth = TileSize; // Width of a single frame
-            _frameHeight = TileSize; // Height of a single frame
+            _frameWidth = Global.TileSize; // Width of a single frame
+            _frameHeight = Global.TileSize; // Height of a single frame
             _frameCount = 9; // Total number of frames in the sprite sheet
             _currentFrame = 0; // Start at the first frame
             _frameTime = 0.1f; // Duration of each frame in seconds
@@ -136,6 +133,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             //    _timer = 0f; // Reset the timer
             //}
 
+
             HandleInput(gameTime);
 
             Debugger.Lines[0] = $"Player Position: [{(int)Position.X}, {(int)Position.Y}]";
@@ -166,6 +164,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             {
                 movement.X -= speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
+
+            // TODO: REMOVE THIS LATER ***********************************************************
+            if (state.IsKeyDown(Keys.K))
+            {
+                speed -= 5;
+            }
+            else if (state.IsKeyDown(Keys.L))
+            {
+                speed += 5;
+            }
+            // ***********************************************************************************
 
             UpdateAnimationFrame(movement);
 
@@ -222,8 +231,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void PositionPlayerInMiddleOfMap(WorldMapSettings settings)
         {
-            var playerStartPosX = settings.Width * settings.TileSize / 2;
-            var playerStartPosY = settings.Height * settings.TileSize / 2;
+            var playerStartPosX = settings.Width * Global.TileSize / 2;
+            var playerStartPosY = settings.Height * Global.TileSize / 2;
 
             Position = new Vector2(playerStartPosX, playerStartPosY);
         }
@@ -231,8 +240,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         public (int, int) GetWorldChunkCoords()
         {
 
-            var x = (int)(Position.X / (TileSize * ChunkSize));
-            var y = (int)(Position.Y / (TileSize * ChunkSize));
+            var x = (int)(Position.X / (Global.TileSize * Global.ChunkSize));
+            var y = (int)(Position.Y / (Global.TileSize * Global.ChunkSize));
 
             if (Position.X < 0)
             {

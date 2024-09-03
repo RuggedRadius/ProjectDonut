@@ -25,11 +25,11 @@ namespace ProjectDonut.Core
 
         private Dictionary<string, Texture2D> sheets;
         public Dictionary<string, List<Texture2D>> DungeonSprites;
+        public Dictionary<string, List<Texture2D>> WorldMapSprites;
 
 
         private Dictionary<string, Texture2D> lib;
 
-        private int TileSize = 32;
 
         public SpriteLibrary()
         {
@@ -41,6 +41,9 @@ namespace ProjectDonut.Core
             sheets = new Dictionary<string, Texture2D>();
             lib = new Dictionary<string, Texture2D>();
 
+            WorldMapSprites = new Dictionary<string, List<Texture2D>>();
+
+            LoadWorldMapSprites();
             LoadSpriteSheets();
 
             LoadStructureCastle();
@@ -87,6 +90,13 @@ namespace ProjectDonut.Core
 
             LoadDungeonSprites();
             LoadDungeonPopulationSprites();
+        }
+
+        private void LoadWorldMapSprites()
+        {
+            var trees = new List<Texture2D>();
+            trees.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2"));
+            WorldMapSprites.Add("tree-02", trees);            
         }
 
         private void LoadSpriteSheets()
@@ -411,8 +421,8 @@ namespace ProjectDonut.Core
 
         private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
         {
-            var width = TileSize;
-            var height = TileSize;
+            var width = Global.TileSize;
+            var height = Global.TileSize;
 
             x *= width;
             y *= height;
@@ -437,8 +447,8 @@ namespace ProjectDonut.Core
 
         private Texture2D ExtractBiomeSprite(int x, int y)
         {
-            var width = TileSize;
-            var height = TileSize;
+            var width = Global.TileSize;
+            var height = Global.TileSize;
 
             x *= width;
             y *= height;
@@ -459,8 +469,8 @@ namespace ProjectDonut.Core
 
         private Texture2D ExtractTileSprite(int x, int y)
         {
-            var width = TileSize;
-            var height = TileSize;
+            var width = Global.TileSize;
+            var height = Global.TileSize;
 
             x *= width;
             y *= height;
@@ -481,8 +491,8 @@ namespace ProjectDonut.Core
 
         private Texture2D ExtractForestSprite(int x, int y)
         {
-            var width = TileSize;
-            var height = TileSize;
+            var width = Global.TileSize;
+            var height = Global.TileSize;
 
             x *= width;
             y *= height;
