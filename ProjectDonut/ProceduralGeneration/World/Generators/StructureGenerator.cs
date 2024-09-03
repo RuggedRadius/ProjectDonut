@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.Tools;
 
@@ -205,11 +206,17 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 }
             }
 
-            chunk.Structures.Add(new StructureData
+            var structureData = new StructureData
             {
                 Bounds = new Rectangle(x * settings.TileSize, y * settings.TileSize, 9 * settings.TileSize, 9 * settings.TileSize),
-                Name = NameGenerator.GenerateRandomName(random.Next(2, 5))
-            });
+                Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
+                Instance = new InstanceScene(SceneType.Instance, spriteLib)
+            };
+
+            structureData.Instance.Initialize();
+            structureData.Instance.LoadContent(Global.ContentManager);
+
+            chunk.Structures.Add(structureData);
         }
 
         private Texture2D DetermineTexture(Structure structure, string direction)

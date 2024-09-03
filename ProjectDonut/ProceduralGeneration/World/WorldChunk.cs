@@ -154,7 +154,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                         
                         worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, 32, 32);
 
-                        Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                        Global.SceneManager.SetCurrentScene(structure.Instance);
                         Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
                     }
                 }
