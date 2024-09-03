@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.ProceduralGeneration.Dungeons;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.Tools;
 
@@ -211,7 +212,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 Bounds = new Rectangle(x * settings.TileSize, y * settings.TileSize, 9 * settings.TileSize, 9 * settings.TileSize),
                 Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
-                Instance = new InstanceScene(SceneType.Instance)
+                Instance = new DungeonScene(5) // TODO: Change this to randomised value later
             };
 
             structureData.Instance.Initialize();

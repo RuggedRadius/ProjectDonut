@@ -12,6 +12,8 @@ namespace ProjectDonut.Core.SceneManagement
     public class SceneManager : IGameObject
     {
         public Scene CurrentScene { get; set; }
+        public SceneType CurrentSceneType { get; set; }
+        public int CurrentLevelIndex = 0;
 
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
@@ -65,7 +67,7 @@ namespace ProjectDonut.Core.SceneManagement
 
         public InstanceScene CreateInstanceScene()
         {
-            var scene = new InstanceScene(SceneType.Instance);
+            var scene = new InstanceScene();
             scene.Initialize();
             scene.LoadContent(Global.ContentManager);
 

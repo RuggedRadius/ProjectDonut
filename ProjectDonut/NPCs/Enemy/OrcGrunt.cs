@@ -47,15 +47,13 @@ namespace ProjectDonut.NPCs.Enemy
 
             switch (State)
             {
-                case EnemyState.Idle: 
-                    
-                    //if (CurrentPath == null && DistanceToPlayer <= DetectionDistance)
+                case EnemyState.Idle:                     
                     if (DistanceToPlayer <= DetectionDistance)
                     {                        
-                        var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
+                        var curInstanceScene = (DungeonScene)Global.SceneManager.CurrentScene;
                         var curPlayerNode = new Node((int)Global.Player.Position.X / 32, (int)Global.Player.Position.Y / 32);
                         var curNode = new Node((int)Position.X / 32, (int)Position.Y / 32);
-                        CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
+                        CurrentPath = Astar.FindPath(curInstanceScene.Levels[].DataMap, curNode, curPlayerNode);
                         
 
                         if (CurrentPath != null)
@@ -88,7 +86,7 @@ namespace ProjectDonut.NPCs.Enemy
                             MoveTimer = 0;
                             Position = new Vector2(NextPosition.X, NextPosition.Y);
 
-                            var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
+                            var curInstanceScene = (DungeonLevel)Global.SceneManager.CurrentScene;
                             var curPlayerNode = new Node((int)Global.Player.Position.X / 32, (int)Global.Player.Position.Y / 32);
                             var curNode = new Node((int)Position.X / 32, (int)Position.Y / 32);
                             CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
