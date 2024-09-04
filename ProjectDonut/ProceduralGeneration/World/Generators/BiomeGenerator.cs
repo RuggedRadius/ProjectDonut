@@ -29,7 +29,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise[0].SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
             _noise[0].SetDomainWarpAmp(100.0f);
             _noise[0].SetFrequency(0.0075f);
-            _noise[0].SetFractalGain(0.5f);
+            _noise[0].SetFractalGain(0.75f);
             _noise[0].SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
             _noise[0].SetFractalOctaves(8);
             _noise[0].SetFractalLacunarity(2.0f);

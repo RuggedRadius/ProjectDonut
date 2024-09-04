@@ -16,7 +16,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private FastNoiseLite[] _noise;
         private SpriteBatch _spriteBatch;
 
-        private float OctaveBlend = 0.125f;
+        private float OctaveBlend = 0.0525f;
 
         public HeightGenerator(WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
         {
