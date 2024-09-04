@@ -60,7 +60,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             }
 
             enemies.ForEach(x => x.Initialize());
-            enemies.ForEach(x => x.LoadContent(Global.ContentManager));
+            enemies.ForEach(x => x.LoadContent());
 
             return enemies;
         }

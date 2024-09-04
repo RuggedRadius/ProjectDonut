@@ -34,11 +34,11 @@ namespace ProjectDonut.NPCs.Enemy
             DetectionDistance = 1000;
         }
 
-        public override void LoadContent(ContentManager content)
+        public override void LoadContent()
         {
-            base.LoadContent(content);
+            base.LoadContent();
 
-            _sprite = Global.ContentManager.Load<Texture2D>("Sprites/Enemy/Test_Grunt");
+            Texture = Global.ContentManager.Load<Texture2D>("Sprites/Enemy/Test_Grunt");
         }
 
         public override void Update(GameTime gameTime)
@@ -116,9 +116,9 @@ namespace ProjectDonut.NPCs.Enemy
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime, spriteBatch);
+            base.Draw(gameTime);
         }    
     }
 }

@@ -10,7 +10,8 @@ namespace ProjectDonut.ProceduralGeneration
 {
     public interface ISceneObject : IDrawable
     {
-        void Update();
-        void Draw();
+        int ZIndex { get; set; }
+        void Update(GameTime gameTime);
+        new void Draw(GameTime gameTime);
     }
 }

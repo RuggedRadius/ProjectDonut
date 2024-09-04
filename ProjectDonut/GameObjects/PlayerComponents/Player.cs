@@ -32,7 +32,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         }
         public int ZIndex { get; set; }
 
-        private Texture2D _texture;
+        public Texture2D Texture { get; set; }
         private Texture2D spriteSheet;
 
 
@@ -99,18 +99,18 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             return texture;
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
-            spriteSheet = content.Load<Texture2D>("Sprites/TestPlayer");
+            spriteSheet = Global.ContentManager.Load<Texture2D>("Sprites/TestPlayer");
 
-            _textures.Add("walk-north-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-N-01"));
-            _textures.Add("walk-east-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-E-01"));
-            _textures.Add("walk-south-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-S-01"));
-            _textures.Add("walk-west-01", content.Load<Texture2D>("Sprites/Player/Player-Walk-W-01"));
+            _textures.Add("walk-north-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-N-01"));
+            _textures.Add("walk-east-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-E-01"));
+            _textures.Add("walk-south-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-S-01"));
+            _textures.Add("walk-west-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-W-01"));
 
             currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
 
-            _inventory.LoadContent(content);
+            _inventory.LoadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -186,35 +186,35 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             if (movement.X > 0)
             {
-                _texture = _textures["walk-east-01"];
+                Texture = _textures["walk-east-01"];
             }
             else if (movement.X < 0)
             {
-                _texture = _textures["walk-west-01"];
+                Texture = _textures["walk-west-01"];
             }
             else if (movement.Y < 0)
             {
-                _texture = _textures["walk-north-01"];
+                Texture = _textures["walk-north-01"];
             }
             else
             {
-                _texture = _textures["walk-south-01"];
+                Texture = _textures["walk-south-01"];
             }
 
-            if (_texture != null)
+            if (Texture != null)
             {
-                _textureOrigin = new Vector2(_texture.Width / 2f, _texture.Height / 2f);
+                _textureOrigin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
             }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
-            spriteBatch.Draw(_texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
-            spriteBatch.End();
+            Global.SpriteBatch.Draw(Texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
+            Global.SpriteBatch.End();
 
-            _inventory.Draw(spriteBatch, gameTime);
+            _inventory.Draw(gameTime);
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)

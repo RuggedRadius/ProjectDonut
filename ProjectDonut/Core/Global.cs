@@ -19,6 +19,10 @@ namespace ProjectDonut.Core
 {
     public static class Global
     {
+        // SCREEN SETTINGS
+        public static int ScreenWidth = 1920;
+        public static int ScreenHeight = 1080;
+
         // MAP SETTINGS
         public static int TileSize = 64;
         public static int ChunkSize = 50;

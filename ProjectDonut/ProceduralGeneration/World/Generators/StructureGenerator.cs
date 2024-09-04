@@ -219,7 +219,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             };
 
             structureData.Instance.Initialize();
-            structureData.Instance.LoadContent(Global.ContentManager);
+            structureData.Instance.LoadContent();
 
             chunk.Structures.Add(structureData);
         }

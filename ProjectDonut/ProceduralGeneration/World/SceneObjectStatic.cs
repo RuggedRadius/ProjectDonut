@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
@@ -11,25 +12,28 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Texture2D Texture { get; set; }
         public int ZIndex { get; set; }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-        }
+        public int DrawOrder => throw new NotImplementedException();
+
+        public bool Visible => throw new NotImplementedException();
+
+        public event EventHandler<EventArgs> DrawOrderChanged;
+        public event EventHandler<EventArgs> VisibleChanged;
 
         public void Initialize()
         {
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             //    var verticalDistanceFromPlayer = Global.Player.Position.Y - Position.Y;
             //    ZIndex = (int)verticalDistanceFromPlayer * -1; 
         }
 
-        public void Draw()
+        public void Draw(GameTime gameTime)
         {
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             Global.SpriteBatch.Draw(Texture, Position, Color.White);

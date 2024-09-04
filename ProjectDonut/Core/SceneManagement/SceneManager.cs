@@ -6,10 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.GameObjects;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.Core.SceneManagement
 {
-    public class SceneManager : IGameObject
+    public class SceneManager : IGameComponent
     {
         public Scene CurrentScene { get; set; }
         public SceneType CurrentSceneType { get; set; }
@@ -35,9 +36,9 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Initialize();
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
-            CurrentScene.LoadContent(content);
+            CurrentScene.LoadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -45,9 +46,9 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
-            CurrentScene.Draw(gameTime, spriteBatch);
+            CurrentScene.Draw(gameTime);
         }
 
         public void SetCurrentScene(Scene scene, SceneType sceneType)
@@ -60,7 +61,7 @@ namespace ProjectDonut.Core.SceneManagement
         {
             var scene = new WorldScene(SceneType.World);
             scene.Initialize();
-            scene.LoadContent(Global.ContentManager);
+            scene.LoadContent();
 
             return scene;
         }
@@ -69,7 +70,7 @@ namespace ProjectDonut.Core.SceneManagement
         {
             var scene = new InstanceScene(SceneType.Instance);
             scene.Initialize();
-            scene.LoadContent(Global.ContentManager);
+            scene.LoadContent();
 
             return scene;
         }

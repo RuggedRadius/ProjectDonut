@@ -18,10 +18,11 @@ using System.Diagnostics;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class WorldChunk : Microsoft.Xna.Framework.IGameComponent
+    public class WorldChunk : IGameComponent
     {
         public int ChunkCoordX { get; private set; }
         public int ChunkCoordY { get; private set; }
@@ -121,7 +122,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
         }
 
@@ -194,7 +195,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             _scrollDisplayer.HideScroll();
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
             foreach (var tilemap in Tilemaps)
             {
@@ -203,7 +204,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     if (tile == null)
                         continue;
 
-                    tile.Draw(gameTime, spriteBatch);
+                    tile.Draw(gameTime);
                 }
             }
 
@@ -216,14 +217,14 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 foreach (var structure in Structures)
                 {
-                    spriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
+                    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
                 }
             }
 
             return;
         }
 
-        public void DrawSceneObjectsBelowPlayer()
+        public void DrawSceneObjectsBelowPlayer(GameTime gameTime)
         {
             foreach (var sceneObject in SceneObjects)
             {
@@ -231,13 +232,13 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     if (obj.ZIndex <= Global.Player.Position.Y)
                     {
-                        obj.Draw();
+                        obj.Draw(gameTime);
                     }
                 }
             }
         }
 
-        public void DrawSceneObjectsAbovePlayer()
+        public void DrawSceneObjectsAbovePlayer(GameTime gameTime)
         {
             foreach (var sceneObject in SceneObjects)
             {
@@ -245,7 +246,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     if (obj.ZIndex >= Global.Player.Position.Y)
                     {
-                        obj.Draw();
+                        obj.Draw(gameTime);
                     }
                 }
             }

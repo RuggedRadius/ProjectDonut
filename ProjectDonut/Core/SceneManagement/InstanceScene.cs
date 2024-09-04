@@ -139,9 +139,9 @@ namespace ProjectDonut.Core.SceneManagement
             return generator.CreateTileMap(dataMap);
         }
 
-        public override void LoadContent(ContentManager content)
+        public override void LoadContent()
         {
-            base.LoadContent(content);
+            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -185,16 +185,16 @@ namespace ProjectDonut.Core.SceneManagement
             }
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
 
             foreach (var tile in _tilemap.Map)
             {
                 if (tile == null)
                     continue;
 
-                tile.Draw(gameTime, spriteBatch);
+                tile.Draw(gameTime);
             }
 
             foreach (var tile in _populationMap.Map)
@@ -202,23 +202,24 @@ namespace ProjectDonut.Core.SceneManagement
                 if (tile == null)
                     continue;
 
-                tile.Draw(gameTime, spriteBatch);
+                tile.Draw(gameTime);
             }
 
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.Draw(gameTime, spriteBatch));
-            spriteBatch.End();
+                .ForEach(x => x.Draw(gameTime));
+
+            Global.SpriteBatch.End();
 
             if (Global.DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE)
             {
                 foreach (var exitPoint in ExitLocations)
                 {
-                    spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-                    spriteBatch.Draw(_debugTexture, exitPoint.Value, Color.White);
-                    spriteBatch.End();
+                    Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+                    Global.SpriteBatch.Draw(_debugTexture, exitPoint.Value, Color.White);
+                    Global.SpriteBatch.End();
                 }
             }
 

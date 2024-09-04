@@ -20,18 +20,19 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         Hidden
     }
 
-    public class PlayerInventory// : IScreenObject
+    public class PlayerInventory : IGameObject
     {
         public UIComponentState State { get; set; }
         public int ZIndex { get; set; }
 
-        private Texture2D _baseTexture;
+        public Texture2D Texture { get; set; }
         private Texture2D _slotTexture;
         private Texture2D _emptySlotTexture;
 
-        private Vector2 _position;
+        public Vector2 Position { get; set; }
 
         public List<PlayerInventorySlot> Slots { get; set; }
+        
         private int _slotsInRow = 8;
 
         private float _toggleTimeout = 0.2f;
@@ -64,7 +65,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             var newSlot = new PlayerInventorySlot(this, item);
             newSlot.Initialize();
-            newSlot.LoadContent(Global.ContentManager);
+            newSlot.LoadContent();
 
             return newSlot;
         }
@@ -152,15 +153,15 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             }
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
-            _baseTexture = content.Load<Texture2D>("Sprites/UI/PlayerInventory");
-            _slotTexture = content.Load<Texture2D>("Sprites/UI/PlayerInventorySlot");
+            Texture = Global.ContentManager.Load<Texture2D>("Sprites/UI/PlayerInventory");
+            _slotTexture = Global.ContentManager.Load<Texture2D>("Sprites/UI/PlayerInventorySlot");
             _emptySlotTexture = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/empty-slot");
 
-            var x = 1920 - _baseTexture.Width - 50;
-            var y = 1080 - _baseTexture.Height - 50;
-            _position = new Vector2(x, y);
+            var x = Global.ScreenWidth - Texture.Width - 50;
+            var y = Global.ScreenHeight - Texture.Height - 50;
+            Position = new Vector2(x, y);
         }
 
         public void ToggleInventory()
@@ -243,31 +244,31 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
             if (State == UIComponentState.Hidden)
             {
                 return;
             }
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
-            spriteBatch.Draw(_baseTexture, _position, Color.White);
+            Global.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
+            Global.SpriteBatch.Draw(Texture, Position, Color.White);
 
-            DrawSlots(spriteBatch, gameTime);
+            DrawSlots(gameTime);
 
-            spriteBatch.End();
+            Global.SpriteBatch.End();
         }
 
-        private void DrawSlots(SpriteBatch spriteBatch, GameTime gameTime)
+        private void DrawSlots(GameTime gameTime)
         {
             foreach (var slot in Slots)
             {
-                spriteBatch.Draw(_emptySlotTexture, slot.Bounds, Color.White);
+                Global.SpriteBatch.Draw(_emptySlotTexture, slot.Bounds, Color.White);
             }
 
             foreach (var slot in Slots)
             {
-                slot.Draw(gameTime, spriteBatch);
+                slot.Draw(gameTime);
             }
         }
 
@@ -282,12 +283,12 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var cellSpacing = 0;
             var outerSpacing = startWidth;
 
-            var maxPosition = _position.X + _baseTexture.Width - outerSpacing - _emptySlotTexture.Width;
+            var maxPosition = Position.X + Texture.Width - outerSpacing - _emptySlotTexture.Width;
 
             foreach (var slot in Slots)
             {
-                var x = _position.X + startWidth + offsetX;
-                var y = _position.Y + startHeight + offsetY;
+                var x = Position.X + startWidth + offsetX;
+                var y = Position.Y + startHeight + offsetY;
 
                 var drawPos = new Vector2(x, y);
                 var rect = new Rectangle((int)drawPos.X, (int)drawPos.Y, _emptySlotTexture.Width, _emptySlotTexture.Height);

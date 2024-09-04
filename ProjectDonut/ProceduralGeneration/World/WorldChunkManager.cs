@@ -12,14 +12,16 @@ using ProjectDonut.UI.ScrollDisplay;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class WorldChunkManager : Microsoft.Xna.Framework.IGameComponent
+    public class WorldChunkManager : IGameObject
     {
         public (int, int) PlayerChunkPosition { get; set; }
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
+        public Texture2D Texture { get; set; }
 
         private List<object> Dependencies;
 
@@ -78,11 +80,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             rulesGrasslands = new GrasslandsRules(spriteLib);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
             for (int i = 0; i < CurrentChunks.Count; i++)
             {
-                CurrentChunks[i].Draw(gameTime, spriteBatch);
+                CurrentChunks[i].Draw(gameTime);
             }
 
             foreach (var structure in StructuresInCenterChunk)
@@ -157,34 +159,6 @@ namespace ProjectDonut.ProceduralGeneration.World
             PlayerChunk = GetCurrentChunk();
         }
 
-        //private List<ChunkStructure> GetStructuresInCurrentChunks()
-        //{
-        //    var structures = new List<ChunkStructure>();
-
-        //    foreach (var chunk in CurrentChunks)
-        //    {
-        //        for (int i = 0; i < chunk.Width; i++)
-        //        {
-        //            for (int j = 0; j < chunk.Height; j++)
-        //            {
-        //                if (chunk.StructureData[i, j] != 0)
-        //                {
-        //                    var structure = new ChunkStructure()
-        //                    {
-        //                        StructureName = "test",
-        //                        StructureType = (Structure)chunk.StructureData[i, j],
-        //                        Rectangle = new Rectangle(i * ChunkSize, j * ChunkSize, ChunkSize, ChunkSize)
-        //                    };
-
-        //                    structures.Add(structure);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return structures;
-        //}
-
         public void Initialize()
         {
             //ChunksBeingGenerated = new List<(int, int)>();
@@ -250,11 +224,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             return chunk;
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
             foreach (var chunk in _chunks)
             {
-                chunk.Value.LoadContent(content);
+                chunk.Value.LoadContent();
             }
         }
 

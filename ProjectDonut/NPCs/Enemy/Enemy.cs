@@ -7,6 +7,7 @@ using AsepriteDotNet;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
 using ProjectDonut.Pathfinding;
 
@@ -19,26 +20,26 @@ namespace ProjectDonut.NPCs.Enemy
         public Rectangle Bounds { get; set; }
         public int ZIndex { get; set; }
 
-        public Texture2D _sprite;
-        public Vector2 _textureOrigin => new Vector2(_sprite.Width / 2f, _sprite.Height / 2f);
+        public Texture2D Texture { get; set; }
+        public Vector2 _textureOrigin => new Vector2(Texture.Width / 2f, Texture.Height / 2f);
 
 
         public virtual void Initialize()
         {
         }
 
-        public virtual void LoadContent(ContentManager content)
+        public virtual void LoadContent()
         {
         }
 
         public virtual void Update(GameTime gameTime)
         {
-            Bounds = new Rectangle((int)Position.X, (int)Position.Y, _sprite.Width, _sprite.Height);
+            Bounds = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
         }
 
-        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public virtual void Draw(GameTime gameTime)
         {
-            spriteBatch.Draw(_sprite, Position, null, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+            Global.SpriteBatch.Draw(Texture, Position, null, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
         }
     }
 }

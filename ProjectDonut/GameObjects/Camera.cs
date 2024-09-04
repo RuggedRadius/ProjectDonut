@@ -6,10 +6,11 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Interfaces;
 using Microsoft.Xna.Framework.Content;
 using ProjectDonut.Core;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.GameObjects
 {
-    public class Camera : IGameObject
+    public class Camera : IGameComponent
     {
         public Vector2 Position { get; set; }
         public float Zoom { get; set; }
@@ -114,7 +115,7 @@ namespace ProjectDonut.GameObjects
             //throw new System.NotImplementedException();
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
             //throw new System.NotImplementedException();
         }

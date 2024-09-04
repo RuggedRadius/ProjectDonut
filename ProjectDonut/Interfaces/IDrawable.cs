@@ -9,6 +9,6 @@ namespace ProjectDonut.Interfaces
         Vector2 Position { get; set; }
         int ZIndex { get; set; }
 
-        void Draw();
+        void Draw(GameTime gameTime);
     }
 }

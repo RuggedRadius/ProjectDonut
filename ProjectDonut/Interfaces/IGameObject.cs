@@ -6,6 +6,9 @@ namespace ProjectDonut.Interfaces
 {
     public interface IGameObject : IDrawable
     {
-
+        void Initialize();
+        void LoadContent();
+        void Update(GameTime gameTime);
+        new void Draw(GameTime gameTime);
     }
 }

@@ -25,6 +25,8 @@ namespace ProjectDonut.Core.SceneManagement
 
         public Rectangle LastExitLocation;
 
+
+
         public WorldScene(SceneType sceneType)
         {
             if (Instance == null)
@@ -53,9 +55,9 @@ namespace ProjectDonut.Core.SceneManagement
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
         }
 
-        public override void LoadContent(ContentManager content)
+        public override void LoadContent()
         {
-            base.LoadContent(content);
+            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -94,9 +96,9 @@ namespace ProjectDonut.Core.SceneManagement
 
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime, spriteBatch);
+            base.Draw(gameTime);
         }
 
         private WorldMapSettings CreateWorldMapSettings()

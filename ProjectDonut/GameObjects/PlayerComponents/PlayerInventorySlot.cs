@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
 {
-    public class PlayerInventorySlot : Microsoft.Xna.Framework.IGameComponent
+    public class PlayerInventorySlot : IGameComponent
     {
         public Rectangle Bounds { get; set; }
         public InventoryItem Item { get; set; }
@@ -32,20 +34,20 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
-            _emptySlotTexture = content.Load<Texture2D>("Sprites/UI/Items/empty-slot");
+            _emptySlotTexture = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/empty-slot");
         }
 
         public void Update(GameTime gameTime)
         {
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
             if (Item != null)
             {
-                spriteBatch.Draw(Item.Icon, Item.Position, Color.White);
+                Global.SpriteBatch.Draw(Item.Icon, Item.Position, Color.White);
             }
         }
     }
