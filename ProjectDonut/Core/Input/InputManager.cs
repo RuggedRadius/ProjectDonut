@@ -12,7 +12,7 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Core.Input
 {
-    public class InputManager :IGameObject
+    public class InputManager : Microsoft.Xna.Framework.IGameComponent
     {
         public static InputManager Instance;
 

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class WorldChunkManager : IGameObject
+    public class WorldChunkManager : Microsoft.Xna.Framework.IGameComponent
     {
         public (int, int) PlayerChunkPosition { get; set; }
         public Vector2 Position { get; set; }

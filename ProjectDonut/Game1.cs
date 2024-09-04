@@ -28,6 +28,8 @@ namespace ProjectDonut
         private DialogueManager dialogue;        
         private Random random = new Random();
 
+        private List<IGameObject> _objectsToDraw();
+
 
         public Game1()
         {

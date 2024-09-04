@@ -21,7 +21,7 @@ using ProjectDonut.Core;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class WorldChunk : IGameObject
+    public class WorldChunk : Microsoft.Xna.Framework.IGameComponent
     {
         public int ChunkCoordX { get; private set; }
         public int ChunkCoordY { get; private set; }

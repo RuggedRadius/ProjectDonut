@@ -10,7 +10,7 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
 {
-    public class PlayerInventorySlot : IGameObject
+    public class PlayerInventorySlot : Microsoft.Xna.Framework.IGameComponent
     {
         public Rectangle Bounds { get; set; }
         public InventoryItem Item { get; set; }

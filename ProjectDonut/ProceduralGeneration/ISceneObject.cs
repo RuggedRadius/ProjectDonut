@@ -8,12 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectDonut.ProceduralGeneration
 {
-    public interface ISceneObject
+    public interface ISceneObject : IDrawable
     {
-        Vector2 Position { get; set; }
-        Texture2D Texture { get; set; }
-        int ZIndex { get; set; }
-
         void Update();
         void Draw();
     }
