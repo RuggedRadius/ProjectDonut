@@ -96,7 +96,19 @@ namespace ProjectDonut.Core
         {
             var trees = new List<Texture2D>();
             trees.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2"));
-            WorldMapSprites.Add("tree-02", trees);            
+            WorldMapSprites.Add("tree-02", trees);
+
+            var treesWinter = new List<Texture2D>();
+            treesWinter.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-winter"));
+            WorldMapSprites.Add("tree-02-winter", treesWinter);
+
+            var rocks = new List<Texture2D>();
+            rocks.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01"));
+            WorldMapSprites.Add("rock-01", rocks);
+
+            var cactus = new List<Texture2D>();
+            cactus.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Cactus01"));
+            WorldMapSprites.Add("cactus-01", cactus);
         }
 
         private void LoadSpriteSheets()

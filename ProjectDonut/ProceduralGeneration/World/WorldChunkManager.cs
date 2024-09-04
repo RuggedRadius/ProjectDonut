@@ -211,15 +211,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.Tilemaps.Add("structures", tilemapStructures);
 
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
-
-            // TEMP CODE FOR DEBUGGING
-            //if (!tempONETREEONLY)
-            //{
-                chunk.SceneObjects.Add("trees", genForest.GenerateFreeStandingTrees(chunk));
-            //    tempONETREEONLY = true;
-            //}
-
-            //chunk.Structures = genStructure.GetStructuresData(chunk);
+            chunk.SceneObjects.Add("trees", genForest.GenerateTrees(chunk));
+            chunk.SceneObjects.Add("trees-winter", genForest.GenerateWinterTrees(chunk));
+            chunk.SceneObjects.Add("rocks", genForest.GenerateRocks(chunk));
+            chunk.SceneObjects.Add("trees-loose", genForest.GenerateLooseTrees(chunk));
+            chunk.SceneObjects.Add("cactus", genForest.GenerateCactai(chunk));
 
             return chunk;
         }

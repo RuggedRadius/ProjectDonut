@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ProjectDonut.ProceduralGeneration
+namespace ProjectDonut.Interfaces
 {
     public interface ISceneObject : IDrawable
     {

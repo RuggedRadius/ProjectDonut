@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.ProceduralGeneration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -226,30 +225,28 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void DrawSceneObjectsBelowPlayer(GameTime gameTime)
         {
+            var sceneObjs = new List<ISceneObject>();
+
             foreach (var sceneObject in SceneObjects)
             {
-                foreach (var obj in sceneObject.Value)
-                {
-                    if (obj.ZIndex <= Global.Player.Position.Y)
-                    {
-                        obj.Draw(gameTime);
-                    }
-                }
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex <= Global.Player.Position.Y).ToList();
+                sceneObjs.AddRange(validObjs);
             }
+
+            sceneObjs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
         }
 
         public void DrawSceneObjectsAbovePlayer(GameTime gameTime)
         {
+            var sceneObjs = new List<ISceneObject>();
+
             foreach (var sceneObject in SceneObjects)
             {
-                foreach (var obj in sceneObject.Value)
-                {
-                    if (obj.ZIndex >= Global.Player.Position.Y)
-                    {
-                        obj.Draw(gameTime);
-                    }
-                }
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex > Global.Player.Position.Y).ToList();
+                sceneObjs.AddRange(validObjs);
             }
+
+            sceneObjs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
         }
 
         private void DrawChunkOutline(GameTime gameTime)

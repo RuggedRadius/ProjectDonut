@@ -111,6 +111,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
 
             _inventory.LoadContent();
+
+            Texture = _textures["walk-south-01"];
         }
 
         public void Update(GameTime gameTime)
@@ -136,9 +138,9 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             HandleInput(gameTime);
 
-            Debugger.Lines[0] = $"Player Position: [{(int)Position.X}, {(int)Position.Y}]";
-            Debugger.Lines[1] = $"Chunk: [{ChunkPosX}, {ChunkPosY}]";
-            Debugger.Lines[3] = $"ChunkPos = [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";
+            Debugger.Lines[0] = $"Player World Position: [{(int)Position.X}, {(int)Position.Y}]";
+            Debugger.Lines[1] = $"World Chunk Coords: [{ChunkPosX}, {ChunkPosY}]";
+            Debugger.Lines[3] = $"Player Chunk Position = [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";
 
             _inventory.Update(gameTime);
         }
@@ -196,7 +198,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             {
                 Texture = _textures["walk-north-01"];
             }
-            else
+            else if (movement.Y > 0)
             {
                 Texture = _textures["walk-south-01"];
             }

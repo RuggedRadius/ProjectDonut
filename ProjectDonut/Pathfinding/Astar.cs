@@ -14,68 +14,75 @@ namespace ProjectDonut.Pathfinding
 
         public static List<Node> FindPath(int[,] grid, Node start, Node end)
         {
-            var openList = new List<Node>();
-            var closedList = new HashSet<Node>();
+            try
+            {
+                var openList = new List<Node>();
+                var closedList = new HashSet<Node>();
 
-            if (grid[end.X, end.Y] != 2)
+                if (grid[end.X, end.Y] != 2)
+                {
+                    return null;
+                }
+
+                openList.Add(start);
+
+                var maxCount = 50;
+                int counter = 0;
+
+                while (openList.Count > 0)
+                {
+                    // Get the node with the lowest F score
+                    var currentNode = openList.OrderBy(node => node.F).First();
+
+                    // If we have reached the end, reconstruct and return the path
+                    if (currentNode.X == end.X && currentNode.Y == end.Y)
+                    {
+                        return ReconstructPath(currentNode);
+                    }
+
+                    openList.Remove(currentNode);
+                    closedList.Add(currentNode);
+
+                    // Check each neighboring cell
+                    foreach (var neighbor in GetNeighbors(grid, currentNode))
+                    {
+                        if (closedList.Contains(neighbor) ||
+                            grid[neighbor.X, neighbor.Y] != 2)// ||
+                                                              //occupiedCells[neighbor.X, neighbor.Y] == true)
+                        {
+                            continue;
+                        }
+
+                        int tentativeG = currentNode.G + 1;
+
+                        if (!openList.Contains(neighbor))
+                        {
+                            neighbor.Parent = currentNode;
+                            neighbor.G = tentativeG;
+                            neighbor.H = Math.Abs(neighbor.X - end.X) + Math.Abs(neighbor.Y - end.Y);
+                            openList.Add(neighbor);
+                        }
+                        else if (tentativeG < neighbor.G)
+                        {
+                            neighbor.Parent = currentNode;
+                            neighbor.G = tentativeG;
+                        }
+                    }
+
+                    counter++;
+
+                    if (counter >= maxCount)
+                    {
+                        break;
+                    }
+                }
+
+                return null; // No path found
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-            openList.Add(start);
-
-            var maxCount = 50;
-            int counter = 0;
-
-            while (openList.Count > 0)
-            {
-                // Get the node with the lowest F score
-                var currentNode = openList.OrderBy(node => node.F).First();
-
-                // If we have reached the end, reconstruct and return the path
-                if (currentNode.X == end.X && currentNode.Y == end.Y)
-                {
-                    return ReconstructPath(currentNode);
-                }
-
-                openList.Remove(currentNode);
-                closedList.Add(currentNode);
-
-                // Check each neighboring cell
-                foreach (var neighbor in GetNeighbors(grid, currentNode))
-                {
-                    if (closedList.Contains(neighbor) || 
-                        grid[neighbor.X, neighbor.Y] != 2)// ||
-                        //occupiedCells[neighbor.X, neighbor.Y] == true)
-                    {
-                        continue;
-                    }
-
-                    int tentativeG = currentNode.G + 1;
-
-                    if (!openList.Contains(neighbor))
-                    {
-                        neighbor.Parent = currentNode;
-                        neighbor.G = tentativeG;
-                        neighbor.H = Math.Abs(neighbor.X - end.X) + Math.Abs(neighbor.Y - end.Y);
-                        openList.Add(neighbor);
-                    }
-                    else if (tentativeG < neighbor.G)
-                    {
-                        neighbor.Parent = currentNode;
-                        neighbor.G = tentativeG;
-                    }
-                }
-
-                counter++;
-
-                if (counter >= maxCount)
-                {
-                    break;
-                }
-            }
-
-            return null; // No path found
         }
 
         private static List<Node> GetNeighbors(int[,] grid, Node node)

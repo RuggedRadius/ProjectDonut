@@ -16,6 +16,7 @@ using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
+using IDrawable = ProjectDonut.Interfaces.IDrawable;
 
 
 namespace ProjectDonut
@@ -157,7 +158,18 @@ namespace ProjectDonut
             base.Update(gameTime);
         }
 
-        //private Dictionary<object, int> _gameObjectsToDraw = new Dictionary<object, int>();
+        private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
+        private void GetAllDrawableObjects()
+        {
+            _gameObjectsToDraw.Clear();
+
+            foreach (var go in _gameObjects)
+            {
+                _gameObjectsToDraw.Add(go.Value);
+
+            }
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);

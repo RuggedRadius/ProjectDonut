@@ -99,6 +99,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Map/World/Biomes.png
 
+#begin Sprites/Map/World/Cactus01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Map/World/Cactus01.png
+
 #begin Sprites/Map/World/Forest.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -122,6 +134,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sprites/Map/World/Mountain.png
+
+#begin Sprites/Map/World/Rock01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Map/World/Rock01.png
+
+#begin Sprites/Map/World/Tree2-winter.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Map/World/Tree2-winter.png
 
 #begin Sprites/Map/World/Tree2.png
 /importer:TextureImporter
