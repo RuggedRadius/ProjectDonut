@@ -5,7 +5,6 @@ using ProjectDonut.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
 using ProjectDonut.ProceduralGeneration.World;
-using ProjectDonut.ProceduralGeneration;
 using System.Threading.Tasks;
 using ProjectDonut.Interfaces;
 using ProjectDonut.UI.DialogueSystem;
@@ -15,6 +14,10 @@ using ProjectDonut.Tools;
 using System;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects.PlayerComponents;
+using ProjectDonut.Core;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
+using IDrawable = ProjectDonut.Interfaces.IDrawable;
+
 
 namespace ProjectDonut
 {
@@ -22,12 +25,14 @@ namespace ProjectDonut
     {
         private SpriteFont _font;
 
+        private Dictionary<string, IGameComponent> _gameComponents;
         private Dictionary<string, IGameObject> _gameObjects;
         private Dictionary<string, IScreenObject> _screenObjects;
 
-        private SpriteLibrary spriteLib;
         private DialogueManager dialogue;        
         private Random random = new Random();
+
+        private List<IGameObject> _objectsToDraw;
 
 
         public Game1()
@@ -36,9 +41,8 @@ namespace ProjectDonut
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            Global.GraphicsDeviceManager.PreferredBackBufferWidth = 1920;
-            Global.GraphicsDeviceManager.PreferredBackBufferHeight = 1080;
-            //Global.GraphicsDeviceManager.PreferredBackBufferHeight = 1440;
+            Global.GraphicsDeviceManager.PreferredBackBufferWidth = Global.ScreenWidth;
+            Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
         }
 
         protected override void Initialize()
@@ -47,40 +51,21 @@ namespace ProjectDonut
             Global.SpriteBatch = new SpriteBatch(GraphicsDevice);
             Global.ContentManager = Content;
 
-            _gameObjects = new Dictionary<string, IGameObject>();
-            _screenObjects = new Dictionary<string, IScreenObject>();
-
-
-
-            //worldChunks = new WorldChunk[3,3];
-
-            spriteLib = new SpriteLibrary(Content, GraphicsDevice);
-            spriteLib.LoadSpriteLibrary();
-
-            // Fog of ware
-
-            // Camera
-            Global.Camera = new Camera(GraphicsDevice);
-            _gameObjects.Add("camera", Global.Camera);
-
-            // Player
-
-
-            dialogue = new DialogueManager(spriteLib);
-            _screenObjects.Add("dialogue", dialogue);
-
-            Global.GameCursor = new GameCursor(this, spriteLib);
-            _screenObjects.Add("cursor", Global.GameCursor);
+            Global.DEBUG_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
+            Global.DEBUG_TEXTURE.SetData(new[] { Color.Magenta });
+            Global.SpriteLibrary = new SpriteLibrary();
+            Global.SpriteLibrary.LoadSpriteLibrary();
 
             Global.Player = new Player();
-            _gameObjects.Add("player", Global.Player);
-
-            // World map
-            Global.SceneManager = new SceneManager(spriteLib);
-            _gameObjects.Add("sceneManager", Global.SceneManager);
+            Global.Player.Initialize();
 
             Debugger.Initialize();
 
+            CreateGameComponents();
+            CreateGameObjects();
+            CreateScreenObjects();
+
+            _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
 
@@ -90,21 +75,51 @@ namespace ProjectDonut
             //    dialogue.ExecuteMultipleLines(test);
             //});
 
-            // Position player in middle of the map
-            //player.PositionPlayerInMiddleOfMap(worldMapSettings);
-
             base.Initialize();
         }
 
-        
+        private void CreateGameComponents()
+        {
+            _gameComponents = new Dictionary<string, IGameComponent>();
+
+            // World map
+            Global.SceneManager = new SceneManager();
+            Global.SceneManager.CurrentSceneType = SceneType.World;
+
+            // Camera
+            Global.Camera = new Camera();
+            
+            _gameComponents.Add("sceneManager", Global.SceneManager);
+            _gameComponents.Add("camera", Global.Camera);
+        }
+
+        private void CreateScreenObjects()
+        {
+            _screenObjects = new Dictionary<string, IScreenObject>();
+
+            // Dialogue manager
+            dialogue = new DialogueManager();
+            _screenObjects.Add("dialogue", dialogue);
+
+            // Game cursor
+            Global.GameCursor = new GameCursor(this);
+            _screenObjects.Add("cursor", Global.GameCursor);
+        }
+
+        private void CreateGameObjects()
+        {
+            _gameObjects = new Dictionary<string, IGameObject>();
+        }
 
         protected override void LoadContent()
         {
             Debugger.LoadContent();
 
-            Global.SceneManager.LoadContent(Content);
+            Global.SceneManager.LoadContent();
 
-            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(Content));
+            Global.Player.LoadContent();
+            _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
+            _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
@@ -116,17 +131,24 @@ namespace ProjectDonut
 
             if (kbState.IsKeyDown(Keys.F8))
             {
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
+                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
             if (kbState.IsKeyDown(Keys.F9))
             {
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, Global.TileSize, Global.TileSize);
+                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
+                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
             Global.SceneManager.Update(gameTime);
-            Global.Camera.Position = _gameObjects["player"].Position;
+            Global.Camera.Position = Global.Player.Position;
 
+            Global.Player.Update(gameTime);
+
+            _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
@@ -136,22 +158,48 @@ namespace ProjectDonut
             base.Update(gameTime);
         }
 
+        private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
+        private void GetAllDrawableObjects()
+        {
+            _gameObjectsToDraw.Clear();
+
+            foreach (var go in _gameObjects)
+            {
+                _gameObjectsToDraw.Add(go.Value);
+
+            }
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
-            Global.SceneManager.Draw(gameTime, Global.SpriteBatch);
+            Global.SceneManager.Draw(gameTime);
 
-            // GameObjects
-            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.Draw(gameTime, Global.SpriteBatch));
-            //Global.SpriteBatch.End();
+                .ForEach(x => x.Draw(gameTime));
 
-            // ScreenObjects
+            if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            {
+                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+                {
+                    chunk.DrawSceneObjectsBelowPlayer(gameTime);
+                }
+            }
+
+            Global.Player.Draw(gameTime);
+
+            if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            {
+                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+                {
+                    chunk.DrawSceneObjectsAbovePlayer(gameTime);
+                }
+            }
+
             _screenObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)

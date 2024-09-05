@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
 using System;
 using System.Collections.Generic;

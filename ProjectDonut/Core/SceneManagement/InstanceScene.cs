@@ -18,27 +18,34 @@ using ProjectDonut.ProceduralGeneration.Dungeons.BSP;
 using System.Diagnostics;
 using ProjectDonut.ProceduralGeneration.Dungeons;
 using System.IO;
+using ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation;
+using ProjectDonut.NPCs.Enemy;
 
 namespace ProjectDonut.Core.SceneManagement
 {
     public class InstanceScene : Scene
     {
-        private SpriteLibrary _spriteLib;
         //private FogOfWar _fog;
         private Random random = new Random();
 
         // Instance-related 
+        public int[,] DataMap;
         private BSP _bsp;
         private Tilemap _tilemap;
+        private Tilemap _populationMap;
 
         private const int Dimension = 100;
 
-        public InstanceScene(SceneType sceneType, SpriteLibrary spriteLibray)
+        private Rectangle EntryLocation;
+
+        private Dictionary<string, Rectangle> ExitLocations;
+        public List<IGameObject> Enemies { get; set; }
+
+        private Texture2D _debugTexture;
+
+        public InstanceScene(SceneType sceneType)
         {
             SceneType = sceneType;
-            
-            _spriteLib = spriteLibray;
-
             _bsp = new BSP();
         }
 
@@ -46,11 +53,53 @@ namespace ProjectDonut.Core.SceneManagement
         {
             base.Initialize();
 
-            _tilemap = GenerateDungeon(Dimension, Dimension, true, false);
+            _debugTexture = new Texture2D(Global.GraphicsDevice, 1, 1);
+            _debugTexture.SetData(new[] { Color.Magenta });
+
+            GenerateDungeon(true, false);
         }
 
-        private int[,] dataMap;
-        private Tilemap GenerateDungeon(int width, int height, bool loadLast, bool squashRooms)
+        private void GenerateDungeon(bool loadLast, bool SquashRooms)
+        {
+            _tilemap = GenerateDungeonTileMap(Dimension, Dimension, loadLast, SquashRooms);
+
+            var popSettings = new DungeonLevelSettings()
+            {
+                EnemyCount = 50,
+                PossibleEnemies = new Dictionary<string, int>()
+                {
+                    { "goblin", 10 },
+                    { "orc", 5 }
+                },
+                HasSubsequentLevel = true
+            };
+
+            var dungeonPopulater = new DungeonPopulater(DataMap);
+            dungeonPopulater.PopulateDungeon(popSettings);
+            _populationMap = dungeonPopulater.CreateTileMap();
+
+            Enemies = new List<IGameObject>();
+            var enemies = dungeonPopulater.CreateEnemies(popSettings);
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                _gameObjects.Add($"enemy-{i + 1}", enemies[i]);
+                Enemies.Add(enemies[i]);
+            }            
+
+            var stairsLocation = dungeonPopulater.GetStairsLocation();
+            EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, Global.TileSize, Global.TileSize);
+            //Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
+
+            ExitLocations = new Dictionary<string, Rectangle>();
+            var exitPoints = dungeonPopulater.GetExitLocations();
+            foreach (var point in exitPoints)
+            {
+                ExitLocations.Add("world-exit", new Rectangle(point.Item1, point.Item2, Global.TileSize, Global.TileSize));
+            }
+        }
+
+        
+        private Tilemap GenerateDungeonTileMap(int width, int height, bool loadLast, bool squashRooms)
         {
             var path = @"C:\DungeonData.txt";
             var dataMap = new int[width, height];
@@ -81,66 +130,98 @@ namespace ProjectDonut.Core.SceneManagement
                 dataMap = BSP.MergeArrays(dataMap, linkages);
             }
 
-            Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
-            Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
+            DataMap = dataMap;
+
+            //Debugging.Debugger.PrintDataMap(dataMap, @"C:\Dungeon.txt");
+            //Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
 
             var generator = new DungeonGenerator();
             return generator.CreateTileMap(dataMap);
         }
 
-        public override void LoadContent(ContentManager content)
+        public override void LoadContent()
         {
-            base.LoadContent(content);
+            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             var kbState = Keyboard.GetState();
 
             if (kbState.IsKeyDown(Keys.F1))
             {
-                _tilemap = GenerateDungeon(Dimension, Dimension, false, false);
+                GenerateDungeon(false, false);
             }
 
             if (kbState.IsKeyDown(Keys.F2))
             {
-                _tilemap = GenerateDungeon(Dimension, Dimension, false, true);
+                GenerateDungeon(false, true);
             }
 
             if (kbState.IsKeyDown(Keys.F4))
             {
                 var path = @"C:\DungeonData.txt";
-                dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
-                _tilemap = GenerateDungeon(Dimension, Dimension, true, true);
+                DataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
             }
 
             if (kbState.IsKeyDown(Keys.F5))
             {
                 var path = @"C:\DungeonData.txt";
-                Debugging.Debugger.SaveIntArrayToFile(dataMap, path);
+                Debugging.Debugger.SaveIntArrayToFile(DataMap, path);
             }
 
-            base.Update(gameTime);
+            foreach (var exitPoint in ExitLocations)
+            {
+                //if (exitPoint.Value.Contains(Global.Player.ChunkPosition))
+                if (exitPoint.Value.Contains(Global.Player.Position))
+                {
+
+                    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
+                    ((WorldScene)Global.SceneManager.CurrentScene).PrepareForPlayerEntry();
+                }
+            }
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
 
             foreach (var tile in _tilemap.Map)
             {
                 if (tile == null)
                     continue;
 
-                tile.Draw(gameTime, spriteBatch);
+                tile.Draw(gameTime);
+            }
+
+            foreach (var tile in _populationMap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.Draw(gameTime);
             }
 
             _gameObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.Draw(gameTime, spriteBatch));
-            spriteBatch.End();
+                .ForEach(x => x.Draw(gameTime));
+
+            Global.SpriteBatch.End();
+
+            if (Global.DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE)
+            {
+                foreach (var exitPoint in ExitLocations)
+                {
+                    Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+                    Global.SpriteBatch.Draw(_debugTexture, exitPoint.Value, Color.White);
+                    Global.SpriteBatch.End();
+                }
+            }
 
             // ScreenObjects
             _screenObjects
@@ -148,6 +229,13 @@ namespace ProjectDonut.Core.SceneManagement
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
+        }
+
+        public override void PrepareForPlayerEntry()
+        {
+            base.PrepareForPlayerEntry();
+
+            Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
         }
     }
 }

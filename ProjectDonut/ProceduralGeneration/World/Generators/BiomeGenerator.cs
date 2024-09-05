@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectDonut.Core;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
@@ -28,7 +29,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise[0].SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
             _noise[0].SetDomainWarpAmp(100.0f);
             _noise[0].SetFrequency(0.0075f);
-            _noise[0].SetFractalGain(0.5f);
+            _noise[0].SetFractalGain(0.75f);
             _noise[0].SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
             _noise[0].SetFractalOctaves(8);
             _noise[0].SetFractalLacunarity(2.0f);
@@ -63,7 +64,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 {
                     for (int j = 0; j < height; j++)
                     {
-                        heightData[i, j] = (int)(_noise[z].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * 100);
+                        heightData[i, j] = (int)(_noise[z].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * Global.ChunkSize);
                     }
                 }
 
@@ -75,7 +76,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 for (int j = 0; j < height; j++)
                 {
-                    result[i, j] = Blend(data[0][i, j], data[1][i, j], OctaveBlendAmount) / 100;
+                    result[i, j] = Blend(data[0][i, j], data[1][i, j], OctaveBlendAmount) / Global.ChunkSize;
                 }
             }
 

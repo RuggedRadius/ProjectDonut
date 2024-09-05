@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,35 +39,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _spriteBatch = spriteBatch;
         }
 
-        //public int[,] GenerateMountainMap(int width, int height, int xOffset, int yOffset)
-        //{
-        //    var datas = new List<int[,]>();
-
-        //    for (int z = 0; z < 2; z++)
-        //    {
-        //        int[,] heightData = new int[height, width];
-
-        //        int min = 0;
-        //        int max = 0;
-
-        //        for (int i = 0; i < width; i++)
-        //        {
-        //            for (int j = 0; j < height; j++)
-        //            {
-        //                var x = xOffset * settings.Width + i;
-        //                var y = yOffset * settings.Height + j;
-
-        //                var heightValue = (int)(_noise[z].GetNoise(x, y) * 100) + 35;
-
-        //                heightData[i, j] = heightValue;
-        //            }
-        //        }
-
-        //        datas.Add(heightData);
-        //    }
-
-        //    return datas[0];
-        //}
         public Tilemap CreateTilemap(WorldChunk chunk)
         {
             var tmBase = new Tilemap(chunk.Width, chunk.Height);

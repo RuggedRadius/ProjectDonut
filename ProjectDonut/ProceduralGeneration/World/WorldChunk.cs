@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.ProceduralGeneration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,13 +16,13 @@ using ProjectDonut.ProceduralGeneration.World.Generators;
 using System.Diagnostics;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Core;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class WorldChunk : IGameObject
+    public class WorldChunk : IGameComponent
     {
-        private bool DRAW_DEBUG_OUTLINE = true;
-
         public int ChunkCoordX { get; private set; }
         public int ChunkCoordY { get; private set; }
 
@@ -36,13 +35,13 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int[,] RiverData;
         public int[,] StructureData;
 
-        private int TileSize = 32;
-
         public Dictionary<string, Tilemap> Tilemaps;
 
         public List<Rectangle> StructureBounds;// TODO: NOT SURE THIS SHOULD EXIST...
         public List<StructureData> Structures;
         private WorldChunkManager _manager;
+
+        public Dictionary<string, List<ISceneObject>> SceneObjects;
 
         public int Width
         {
@@ -94,18 +93,18 @@ namespace ProjectDonut.ProceduralGeneration.World
             ChunkCoordX = chunkXPos;
             ChunkCoordY = chunkYPos;
 
-            WorldCoordX = chunkXPos * 100 * 32;
-            WorldCoordY = chunkYPos * 100 * 32;
+            WorldCoordX = chunkXPos * Global.ChunkSize * Global.TileSize;
+            WorldCoordY = chunkYPos * Global.ChunkSize * Global.TileSize;
 
             _scrollDisplayer = scrollDisplayer;
 
             Tilemaps = new Dictionary<string, Tilemap>();
 
-            // Create a new Texture2D object with the dimensions 32x32
-            tempTexture = new Texture2D(Global.GraphicsDevice, 32, 32);
+            // Create a new Texture2D object with the dimensions Global.TileSizexGlobal.TileSize
+            tempTexture = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
 
             // Create an array to hold the color data
-            Color[] colorData = new Color[32 * 32];
+            Color[] colorData = new Color[Global.TileSize * Global.TileSize];
 
             // Fill the array with Color.White
             for (int i = 0; i < colorData.Length; i++)
@@ -115,14 +114,14 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             // Set the texture data to the array of colors
             tempTexture.SetData(colorData);
-
         }
 
         public void Initialize()
         {
+
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
         }
 
@@ -147,10 +146,22 @@ namespace ProjectDonut.ProceduralGeneration.World
                     if (structure.Bounds.Contains(Global.Player.ChunkPosition.X, Global.Player.ChunkPosition.Y))
                     {
                         // TODO: TEMP CODE TO TEST SCENE SWITCHING
-                        Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+                        var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+
+                        var worldExitPointX = (structure.Bounds.Width/2) + structure.Bounds.X + (Global.Player.ChunkPosX * Global.TileSize * Width); 
+                        var worldExitPointY = structure.Bounds.Bottom + Global.TileSize + (Global.Player.ChunkPosY * Global.TileSize * Height); 
+                        
+                        worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, Global.TileSize, Global.TileSize);
+
+                        Global.SceneManager.SetCurrentScene(structure.Instance, SceneType.Instance);
+                        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
                     }
                 }
             }
+
+            if (SceneObjects != null && SceneObjects.ContainsKey("trees") && SceneObjects["trees"].Count > 0)
+                Debugging.Debugger.Lines[2] = $"Tree Z-Index: {SceneObjects["trees"][0].ZIndex}";
+
             // Check for scroll display
             //HandleScrollDisplay();
         }
@@ -183,7 +194,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             _scrollDisplayer.HideScroll();
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
             foreach (var tilemap in Tilemaps)
             {
@@ -192,16 +203,50 @@ namespace ProjectDonut.ProceduralGeneration.World
                     if (tile == null)
                         continue;
 
-                    tile.Draw(gameTime, spriteBatch);
+                    tile.Draw(gameTime);
                 }
             }
 
-            if (DRAW_DEBUG_OUTLINE)
+            if (Global.DRAW_WORLD_CHUNK_OUTLINE)
             {
                 DrawChunkOutline(gameTime);
             }
 
+            if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
+            {
+                foreach (var structure in Structures)
+                {
+                    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
+                }
+            }
+
             return;
+        }
+
+        public void DrawSceneObjectsBelowPlayer(GameTime gameTime)
+        {
+            var sceneObjs = new List<ISceneObject>();
+
+            foreach (var sceneObject in SceneObjects)
+            {
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex <= Global.Player.Position.Y).ToList();
+                sceneObjs.AddRange(validObjs);
+            }
+
+            sceneObjs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+        }
+
+        public void DrawSceneObjectsAbovePlayer(GameTime gameTime)
+        {
+            var sceneObjs = new List<ISceneObject>();
+
+            foreach (var sceneObject in SceneObjects)
+            {
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex > Global.Player.Position.Y).ToList();
+                sceneObjs.AddRange(validObjs);
+            }
+
+            sceneObjs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
         }
 
         private void DrawChunkOutline(GameTime gameTime)
@@ -210,7 +255,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    var position = new Vector2(WorldCoordX + x * 32, WorldCoordY + y * 32);
+                    var position = new Vector2(WorldCoordX + x * Global.TileSize, WorldCoordY + y * Global.TileSize);
 
                     if (x == 0 || y == 0)
                     {

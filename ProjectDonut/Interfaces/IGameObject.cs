@@ -4,14 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectDonut.Interfaces
 {
-    public interface IGameObject
+    public interface IGameObject : IDrawable
     {
-        Vector2 Position { get; set; }
-        int ZIndex { get; set; }
-
         void Initialize();
-        void LoadContent(ContentManager content);
+        void LoadContent();
         void Update(GameTime gameTime);
-        void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+        new void Draw(GameTime gameTime);
     }
 }

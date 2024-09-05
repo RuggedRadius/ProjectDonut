@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite;
+using ProjectDonut.Core;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 
@@ -61,19 +62,20 @@ namespace ProjectDonut.ProceduralGeneration
             }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
-            var x = (ChunkX * 100 * 32) + (LocalPosition.X);
-            var y = (ChunkY * 100 * 32) + (LocalPosition.Y);
+            var x = (ChunkX * Global.ChunkSize * Global.TileSize) + (LocalPosition.X);
+            var y = (ChunkY * Global.ChunkSize * Global.TileSize) + (LocalPosition.Y);
             var position = new Vector2(x, y);
-            _spriteBatch.Draw(Texture, position, null, Color.White);
+
+            Global.SpriteBatch.Draw(Texture, position, null, Color.White);
         }
 
         public void Initialize()
         {
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
         }
 

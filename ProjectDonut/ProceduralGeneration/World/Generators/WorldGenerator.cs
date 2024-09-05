@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
@@ -40,7 +41,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             baseGen = new HeightGenerator(settings, spriteLib, spriteBatch);
             biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
-            forest = new ForestGenerator(spriteLib, settings, spriteBatch);
+            forest = new ForestGenerator(settings);
 
             rules = new WorldTileRuler(spriteLib);
 

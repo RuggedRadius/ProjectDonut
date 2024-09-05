@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectDonut.Core;
 using ProjectDonut.GameObjects.PlayerComponents;
 
 namespace ProjectDonut.GameObjects
@@ -35,8 +36,8 @@ namespace ProjectDonut.GameObjects
 
         public void UpdateFogOfWar()
         {
-            var playerX = (int)_player.Position.X / 32;
-            var playerY = (int)_player.Position.X / 32;
+            var playerX = (int)_player.Position.X / Global.TileSize;
+            var playerY = (int)_player.Position.X / Global.TileSize;
 
             for (int i = playerX - sightRadius; i < playerX + sightRadius; i++)
             {
@@ -57,8 +58,8 @@ namespace ProjectDonut.GameObjects
 
         public bool IsTileInSightRadius(int x, int y, int playerX, int playerY)
         {
-            playerX /= 32;
-            playerY /= 32;
+            playerX /= Global.TileSize;
+            playerY /= Global.TileSize;
 
             var calcX = Math.Pow(x - playerX, 2);
             var calcY = Math.Pow(y - playerY, 2);

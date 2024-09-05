@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
-using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
@@ -17,17 +16,18 @@ namespace ProjectDonut.Core.SceneManagement
     {
         public static WorldScene Instance;
 
-        private SpriteLibrary _spriteLib;
         private ScrollDisplayer _scrollDisplay;
         private WorldChunkManager worldChunks;
-        private const int ChunkSize = 100;
 
         private WorldMapSettings worldMapSettings;
         private FogOfWar _fog;
         private Random random = new Random();
-        
 
-        public WorldScene(SceneType sceneType, SpriteLibrary spriteLibray)
+        public Rectangle LastExitLocation;
+
+
+
+        public WorldScene(SceneType sceneType)
         {
             if (Instance == null)
             {
@@ -35,8 +35,6 @@ namespace ProjectDonut.Core.SceneManagement
             }
 
             base.SceneType = sceneType;
-
-            _spriteLib = spriteLibray;
         }
 
         public override void Initialize()
@@ -49,16 +47,17 @@ namespace ProjectDonut.Core.SceneManagement
             _scrollDisplay = new ScrollDisplayer(Global.ContentManager, Global.SpriteBatch, Global.GraphicsDevice);
             _screenObjects.Add("scrollDisplay", _scrollDisplay);
 
-            worldChunks = new WorldChunkManager(_spriteLib, _scrollDisplay, worldMapSettings);
+            worldChunks = new WorldChunkManager(Global.SpriteLibrary, _scrollDisplay, worldMapSettings);
             _gameObjects.Add("chunkmanager", worldChunks);
+            Global.WorldChunkManager = worldChunks;
 
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Initialize());
         }
 
-        public override void LoadContent(ContentManager content)
+        public override void LoadContent()
         {
-            base.LoadContent(content);
+            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -97,9 +96,9 @@ namespace ProjectDonut.Core.SceneManagement
 
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime, spriteBatch);
+            base.Draw(gameTime);
         }
 
         private WorldMapSettings CreateWorldMapSettings()
@@ -107,9 +106,9 @@ namespace ProjectDonut.Core.SceneManagement
             var s = new WorldMapSettings();
 
             // Dimensions
-            s.Width = ChunkSize;
-            s.Height = ChunkSize;
-            s.TileSize = 32;
+            s.Width = Global.ChunkSize;
+            s.Height = Global.ChunkSize;
+            s.TileSize = Global.TileSize;
 
             // Heights
             s.DeepWaterHeightMin = 0;
@@ -148,6 +147,13 @@ namespace ProjectDonut.Core.SceneManagement
             s.DeepWaterErosionWidthMax = 20;
 
             return s;
+        }
+
+        public override void PrepareForPlayerEntry()
+        {
+            base.PrepareForPlayerEntry();
+
+            Global.Player.Position = new Vector2(LastExitLocation.X, LastExitLocation.Y);
         }
     }
 }

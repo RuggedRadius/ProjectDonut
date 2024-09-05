@@ -6,24 +6,22 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.GameObjects;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
-using ProjectDonut.ProceduralGeneration;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.Core.SceneManagement
 {
-    public class SceneManager : IGameObject
+    public class SceneManager : IGameComponent
     {
         public Scene CurrentScene { get; set; }
+        public SceneType CurrentSceneType { get; set; }
 
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
-        private SpriteLibrary _spriteLib;
-
         public Dictionary<string, Scene> Scenes;
 
-        public SceneManager(SpriteLibrary spriteLib)
+        public SceneManager()
         {
-            _spriteLib = spriteLib;
             Scenes = new Dictionary<string, Scene>()
             {
                 { "world", CreateWorldScene() },
@@ -38,9 +36,9 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Initialize();
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
-            CurrentScene.LoadContent(content);
+            CurrentScene.LoadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -48,30 +46,31 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
-            CurrentScene.Draw(gameTime, spriteBatch);
+            CurrentScene.Draw(gameTime);
         }
 
-        public void SetCurrentScene(Scene scene)
+        public void SetCurrentScene(Scene scene, SceneType sceneType)
         {
             CurrentScene = scene;
+            CurrentSceneType = sceneType;
         }
 
         public WorldScene CreateWorldScene()
         {
-            var scene = new WorldScene(SceneType.World, _spriteLib);
+            var scene = new WorldScene(SceneType.World);
             scene.Initialize();
-            scene.LoadContent(Global.ContentManager);
+            scene.LoadContent();
 
             return scene;
         }
 
         public InstanceScene CreateInstanceScene()
         {
-            var scene = new InstanceScene(SceneType.Instance, _spriteLib);
+            var scene = new InstanceScene(SceneType.Instance);
             scene.Initialize();
-            scene.LoadContent(Global.ContentManager);
+            scene.LoadContent();
 
             return scene;
         }

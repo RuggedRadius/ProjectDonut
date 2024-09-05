@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private FastNoiseLite[] _noise;
         private SpriteBatch _spriteBatch;
 
-        private float OctaveBlend = 0.125f;
+        private float OctaveBlend = 0.0525f;
 
         public HeightGenerator(WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
         {
@@ -56,7 +57,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var x = xOffset * settings.Width + i;
                         var y = yOffset * settings.Height + j;
 
-                        var heightValue = (int)(_noise[z].GetNoise(x, y) * 100) + 35;
+                        var heightValue = (int)(_noise[z].GetNoise(x, y) * Global.ChunkSize) + 35;
 
                         heightData[i, j] = heightValue;
 
