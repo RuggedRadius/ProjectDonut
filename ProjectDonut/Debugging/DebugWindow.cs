@@ -10,28 +10,32 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Debugging
 {
-    public static class Debugger
+    public class DebugWindow : IScreenObject
     {
-        private static SpriteFont debugFont;
-        private static Texture2D debugTexture;
-        private static Rectangle debugRect;
-        private static int maxWindowWidth;
+        public bool IsShown { get; set; }
+
+        private SpriteFont debugFont;
+        private Texture2D debugTexture;
+        private Rectangle debugRect;
+        private int maxWindowWidth;
 
         public static string[] Lines = new string[15];
-        public static int ZIndex { get; set; }
+        public int ZIndex { get; set; }
 
+        public Texture2D Texture { get; set; }
+        public Vector2 Position { get; set; }
 
-        public static void Initialize()
+        public void Initialize()
         {
         }
 
-        public static void LoadContent()
+        public void LoadContent()
         {
             debugFont = Global.ContentManager.Load<SpriteFont>("Fonts/Default");
             debugTexture = CreateTexture(Global.GraphicsDevice, 1, 1, Color.Black);
         }
 
-        private static Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
+        private Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
         {
             Texture2D texture = new Texture2D(graphicsDevice, width, height);
             Color[] colorData = new Color[width * height];
@@ -40,8 +44,10 @@ namespace ProjectDonut.Debugging
             return texture;
         }
 
-        public static void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
+            if (!IsShown) return;
+
             // Calculate the height of the debug panel based on the number of debug lines
             int height = 5;
             for (int i = 0; i < Lines.Length; i++)
@@ -73,12 +79,12 @@ namespace ProjectDonut.Debugging
             debugRect = new Rectangle(x, y, maxWindowWidth, height);
         }
         
-        public static void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Begin(transformMatrix: Matrix.Identity);
-            Global.SpriteBatch.Draw(debugTexture, debugRect, Color.Black);
+            if (!IsShown) return;
 
-            var camPos = Global.Camera.Position;
+            Global.SpriteBatch.Begin(transformMatrix: Matrix.Identity);
+            Global.SpriteBatch.Draw(debugTexture, debugRect, Color.Black * 0.5f);
 
             for (int i = 0; i < Lines.Length; i++)
             {

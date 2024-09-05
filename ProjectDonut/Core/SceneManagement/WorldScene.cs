@@ -42,7 +42,7 @@ namespace ProjectDonut.Core.SceneManagement
             base.Initialize();
 
             worldMapSettings = CreateWorldMapSettings();
-            _fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height, Global.Player);
+            _fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
 
             _scrollDisplay = new ScrollDisplayer(Global.ContentManager, Global.SpriteBatch, Global.GraphicsDevice);
             _screenObjects.Add("scrollDisplay", _scrollDisplay);
@@ -85,14 +85,14 @@ namespace ProjectDonut.Core.SceneManagement
             var structure = worldChunks.GetCurrentChunk().Structures.FirstOrDefault();
             if (structure != null)
             {
-                Debugger.Lines[5] = $"Structure: {structure.Bounds}";
+                DebugWindow.Lines[5] = $"Structure: {structure.Bounds}";
             }
             else
             {
-                Debugger.Lines[5] = "Structure: null";
+                DebugWindow.Lines[5] = "Structure: null";
             }
 
-            Debugger.Lines[6] = $"Camera Position: {Global.Camera.Position}";
+            DebugWindow.Lines[6] = $"Camera Position: {Global.Camera.Position}";
 
         }
 

@@ -27,16 +27,12 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private int TownCountMin = 0;
         private int TownCountMax = 2;
 
-        private SpriteLibrary spriteLib;
         private WorldMapSettings settings;
-        private SpriteBatch _spriteBatch;
         private Random random = new Random();
 
-        public StructureGenerator(SpriteLibrary spriteLib, WorldMapSettings settings, SpriteBatch spriteBatch)
+        public StructureGenerator(WorldMapSettings settings)
         {
-            this.spriteLib = spriteLib;
             this.settings = settings;
-            _spriteBatch = spriteBatch;
         }
 
         public void GenerateStructureData(WorldChunk chunk)
@@ -188,18 +184,19 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 for (int i = 0; i < 9; i++)
                 {
-                    var tile = new Tile(_spriteBatch, true)
+                    var tile = new Tile(true)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,
                         xIndex = i + x,
                         yIndex = j + y,
+                        //Position = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize) + chunk.Position,
                         LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = spriteLib.GetSprite($"castle-01-{i}-{j}"), //DetermineTexture(structure, directions[counter]),
+                        Texture = Global.SpriteLibrary.GetSprite($"castle-01-{i}-{j}"),
                         WorldTileType = WorldTileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i + x, j + y],
-                        Frames = new List<Texture2D>()//GetFrames(structure, directions[counter], 4)
+                        Frames = new List<Texture2D>()
                     };
 
                     map.Map[i + x, j + y] = tile;
@@ -207,12 +204,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 }
             }
 
-            var entryRectX = x * Global.TileSize + (4 * Global.TileSize);// + (Global.Player.ChunkPosX * Global.ChunkSize * Global.TileSize);
-            var entryRectY = y * Global.TileSize + (8 * Global.TileSize);// + (Global.Player.ChunkPosY * Global.ChunkSize * Global.TileSize);
+            var entryRectX = x * Global.TileSize + (4 * Global.TileSize);
+            var entryRectY = y * Global.TileSize + (8 * Global.TileSize);
 
             var structureData = new StructureData
             {
-                //Bounds = new Rectangle(x * Global.TileSize, y * Global.TileSize, 9 * Global.TileSize, 9 * Global.TileSize),
                 Bounds = new Rectangle(entryRectX, entryRectY, Global.TileSize, Global.TileSize),
                 Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
                 Instance = new InstanceScene(SceneType.Instance)
@@ -229,13 +225,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             switch (structure)
             {
                 case Structure.Castle:
-                    return spriteLib.GetSprite($"castle-01-{direction}");
+                    return Global.SpriteLibrary.GetSprite($"castle-01-{direction}");
 
                 case Structure.Town:
-                    return spriteLib.GetSprite($"town-01-{direction}");
+                    return Global.SpriteLibrary.GetSprite($"town-01-{direction}");
 
                 default:
-                    return spriteLib.GetSprite("grasslands");
+                    return Global.SpriteLibrary.GetSprite("grasslands");
             }
         }
 
@@ -249,7 +245,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     for (int i = 0; i < frameCount; i++)
                     {
                         var key = $"castle-{i + 1:D2}-{direction}";
-                        results.Add(spriteLib.GetSprite(key));
+                        results.Add(Global.SpriteLibrary.GetSprite(key));
                     }
                     break;
 
@@ -257,7 +253,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     for (int i = 0; i < frameCount; i++)
                     {
                         var key = $"town-{i + 1:D2}-{direction}";
-                        results.Add(spriteLib.GetSprite(key));
+                        results.Add(Global.SpriteLibrary.GetSprite(key));
                     }
                     break;
             }

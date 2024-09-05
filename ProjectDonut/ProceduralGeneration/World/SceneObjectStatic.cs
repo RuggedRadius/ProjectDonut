@@ -15,7 +15,8 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public int DrawOrder => throw new NotImplementedException();
 
-        public bool Visible => throw new NotImplementedException();
+        public bool Visible { get; set; }
+        public bool Explored { get; set; }
 
         public event EventHandler<EventArgs> DrawOrderChanged;
         public event EventHandler<EventArgs> VisibleChanged;
@@ -32,13 +33,36 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             //    var verticalDistanceFromPlayer = Global.Player.Position.Y - Position.Y;
             //    ZIndex = (int)verticalDistanceFromPlayer * -1; 
+
+            UpdateObjectVisibility();
         }
 
         public void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            Global.SpriteBatch.Draw(Texture, Position, Color.White);
-            Global.SpriteBatch.End();
+            if (!Explored) return;
+
+
+            if (!Visible)
+            {
+                Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+                Global.SpriteBatch.Draw(Texture, Position, Color.Gray);
+                Global.SpriteBatch.End();
+            }
+            else
+            {
+                Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+                Global.SpriteBatch.Draw(Texture, Position, Color.White);
+                Global.SpriteBatch.End();
+            }
+        }
+
+        public void UpdateObjectVisibility()
+        {
+            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
+            Visible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+
+            if (Visible && !Explored)
+                Explored = true;
         }
     }
 }

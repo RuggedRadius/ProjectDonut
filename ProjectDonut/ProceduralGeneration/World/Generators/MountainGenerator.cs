@@ -12,16 +12,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
     public class MountainGenerator
     {
         private WorldMapSettings settings;
-        private SpriteLibrary spriteLib;
         private FastNoiseLite[] _noise;
-        private SpriteBatch _spriteBatch;
 
         private float OctaveBlend = 0.125f;
 
-        public MountainGenerator(WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
+        public MountainGenerator(WorldMapSettings settings)
         {
             this.settings = settings;
-            this.spriteLib = spriteLib;
 
             _noise = new FastNoiseLite[2];
             _noise[0] = new FastNoiseLite();
@@ -36,7 +33,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise[1].SetFrequency(0.5f);
             _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Manhattan);
 
-            _spriteBatch = spriteBatch;
         }
 
         public Tilemap CreateTilemap(WorldChunk chunk)
@@ -55,7 +51,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
-                    var tile = new Tile(_spriteBatch, false)
+                    var tile = new Tile(false)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,
@@ -79,7 +75,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         {
             var biome = (Biome)biomeValue;
 
-            return spriteLib.GetSprite("mountain");
+            return Global.SpriteLibrary.GetSprite("mountain");
 
             //if (heightValue >= settings.MountainHeightMin)
             //{

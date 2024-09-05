@@ -40,7 +40,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
                         continue;
                     }
 
-                    var tile = new Tile(Global.SpriteBatch, false)
+                    var tile = new Tile(false)
                     {
                         ChunkX = 0,
                         ChunkY = 0,

@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Debugging;
+using ProjectDonut.Debugging.Console;
 using ProjectDonut.GameObjects;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Pathfinding;
@@ -27,11 +29,19 @@ namespace ProjectDonut.Core
         public static int TileSize = 64;
         public static int ChunkSize = 50;
 
+        // FOG OF WAR SETTINGS
+        public static bool SHOW_FOG_OF_WAR = true;
+        public static int FOG_OF_WAR_RADIUS = 2000;
+
         // DEBUG SETTINGS
         public static Texture2D DEBUG_TEXTURE;
         public static bool DRAW_WORLD_CHUNK_OUTLINE = false;
         public static bool DRAW_STRUCTURE_ENTRY_OUTLINE = true;
         public static bool DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE = true;
+
+        // DEBUG
+        public static DevConsole Console;
+        public static DebugWindow DebugWindow;
 
         public static ContentManager ContentManager;
         public static SpriteBatch SpriteBatch;
@@ -43,6 +53,9 @@ namespace ProjectDonut.Core
         public static Camera Camera;
         public static GameCursor GameCursor;
         public static SpriteLibrary SpriteLibrary;
+
+
+        
         //public static Astar Pathfinding;
 
         public static WorldChunkManager WorldChunkManager;

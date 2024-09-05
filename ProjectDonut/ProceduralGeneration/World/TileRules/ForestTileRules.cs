@@ -11,13 +11,6 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {
     public class ForestTileRules
     {
-        private SpriteLibrary spriteLib;
-
-        public ForestTileRules(SpriteLibrary spriteLib)
-        {
-            this.spriteLib = spriteLib;
-        }
-
         public Tilemap ApplyForestRules(Tilemap tilemap)
         {
             foreach (var tile in tilemap.Map)
@@ -44,7 +37,7 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                     var biomeString = GetBiomeString(tile);
                     var tileString = $"{biomeString}-{directionString}";
 
-                    tile.Texture = spriteLib.GetSprite(tileString);
+                    tile.Texture = Global.SpriteLibrary.GetSprite(tileString);
                 }
                 catch (Exception ex)
                 {

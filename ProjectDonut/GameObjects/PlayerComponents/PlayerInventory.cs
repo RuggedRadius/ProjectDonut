@@ -38,10 +38,13 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private float _toggleTimeout = 0.2f;
         private float _toggleTimer = 0;
 
+        public bool IsVisible { get; set; }
+
         public PlayerInventory(ContentManager content, GameCursor cursor)
         {
             State = UIComponentState.Hidden;
             ZIndex = 100;
+            IsVisible = true;
         }
 
         public void Initialize()
@@ -197,7 +200,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             CalculateSlotsBounds();
 
-            Debugging.Debugger.Lines[2] = string.Empty;
+            Debugging.DebugWindow.Lines[2] = string.Empty;
             var currentlyPickedUpOriginalSlot = Slots.Where(x => x.Item?.State == InventoryItemState.PickedUp).FirstOrDefault();
             foreach (var slot in Slots)
             {

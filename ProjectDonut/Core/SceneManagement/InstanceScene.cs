@@ -105,7 +105,7 @@ namespace ProjectDonut.Core.SceneManagement
             var dataMap = new int[width, height];
             if (File.Exists(path) && loadLast)
             {
-                dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                dataMap = Debugging.DebugWindow.LoadIntArrayFromFile(path);
             }
             else
             {
@@ -163,14 +163,14 @@ namespace ProjectDonut.Core.SceneManagement
             if (kbState.IsKeyDown(Keys.F4))
             {
                 var path = @"C:\DungeonData.txt";
-                DataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                DataMap = Debugging.DebugWindow.LoadIntArrayFromFile(path);
                 _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
             }
 
             if (kbState.IsKeyDown(Keys.F5))
             {
                 var path = @"C:\DungeonData.txt";
-                Debugging.Debugger.SaveIntArrayToFile(DataMap, path);
+                Debugging.DebugWindow.SaveIntArrayToFile(DataMap, path);
             }
 
             foreach (var exitPoint in ExitLocations)

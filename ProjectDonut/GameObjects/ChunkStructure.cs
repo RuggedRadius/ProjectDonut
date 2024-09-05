@@ -19,6 +19,7 @@ namespace ProjectDonut.GameObjects
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
+        public bool IsVisible { get; set; }
 
         public void Initialize()
         {

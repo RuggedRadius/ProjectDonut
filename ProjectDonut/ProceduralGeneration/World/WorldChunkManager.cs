@@ -22,6 +22,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
+        public bool IsVisible { get; set; }
 
         private List<object> Dependencies;
 
@@ -69,13 +70,13 @@ namespace ProjectDonut.ProceduralGeneration.World
             tempTexture = new Texture2D(Global.GraphicsDevice, 1, 1);
             tempTexture.SetData(new[] { Color.Green });
 
-            WorldGen = new WorldGenerator(Global.ContentManager, Global.GraphicsDevice, settings, spriteLib, Global.SpriteBatch);
-            genHeight = new HeightGenerator(settings, spriteLib, Global.SpriteBatch);
+            WorldGen = new WorldGenerator(settings);
+            genHeight = new HeightGenerator(settings);
             genBiomes = new BiomeGenerator(settings);
             genForest = new ForestGenerator(settings);
-            genRiver = new RiverGenerator(spriteLib, settings);
-            genMountain = new MountainGenerator(settings, spriteLib, Global.SpriteBatch);
-            genStructure = new StructureGenerator(spriteLib, settings, Global.SpriteBatch);
+            genRiver = new RiverGenerator(settings);
+            genMountain = new MountainGenerator(settings);
+            genStructure = new StructureGenerator(settings);
 
             rulesGrasslands = new GrasslandsRules(spriteLib);
         }
@@ -157,6 +158,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             PlayerChunk = GetCurrentChunk();
+
+            foreach (var chunk in CurrentChunks)
+            {
+                chunk.Update(gameTime);
+            }
         }
 
         public void Initialize()
@@ -216,6 +222,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.SceneObjects.Add("rocks", genForest.GenerateRocks(chunk));
             chunk.SceneObjects.Add("trees-loose", genForest.GenerateLooseTrees(chunk));
             chunk.SceneObjects.Add("cactus", genForest.GenerateCactai(chunk));
+
+            chunk.Initialize();
 
             return chunk;
         }

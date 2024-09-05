@@ -17,11 +17,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private int[,] forestData;
         private Tilemap tmForest;
 
-        private ContentManager content;
-        private GraphicsDevice graphicsDevice;
         private WorldTileRuler rules;
-        private SpriteLibrary spriteLib;
-        private SpriteBatch _spriteBatch;
 
         private WorldMapSettings settings;
 
@@ -31,22 +27,16 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private WaterGenerator water;
         private ForestGenerator forest;
 
-        public WorldGenerator(ContentManager content, GraphicsDevice graphicsDevice, WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
+        public WorldGenerator(WorldMapSettings settings)
         {
-            this.content = content;
-            this.graphicsDevice = graphicsDevice;
-            this.spriteLib = spriteLib;
             this.settings = settings;
 
-            baseGen = new HeightGenerator(settings, spriteLib, spriteBatch);
+            baseGen = new HeightGenerator(settings);
             biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
             forest = new ForestGenerator(settings);
 
-            rules = new WorldTileRuler(spriteLib);
-
-            //spriteLib.LoadSpriteLibrary();
-            _spriteBatch = spriteBatch;
+            rules = new WorldTileRuler();
         }
 
         public int[,] TEMPCreateDummyBiomeData(int width, int height)

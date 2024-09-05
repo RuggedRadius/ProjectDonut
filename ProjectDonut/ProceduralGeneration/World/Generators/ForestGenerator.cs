@@ -34,7 +34,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             _noise.SetSeed(worldSeed);
 
-            tileRuler = new WorldTileRuler(Global.SpriteLibrary);
+            tileRuler = new WorldTileRuler();
         }
 
         public List<ISceneObject> GenerateWinterTrees(WorldChunk chunk)
@@ -385,7 +385,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
-                    var tile = new Tile(Global.SpriteBatch, false)
+                    var tile = new Tile(false)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,

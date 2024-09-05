@@ -41,6 +41,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         public List<StructureData> Structures;
         private WorldChunkManager _manager;
 
+        //private FogOfWar _fog;
+
         public Dictionary<string, List<ISceneObject>> SceneObjects;
 
         public int Width
@@ -100,13 +102,8 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             Tilemaps = new Dictionary<string, Tilemap>();
 
-            // Create a new Texture2D object with the dimensions Global.TileSizexGlobal.TileSize
             tempTexture = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
-
-            // Create an array to hold the color data
             Color[] colorData = new Color[Global.TileSize * Global.TileSize];
-
-            // Fill the array with Color.White
             for (int i = 0; i < colorData.Length; i++)
             {
                 colorData[i] = Color.White;
@@ -118,7 +115,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Initialize()
         {
-
+            //_fog = new FogOfWar(Width, Height);
         }
 
         public void LoadContent()
@@ -136,6 +133,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                         continue;
 
                     tile.Update(gameTime);
+                }
+            }
+
+            foreach (var kvp in SceneObjects)
+            {
+                foreach (var obj in kvp.Value)
+                {
+                    obj.Update(gameTime);
                 }
             }
 
@@ -159,9 +164,6 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            if (SceneObjects != null && SceneObjects.ContainsKey("trees") && SceneObjects["trees"].Count > 0)
-                Debugging.Debugger.Lines[2] = $"Tree Z-Index: {SceneObjects["trees"][0].ZIndex}";
-
             // Check for scroll display
             //HandleScrollDisplay();
         }
@@ -170,11 +172,11 @@ namespace ProjectDonut.ProceduralGeneration.World
         private void HandleScrollDisplay()
         {
             var playerPos = Global.Player.ChunkPosition;
-            Debugging.Debugger.Lines[7] = $"PlayerChunkPos = {playerPos}";
+            Debugging.DebugWindow.Lines[7] = $"PlayerChunkPos = {playerPos}";
             foreach (var structure in Structures)
             {
                 var distance = Vector2.Distance(playerPos, new Vector2(structure.Bounds.X, structure.Bounds.Y));
-                Debugging.Debugger.Lines[2] = $"Distance = {distance}";
+                Debugging.DebugWindow.Lines[2] = $"Distance = {distance}";
                 if (distance <= 100)
                 {
                     // Mouse is hovering over this structure
@@ -202,6 +204,11 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     if (tile == null)
                         continue;
+
+                    //if (_fog.IsTileExplored(tile.xIndex, tile.yIndex) == false)
+                    //    continue;
+
+
 
                     tile.Draw(gameTime);
                 }
