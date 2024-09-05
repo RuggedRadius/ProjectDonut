@@ -44,7 +44,10 @@ namespace ProjectDonut.ProceduralGeneration
         // Visibility and Appearance
         public bool IsVisible { get; set; }
         public bool IsExplored { get; set; }
+        public bool IsBlocked{ get; set; }
         public Texture2D Texture { get; set; }
+
+        public Rectangle Bounds { get; set; }
 
         public Tile(bool isAnimated)
         {
@@ -60,6 +63,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Initialize()
         {
+            Bounds = new Rectangle((int)Position.X, (int)Position.Y, Global.TileSize, Global.TileSize);
         }
 
         public void LoadContent()
@@ -117,20 +121,35 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Draw(GameTime gameTime)
         {
-            if (!IsExplored) return;
-
-            var x = (ChunkX * Global.ChunkSize * Global.TileSize) + (LocalPosition.X);
-            var y = (ChunkY * Global.ChunkSize * Global.TileSize) + (LocalPosition.Y);
-            var position = new Vector2(x, y);
+            if (!IsExplored)
+                return;
 
             if (!IsVisible)
             {
-                Global.SpriteBatch.Draw(Texture, position, null, Color.Gray);
+                Global.SpriteBatch.Draw(Texture, Position, null, Color.Gray);
             }
             else
             {
-                Global.SpriteBatch.Draw(Texture, position, null, Color.White);
+                var alphaValue = (float)Normalize(Vector2.Distance(Position, Global.Player.Position), 0, 1);
+                Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
             }
+
+            //if (!IsVisible && IsExplored)
+            //{
+            //    // Draw a partially transparent fog texture
+            //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, Bounds, Color.Black * 0.5f);
+            //}
+            //else if (!IsVisible)
+            //{
+            //    // Draw a fully opaque fog texture
+            //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, Bounds, Color.Black);
+            //}
         }
+
+        double Normalize(double value, double min, double max)
+        {
+            return (value - min) / (max - min);
+        }
+
     }
 }

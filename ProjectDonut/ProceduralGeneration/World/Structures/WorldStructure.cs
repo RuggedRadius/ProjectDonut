@@ -58,6 +58,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 (int)WorldPosition.Y - bufferZoneSize,
                 Texture.Width + bufferZoneSize * 2,
                 Texture.Height + bufferZoneSize * 2);
+
+            Instance.Initialize();
         }
 
         public void Update(GameTime gameTime)
@@ -70,23 +72,27 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 var worldExitPointY = EntryBounds.Bottom + Global.TileSize + (Global.Player.ChunkPosY * Global.TileSize * WorldChunk.Height);
                 worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, Global.TileSize, Global.TileSize);
 
+                Global.ScrollDisplay.HideScroll();
                 Global.SceneManager.SetCurrentScene(Instance, SceneType.Instance);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
-            if (ScrollBounds.Contains(Global.Player.Position))
+            if (Global.SceneManager.CurrentScene is WorldScene && Global.WorldChunkManager.PlayerChunk == WorldChunk)
             {
-                PlayerWithinScrollBounds = true;
-
-                if (ScrollDisplayer.CurrentStructure != this)
+                if (ScrollBounds.Contains(Global.Player.Position))
                 {
-                    Global.ScrollDisplay.HideScroll();
-                    ScrollDisplayer.CurrentStructure = this;
+                    PlayerWithinScrollBounds = true;
+
+                    if (ScrollDisplayer.CurrentStructure != this)
+                    {
+                        Global.ScrollDisplay.HideScroll();
+                        ScrollDisplayer.CurrentStructure = this;
+                    }
                 }
-            }
-            else
-            {
-                PlayerWithinScrollBounds = false;
+                else
+                {
+                    PlayerWithinScrollBounds = false;
+                }
             }
         }
 

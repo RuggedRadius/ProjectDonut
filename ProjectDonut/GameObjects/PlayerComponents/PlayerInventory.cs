@@ -200,7 +200,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             CalculateSlotsBounds();
 
-            Debugging.DebugWindow.Lines[2] = string.Empty;
             var currentlyPickedUpOriginalSlot = Slots.Where(x => x.Item?.State == InventoryItemState.PickedUp).FirstOrDefault();
             foreach (var slot in Slots)
             {

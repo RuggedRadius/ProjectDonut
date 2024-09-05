@@ -32,7 +32,7 @@ namespace ProjectDonut.UI.ScrollDisplay
         private float _scrollTimer = 0f;
 
         private Vector2 textDimensions;
-        private string curText = string.Empty;
+        public static string ScrollText = string.Empty;
         private int curBottomWidth;
         private int scale = 5;
 
@@ -40,18 +40,14 @@ namespace ProjectDonut.UI.ScrollDisplay
 
         public static WorldStructure CurrentStructure { get; set; }
 
-
-
-        public void DisplayScroll(WorldStructure structure)
+        public void DisplayScroll()
         {
-            CurrentStructure = structure;
-            //DisplayX = structure.Bounds.X + (structure.Bounds.Width / 2);
-            //DisplayY = structure.Bounds.Y + 20;
             DisplayX = Global.GraphicsDeviceManager.PreferredBackBufferWidth / 2;
-            DisplayY = Global.GraphicsDeviceManager.PreferredBackBufferHeight - 200;
-            textDimensions = scrollFont.MeasureString(structure.Name);
+            DisplayY = Global.GraphicsDeviceManager.PreferredBackBufferHeight - 200;            
+            
+            ScrollText = CurrentStructure.Name;
+            textDimensions = scrollFont.MeasureString(ScrollText);
             DisplayWidth = (int)textDimensions.X + 7 * scale;
-            curText = structure.Name;
 
             _scrollTimer = 0f;
 
@@ -95,7 +91,8 @@ namespace ProjectDonut.UI.ScrollDisplay
                 case ScrollShowState.Hidden:
                     if (CurrentStructure != null)
                     {
-                        DisplayScroll(CurrentStructure);
+                        ScrollText = CurrentStructure.Name;
+                        DisplayScroll();
                     }
                     break;
 
@@ -111,6 +108,7 @@ namespace ProjectDonut.UI.ScrollDisplay
                     break;
 
                 case ScrollShowState.Showing:
+                    _scrollTimer = 0f;
                     break;
             }
         }
@@ -151,7 +149,7 @@ namespace ProjectDonut.UI.ScrollDisplay
             // Draw text with scissor test
             //Global.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, rasterizerState);
             Global.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, rasterizerState);
-            Global.SpriteBatch.DrawString(scrollFont, curText, new Vector2(startX + 7 * scale + 5, startY), Color.Black);
+            Global.SpriteBatch.DrawString(scrollFont, ScrollText, new Vector2(startX + 7 * scale + 5, startY), Color.Black);
             Global.SpriteBatch.End();
 
             // Restore original scissor rectangle

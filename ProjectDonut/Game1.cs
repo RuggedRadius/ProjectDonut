@@ -159,10 +159,7 @@ namespace ProjectDonut
             if (kbState.IsKeyDown(Keys.O))
             {
                 //testScroll.DisplayScroll(500, 300, "Flandaria");                
-                Global.ScrollDisplay.DisplayScroll(new WorldStructure(Vector2.Zero, new WorldChunk(0, 0, null))
-                {
-                    Name = NameGenerator.GenerateRandomName(random.Next(3, 4)),
-                });
+                Global.ScrollDisplay.DisplayScroll();
             }
 
             if (kbState.IsKeyDown(Keys.P))

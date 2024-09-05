@@ -77,7 +77,7 @@ namespace ProjectDonut.GameObjects
 
             Zoom = MathHelper.Clamp(Zoom, ZoomMax, ZoomMin);
 
-            DebugWindow.Lines[6] = $"Camera Position: {Position}";
+            DebugWindow.Lines[6] = $"Camera Position: {Position:N0}";
         }
 
         private void HandleMouseZoom()

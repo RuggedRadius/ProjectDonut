@@ -54,6 +54,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Rectangle rectBottom;
         private Texture2D debugTexture;
 
+        public Rectangle VisibilityRect;
+
         public int ChunkPosX { get; set; }
         public int ChunkPosY { get; set; }
 
@@ -74,7 +76,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             IsVisible = true;
             Position = new Vector2(50, 50);
-            speed = 200;
+            speed = 2000;
             spriteSize = new Vector2(Global.TileSize, Global.TileSize);
             ZIndex = 0;
 
@@ -141,11 +143,18 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             HandleInput(gameTime);
 
-            DebugWindow.Lines[0] = $"Player World Position: [{(int)Position.X}, {(int)Position.Y}]";
-            DebugWindow.Lines[1] = $"World Chunk Coords: [{ChunkPosX}, {ChunkPosY}]";
-            DebugWindow.Lines[3] = $"Player Chunk Position = [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";
+            DebugWindow.Lines[0] = $"World Chunk: [{ChunkPosX}, {ChunkPosY}]";
+            DebugWindow.Lines[1] = $"World Position: [{(int)Position.X}, {(int)Position.Y}]";
+            DebugWindow.Lines[2] = $"Chunk Position: [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";            
 
             _inventory.Update(gameTime);
+
+            VisibilityRect = new Rectangle(
+                (int)Position.X - 500,
+                (int)Position.Y - 500,
+                1000,
+                1000
+                );
         }
 
         private void HandleInput(GameTime gameTime)

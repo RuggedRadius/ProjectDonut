@@ -156,10 +156,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
+            if (Global.SceneManager.CurrentScene is WorldScene && 
+                Global.WorldChunkManager.PlayerChunk == this)
             {
-                ScrollDisplayer.CurrentStructure = null;
-                Global.ScrollDisplay.HideScroll();
+                if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
+                {
+                    ScrollDisplayer.CurrentStructure = null;
+                    Global.ScrollDisplay.HideScroll();
+                }
             }
         }
 
