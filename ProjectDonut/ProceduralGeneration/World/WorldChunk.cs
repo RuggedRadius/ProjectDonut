@@ -41,7 +41,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public List<StructureData> Structures;
         private WorldChunkManager _manager;
 
-        //private FogOfWar _fog;
+        private Texture2D tempTexture;
 
         public Dictionary<string, List<ISceneObject>> SceneObjects;
 
@@ -85,11 +85,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             set; 
         }
 
-        private Texture2D tempTexture;
+        
 
-        private ScrollDisplayer _scrollDisplayer;
 
-        public WorldChunk(int chunkXPos, int chunkYPos, ScrollDisplayer scrollDisplayer, WorldChunkManager manager)
+        public WorldChunk(int chunkXPos, int chunkYPos, WorldChunkManager manager)
         {
             _manager = manager;
             ChunkCoordX = chunkXPos;
@@ -97,8 +96,6 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             WorldCoordX = chunkXPos * Global.ChunkSize * Global.TileSize;
             WorldCoordY = chunkYPos * Global.ChunkSize * Global.TileSize;
-
-            _scrollDisplayer = scrollDisplayer;
 
             Tilemaps = new Dictionary<string, Tilemap>();
 
@@ -165,7 +162,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             // Check for scroll display
-            //HandleScrollDisplay();
+            HandleScrollDisplay();
         }
 
         // **** BEWARE: THIS IS VERY BROKEN ***
@@ -175,25 +172,14 @@ namespace ProjectDonut.ProceduralGeneration.World
             Debugging.DebugWindow.Lines[7] = $"PlayerChunkPos = {playerPos}";
             foreach (var structure in Structures)
             {
-                var distance = Vector2.Distance(playerPos, new Vector2(structure.Bounds.X, structure.Bounds.Y));
-                Debugging.DebugWindow.Lines[2] = $"Distance = {distance}";
-                if (distance <= 100)
+                if (structure.ScrollBounds.Contains(playerPos))
                 {
-                    // Mouse is hovering over this structure
-                    if (_scrollDisplayer.CurrentStructureData == structure)
-                    {
-                        return;
-                    }
-
-                    var x = structure.Bounds.X + (structure.Bounds.Width / 2);
-                    var y = 50;
-
-                    _scrollDisplayer.DisplayScroll(structure);
+                    Global.ScrollDisplay.DisplayScroll(structure);
                     return;
                 }
             }
 
-            _scrollDisplayer.HideScroll();
+            Global.ScrollDisplay.HideScroll();
         }
 
         public void Draw(GameTime gameTime)
@@ -223,7 +209,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 foreach (var structure in Structures)
                 {
-                    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
+                    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.ScrollBounds, Color.White);                    
+                    //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
                 }
             }
 

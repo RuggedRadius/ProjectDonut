@@ -207,8 +207,12 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var entryRectX = x * Global.TileSize + (4 * Global.TileSize);
             var entryRectY = y * Global.TileSize + (8 * Global.TileSize);
 
+            var scrollBoundsX = x * Global.TileSize - (1 * Global.TileSize);
+            var scrollBoundsY = y * Global.TileSize - (1 * Global.TileSize);
+
             var structureData = new StructureData
             {
+                ScrollBounds = new Rectangle(scrollBoundsX, scrollBoundsY, Global.TileSize * 4, Global.TileSize * 4),
                 Bounds = new Rectangle(entryRectX, entryRectY, Global.TileSize, Global.TileSize),
                 Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
                 Instance = new InstanceScene(SceneType.Instance)
@@ -276,9 +280,15 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 {
                     if (data[x, y] != 0)
                     {
+                        var structureBounds = GetStructureBounds(chunk, x, y);
+
+                        var scrollBoundsX = structureBounds.Left - (1 * Global.TileSize);
+                        var scrollBoundsY = structureBounds.Top - (1 * Global.TileSize);
+
                         structures.Add(new StructureData
                         {
-                            Bounds = GetStructureBounds(chunk, x, y),
+                            ScrollBounds = new Rectangle(scrollBoundsX, scrollBoundsY, Global.TileSize * 4, Global.TileSize * 4),
+                            Bounds = structureBounds,
                             Name = NameGenerator.GenerateRandomName(random.Next(2,5))
                         });
                     }

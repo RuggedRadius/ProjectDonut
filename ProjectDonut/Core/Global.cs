@@ -11,6 +11,7 @@ using ProjectDonut.Pathfinding;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.UI.DialogueSystem;
+using ProjectDonut.UI.ScrollDisplay;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,7 @@ namespace ProjectDonut.Core
         public static Camera Camera;
         public static GameCursor GameCursor;
         public static SpriteLibrary SpriteLibrary;
+        public static ScrollDisplayer ScrollDisplay;
 
 
         

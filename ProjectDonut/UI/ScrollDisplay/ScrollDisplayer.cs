@@ -36,19 +36,11 @@ namespace ProjectDonut.UI.ScrollDisplay
         private int curBottomWidth;
         private int scale = 5;
 
-        private ContentManager _content;
-        private SpriteBatch _spriteBatch;
-        private GraphicsDevice _graphicsDevice;
         private RasterizerState rasterizerState;
 
         public StructureData CurrentStructureData { get; set; }
 
-        public ScrollDisplayer(ContentManager content, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
-        {
-            _content = content;
-            _spriteBatch = spriteBatch;
-            _graphicsDevice = graphicsDevice;
-        }
+
 
         public void DisplayScroll(StructureData structure)
         {
@@ -85,10 +77,10 @@ namespace ProjectDonut.UI.ScrollDisplay
 
         public void LoadContent()
         {
-            scrollTopLeft = _content.Load<Texture2D>("Sprites/UI/Scroll-Top-Left");
-            scrollTopRight = _content.Load<Texture2D>("Sprites/UI/Scroll-Top-Right");
-            scrollBottom = _content.Load<Texture2D>("Sprites/UI/Scroll-Bottom");
-            scrollFont = _content.Load<SpriteFont>("Fonts/OldeEnglishDesc");
+            scrollTopLeft = Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Left");
+            scrollTopRight = Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Right");
+            scrollBottom = Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Bottom");
+            scrollFont = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
         }
         public void Update(GameTime gameTime)
         {
@@ -124,40 +116,42 @@ namespace ProjectDonut.UI.ScrollDisplay
             var startX = DisplayX - curBottomWidth / 2;
             var startY = DisplayY + 32 * scale / 2 - textDimensions.Y / 2;
 
-            //_spriteBatch.End();
+            //Global.SpriteBatch.End();
 
             // Draw scroll background parts
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
+            //Global.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
+            Global.SpriteBatch.Begin(transformMatrix: Matrix.Identity);
 
             // Middle section
             int middleWidth = curBottomWidth - 7 * scale + 5;  // Adjust width of the middle section
             middleWidth = middleWidth < 0 ? 0 : middleWidth;
             for (int i = 0; i < middleWidth; i++)
             {
-                _spriteBatch.Draw(scrollBottom, new Rectangle(startX + 7 * scale + i, DisplayY, 1 * scale, 32 * scale), Color.White);
+                Global.SpriteBatch.Draw(scrollBottom, new Rectangle(startX + 7 * scale + i, DisplayY, 1 * scale, 32 * scale), Color.White);
             }
 
-            _spriteBatch.End();
+            Global.SpriteBatch.End();
 
             // Store the original scissor rectangle
-            var originalScissorRect = _graphicsDevice.ScissorRectangle;
+            var originalScissorRect = Global.GraphicsDevice.ScissorRectangle;
 
             // Apply scissor rectangle
-            _graphicsDevice.ScissorRectangle = new Rectangle(startX + 7 * scale, DisplayY, middleWidth, 32 * scale);
+            Global.GraphicsDevice.ScissorRectangle = new Rectangle(startX + 7 * scale, DisplayY, middleWidth, 32 * scale);
 
             // Draw text with scissor test
-            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, rasterizerState);
-            _spriteBatch.DrawString(scrollFont, curText, new Vector2(startX + 7 * scale + 5, startY), Color.Black);
-            _spriteBatch.End();
+            //Global.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, rasterizerState);
+            Global.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, rasterizerState);
+            Global.SpriteBatch.DrawString(scrollFont, curText, new Vector2(startX + 7 * scale + 5, startY), Color.Black);
+            Global.SpriteBatch.End();
 
             // Restore original scissor rectangle
-            _graphicsDevice.ScissorRectangle = originalScissorRect;
+            Global.GraphicsDevice.ScissorRectangle = originalScissorRect;
 
             // Draw scroll caps
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            _spriteBatch.Draw(scrollTopLeft, new Rectangle(startX, DisplayY, 7 * scale, 32 * scale), Color.White);
-            _spriteBatch.Draw(scrollTopRight, new Rectangle(startX + 7 * scale + middleWidth, DisplayY, 7 * scale, 32 * scale), Color.White);
-            _spriteBatch.End();
+            Global.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            Global.SpriteBatch.Draw(scrollTopLeft, new Rectangle(startX, DisplayY, 7 * scale, 32 * scale), Color.White);
+            Global.SpriteBatch.Draw(scrollTopRight, new Rectangle(startX + 7 * scale + middleWidth, DisplayY, 7 * scale, 32 * scale), Color.White);
+            Global.SpriteBatch.End();
         }
 
 

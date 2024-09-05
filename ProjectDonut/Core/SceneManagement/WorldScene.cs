@@ -16,7 +16,6 @@ namespace ProjectDonut.Core.SceneManagement
     {
         public static WorldScene Instance;
 
-        private ScrollDisplayer _scrollDisplay;
         private WorldChunkManager worldChunks;
 
         private WorldMapSettings worldMapSettings;
@@ -44,10 +43,7 @@ namespace ProjectDonut.Core.SceneManagement
             worldMapSettings = CreateWorldMapSettings();
             _fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
 
-            _scrollDisplay = new ScrollDisplayer(Global.ContentManager, Global.SpriteBatch, Global.GraphicsDevice);
-            _screenObjects.Add("scrollDisplay", _scrollDisplay);
-
-            worldChunks = new WorldChunkManager(Global.SpriteLibrary, _scrollDisplay, worldMapSettings);
+            worldChunks = new WorldChunkManager(worldMapSettings);
             _gameObjects.Add("chunkmanager", worldChunks);
             Global.WorldChunkManager = worldChunks;
 
@@ -63,24 +59,6 @@ namespace ProjectDonut.Core.SceneManagement
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
-
-            var kbState = Keyboard.GetState();
-            if (kbState.IsKeyDown(Keys.O))
-            {
-                //testScroll.DisplayScroll(500, 300, "Flandaria");                
-                _scrollDisplay.DisplayScroll(new ProceduralGeneration.World.Structures.StructureData()
-                {
-                    Name = NameGenerator.GenerateRandomName(random.Next(3, 4)),
-                    //Name = "Flandaria",
-                    Bounds = new Rectangle(800, 100, 100, 100)
-                });
-            }
-
-            if (kbState.IsKeyDown(Keys.P))
-            {
-                _scrollDisplay.HideScroll();
-            }
 
             var structure = worldChunks.GetCurrentChunk().Structures.FirstOrDefault();
             if (structure != null)

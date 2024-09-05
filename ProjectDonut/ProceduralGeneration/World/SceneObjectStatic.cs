@@ -58,6 +58,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void UpdateObjectVisibility()
         {
+            if (Global.SHOW_FOG_OF_WAR == false)
+            {
+                Visible = true;
+                Explored = true;
+                return;
+            }
+
             float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
             Visible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 

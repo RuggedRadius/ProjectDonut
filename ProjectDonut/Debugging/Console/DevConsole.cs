@@ -102,6 +102,14 @@ namespace ProjectDonut.Debugging.Console
                 _inputTimer = 0f;
             }
 
+            if (kbState.IsKeyDown(Keys.Back))
+            {
+                if (_currentInput.Length > 0)
+                    _currentInput = _currentInput.Substring(0, _currentInput.Length - 1);
+
+                _inputTimer = 0f;
+            }
+
             if (kbState.IsKeyDown(Keys.Enter))
             {
                 _inputTimer = 0f;
@@ -155,7 +163,7 @@ namespace ProjectDonut.Debugging.Console
 
         private void ExecuteCommand(string command)
         {
-            var parts = command.Split(' ');
+            var parts = command.ToLower().Split(' ');
 
             switch (parts[0])
             {

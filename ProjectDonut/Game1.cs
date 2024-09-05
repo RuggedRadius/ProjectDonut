@@ -14,6 +14,9 @@ using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using IDrawable = ProjectDonut.Interfaces.IDrawable;
 using IScreenObject = ProjectDonut.Interfaces.IScreenObject;
 using ProjectDonut.Debugging.Console;
+using ProjectDonut.UI.ScrollDisplay;
+using ProjectDonut.Tools;
+using Microsoft.Xna.Framework.Input;
 
 namespace ProjectDonut
 {
@@ -109,6 +112,9 @@ namespace ProjectDonut
             Global.DebugWindow = new DebugWindow();
             Global.DebugWindow.Initialize();
             _screenObjects.Add("debugWindow", Global.DebugWindow);
+
+            Global.ScrollDisplay = new ScrollDisplayer();
+            _screenObjects.Add("scrollDisplay", Global.ScrollDisplay);
         }
 
         private void CreateGameObjects()
@@ -132,20 +138,36 @@ namespace ProjectDonut
 
         protected override void Update(GameTime gameTime)
         {
-            var kbState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+            var kbState = Keyboard.GetState();
 
-            if (kbState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F8))
+            if (kbState.IsKeyDown(Keys.F8))
             {
                 Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
-            if (kbState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F9))
+            if (kbState.IsKeyDown(Keys.F9))
             {
                 var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
                 worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, Global.TileSize, Global.TileSize);
                 Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+            }
+
+            if (kbState.IsKeyDown(Keys.O))
+            {
+                //testScroll.DisplayScroll(500, 300, "Flandaria");                
+                Global.ScrollDisplay.DisplayScroll(new ProceduralGeneration.World.Structures.StructureData()
+                {
+                    Name = NameGenerator.GenerateRandomName(random.Next(3, 4)),
+                    //Name = "Flandaria",
+                    Bounds = new Rectangle(800, 100, 100, 100)
+                });
+            }
+
+            if (kbState.IsKeyDown(Keys.P))
+            {
+                Global.ScrollDisplay.HideScroll();
             }
 
             Global.SceneManager.Update(gameTime);
@@ -162,17 +184,17 @@ namespace ProjectDonut
             base.Update(gameTime);
         }
 
-        private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
-        private void GetAllDrawableObjects()
-        {
-            _gameObjectsToDraw.Clear();
+        //private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
+        //private void GetAllDrawableObjects()
+        //{
+        //    _gameObjectsToDraw.Clear();
 
-            foreach (var go in _gameObjects)
-            {
-                _gameObjectsToDraw.Add(go.Value);
+        //    foreach (var go in _gameObjects)
+        //    {
+        //        _gameObjectsToDraw.Add(go.Value);
 
-            }
-        }
+        //    }
+        //}
 
         protected override void Draw(GameTime gameTime)
         {

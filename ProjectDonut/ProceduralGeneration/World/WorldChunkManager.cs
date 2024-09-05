@@ -51,14 +51,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public List<ChunkStructure> StructuresInCenterChunk = new List<ChunkStructure>();
 
-        private ScrollDisplayer _scrollDisplayer;
-
-        public WorldChunkManager(SpriteLibrary spriteLib, ScrollDisplayer scrollDisplayer, WorldMapSettings settings)
+        public WorldChunkManager(WorldMapSettings settings)
         {
             Settings = settings;
-
-            this.spriteLib = spriteLib;
-            this._scrollDisplayer = scrollDisplayer;
 
             var random = new Random();
             var worldSeed = random.Next(int.MinValue, int.MaxValue);
@@ -196,7 +191,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         //private bool tempONETREEONLY = false;
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
-            var chunk = new WorldChunk(chunkX, chunkY, _scrollDisplayer, this);
+            var chunk = new WorldChunk(chunkX, chunkY, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
