@@ -17,6 +17,8 @@ using ProjectDonut.Debugging.Console;
 using ProjectDonut.UI.ScrollDisplay;
 using ProjectDonut.Tools;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.ProceduralGeneration.World.Structures;
+using ProjectDonut.ProceduralGeneration.World;
 
 namespace ProjectDonut
 {
@@ -157,11 +159,9 @@ namespace ProjectDonut
             if (kbState.IsKeyDown(Keys.O))
             {
                 //testScroll.DisplayScroll(500, 300, "Flandaria");                
-                Global.ScrollDisplay.DisplayScroll(new ProceduralGeneration.World.Structures.StructureData()
+                Global.ScrollDisplay.DisplayScroll(new WorldStructure(Vector2.Zero, new WorldChunk(0, 0, null))
                 {
                     Name = NameGenerator.GenerateRandomName(random.Next(3, 4)),
-                    //Name = "Flandaria",
-                    Bounds = new Rectangle(800, 100, 100, 100)
                 });
             }
 

@@ -58,20 +58,7 @@ namespace ProjectDonut.Core.SceneManagement
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
-            var structure = worldChunks.GetCurrentChunk().Structures.FirstOrDefault();
-            if (structure != null)
-            {
-                DebugWindow.Lines[5] = $"Structure: {structure.Bounds}";
-            }
-            else
-            {
-                DebugWindow.Lines[5] = "Structure: null";
-            }
-
-            DebugWindow.Lines[6] = $"Camera Position: {Global.Camera.Position}";
-
+            base.Update(gameTime);            
         }
 
         public override void Draw(GameTime gameTime)

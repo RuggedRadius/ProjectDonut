@@ -31,9 +31,6 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
-            //    var verticalDistanceFromPlayer = Global.Player.Position.Y - Position.Y;
-            //    ZIndex = (int)verticalDistanceFromPlayer * -1; 
-
             UpdateObjectVisibility();
         }
 

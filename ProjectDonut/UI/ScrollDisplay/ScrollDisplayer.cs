@@ -15,7 +15,7 @@ namespace ProjectDonut.UI.ScrollDisplay
 {
     public class ScrollDisplayer : IScreenObject
     {
-        private ScrollShowState state;
+        public ScrollShowState ScrollState;
 
         private Texture2D scrollTopLeft;
         private Texture2D scrollTopRight;
@@ -38,13 +38,13 @@ namespace ProjectDonut.UI.ScrollDisplay
 
         private RasterizerState rasterizerState;
 
-        public StructureData CurrentStructureData { get; set; }
+        public static WorldStructure CurrentStructure { get; set; }
 
 
 
-        public void DisplayScroll(StructureData structure)
+        public void DisplayScroll(WorldStructure structure)
         {
-            CurrentStructureData = structure;
+            CurrentStructure = structure;
             //DisplayX = structure.Bounds.X + (structure.Bounds.Width / 2);
             //DisplayY = structure.Bounds.Y + 20;
             DisplayX = Global.GraphicsDeviceManager.PreferredBackBufferWidth / 2;
@@ -55,19 +55,19 @@ namespace ProjectDonut.UI.ScrollDisplay
 
             _scrollTimer = 0f;
 
-            state = ScrollShowState.Scrolling;
+            ScrollState = ScrollShowState.Scrolling;
         }
 
         public void HideScroll()
         {
-            state = ScrollShowState.Hidden;
+            ScrollState = ScrollShowState.Hidden;
             _scrollTimer = 0f;
-            CurrentStructureData = null;
+            CurrentStructure = null;
         }
 
         public void Initialize()
         {
-            state = ScrollShowState.Hidden;
+            ScrollState = ScrollShowState.Hidden;
 
             rasterizerState = new RasterizerState
             {
@@ -84,9 +84,19 @@ namespace ProjectDonut.UI.ScrollDisplay
         }
         public void Update(GameTime gameTime)
         {
-            switch (state)
+            if (CurrentStructure == null)
+            {
+                HideScroll();
+                return;
+            }
+
+            switch (ScrollState)
             {
                 case ScrollShowState.Hidden:
+                    if (CurrentStructure != null)
+                    {
+                        DisplayScroll(CurrentStructure);
+                    }
                     break;
 
                 case ScrollShowState.Scrolling:
@@ -96,7 +106,7 @@ namespace ProjectDonut.UI.ScrollDisplay
 
                     if (_scrollTimer >= _scrollDuration)
                     {
-                        state = ScrollShowState.Showing;
+                        ScrollState = ScrollShowState.Showing;
                     }
                     break;
 
@@ -107,7 +117,7 @@ namespace ProjectDonut.UI.ScrollDisplay
 
         public void Draw(GameTime gameTime)
         {
-            if (state == ScrollShowState.Hidden)
+            if (ScrollState == ScrollShowState.Hidden)
             {
                 return;
             }

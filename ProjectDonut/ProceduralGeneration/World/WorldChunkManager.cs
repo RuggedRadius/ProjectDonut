@@ -1,18 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
-using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
-using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
-using ProjectDonut.UI.ScrollDisplay;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -26,7 +21,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private List<object> Dependencies;
 
-        private WorldGenerator WorldGen;
+        //private WorldGenerator WorldGen;
         private WorldMapSettings Settings;
 
         public Dictionary<(int, int), WorldChunk> _chunks;
@@ -42,6 +37,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private RiverGenerator genRiver;
         private MountainGenerator genMountain;
         private StructureGenerator genStructure;
+        private ScenaryGenerator _genScenary;
 
         private GrasslandsRules rulesGrasslands;
 
@@ -65,13 +61,14 @@ namespace ProjectDonut.ProceduralGeneration.World
             tempTexture = new Texture2D(Global.GraphicsDevice, 1, 1);
             tempTexture.SetData(new[] { Color.Green });
 
-            WorldGen = new WorldGenerator(settings);
+            //WorldGen = new WorldGenerator(settings);
             genHeight = new HeightGenerator(settings);
             genBiomes = new BiomeGenerator(settings);
             genForest = new ForestGenerator(settings);
             genRiver = new RiverGenerator(settings);
             genMountain = new MountainGenerator(settings);
             genStructure = new StructureGenerator(settings);
+            _genScenary = new ScenaryGenerator(settings);
 
             rulesGrasslands = new GrasslandsRules(spriteLib);
         }
@@ -141,7 +138,6 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            // Disabling for now cos collection kept changing duration iterations
             foreach (var chunk in CurrentChunks)
             {
                 chunk.Update(gameTime);
@@ -201,7 +197,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             var tilemapBase = genHeight.CreateBaseTilemap(chunk);
             //var tilemapForest = genForest.CreateTileMap(chunk);
-            var tilemapStructures = genStructure.CreateTileMap(chunk);
+            //var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);
 
             tilemapBase = rulesGrasslands.ApplyRules(tilemapBase);
@@ -209,16 +205,18 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.Tilemaps.Add("base", tilemapBase);
             //chunk.Tilemaps.Add("forest", tilemapForest);
             chunk.Tilemaps.Add("mountains", tilemapMountains);
-            chunk.Tilemaps.Add("structures", tilemapStructures);
+            //chunk.Tilemaps.Add("structures", tilemapStructures);
 
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
-            chunk.SceneObjects.Add("trees", genForest.GenerateTrees(chunk));
-            chunk.SceneObjects.Add("trees-winter", genForest.GenerateWinterTrees(chunk));
-            chunk.SceneObjects.Add("rocks", genForest.GenerateRocks(chunk));
-            chunk.SceneObjects.Add("trees-loose", genForest.GenerateLooseTrees(chunk));
-            chunk.SceneObjects.Add("cactus", genForest.GenerateCactai(chunk));
+            chunk.SceneObjects.Add("trees", _genScenary.GenerateTrees(chunk));
+            chunk.SceneObjects.Add("trees-winter", _genScenary.GenerateWinterTrees(chunk));
+            chunk.SceneObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
+            chunk.SceneObjects.Add("trees-loose", _genScenary.GenerateLooseTrees(chunk));
+            chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
+            chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
 
             chunk.Initialize();
+            chunk.LoadContent();
 
             return chunk;
         }

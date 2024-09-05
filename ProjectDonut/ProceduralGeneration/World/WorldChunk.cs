@@ -18,6 +18,7 @@ using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
+using MonoGame.Extended.Timers;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -37,8 +38,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Dictionary<string, Tilemap> Tilemaps;
 
-        public List<Rectangle> StructureBounds;// TODO: NOT SURE THIS SHOULD EXIST...
-        public List<StructureData> Structures;
+        public List<WorldStructure> Structures;
         private WorldChunkManager _manager;
 
         private Texture2D tempTexture;
@@ -117,6 +117,21 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void LoadContent()
         {
+            if (Structures == null)
+            {
+                Structures = new List<WorldStructure>();
+
+                foreach (var kvp in SceneObjects)
+                {
+                    foreach (var obj in kvp.Value)
+                    {
+                        if (obj is WorldStructure)
+                        {
+                            Structures.Add((WorldStructure)obj);
+                        }
+                    }
+                }
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -141,46 +156,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            if (_manager.PlayerChunk == this)
+            if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
             {
-                foreach (var structure in Structures)
-                {
-                    if (structure.Bounds.Contains(Global.Player.ChunkPosition.X, Global.Player.ChunkPosition.Y))
-                    {
-                        // TODO: TEMP CODE TO TEST SCENE SWITCHING
-                        var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-
-                        var worldExitPointX = (structure.Bounds.Width/2) + structure.Bounds.X + (Global.Player.ChunkPosX * Global.TileSize * Width); 
-                        var worldExitPointY = structure.Bounds.Bottom + Global.TileSize + (Global.Player.ChunkPosY * Global.TileSize * Height); 
-                        
-                        worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, Global.TileSize, Global.TileSize);
-
-                        Global.SceneManager.SetCurrentScene(structure.Instance, SceneType.Instance);
-                        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-                    }
-                }
+                ScrollDisplayer.CurrentStructure = null;
+                Global.ScrollDisplay.HideScroll();
             }
-
-            // Check for scroll display
-            HandleScrollDisplay();
         }
 
-        // **** BEWARE: THIS IS VERY BROKEN ***
-        private void HandleScrollDisplay()
-        {
-            var playerPos = Global.Player.ChunkPosition;
-            Debugging.DebugWindow.Lines[7] = $"PlayerChunkPos = {playerPos}";
-            foreach (var structure in Structures)
-            {
-                if (structure.ScrollBounds.Contains(playerPos))
-                {
-                    Global.ScrollDisplay.DisplayScroll(structure);
-                    return;
-                }
-            }
 
-            Global.ScrollDisplay.HideScroll();
-        }
 
         public void Draw(GameTime gameTime)
         {
@@ -191,11 +174,6 @@ namespace ProjectDonut.ProceduralGeneration.World
                     if (tile == null)
                         continue;
 
-                    //if (_fog.IsTileExplored(tile.xIndex, tile.yIndex) == false)
-                    //    continue;
-
-
-
                     tile.Draw(gameTime);
                 }
             }
@@ -203,15 +181,6 @@ namespace ProjectDonut.ProceduralGeneration.World
             if (Global.DRAW_WORLD_CHUNK_OUTLINE)
             {
                 DrawChunkOutline(gameTime);
-            }
-
-            if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
-            {
-                foreach (var structure in Structures)
-                {
-                    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.ScrollBounds, Color.White);                    
-                    //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
-                }
             }
 
             return;

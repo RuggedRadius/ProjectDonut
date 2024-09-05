@@ -26,6 +26,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private BiomeGenerator biomes;
         private WaterGenerator water;
         private ForestGenerator forest;
+        private ScenaryGenerator _scenary;
 
         public WorldGenerator(WorldMapSettings settings)
         {
@@ -35,6 +36,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
             forest = new ForestGenerator(settings);
+            _scenary = new ScenaryGenerator(settings);
 
             rules = new WorldTileRuler();
         }
