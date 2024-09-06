@@ -18,6 +18,7 @@ using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
+using MonoGame.Extended.Timers;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -37,9 +38,10 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Dictionary<string, Tilemap> Tilemaps;
 
-        public List<Rectangle> StructureBounds;// TODO: NOT SURE THIS SHOULD EXIST...
-        public List<StructureData> Structures;
+        public List<WorldStructure> Structures;
         private WorldChunkManager _manager;
+
+        private Texture2D tempTexture;
 
         public Dictionary<string, List<ISceneObject>> SceneObjects;
 
@@ -83,11 +85,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             set; 
         }
 
-        private Texture2D tempTexture;
+        
 
-        private ScrollDisplayer _scrollDisplayer;
 
-        public WorldChunk(int chunkXPos, int chunkYPos, ScrollDisplayer scrollDisplayer, WorldChunkManager manager)
+        public WorldChunk(int chunkXPos, int chunkYPos, WorldChunkManager manager)
         {
             _manager = manager;
             ChunkCoordX = chunkXPos;
@@ -96,17 +97,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             WorldCoordX = chunkXPos * Global.ChunkSize * Global.TileSize;
             WorldCoordY = chunkYPos * Global.ChunkSize * Global.TileSize;
 
-            _scrollDisplayer = scrollDisplayer;
-
             Tilemaps = new Dictionary<string, Tilemap>();
 
-            // Create a new Texture2D object with the dimensions Global.TileSizexGlobal.TileSize
             tempTexture = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
-
-            // Create an array to hold the color data
             Color[] colorData = new Color[Global.TileSize * Global.TileSize];
-
-            // Fill the array with Color.White
             for (int i = 0; i < colorData.Length; i++)
             {
                 colorData[i] = Color.White;
@@ -118,11 +112,26 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Initialize()
         {
-
+            //_fog = new FogOfWar(Width, Height);
         }
 
         public void LoadContent()
         {
+            if (Structures == null)
+            {
+                Structures = new List<WorldStructure>();
+
+                foreach (var kvp in SceneObjects)
+                {
+                    foreach (var obj in kvp.Value)
+                    {
+                        if (obj is WorldStructure)
+                        {
+                            Structures.Add((WorldStructure)obj);
+                        }
+                    }
+                }
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -139,60 +148,26 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            if (_manager.PlayerChunk == this)
+            foreach (var kvp in SceneObjects)
             {
-                foreach (var structure in Structures)
+                foreach (var obj in kvp.Value)
                 {
-                    if (structure.Bounds.Contains(Global.Player.ChunkPosition.X, Global.Player.ChunkPosition.Y))
-                    {
-                        // TODO: TEMP CODE TO TEST SCENE SWITCHING
-                        var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-
-                        var worldExitPointX = (structure.Bounds.Width/2) + structure.Bounds.X + (Global.Player.ChunkPosX * Global.TileSize * Width); 
-                        var worldExitPointY = structure.Bounds.Bottom + Global.TileSize + (Global.Player.ChunkPosY * Global.TileSize * Height); 
-                        
-                        worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, Global.TileSize, Global.TileSize);
-
-                        Global.SceneManager.SetCurrentScene(structure.Instance, SceneType.Instance);
-                        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-                    }
+                    obj.Update(gameTime);
                 }
             }
 
-            if (SceneObjects != null && SceneObjects.ContainsKey("trees") && SceneObjects["trees"].Count > 0)
-                Debugging.Debugger.Lines[2] = $"Tree Z-Index: {SceneObjects["trees"][0].ZIndex}";
-
-            // Check for scroll display
-            //HandleScrollDisplay();
-        }
-
-        // **** BEWARE: THIS IS VERY BROKEN ***
-        private void HandleScrollDisplay()
-        {
-            var playerPos = Global.Player.ChunkPosition;
-            Debugging.Debugger.Lines[7] = $"PlayerChunkPos = {playerPos}";
-            foreach (var structure in Structures)
+            if (Global.SceneManager.CurrentScene is WorldScene && 
+                Global.WorldChunkManager.PlayerChunk == this)
             {
-                var distance = Vector2.Distance(playerPos, new Vector2(structure.Bounds.X, structure.Bounds.Y));
-                Debugging.Debugger.Lines[2] = $"Distance = {distance}";
-                if (distance <= 100)
+                if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
                 {
-                    // Mouse is hovering over this structure
-                    if (_scrollDisplayer.CurrentStructureData == structure)
-                    {
-                        return;
-                    }
-
-                    var x = structure.Bounds.X + (structure.Bounds.Width / 2);
-                    var y = 50;
-
-                    _scrollDisplayer.DisplayScroll(structure);
-                    return;
+                    ScrollDisplayer.CurrentStructure = null;
+                    Global.ScrollDisplay.HideScroll();
                 }
             }
-
-            _scrollDisplayer.HideScroll();
         }
+
+
 
         public void Draw(GameTime gameTime)
         {
@@ -210,14 +185,6 @@ namespace ProjectDonut.ProceduralGeneration.World
             if (Global.DRAW_WORLD_CHUNK_OUTLINE)
             {
                 DrawChunkOutline(gameTime);
-            }
-
-            if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
-            {
-                foreach (var structure in Structures)
-                {
-                    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, structure.Bounds, Color.White);                    
-                }
             }
 
             return;

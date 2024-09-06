@@ -11,17 +11,14 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class WorldTileRuler
     {
-        private SpriteLibrary spriteLib;
-
         private CoastTileRules coastRules;
         private ForestTileRules forestRules;
 
-        public WorldTileRuler(SpriteLibrary spriteLib)
+        public WorldTileRuler()
         {
-            this.spriteLib = spriteLib;
 
-            coastRules = new CoastTileRules(spriteLib);
-            forestRules = new ForestTileRules(spriteLib);
+            coastRules = new CoastTileRules();
+            forestRules = new ForestTileRules();
         }
 
         public Tilemap ApplyBaseRules(Tilemap tilemap)

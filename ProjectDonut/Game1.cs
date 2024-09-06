@@ -1,23 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using ProjectDonut.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
-using ProjectDonut.ProceduralGeneration.World;
-using System.Threading.Tasks;
 using ProjectDonut.Interfaces;
 using ProjectDonut.UI.DialogueSystem;
-using ProjectDonut.UI.ScrollDisplay;
 using ProjectDonut.Debugging;
-using ProjectDonut.Tools;
 using System;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using IDrawable = ProjectDonut.Interfaces.IDrawable;
-
+using IScreenObject = ProjectDonut.Interfaces.IScreenObject;
+using ProjectDonut.Debugging.Console;
+using ProjectDonut.UI.ScrollDisplay;
+using ProjectDonut.Tools;
+using Microsoft.Xna.Framework.Input;
+using ProjectDonut.ProceduralGeneration.World.Structures;
+using ProjectDonut.ProceduralGeneration.World;
 
 namespace ProjectDonut
 {
@@ -59,7 +60,9 @@ namespace ProjectDonut
             Global.Player = new Player();
             Global.Player.Initialize();
 
-            Debugger.Initialize();
+
+
+            
 
             CreateGameComponents();
             CreateGameObjects();
@@ -77,7 +80,6 @@ namespace ProjectDonut
 
             base.Initialize();
         }
-
         private void CreateGameComponents()
         {
             _gameComponents = new Dictionary<string, IGameComponent>();
@@ -104,17 +106,28 @@ namespace ProjectDonut
             // Game cursor
             Global.GameCursor = new GameCursor(this);
             _screenObjects.Add("cursor", Global.GameCursor);
+
+            Global.Console = new DevConsole();
+            Global.Console.Initialize();
+            _screenObjects.Add("console", Global.Console);
+
+            Global.DebugWindow = new DebugWindow();
+            Global.DebugWindow.Initialize();
+            _screenObjects.Add("debugWindow", Global.DebugWindow);
+
+            Global.ScrollDisplay = new ScrollDisplayer();
+            _screenObjects.Add("scrollDisplay", Global.ScrollDisplay);
         }
 
         private void CreateGameObjects()
         {
             _gameObjects = new Dictionary<string, IGameObject>();
+
+
         }
 
         protected override void LoadContent()
         {
-            Debugger.LoadContent();
-
             Global.SceneManager.LoadContent();
 
             Global.Player.LoadContent();
@@ -143,6 +156,17 @@ namespace ProjectDonut
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
+            if (kbState.IsKeyDown(Keys.O))
+            {
+                //testScroll.DisplayScroll(500, 300, "Flandaria");                
+                Global.ScrollDisplay.DisplayScroll();
+            }
+
+            if (kbState.IsKeyDown(Keys.P))
+            {
+                Global.ScrollDisplay.HideScroll();
+            }
+
             Global.SceneManager.Update(gameTime);
             Global.Camera.Position = Global.Player.Position;
 
@@ -152,23 +176,22 @@ namespace ProjectDonut
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
-            Debugger.Lines[4] = $"Cursor: {Global.GameCursor.Position}";
+            DebugWindow.Lines[4] = $"Cursor: {Global.GameCursor.Position}";
             
-            Debugger.Update(gameTime);
             base.Update(gameTime);
         }
 
-        private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
-        private void GetAllDrawableObjects()
-        {
-            _gameObjectsToDraw.Clear();
+        //private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
+        //private void GetAllDrawableObjects()
+        //{
+        //    _gameObjectsToDraw.Clear();
 
-            foreach (var go in _gameObjects)
-            {
-                _gameObjectsToDraw.Add(go.Value);
+        //    foreach (var go in _gameObjects)
+        //    {
+        //        _gameObjectsToDraw.Add(go.Value);
 
-            }
-        }
+        //    }
+        //}
 
         protected override void Draw(GameTime gameTime)
         {
@@ -206,7 +229,6 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            Debugger.Draw(gameTime);
             base.Draw(gameTime);
         }
     }

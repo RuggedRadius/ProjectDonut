@@ -12,16 +12,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
     public class HeightGenerator
     {
         private WorldMapSettings settings;
-        private SpriteLibrary spriteLib;
         private FastNoiseLite[] _noise;
-        private SpriteBatch _spriteBatch;
 
         private float OctaveBlend = 0.0525f;
 
-        public HeightGenerator(WorldMapSettings settings, SpriteLibrary spriteLib, SpriteBatch spriteBatch)
+        public HeightGenerator(WorldMapSettings settings)
         {
             this.settings = settings;
-            this.spriteLib = spriteLib;
 
             _noise = new FastNoiseLite[2];
             _noise[0] = new FastNoiseLite();
@@ -35,8 +32,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise[1].SetSeed(new Random().Next(int.MinValue, int.MaxValue));
             _noise[1].SetFrequency(0.5f);
             _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Manhattan);
-
-            _spriteBatch = spriteBatch;
         }
 
         public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
@@ -168,15 +163,17 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var biomeValue = chunk.BiomeData[i, j];
                     var heightValue = chunk.HeightData[i, j];
 
-                    var tile = new Tile(_spriteBatch, false)
+                    var tile = new Tile(false)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,
                         xIndex = i,
                         yIndex = j,
+                        //Position = new Vector2(i * settings.TileSize, j * settings.TileSize) + chunk.Position,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(i, j, biomeValue, heightValue),
+                        TileType = TileType.World,
                         WorldTileType = DetermineTileType(i, j, heightValue),
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };
@@ -197,27 +194,27 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 switch (biome)
                 {
                     case Biome.Desert:
-                        return spriteLib.GetSprite("desert");
+                        return Global.SpriteLibrary.GetSprite("desert");
 
                     case Biome.Grasslands:
-                        return spriteLib.GetSprite("grasslands");
+                        return Global.SpriteLibrary.GetSprite("grasslands");
 
                     case Biome.Winterlands:
-                        return spriteLib.GetSprite("winterlands");
+                        return Global.SpriteLibrary.GetSprite("winterlands");
 
                     default:
-                        return spriteLib.GetSprite("grasslands");
+                        return Global.SpriteLibrary.GetSprite("grasslands");
                 }
             }
             else
             {
                 if (heightValue >= settings.WaterHeightMin)
                 {
-                    return spriteLib.GetSprite("coast-inv");
+                    return Global.SpriteLibrary.GetSprite("coast-inv");
                 }
                 else
                 {
-                    return spriteLib.GetSprite("deepwater-C");
+                    return Global.SpriteLibrary.GetSprite("deepwater-C");
                 }
             }
         }

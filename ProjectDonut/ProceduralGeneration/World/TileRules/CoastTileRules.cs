@@ -9,13 +9,7 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {
     public class CoastTileRules
     {
-        private SpriteLibrary spriteLib;
         private Tilemap tilemap;
-
-        public CoastTileRules(SpriteLibrary spriteLib)
-        {
-            this.spriteLib = spriteLib;
-        }
 
         public Tilemap ApplyCoastLineRules(Tilemap tilemap)
         {
@@ -37,22 +31,22 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
 
                     if (isNorthWestCoast(x, y))
                     {
-                        tile.Texture = spriteLib.GetSprite("coast-NW");
+                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-NW");
                     }
 
                     if (isNorthEastCoast(x, y))
                     {
-                        tile.Texture = spriteLib.GetSprite("coast-NE");
+                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-NE");
                     }
 
                     if (isSouthEastCoast(x, y))
                     {
-                        tile.Texture = spriteLib.GetSprite("coast-SE");
+                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-SE");
                     }
 
                     if (isSouthWestCoast(x, y))
                     {
-                        tile.Texture = spriteLib.GetSprite("coast-SW");
+                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-SW");
                     }
                 }
                 catch (Exception ex)

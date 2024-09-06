@@ -12,6 +12,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
     {
         public string Name { get; set; }
         public Rectangle Bounds { get; set; }
+        public Rectangle ScrollBounds { get; set; }
 
         public InstanceScene Instance { get; set; }
 

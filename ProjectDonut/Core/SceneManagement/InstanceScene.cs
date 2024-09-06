@@ -39,9 +39,13 @@ namespace ProjectDonut.Core.SceneManagement
         private Rectangle EntryLocation;
 
         private Dictionary<string, Rectangle> ExitLocations;
+        private List<Rectangle> WallPositions;
         public List<IGameObject> Enemies { get; set; }
 
         private Texture2D _debugTexture;
+
+        private int mapWidth;
+        private int mapHeight;
 
         public InstanceScene(SceneType sceneType)
         {
@@ -57,6 +61,10 @@ namespace ProjectDonut.Core.SceneManagement
             _debugTexture.SetData(new[] { Color.Magenta });
 
             GenerateDungeon(true, false);
+            WallPositions = FindWallPositions();
+
+            mapWidth = _tilemap.Map.GetLength(0);
+            mapHeight = _tilemap.Map.GetLength(1);
         }
 
         private void GenerateDungeon(bool loadLast, bool SquashRooms)
@@ -98,14 +106,40 @@ namespace ProjectDonut.Core.SceneManagement
             }
         }
 
-        
+        private List<Rectangle> FindWallPositions()
+        {
+            var wallTiles = new List<Rectangle>();
+
+            foreach (var tile in _tilemap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                if (tile.DungeonTileType == DungeonTileType.Wall)
+                {
+                    wallTiles.Add(tile.Bounds);
+                }
+
+                //if (DataMap[tile.xIndex, tile.yIndex] == 1)
+                //{
+                //    wallTiles.Add(new Rectangle(
+                //        (int)tile.Position.X,
+                //        (int)tile.Position.Y,
+                //        Global.TileSize,
+                //        Global.TileSize));
+                //}
+            }
+
+            return wallTiles;
+        }
+
         private Tilemap GenerateDungeonTileMap(int width, int height, bool loadLast, bool squashRooms)
         {
             var path = @"C:\DungeonData.txt";
             var dataMap = new int[width, height];
             if (File.Exists(path) && loadLast)
             {
-                dataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                dataMap = Debugging.DebugWindow.LoadIntArrayFromFile(path);
             }
             else
             {
@@ -157,25 +191,25 @@ namespace ProjectDonut.Core.SceneManagement
 
             if (kbState.IsKeyDown(Keys.F2))
             {
+                _gameObjects.Clear();                
                 GenerateDungeon(false, true);
             }
 
             if (kbState.IsKeyDown(Keys.F4))
             {
                 var path = @"C:\DungeonData.txt";
-                DataMap = Debugging.Debugger.LoadIntArrayFromFile(path);
+                DataMap = Debugging.DebugWindow.LoadIntArrayFromFile(path);
                 _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
             }
 
             if (kbState.IsKeyDown(Keys.F5))
             {
                 var path = @"C:\DungeonData.txt";
-                Debugging.Debugger.SaveIntArrayToFile(DataMap, path);
+                Debugging.DebugWindow.SaveIntArrayToFile(DataMap, path);
             }
 
             foreach (var exitPoint in ExitLocations)
             {
-                //if (exitPoint.Value.Contains(Global.Player.ChunkPosition))
                 if (exitPoint.Value.Contains(Global.Player.Position))
                 {
 
@@ -183,7 +217,125 @@ namespace ProjectDonut.Core.SceneManagement
                     ((WorldScene)Global.SceneManager.CurrentScene).PrepareForPlayerEntry();
                 }
             }
+
+            UpdateVisibility(Global.Player.Position, 15);
         }
+
+
+        // This function performs raycasting from the player position
+
+        public void UpdateVisibility(Vector2 playerPosition, int viewDistance)
+        {
+            int playerTileX = (int)(playerPosition.X / Global.TileSize);
+            int playerTileY = (int)(playerPosition.Y / Global.TileSize);
+
+
+
+            // Clear current visibility
+            foreach (var tile in _tilemap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.IsVisible = false;
+            }
+
+            // Cast rays in all directions
+            for (float angle = 0; angle < 360; angle += 1)
+            {
+                CastRay(playerTileX, playerTileY, MathHelper.ToRadians(angle), viewDistance);
+            }
+        }
+
+        // Raycasting logic
+        private void CastRay(int startX, int startY, float angle, int viewDistance)
+        {
+            float x = startX + 0.5f;
+            float y = startY + 0.5f;
+
+            float deltaX = (float)Math.Cos(angle);
+            float deltaY = (float)Math.Sin(angle);
+
+            for (int i = 0; i < viewDistance; i++)
+            {
+                int tileX = (int)x;
+                int tileY = (int)y;
+
+                if (tileX < 0 || tileY < 0 || tileX >= mapWidth || tileY >= mapHeight)
+                    break;
+
+                if (_tilemap.Map[tileX, tileY] == null)
+                    break;
+
+                _tilemap.Map[tileX, tileY].IsVisible = true;
+                _tilemap.Map[tileX, tileY].IsExplored = true;
+
+                // Stop ray if it hits a blocked tile
+                if (_tilemap.Map[tileX, tileY].IsBlocked)
+                    break;
+
+                x += deltaX;
+                y += deltaY;
+            }
+        }
+
+
+        //public void UpdateVisibility()
+        //{
+        //    var visibleTiles = new HashSet<Rectangle>();
+        //    foreach (var tile in _tilemap.Map)
+        //    {
+        //        if (tile == null)
+        //            continue;
+
+        //        if (!Global.Player.VisibilityRect.Contains(tile.Position))                
+        //            continue;                
+
+        //        if (IsTileVisible(Global.Player.VisibilityRect, tile.Bounds, WallPositions))
+        //        {
+        //            tile.IsVisible = true;
+        //            tile.IsExplored = true;
+        //            visibleTiles.Add(tile.Bounds);
+        //        }
+        //        else
+        //        {
+        //            tile.IsVisible = false;
+        //        }
+        //    }
+
+        //    UpdateTileVisibility(visibleTiles);
+        //}
+
+        //private void UpdateTileVisibility(HashSet<Rectangle> visibleTiles)
+        //{
+        //    foreach (var tile in _tilemap.Map)
+        //    {
+        //        if (tile == null)
+        //            continue;
+
+        //        tile.IsVisible = visibleTiles.Contains(tile.Bounds);
+        //    }
+        //}
+
+        //public static bool IsTileVisible(Rectangle playerBounds, Rectangle tileBounds, List<Rectangle> obstacles)
+        //{
+        //    Rectangle intersection = Rectangle.Intersect(playerBounds, tileBounds);
+
+        //    if (intersection.IsEmpty)
+        //    {
+        //        return true; // No intersection, tile is visible
+        //    }
+
+        //    foreach (var obstacle in obstacles)
+        //    {
+        //        if (obstacle.Intersects(intersection))
+        //        {
+        //            return false; // Obstacle in the way
+        //        }
+        //    }
+
+        //    return true; // No obstacles, tile is visible
+        //}
 
         public override void Draw(GameTime gameTime)
         {

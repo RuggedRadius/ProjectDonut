@@ -7,6 +7,7 @@ using ProjectDonut.Interfaces;
 using Microsoft.Xna.Framework.Content;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
+using ProjectDonut.Debugging;
 
 namespace ProjectDonut.GameObjects
 {
@@ -75,6 +76,8 @@ namespace ProjectDonut.GameObjects
             }
 
             Zoom = MathHelper.Clamp(Zoom, ZoomMax, ZoomMin);
+
+            DebugWindow.Lines[6] = $"Camera Position: {Position:N0}";
         }
 
         private void HandleMouseZoom()

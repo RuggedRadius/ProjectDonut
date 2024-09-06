@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.Tools;
 
@@ -27,16 +28,12 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private int TownCountMin = 0;
         private int TownCountMax = 2;
 
-        private SpriteLibrary spriteLib;
         private WorldMapSettings settings;
-        private SpriteBatch _spriteBatch;
         private Random random = new Random();
 
-        public StructureGenerator(SpriteLibrary spriteLib, WorldMapSettings settings, SpriteBatch spriteBatch)
+        public StructureGenerator(WorldMapSettings settings)
         {
-            this.spriteLib = spriteLib;
             this.settings = settings;
-            _spriteBatch = spriteBatch;
         }
 
         public void GenerateStructureData(WorldChunk chunk)
@@ -149,93 +146,128 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return true;
         }
 
-        public Tilemap CreateTileMap(WorldChunk chunk)
+        //public Tilemap CreateTileMap(WorldChunk chunk)
+        //{
+        //    var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
+        //    var tmStructures = new Tilemap(chunk.Width, chunk.Height);
+
+        //    chunk.Structures = new List<StructureData>();
+
+        //    for (int i = 0; i < chunk.Width; i++)
+        //    {
+        //        for (int j = 0; j < chunk.Height; j++)
+        //        {
+        //            if (chunk.StructureData[i, j] == 0)
+        //            {
+        //                continue;
+        //            }
+
+        //            if (i == 0 || j == 0 || i == chunk.Width - 1 || j == chunk.Height - 1)
+        //            {
+        //                continue;
+        //            }
+
+        //            PlaceStructure(chunk, tmStructures, i, j, chunk.StructureData[i, j]);
+        //        }
+        //    }
+
+        //    return tmStructures;
+        //}
+
+        public List<ISceneObject> GenerateCastles(WorldChunk chunk)
         {
-            var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
-            var tmStructures = new Tilemap(chunk.Width, chunk.Height);
+            var structures = new List<ISceneObject>();
 
-            chunk.Structures = new List<StructureData>();
+            var viableLocations = GetViableStructureLocations(chunk);
 
-            for (int i = 0; i < chunk.Width; i++)
+            if (viableLocations.Count == 0)
             {
-                for (int j = 0; j < chunk.Height; j++)
-                {
-                    if (chunk.StructureData[i, j] == 0)
-                    {
-                        continue;
-                    }
-
-                    if (i == 0 || j == 0 || i == chunk.Width - 1 || j == chunk.Height - 1)
-                    {
-                        continue;
-                    }
-
-                    PlaceStructure(chunk, tmStructures, i, j, chunk.StructureData[i, j]);
-                }
+                return structures;
             }
 
-            return tmStructures;
-        }
+            var viableLocation = viableLocations[random.Next(0, viableLocations.Count)];
+            var position = new Vector2(viableLocation.Item1, viableLocation.Item2);
+            viableLocations.Remove(viableLocation);
 
-        private void PlaceStructure(WorldChunk chunk, Tilemap map, int x, int y, int structureValue)
-        {
-            var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
-            int counter = 0;
-
-            var structure = (Structure)structureValue;
-
-            for (int j = 0; j < 9; j++)
+            if (random.Next(0, 100) >= 50) // 50% chance of creating a castle in a chunk
             {
-                for (int i = 0; i < 9; i++)
+                var castle = new WorldStructure(position, chunk)
                 {
-                    var tile = new Tile(_spriteBatch, true)
-                    {
-                        ChunkX = chunk.ChunkCoordX,
-                        ChunkY = chunk.ChunkCoordY,
-                        xIndex = i + x,
-                        yIndex = j + y,
-                        LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
-                        Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = spriteLib.GetSprite($"castle-01-{i}-{j}"), //DetermineTexture(structure, directions[counter]),
-                        WorldTileType = WorldTileType.Forest,
-                        Biome = (Biome)chunk.BiomeData[i + x, j + y],
-                        Frames = new List<Texture2D>()//GetFrames(structure, directions[counter], 4)
-                    };
+                    Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
+                    Instance = new InstanceScene(SceneType.Instance),
+                    Texture = Global.SpriteLibrary.GetSprite("castle"),
+                };
 
-                    map.Map[i + x, j + y] = tile;
-                    counter++;
-                }
+                castle.Initialize();
+                structures.Add(castle);
             }
 
-            var entryRectX = x * Global.TileSize + (4 * Global.TileSize);// + (Global.Player.ChunkPosX * Global.ChunkSize * Global.TileSize);
-            var entryRectY = y * Global.TileSize + (8 * Global.TileSize);// + (Global.Player.ChunkPosY * Global.ChunkSize * Global.TileSize);
-
-            var structureData = new StructureData
-            {
-                //Bounds = new Rectangle(x * Global.TileSize, y * Global.TileSize, 9 * Global.TileSize, 9 * Global.TileSize),
-                Bounds = new Rectangle(entryRectX, entryRectY, Global.TileSize, Global.TileSize),
-                Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
-                Instance = new InstanceScene(SceneType.Instance)
-            };
-
-            structureData.Instance.Initialize();
-            structureData.Instance.LoadContent();
-
-            chunk.Structures.Add(structureData);
+            return structures;
         }
+
+        //private void PlaceStructure(WorldChunk chunk, Tilemap map, int x, int y, int structureValue)
+        //{
+        //    var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
+        //    int counter = 0;
+
+        //    var structure = (Structure)structureValue;
+
+        //    for (int j = 0; j < 9; j++)
+        //    {
+        //        for (int i = 0; i < 9; i++)
+        //        {
+        //            var tile = new Tile(true)
+        //            {
+        //                ChunkX = chunk.ChunkCoordX,
+        //                ChunkY = chunk.ChunkCoordY,
+        //                xIndex = i + x,
+        //                yIndex = j + y,
+        //                //Position = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize) + chunk.Position,
+        //                LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
+        //                Size = new Vector2(settings.TileSize, settings.TileSize),
+        //                Texture = Global.SpriteLibrary.GetSprite($"castle-01-{i}-{j}"),
+        //                WorldTileType = WorldTileType.Forest,
+        //                Biome = (Biome)chunk.BiomeData[i + x, j + y],
+        //                Frames = new List<Texture2D>()
+        //            };
+
+        //            map.Map[i + x, j + y] = tile;
+        //            counter++;
+        //        }
+        //    }
+
+        //    var entryRectX = x * Global.TileSize + (4 * Global.TileSize);
+        //    var entryRectY = y * Global.TileSize + (8 * Global.TileSize);
+
+        //    var scrollBoundsX = (int)chunk.Position.X + (x * Global.TileSize - (1 * Global.TileSize)); // = World Position X
+        //    var scrollBoundsY = (int)chunk.Position.Y + (y * Global.TileSize - (1 * Global.TileSize)); // = World Position Y
+
+        //    var structureData = new StructureData
+        //    {
+        //        ScrollBounds = new Rectangle(scrollBoundsX, scrollBoundsY, Global.TileSize * 11, Global.TileSize * 11),
+        //        Bounds = new Rectangle(entryRectX, entryRectY, Global.TileSize, Global.TileSize),
+        //        Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
+        //        Instance = new InstanceScene(SceneType.Instance)
+        //    };
+
+        //    structureData.Instance.Initialize();
+        //    structureData.Instance.LoadContent();
+
+        //    //chunk.Structures.Add(structureData);
+        //}
 
         private Texture2D DetermineTexture(Structure structure, string direction)
         {
             switch (structure)
             {
                 case Structure.Castle:
-                    return spriteLib.GetSprite($"castle-01-{direction}");
+                    return Global.SpriteLibrary.GetSprite($"castle-01-{direction}");
 
                 case Structure.Town:
-                    return spriteLib.GetSprite($"town-01-{direction}");
+                    return Global.SpriteLibrary.GetSprite($"town-01-{direction}");
 
                 default:
-                    return spriteLib.GetSprite("grasslands");
+                    return Global.SpriteLibrary.GetSprite("grasslands");
             }
         }
 
@@ -249,7 +281,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     for (int i = 0; i < frameCount; i++)
                     {
                         var key = $"castle-{i + 1:D2}-{direction}";
-                        results.Add(spriteLib.GetSprite(key));
+                        results.Add(Global.SpriteLibrary.GetSprite(key));
                     }
                     break;
 
@@ -257,39 +289,12 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     for (int i = 0; i < frameCount; i++)
                     {
                         var key = $"town-{i + 1:D2}-{direction}";
-                        results.Add(spriteLib.GetSprite(key));
+                        results.Add(Global.SpriteLibrary.GetSprite(key));
                     }
                     break;
             }
 
             return results;
-        }
-
-        public List<StructureData> GetStructuresData(WorldChunk chunk)
-        {
-            var random = new Random();
-            var structures = new List<StructureData>();
-
-            var width = chunk.Width;
-            var height = chunk.Height;
-            var data = chunk.StructureData;
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (data[x, y] != 0)
-                    {
-                        structures.Add(new StructureData
-                        {
-                            Bounds = GetStructureBounds(chunk, x, y),
-                            Name = NameGenerator.GenerateRandomName(random.Next(2,5))
-                        });
-                    }
-                }
-            }
-
-            return structures;
         }
 
         private Rectangle GetStructureBounds(WorldChunk chunk, int x, int y)

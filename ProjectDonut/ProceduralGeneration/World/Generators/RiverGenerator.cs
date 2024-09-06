@@ -9,30 +9,24 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
     public class RiverGenerator
     {
-        private SpriteLibrary spriteLib;
         private WorldMapSettings settings;
         private FastNoiseLite _noise;
 
         private float heightCutOff = -0.9f;
 
-        public RiverGenerator(SpriteLibrary spriteLib, WorldMapSettings settings)
+        public RiverGenerator(WorldMapSettings settings)
         {
-            this.spriteLib = spriteLib;
             this.settings = settings;
 
             _noise = new FastNoiseLite();
             _noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
             _noise.SetSeed(new Random().Next(int.MinValue, int.MaxValue));
             _noise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Hybrid);
-            //_noise.SetFrequency(-0.017f);
             _noise.SetFrequency(0.05f);
-
             _noise.SetCellularJitter(1.1f);
             _noise.SetCellularReturnType(FastNoiseLite.CellularReturnType.Distance2Sub);
             _noise.SetDomainWarpType(FastNoiseLite.DomainWarpType.BasicGrid);
             _noise.SetDomainWarpAmp(27);
-
-
             _noise.SetFractalGain(0.5f);
             _noise.SetFractalType(FastNoiseLite.FractalType.DomainWarpIndependent);
             _noise.SetFractalOctaves(1);
@@ -41,9 +35,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
         public void GenerateRivers(WorldChunk chunk)
         {
-            var min = 1f;
-            var max = 0f;
-
             for (int i = 0; i < chunk.Width; i++)
             {
                 for (int j = 0; j < chunk.Height; j++)

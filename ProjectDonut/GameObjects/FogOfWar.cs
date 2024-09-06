@@ -10,17 +10,14 @@ namespace ProjectDonut.GameObjects
 {
     public class FogOfWar
     {
-        private bool TEMP_EXPLORE_ALL = true;
+        private bool TEMP_EXPLORE_ALL = false;
 
         private int sightRadius = 20;
         public bool[,] exploredTiles;
 
-        private Player _player;
-
-        public FogOfWar(int width, int height, Player player)
+        public FogOfWar(int width, int height)
         {
             exploredTiles = new bool[width, height];
-            _player = player;
 
             if (TEMP_EXPLORE_ALL)
             {
@@ -36,8 +33,8 @@ namespace ProjectDonut.GameObjects
 
         public void UpdateFogOfWar()
         {
-            var playerX = (int)_player.Position.X / Global.TileSize;
-            var playerY = (int)_player.Position.X / Global.TileSize;
+            var playerX = (int)Global.Player.Position.X / Global.TileSize;
+            var playerY = (int)Global.Player.Position.X / Global.TileSize;
 
             for (int i = playerX - sightRadius; i < playerX + sightRadius; i++)
             {

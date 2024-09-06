@@ -364,6 +364,7 @@ namespace ProjectDonut.Core
         private void LoadStructureCastle()
         {
             spriteSheetCastle = Global.ContentManager.Load<Texture2D>("Sprites/WorldStructures/Castle");
+            lib.Add("castle", spriteSheetCastle);
 
             var frameCount = 1;
             var rowCount = 9;

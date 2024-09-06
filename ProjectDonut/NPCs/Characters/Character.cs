@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
 using static ProjectDonut.NPCs.Characters.CharacterEnums;
 
@@ -19,6 +20,7 @@ namespace ProjectDonut.NPCs.Characters
         public CharacterAttributes Attributes { get; set; }
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
+        public bool IsVisible { get; set; }
         public Texture2D Texture 
         { 
             get => throw new NotImplementedException(); 
@@ -57,7 +59,13 @@ namespace ProjectDonut.NPCs.Characters
 
         public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            UpdateObjectVisibility();
+        }
+
+        public void UpdateObjectVisibility()
+        {
+            float distance = Vector2.Distance(Global.Player.Position, Position);
+            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
         }
 
         public void Draw(GameTime gameTime)
