@@ -9,11 +9,8 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {
     public class GrasslandsRules
     {
-        private SpriteLibrary spriteLib;
-
-        public GrasslandsRules(SpriteLibrary spriteLib)
+        public GrasslandsRules()
         {
-            this.spriteLib = spriteLib;
         }
 
         public Tilemap ApplyRules(Tilemap tilemap)
@@ -51,7 +48,7 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                     var directionString = GetDirectionString(tilemap, x, y);
                     var tileString = $"grasslands-{directionString}";
 
-                    tile.Texture = spriteLib.GetSprite(tileString);
+                    tile.Texture = Global.SpriteLibrary.GetSprite(tileString);
                 }
                 catch (Exception ex)
                 {

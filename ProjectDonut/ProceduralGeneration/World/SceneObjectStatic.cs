@@ -18,12 +18,14 @@ namespace ProjectDonut.ProceduralGeneration.World
         public bool Visible { get; set; }
         public bool Explored { get; set; }
         public bool IsExplored { get; set; }
+        public Rectangle Bounds { get; set; }
 
         public event EventHandler<EventArgs> DrawOrderChanged;
         public event EventHandler<EventArgs> VisibleChanged;
 
         public void Initialize()
         {
+            Bounds = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
         }
 
         public void LoadContent()

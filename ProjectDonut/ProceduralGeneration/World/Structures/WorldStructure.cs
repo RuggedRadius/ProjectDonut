@@ -28,6 +28,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         public bool PlayerWithinScrollBounds { get; set; }
         public bool IsExplored { get; set; }
+        public Rectangle Bounds { get; set; }
 
         public WorldStructure(Vector2 chunkPosition, WorldChunk chunk)
         {
@@ -58,6 +59,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 (int)WorldPosition.Y - bufferZoneSize,
                 Texture.Width + bufferZoneSize * 2,
                 Texture.Height + bufferZoneSize * 2);
+
+            Bounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Texture.Width, Texture.Height);
 
             Instance.Initialize();
         }

@@ -43,6 +43,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public MineableObjectAnimationState MineableObjectAnimationState { get; set; }
         public MineableObjectType MineableObjectType { get; set; }
+        public Rectangle Bounds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private SpriteSheet _spriteSheet;
         private AnimationController _animControllerHit;
@@ -57,14 +58,12 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             InteractBounds = new Rectangle(
                 (int)Position.X + (Global.TileSize / 2),// - Global.TileSize, 
-                (int)Position.Y + (Global.TileSize),// - Global.TileSize,
+                (int)Position.Y + ((Global.TileSize / 2) * 3),// - Global.TileSize,
                 Global.TileSize,// + (2 * Global.TileSize),
                 Global.TileSize);// + (2 * Global.TileSize));
 
             MaxHealth = 1000;
             Health = MaxHealth;
-
-
         }
 
         public void LoadContent()

@@ -13,5 +13,6 @@ namespace ProjectDonut.Interfaces
         bool IsExplored { get; set; }
         void Update(GameTime gameTime);
         new void Draw(GameTime gameTime);
+        Rectangle Bounds { get; set; }
     }
 }

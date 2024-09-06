@@ -71,7 +71,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             genStructure = new StructureGenerator(settings);
             _genScenary = new ScenaryGenerator(settings);
 
-            rulesGrasslands = new GrasslandsRules(spriteLib);
+            rulesGrasslands = new GrasslandsRules();
         }
 
         public void Update(GameTime gameTime)
@@ -214,14 +214,15 @@ namespace ProjectDonut.ProceduralGeneration.World
             //chunk.Tilemaps.Add("structures", tilemapStructures);
 
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
-            
+            chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
+
             chunk.SceneObjects.Add("trees", _genScenary.GenerateWinterTrees(chunk));
             chunk.SceneObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
             //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
             chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
             chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
 
-            chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
+            
             chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
 
             chunk.Initialize();

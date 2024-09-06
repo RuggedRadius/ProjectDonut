@@ -200,7 +200,56 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                 castle.Initialize();
                 structures.Add(castle);
+
+                var sceneObjectsToCull = new List<ISceneObject>();
+                foreach (var objList in chunk.SceneObjects?.Values)
+                {
+                    foreach (var obj in objList)
+                    {
+                        if (castle.TextureBounds.Intersects(obj.Bounds))
+                        {
+                            sceneObjectsToCull.Add(obj);
+                        }
+                    }                    
+                }
+
+                foreach (var obj in sceneObjectsToCull)
+                {
+                    foreach (var kvp in chunk.SceneObjects)
+                    {
+                        if (kvp.Value.Remove(obj))
+                        {
+                            break;
+                        }
+                    }
+                }
+
+
+                var mineablesToCull = new List<IMineable>();
+                foreach (var objList in chunk.MineableObjects?.Values)
+                {
+                    foreach (var obj in objList)
+                    {
+                        if (castle.TextureBounds.Intersects(obj.Bounds))
+                        {
+                            mineablesToCull.Add(obj);
+                        }
+                    }
+                }
+
+                foreach (var obj in mineablesToCull)
+                {
+                    foreach (var kvp in chunk.MineableObjects)
+                    {
+                        if (kvp.Value.Remove(obj))
+                        {
+                            break;
+                        }
+                    }
+                }
             }
+
+
 
             return structures;
         }
