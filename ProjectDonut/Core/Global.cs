@@ -33,6 +33,7 @@ namespace ProjectDonut.Core
         public static int TEMP_PLAYER_DAMAGE = 10;
 
         // FOG OF WAR SETTINGS
+        public static int INSTANCE_SIGHT_RADIUS = 8;
         public static bool SHOW_FOG_OF_WAR = true;
         public static int FOG_OF_WAR_RADIUS = 2000;
 

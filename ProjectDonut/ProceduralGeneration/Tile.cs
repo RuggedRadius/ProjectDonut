@@ -12,6 +12,7 @@ using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.Tools;
 
 namespace ProjectDonut.ProceduralGeneration
 {
@@ -145,13 +146,17 @@ namespace ProjectDonut.ProceduralGeneration
 
             if (Global.SceneManager.CurrentScene is InstanceScene)
             {
-                if (!IsVisible)
-                    return;
-
-                var dist = Vector2.Distance(Position, Global.Player.Position);
-                var absValue = Math.Abs(dist);
-                var alphaValue = (float)Normalize(dist, 1000, 0);
-                Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
+                if (!IsVisible)                    
+                {
+                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White * 0.05f);
+                }
+                else 
+                { 
+                    var dist = Vector2.Distance(Position, Global.Player.Position);
+                    var absValue = Math.Abs(dist);
+                    var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
+                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
+                }
             }
             else
             {

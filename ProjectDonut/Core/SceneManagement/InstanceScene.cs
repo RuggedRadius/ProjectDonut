@@ -208,6 +208,16 @@ namespace ProjectDonut.Core.SceneManagement
                 Debugging.DebugWindow.SaveIntArrayToFile(DataMap, path);
             }
 
+            if (kbState.IsKeyDown(Keys.C))
+            {
+                Global.INSTANCE_SIGHT_RADIUS -= 1;
+            }
+
+            if (kbState.IsKeyDown(Keys.V))
+            {
+                Global.INSTANCE_SIGHT_RADIUS += 1;
+            }
+
             foreach (var exitPoint in ExitLocations)
             {
                 if (exitPoint.Value.Contains(Global.Player.Position))
@@ -218,7 +228,7 @@ namespace ProjectDonut.Core.SceneManagement
                 }
             }
 
-            UpdateVisibility(Global.Player.Position, 15);
+            UpdateVisibility(Global.Player.Position, Global.INSTANCE_SIGHT_RADIUS);
         }
 
 
@@ -228,8 +238,6 @@ namespace ProjectDonut.Core.SceneManagement
         {
             int playerTileX = (int)(playerPosition.X / Global.TileSize);
             int playerTileY = (int)(playerPosition.Y / Global.TileSize);
-
-
 
             // Clear current visibility
             foreach (var tile in _tilemap.Map)
@@ -267,12 +275,19 @@ namespace ProjectDonut.Core.SceneManagement
                 if (_tilemap.Map[tileX, tileY] == null)
                     break;
 
-                _tilemap.Map[tileX, tileY].IsVisible = true;
-                _tilemap.Map[tileX, tileY].IsExplored = true;
-
                 // Stop ray if it hits a blocked tile
                 if (_tilemap.Map[tileX, tileY].IsBlocked)
                     break;
+
+                if (_tilemap.Map[tileX, tileY].DungeonTileType == DungeonTileType.Wall)
+                {
+                    _tilemap.Map[tileX, tileY].IsVisible = true;
+                    _tilemap.Map[tileX, tileY].IsExplored = true;
+                    break;
+                }
+
+                _tilemap.Map[tileX, tileY].IsVisible = true;
+                _tilemap.Map[tileX, tileY].IsExplored = true;
 
                 x += deltaX;
                 y += deltaY;

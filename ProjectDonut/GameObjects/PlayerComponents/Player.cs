@@ -78,7 +78,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             IsVisible = true;
             Position = new Vector2(50, 50);
-            speed = 2000;
+            speed = 200;
             spriteSize = new Vector2(Global.TileSize, Global.TileSize);
             ZIndex = 0;
 
