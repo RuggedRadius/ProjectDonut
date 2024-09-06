@@ -6,124 +6,62 @@ using ProjectDonut.Interfaces;
 using Microsoft.Xna.Framework.Content;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using ProjectDonut.Debugging;
+using MonoGame.Extended.ViewportAdapters;
+using MonoGame.Extended;
+using SadConsole.UI;
 
 namespace ProjectDonut.Core
 {
     public class Camera : IGameComponent
     {
-        public Vector2 Position { get; set; }
-        public float Zoom { get; set; }
-        public float ZoomMax = 0.15f;
-        public float ZoomMin = 6f;
-        public float Rotation { get; set; }
-        public int ZIndex { get; set; }
+        private Game1 _game;
+        private OrthographicCamera _camera;
 
-        // States
-        private MouseState _previousMouseState;
-
-
-        public Camera()
+        public Camera(Game1 game)
         {
-            Position = Vector2.Zero;
-            Zoom = 1f;
-            Rotation = 0f;
+            _game = game;
         }
 
         public Matrix GetTransformationMatrix()
         {
-            return Matrix.CreateTranslation(new Vector3(-Position, 0)) *
-                   Matrix.CreateRotationZ(Rotation) *
-                   Matrix.CreateScale(new Vector3(Zoom, Zoom, 1)) *
-                   Matrix.CreateTranslation(new Vector3(Global.GraphicsDevice.Viewport.Width * 0.5f, Global.GraphicsDevice.Viewport.Height * 0.5f, 0));
-        }
-
-        public Matrix GetViewMatrix()
-        {
-            // Translation moves the camera to its position
-            Matrix translationMatrix = Matrix.CreateTranslation(-Position.X, -Position.Y, 0);
-
-            // Rotation applies any rotation to the camera view
-            Matrix rotationMatrix = Matrix.CreateRotationZ(Rotation);
-
-            // Scale applies zoom to the camera view
-            Matrix scaleMatrix = Matrix.CreateScale(Zoom, Zoom, 1);
-
-            // Combine the transformations
-            Matrix transform = translationMatrix * rotationMatrix * scaleMatrix;
-
-            // Translate back by half the viewport to keep the camera centered
-            Matrix centerMatrix = Matrix.CreateTranslation(Global.GraphicsDevice.Viewport.Width / 2f, Global.GraphicsDevice.Viewport.Height / 2f, 0);
-
-            return transform * centerMatrix;
-        }
-
-
-        public void Update(GameTime gameTime)
-        {
-            Position = Global.Player.Position;
-
-            var keyboardState = Keyboard.GetState();
-
-            if (keyboardState.IsKeyDown(Keys.Z))
-            {
-                Zoom -= 0.025f;
-            }
-            if (keyboardState.IsKeyDown(Keys.X))
-            {
-                Zoom += 0.025f;
-            }
-
-            Zoom = MathHelper.Clamp(Zoom, ZoomMax, ZoomMin);
-
-            DebugWindow.Lines[6] = $"Camera Position: {Position:N0}";
-        }
-
-        private void HandleMouseZoom()
-        {
-            MouseState mouseState = Mouse.GetState();
-
-            int scrollDelta = mouseState.ScrollWheelValue - _previousMouseState.ScrollWheelValue;
-
-            if (scrollDelta != 0)
-            {
-                if (scrollDelta > 0)
-                {
-                    Zoom++;
-                }
-                else
-                {
-                    Zoom--;
-                }
-
-                scrollDelta = (int)MathHelper.Clamp(scrollDelta, -1f, 1f);
-                Zoom += scrollDelta;
-
-                if (Zoom < 2)
-                {
-                    Zoom = 2;
-                }
-                else if (Zoom > 10)
-                {
-                    Zoom = 50;
-                }
-            }
-
-            _previousMouseState = mouseState;
+            return _camera.GetViewMatrix();
         }
 
         public void Initialize()
         {
-            //throw new System.NotImplementedException();
+            var viewportAdapter = new BoxingViewportAdapter(_game.Window, Global.GraphicsDevice, 800, 480);
+            _camera = new OrthographicCamera(viewportAdapter);
         }
 
         public void LoadContent()
         {
-            //throw new System.NotImplementedException();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            var state = Keyboard.GetState();
+            float zoomPerTick = 0.01f;
+            if (state.IsKeyDown(Keys.Z))
+            {
+                _camera.ZoomIn(zoomPerTick);
+            }
+            if (state.IsKeyDown(Keys.X))
+            {
+                _camera.ZoomOut(zoomPerTick);
+            }
+
+            var viewport = _camera.BoundingRectangle;
+            _camera.LookAt(Global.Player.Position);
+
+            DebugWindow.Lines[6] = $"Camera Position: {_camera.Position:N0}";
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            //throw new System.NotImplementedException();
+            var transformMatrix = _camera.GetViewMatrix();
+            Global.SpriteBatch.Begin(transformMatrix: transformMatrix);
+            Global.SpriteBatch.DrawRectangle(new RectangleF(250, 250, 50, 50), Color.Black, 1f);
+            Global.SpriteBatch.End();
         }
     }
 }

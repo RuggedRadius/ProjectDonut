@@ -90,7 +90,7 @@ namespace ProjectDonut
             Global.SceneManager.CurrentSceneType = SceneType.World;
 
             // Camera
-            Global.Camera = new Camera();
+            Global.Camera = new Camera(this);
 
             Global.InputManager = new InputManager();
 
@@ -174,8 +174,6 @@ namespace ProjectDonut
             }
 
             Global.SceneManager.Update(gameTime);
-            Global.Camera.Position = Global.Player.Position;
-
             Global.Player.Update(gameTime);
 
             _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
