@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Interfaces;
-using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.UI.ScrollDisplay;
 
 namespace ProjectDonut.ProceduralGeneration.World.Structures
@@ -29,7 +29,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         public bool PlayerWithinScrollBounds { get; set; }
         public bool IsExplored { get; set; }
-        public bool IsVisible{ get; set; }
+        public bool IsVisible { get; set; }
         public Rectangle Bounds { get; set; }
 
         public WorldStructure(Vector2 chunkPosition, WorldChunk chunk)
@@ -44,6 +44,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
             var worldPositionX = (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize) + ChunkPosition.X;
             var worldPositionY = (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize) + ChunkPosition.Y;
             WorldPosition = new Vector2(worldPositionX, worldPositionY);
+
+            TextureBounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Texture.Width, Texture.Height);
 
             // Entry Rect - MAY BE WRONG
             var entryRectX = WorldPosition.X + (4 * Global.TileSize);
@@ -113,23 +115,66 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
-            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+
+            IsVisible = IsStructureVisible();
 
             if (IsVisible && !IsExplored)
                 IsExplored = true;
         }
 
+        private bool IsStructureVisible()
+        {
+            float[] distances = 
+            [
+                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Bottom))),
+                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
+            ];
+
+            //;
+
+            //float topLeft = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Top)));
+            //float topRight = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Top)));
+            //float bottomRight = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Bottom)));
+            //float bottomLeft = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Bottom)));
+
+            if (distances.Min() <= (Global.FOG_OF_WAR_RADIUS))
+                return true;
+            else
+                return false;
+        }
+
         public void Draw(GameTime gameTime)
         {
             //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
 
             if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
             {
-                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Red * 0.5f);
-                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
+                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Red * 0.25f);
+                //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
             }
+
+            if (!IsExplored)
+            {
+                return;
+            }
+            else if (!IsVisible)
+            {
+                Global.SpriteBatch.Draw(Texture, WorldPosition, Color.Gray);
+            }
+            else
+            {
+                //if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
+                //{
+                //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Red * 0.25f);
+                //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
+                //}
+
+                Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
+            }
+
+
 
             //Global.SpriteBatch.End();
         }

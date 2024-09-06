@@ -35,7 +35,7 @@ namespace ProjectDonut.Core
         // FOG OF WAR SETTINGS
         public static int INSTANCE_SIGHT_RADIUS = 8;
         public static bool SHOW_FOG_OF_WAR = true;
-        public static int FOG_OF_WAR_RADIUS = 2000;
+        public static int FOG_OF_WAR_RADIUS = 1000;
 
         // DEBUG SETTINGS
         public static Texture2D DEBUG_TEXTURE;
