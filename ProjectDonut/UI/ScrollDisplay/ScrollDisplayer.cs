@@ -45,7 +45,7 @@ namespace ProjectDonut.UI.ScrollDisplay
             DisplayX = Global.GraphicsDeviceManager.PreferredBackBufferWidth / 2;
             DisplayY = Global.GraphicsDeviceManager.PreferredBackBufferHeight - 200;            
             
-            ScrollText = CurrentStructure.Name;
+            ScrollText = CurrentStructure?.Name;
             textDimensions = scrollFont.MeasureString(ScrollText);
             DisplayWidth = (int)textDimensions.X + 7 * scale;
 

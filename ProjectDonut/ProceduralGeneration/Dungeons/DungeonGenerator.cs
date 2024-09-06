@@ -48,7 +48,9 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = DetermineTexture(data, i, j)
+                        Texture = DetermineTexture(data, i, j),
+                        TileType = TileType.World,
+                        DungeonTileType = DetermineTileType(data, i, j)
                     };
 
                     tilemap.Map[i, j] = tile;
@@ -56,6 +58,21 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             }
 
             return tilemap;
+        }
+
+        private DungeonTileType DetermineTileType(int[,] map, int x, int y)
+        {
+            switch (map[x, y])
+            {
+                case 0:
+                    return DungeonTileType.None;
+                case 1:
+                    return DungeonTileType.Wall;
+                case 2:
+                    return DungeonTileType.Floor;
+                default:
+                    return DungeonTileType.None;
+            }
         }
 
         private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
@@ -84,7 +101,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             return sprite;
         }
 
-        public enum TileType
+        public enum DungeonInteriorTileType
         {
             Empty = 0,
             Wall = 1,
@@ -94,7 +111,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
         {
             var width  = map.GetLength(0);
             var height = map.GetLength(1);
-            var cell = (TileType)map[x, y];
+            var cell = (DungeonInteriorTileType)map[x, y];
 
             var z = GetNeighbours(map, x, y);
             var n = z["n"];
@@ -106,44 +123,44 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             var se = z["se"];
             var sw = z["sw"];
 
-            if (cell == TileType.Wall)
+            if (cell == DungeonInteriorTileType.Wall)
             {
                 // Wall internal
-                if (n != TileType.Floor && e == TileType.Wall && s == TileType.Wall && w != TileType.Floor && se == TileType.Floor)
+                if (n != DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Wall && w != DungeonInteriorTileType.Floor && se == DungeonInteriorTileType.Floor)
                     return GetRandomTextureFor("wall-nw");
 
-                if (n != TileType.Floor && e == TileType.Wall && s == TileType.Floor && w == TileType.Wall) 
+                if (n != DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall) 
                     return GetRandomTextureFor("wall-n");
 
-                if (n != TileType.Floor && e != TileType.Floor && s == TileType.Wall && w == TileType.Wall && sw == TileType.Floor) 
+                if (n != DungeonInteriorTileType.Floor && e != DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Wall && sw == DungeonInteriorTileType.Floor) 
                     return GetRandomTextureFor("wall-ne");
 
-                if (n == TileType.Wall && e == TileType.Floor && s == TileType.Wall && w != TileType.Floor) 
+                if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w != DungeonInteriorTileType.Floor) 
                     return GetRandomTextureFor("wall-w");
 
-                if (n == TileType.Wall && e != TileType.Floor && s == TileType.Wall && w == TileType.Floor) 
+                if (n == DungeonInteriorTileType.Wall && e != DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Floor) 
                     return GetRandomTextureFor("wall-e");
 
-                if (n == TileType.Wall && e == TileType.Wall && s != TileType.Floor && w != TileType.Floor && ne == TileType.Floor) 
+                if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Wall && s != DungeonInteriorTileType.Floor && w != DungeonInteriorTileType.Floor && ne == DungeonInteriorTileType.Floor) 
                     return GetRandomTextureFor("wall-sw");
 
-                if (n == TileType.Floor && e == TileType.Wall && s != TileType.Floor && w == TileType.Wall) 
+                if (n == DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s != DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall) 
                     return GetRandomTextureFor("wall-s");
 
-                if (n == TileType.Wall && e != TileType.Floor && s != TileType.Floor && w == TileType.Wall && nw == TileType.Floor) 
+                if (n == DungeonInteriorTileType.Wall && e != DungeonInteriorTileType.Floor && s != DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall && nw == DungeonInteriorTileType.Floor) 
                     return GetRandomTextureFor("wall-se");
 
                 // Walls external
-                if (n == TileType.Floor && e == TileType.Wall && s == TileType.Wall && w == TileType.Floor)
+                if (n == DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Floor)
                     return GetRandomTextureFor("wall-ext-nw");
 
-                if (n == TileType.Floor && e == TileType.Floor && s == TileType.Wall && w == TileType.Wall)
+                if (n == DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Wall)
                     return GetRandomTextureFor("wall-ext-ne");
 
-                if (n == TileType.Wall && e == TileType.Wall && s == TileType.Floor && w == TileType.Floor)
+                if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Floor)
                     return GetRandomTextureFor("wall-ext-sw");
 
-                if (n == TileType.Wall && e == TileType.Floor && s == TileType.Floor && w == TileType.Wall)
+                if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall)
                     return GetRandomTextureFor("wall-ext-se");
 
                 // No walls found, return floor
@@ -155,59 +172,59 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             }
         }
 
-        private Dictionary<string, TileType> GetNeighbours(int[,] map, int x, int y)
+        private Dictionary<string, DungeonInteriorTileType> GetNeighbours(int[,] map, int x, int y)
         {
             var width = map.GetLength(0);
             var height = map.GetLength(1);
-            var neighbours = new Dictionary<string, TileType>();
+            var neighbours = new Dictionary<string, DungeonInteriorTileType>();
 
-            var nw = (TileType)0;
-            var n = (TileType)0;
-            var ne = (TileType)0;
-            var w = (TileType)0;
-            var e = (TileType)0;
-            var sw = (TileType)0;
-            var s = (TileType)0;
-            var se = (TileType)0;
+            var nw = (DungeonInteriorTileType)0;
+            var n = (DungeonInteriorTileType)0;
+            var ne = (DungeonInteriorTileType)0;
+            var w = (DungeonInteriorTileType)0;
+            var e = (DungeonInteriorTileType)0;
+            var sw = (DungeonInteriorTileType)0;
+            var s = (DungeonInteriorTileType)0;
+            var se = (DungeonInteriorTileType)0;
 
             if (y > 0 && x > 0)
             {
-                nw = (TileType)map[x - 1, y - 1];
+                nw = (DungeonInteriorTileType)map[x - 1, y - 1];
             }
 
             if (y > 0)
             {
-                n = (TileType)map[x, y - 1];
+                n = (DungeonInteriorTileType)map[x, y - 1];
             }
 
             if (y > 0 && x < width - 1)
             {
-                ne = (TileType)map[x + 1, y - 1];
+                ne = (DungeonInteriorTileType)map[x + 1, y - 1];
             }
 
             if (x > 0)
             {
-                w = (TileType)map[x - 1, y];
+                w = (DungeonInteriorTileType)map[x - 1, y];
             }
 
             if (x < width - 1)
             {
-                e = (TileType)map[x + 1, y];
+                e = (DungeonInteriorTileType)map[x + 1, y];
             }
 
             if (y < height - 1)
             {
-                s = (TileType)map[x, y + 1];
+                s = (DungeonInteriorTileType)map[x, y + 1];
             }
 
             if (y < height - 1 && x > 0)
             {
-                sw = (TileType)map[x - 1, y + 1];
+                sw = (DungeonInteriorTileType)map[x - 1, y + 1];
             }
 
             if (y < height - 1 && x < width - 1)
             {
-                se = (TileType)map[x + 1, y + 1];
+                se = (DungeonInteriorTileType)map[x + 1, y + 1];
             }
 
             neighbours.Add("nw", nw);

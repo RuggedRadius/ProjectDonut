@@ -60,6 +60,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         Texture = DetermineTexture(i, j, biomeValue, heightValue),
+                        TileType = TileType.World,
                         WorldTileType = WorldTileType.Mountain,
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };

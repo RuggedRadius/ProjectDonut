@@ -115,14 +115,19 @@ namespace ProjectDonut.Core.SceneManagement
                 if (tile == null)
                     continue;
 
-                if (DataMap[tile.xIndex, tile.yIndex] == 1)
+                if (tile.DungeonTileType == DungeonTileType.Wall)
                 {
-                    wallTiles.Add(new Rectangle(
-                        (int)tile.Position.X,
-                        (int)tile.Position.Y,
-                        Global.TileSize,
-                        Global.TileSize));
+                    wallTiles.Add(tile.Bounds);
                 }
+
+                //if (DataMap[tile.xIndex, tile.yIndex] == 1)
+                //{
+                //    wallTiles.Add(new Rectangle(
+                //        (int)tile.Position.X,
+                //        (int)tile.Position.Y,
+                //        Global.TileSize,
+                //        Global.TileSize));
+                //}
             }
 
             return wallTiles;
@@ -186,6 +191,7 @@ namespace ProjectDonut.Core.SceneManagement
 
             if (kbState.IsKeyDown(Keys.F2))
             {
+                _gameObjects.Clear();                
                 GenerateDungeon(false, true);
             }
 
@@ -212,7 +218,7 @@ namespace ProjectDonut.Core.SceneManagement
                 }
             }
 
-            UpdateVisibility(Global.Player.Position, 8);
+            UpdateVisibility(Global.Player.Position, 15);
         }
 
 

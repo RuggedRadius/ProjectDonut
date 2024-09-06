@@ -1,17 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
 
 namespace ProjectDonut.ProceduralGeneration
 {
+    public enum TileType
+    {
+        World,
+        Instance
+    }
+
+    public enum DungeonTileType
+    {
+        None,
+        Floor,
+        Wall,
+        Door
+    }
+
     public class Tile : IGameObject
     {
         // Size and Position
@@ -31,6 +47,8 @@ namespace ProjectDonut.ProceduralGeneration
         public int ZIndex { get; set; }
         
         // Attributes
+        public TileType TileType { get; set; }
+        public DungeonTileType DungeonTileType { get; set; }
         public WorldTileType WorldTileType { get; set; }
         public Biome Biome { get; set; }
 
@@ -124,26 +142,27 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            if (!IsVisible)
+            if (Global.SceneManager.CurrentScene is InstanceScene)
             {
-                Global.SpriteBatch.Draw(Texture, Position, null, Color.Gray);
+                if (!IsVisible)
+                    return;
+
+                var dist = Vector2.Distance(Position, Global.Player.Position);
+                var absValue = Math.Abs(dist);
+                var alphaValue = (float)Normalize(dist, 1000, 0);
+                Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
             }
             else
             {
-                var alphaValue = (float)Normalize(Vector2.Distance(Position, Global.Player.Position), 0, 1);
-                Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
+                if (!IsVisible)
+                {
+                    Global.SpriteBatch.Draw(Texture, Position, null, Color.Gray);
+                }
+                else
+                {
+                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White);
+                }
             }
-
-            //if (!IsVisible && IsExplored)
-            //{
-            //    // Draw a partially transparent fog texture
-            //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, Bounds, Color.Black * 0.5f);
-            //}
-            //else if (!IsVisible)
-            //{
-            //    // Draw a fully opaque fog texture
-            //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, Bounds, Color.Black);
-            //}
         }
 
         double Normalize(double value, double min, double max)

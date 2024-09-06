@@ -115,6 +115,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         Size = new Vector2(settings.TileSize, settings.TileSize),
                         //Texture = DetermineTexture(i, j, chunk.BiomeData),
                         Texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0],
+                        TileType = TileType.World,
                         WorldTileType = WorldTileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };

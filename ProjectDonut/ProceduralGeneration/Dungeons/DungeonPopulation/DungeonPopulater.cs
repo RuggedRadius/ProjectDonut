@@ -171,7 +171,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = DetermineTexture(_popData[i, j])
+                        Texture = DetermineTexture(_popData[i, j]),
+                        TileType = TileType.Instance,
                     };
 
                     tilemap.Map[i, j] = tile;
