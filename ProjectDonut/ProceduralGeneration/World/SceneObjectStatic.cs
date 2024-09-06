@@ -15,8 +15,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public int DrawOrder => throw new NotImplementedException();
 
-        public bool Visible { get; set; }
-        public bool Explored { get; set; }
+        public bool IsVisible { get; set; }
         public bool IsExplored { get; set; }
         public Rectangle Bounds { get; set; }
 
@@ -39,20 +38,20 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Draw(GameTime gameTime)
         {
-            if (!Explored) return;
+            if (!IsExplored) return;
 
 
-            if (!Visible)
+            if (!IsVisible)
             {
-                Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+                //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
                 Global.SpriteBatch.Draw(Texture, Position, Color.Gray);
-                Global.SpriteBatch.End();
+                //Global.SpriteBatch.End();
             }
             else
             {
-                Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+                //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
                 Global.SpriteBatch.Draw(Texture, Position, Color.White);
-                Global.SpriteBatch.End();
+                //Global.SpriteBatch.End();
             }
         }
 
@@ -60,16 +59,16 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             if (Global.SHOW_FOG_OF_WAR == false)
             {
-                Visible = true;
-                Explored = true;
+                IsVisible = true;
+                IsExplored = true;
                 return;
             }
 
             float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
-            Visible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
-            if (Visible && !Explored)
-                Explored = true;
+            if (IsVisible && !IsExplored)
+                IsExplored = true;
         }
     }
 }

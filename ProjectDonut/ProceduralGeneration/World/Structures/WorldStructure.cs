@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
@@ -28,6 +29,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         public bool PlayerWithinScrollBounds { get; set; }
         public bool IsExplored { get; set; }
+        public bool IsVisible{ get; set; }
         public Rectangle Bounds { get; set; }
 
         public WorldStructure(Vector2 chunkPosition, WorldChunk chunk)
@@ -97,11 +99,29 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                     PlayerWithinScrollBounds = false;
                 }
             }
+
+            UpdateObjectVisibility();
+        }
+
+        public void UpdateObjectVisibility()
+        {
+            if (Global.SHOW_FOG_OF_WAR == false)
+            {
+                IsVisible = true;
+                IsExplored = true;
+                return;
+            }
+
+            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
+            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+
+            if (IsVisible && !IsExplored)
+                IsExplored = true;
         }
 
         public void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
 
             if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
@@ -110,7 +130,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
             }
 
-            Global.SpriteBatch.End();
+            //Global.SpriteBatch.End();
         }
 
         // **** BEWARE: THIS IS VERY BROKEN ***

@@ -35,13 +35,14 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Texture2D InventoryIcon { get; set; }
         public Vector2 Position { get; set; }
 
+        public bool IsVisible { get; set; }
         public bool IsExplored { get; set; }
         public bool InRangeOfPlayer { get; set; }
         public Rectangle InteractBounds { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; set; }
 
-        public MineableObjectAnimationState MineableObjectAnimationState { get; set; }
+        //public MineableObjectAnimationState MineableObjectAnimationState { get; set; }
         public MineableObjectType MineableObjectType { get; set; }
         public Rectangle Bounds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -71,9 +72,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             switch (MineableObjectType) 
             {
                 case MineableObjectType.Tree:
-                    //Texture = Global.ContentManager.Load<Texture2D>("Sprites/World/Objects/tree");
                     InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
-
 
                     var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-Sheet-export");
                     var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
@@ -99,11 +98,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                     {
                         if (trigger == AnimationEventTrigger.AnimationCompleted)
                         {
-                            Debug.WriteLine("Animation completed");
+                            //Debug.WriteLine("Animation completed");
                             _tree.SetAnimation("idle");
                         }
                     };
-
                     break;
 
                 case MineableObjectType.Rock:
@@ -117,25 +115,14 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
-        public void Draw(GameTime gameTime)
-        {
-            Global.SpriteBatch.End();
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix(), samplerState: SamplerState.PointClamp);
 
-
-            Global.SpriteBatch.Draw(_tree, Position, 0.0f, Vector2.One);
-            //Global.SpriteBatch.Draw(Texture, Position, Color.White);
-            Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
-
-
-            Global.SpriteBatch.End();
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-        }
 
         public void Update(GameTime gameTime)
         {
             _tree.Update(gameTime);
-            //_animControllerHit.Update(gameTime);
+
+            UpdateObjectVisibility();
+
             InRangeOfPlayer = InteractBounds.Intersects(Global.Player.InteractBounds);
 
             if (!InRangeOfPlayer) 
@@ -143,27 +130,91 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             if (InputManager.KeyboardState.IsKeyDown(Keys.E))
             {
-                //if (_tree.CurrentAnimation.)
+                HandleAction();
+            }            
+        }
 
-                MineableObjectAnimationState = MineableObjectAnimationState.Hit;
-                _tree.SetAnimation("hit");
-                Health -= Global.TEMP_PLAYER_DAMAGE;
-
-                if (Health <= 0)
-                {
-                    var item = new InventoryItem
-                    {
-                        Name = "Wood Log",
-                        Icon = InventoryIcon,
-                        ItemType = ItemType.Consumable
-                    };
-
-                    Player.Inventory.AddItemToInventory(item);
-                    var treeCount = Global.WorldChunkManager.PlayerChunk.MineableObjects["trees"].Count;
-                    //Global.WorldChunkManager.PlayerChunk.MineableObjects["trees"].Remove(this);
-                    treeCount = Global.WorldChunkManager.PlayerChunk.MineableObjects["trees"].Count;
-                }
+        public void UpdateObjectVisibility()
+        {
+            if (Global.SHOW_FOG_OF_WAR == false)
+            {
+                IsVisible = true;
+                IsExplored = true;
+                return;
             }
+
+            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
+            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+
+            if (IsVisible && !IsExplored)
+                IsExplored = true;
+        }
+
+        private void HandleAction()
+        {
+            //MineableObjectAnimationState = MineableObjectAnimationState.Hit;
+
+            _tree.SetAnimation("hit");
+
+            Health -= Global.TEMP_PLAYER_DAMAGE;
+
+            if (Health <= 0)
+            {
+                var mineableItem = new InventoryItem();
+                switch (MineableObjectType)
+                {
+                    case MineableObjectType.Tree:
+                        mineableItem.Name = "Wood Log";
+                        mineableItem.Icon = InventoryIcon;
+                        mineableItem.ItemType = ItemType.Consumable;
+                        break;
+
+                    case MineableObjectType.Rock:
+                        mineableItem.Name = "Stone";
+                        mineableItem.Icon = InventoryIcon;
+                        mineableItem.ItemType = ItemType.Consumable;
+                        break;
+
+                    case MineableObjectType.Ore:
+                        mineableItem.Name = "Ore";
+                        mineableItem.Icon = InventoryIcon;
+                        mineableItem.ItemType = ItemType.Consumable;
+                        break;
+
+                    case MineableObjectType.Bush:
+                        mineableItem.Name = "Berry";
+                        mineableItem.Icon = InventoryIcon;
+                        mineableItem.ItemType = ItemType.Consumable;
+                        break;
+                }                
+
+                Player.Inventory.AddItemToInventory(mineableItem);
+            }
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            //Global.SpriteBatch.End();
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix(), samplerState: SamplerState.PointClamp);
+
+            if (!IsExplored)
+            {
+                return;
+            }
+            else if (!IsVisible)
+            {
+                _tree.Color = Color.Gray;
+                Global.SpriteBatch.Draw(_tree, Position, 0.0f, Vector2.One);
+            }
+            else
+            {
+                _tree.Color = Color.White;
+                Global.SpriteBatch.Draw(_tree, Position, 0.0f, Vector2.One);
+                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
+            }
+
+            //Global.SpriteBatch.End();
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
         }
     }
 }

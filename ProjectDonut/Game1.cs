@@ -215,6 +215,7 @@ namespace ProjectDonut
             {
                 foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
                 {
+                    chunk.DrawMineableObjectsBelowPlayer(gameTime);    
                     chunk.DrawSceneObjectsBelowPlayer(gameTime);
                 }
             }
@@ -225,6 +226,7 @@ namespace ProjectDonut
             {
                 foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
                 {
+                    chunk.DrawMineableObjectsAbovePlayer(gameTime);
                     chunk.DrawSceneObjectsAbovePlayer(gameTime);
                 }
             }

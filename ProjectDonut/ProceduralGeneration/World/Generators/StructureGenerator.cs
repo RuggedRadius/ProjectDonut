@@ -230,7 +230,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 {
                     foreach (var obj in objList)
                     {
-                        if (castle.TextureBounds.Intersects(obj.Bounds))
+                        if (castle.TextureBounds.Intersects(obj.InteractBounds))
                         {
                             mineablesToCull.Add(obj);
                         }

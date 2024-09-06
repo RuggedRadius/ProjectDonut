@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
-    public class WorldChunkManager : IGameObject
+    public class WorldChunkManager :  IGameObject
     {
         public (int, int) PlayerChunkPosition { get; set; }
         public Vector2 Position { get; set; }
@@ -151,10 +151,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                 CurrentChunks[i].Draw(gameTime);
             }
 
-            for (int i = 0; i < CurrentChunks.Count; i++)
-            {
-                CurrentChunks[i].MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
-            }
+            //for (int i = 0; i < CurrentChunks.Count; i++)
+            //{
+            //    CurrentChunks[i].MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
+            //}
 
             //foreach (var structure in StructuresInCenterChunk)
             //{

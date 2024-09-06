@@ -187,28 +187,62 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void DrawSceneObjectsBelowPlayer(GameTime gameTime)
         {
-            var sceneObjs = new List<ISceneObject>();
+            var objs = new List<ISceneObject>();
 
             foreach (var sceneObject in SceneObjects)
             {
                 var validObjs = sceneObject.Value.Where(x => x.ZIndex <= Global.Player.Position.Y).ToList();
-                sceneObjs.AddRange(validObjs);
+                objs.AddRange(validObjs);
             }
 
-            sceneObjs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            Global.SpriteBatch.End();
+        }
+
+        public void DrawMineableObjectsBelowPlayer(GameTime gameTime)
+        {
+            var objs = new List<IMineable>();
+
+            foreach (var mineableObj in MineableObjects)
+            {
+                var validObjs = mineableObj.Value.Where(x => x.ZIndex <= Global.Player.Position.Y).ToList();
+                objs.AddRange(validObjs);
+            }
+
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            Global.SpriteBatch.End();
         }
 
         public void DrawSceneObjectsAbovePlayer(GameTime gameTime)
         {
-            var sceneObjs = new List<ISceneObject>();
+            var objs = new List<ISceneObject>();
 
             foreach (var sceneObject in SceneObjects)
             {
                 var validObjs = sceneObject.Value.Where(x => x.ZIndex > Global.Player.Position.Y).ToList();
-                sceneObjs.AddRange(validObjs);
+                objs.AddRange(validObjs);
             }
 
-            sceneObjs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            Global.SpriteBatch.End();
+        }
+
+        public void DrawMineableObjectsAbovePlayer(GameTime gameTime)
+        {
+            var objs = new List<IMineable>();
+
+            foreach (var mineableObj in MineableObjects)
+            {
+                var validObjs = mineableObj.Value.Where(x => x.ZIndex > Global.Player.Position.Y).ToList();
+                objs.AddRange(validObjs);
+            }
+
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            Global.SpriteBatch.End();
         }
 
         private void DrawChunkOutline(GameTime gameTime)

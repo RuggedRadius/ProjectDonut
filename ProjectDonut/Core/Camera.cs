@@ -1,15 +1,13 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
-using ProjectDonut.GameObjects;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Interfaces;
 using Microsoft.Xna.Framework.Content;
-using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using ProjectDonut.Debugging;
 
-namespace ProjectDonut.GameObjects
+namespace ProjectDonut.Core
 {
     public class Camera : IGameComponent
     {

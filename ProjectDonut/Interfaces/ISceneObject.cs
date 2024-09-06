@@ -10,6 +10,7 @@ namespace ProjectDonut.Interfaces
 {
     public interface ISceneObject : IDrawable
     {
+        bool IsVisible { get; set; }
         bool IsExplored { get; set; }
         void Update(GameTime gameTime);
         new void Draw(GameTime gameTime);
