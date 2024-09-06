@@ -22,7 +22,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         public Rectangle TextureBounds { get; set; }
         public Rectangle EntryBounds { get; set; }
-        public Rectangle ScrollBounds { get; set; }
+        public Rectangle InteractBounds { get; set; }
 
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
@@ -56,7 +56,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
             // Scroll Rect
             var bufferZoneSize = 2 * Global.TileSize;
-            ScrollBounds = new Rectangle(
+            InteractBounds = new Rectangle(
                 (int)WorldPosition.X - bufferZoneSize,
                 (int)WorldPosition.Y - bufferZoneSize,
                 Texture.Width + bufferZoneSize * 2,
@@ -84,7 +84,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
             if (Global.SceneManager.CurrentScene is WorldScene && Global.WorldChunkManager.PlayerChunk == WorldChunk)
             {
-                if (ScrollBounds.Contains(Global.Player.Position))
+                //if (ScrollBounds.Contains(Global.Player.Position))
+                if (InteractBounds.Contains(Global.GameCursor.CursorWorldPosition))
                 {
                     PlayerWithinScrollBounds = true;
 
@@ -126,7 +127,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
             if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
             {
-                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, ScrollBounds, Color.Red * 0.5f);
+                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Red * 0.5f);
                 Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
             }
 

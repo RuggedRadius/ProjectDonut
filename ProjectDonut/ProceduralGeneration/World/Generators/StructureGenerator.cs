@@ -146,37 +146,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return true;
         }
 
-        //public Tilemap CreateTileMap(WorldChunk chunk)
-        //{
-        //    var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
-        //    var tmStructures = new Tilemap(chunk.Width, chunk.Height);
-
-        //    chunk.Structures = new List<StructureData>();
-
-        //    for (int i = 0; i < chunk.Width; i++)
-        //    {
-        //        for (int j = 0; j < chunk.Height; j++)
-        //        {
-        //            if (chunk.StructureData[i, j] == 0)
-        //            {
-        //                continue;
-        //            }
-
-        //            if (i == 0 || j == 0 || i == chunk.Width - 1 || j == chunk.Height - 1)
-        //            {
-        //                continue;
-        //            }
-
-        //            PlaceStructure(chunk, tmStructures, i, j, chunk.StructureData[i, j]);
-        //        }
-        //    }
-
-        //    return tmStructures;
-        //}
-
         public List<ISceneObject> GenerateCastles(WorldChunk chunk)
         {
             var structures = new List<ISceneObject>();
+
+            if (random.Next(0, 100) < 50) // 50% chance of creating a castle in a chunk
+            {
+                return structures;
+            }
 
             var viableLocations = GetViableStructureLocations(chunk);
 
@@ -189,207 +166,69 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var position = new Vector2(viableLocation.Item1, viableLocation.Item2);
             viableLocations.Remove(viableLocation);
 
-            if (random.Next(0, 100) >= 50) // 50% chance of creating a castle in a chunk
+            var castle = new WorldStructure(position, chunk)
             {
-                var castle = new WorldStructure(position, chunk)
-                {
-                    Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
-                    Instance = new InstanceScene(SceneType.Instance),
-                    Texture = Global.SpriteLibrary.GetSprite("castle"),
-                };
+                Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
+                Instance = new InstanceScene(SceneType.Instance),
+                Texture = Global.SpriteLibrary.GetSprite("castle"),
+            };
 
-                castle.Initialize();
-                structures.Add(castle);
-
-                var sceneObjectsToCull = new List<ISceneObject>();
-                foreach (var objList in chunk.SceneObjects?.Values)
-                {
-                    foreach (var obj in objList)
-                    {
-                        if (castle.TextureBounds.Intersects(obj.Bounds))
-                        {
-                            sceneObjectsToCull.Add(obj);
-                        }
-                    }                    
-                }
-
-                foreach (var obj in sceneObjectsToCull)
-                {
-                    foreach (var kvp in chunk.SceneObjects)
-                    {
-                        if (kvp.Value.Remove(obj))
-                        {
-                            break;
-                        }
-                    }
-                }
-
-
-                var mineablesToCull = new List<IMineable>();
-                foreach (var objList in chunk.MineableObjects?.Values)
-                {
-                    foreach (var obj in objList)
-                    {
-                        if (castle.TextureBounds.Intersects(obj.InteractBounds))
-                        {
-                            mineablesToCull.Add(obj);
-                        }
-                    }
-                }
-
-                foreach (var obj in mineablesToCull)
-                {
-                    foreach (var kvp in chunk.MineableObjects)
-                    {
-                        if (kvp.Value.Remove(obj))
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-
-
+            castle.Initialize();
+            chunk = CullScenaryAtCastleLocation(castle.InteractBounds, chunk);
+            structures.Add(castle);
 
             return structures;
         }
 
-        //private void PlaceStructure(WorldChunk chunk, Tilemap map, int x, int y, int structureValue)
-        //{
-        //    var directions = new List<string> { "NW", "N", "NE", "W", "C", "E", "SW", "S", "SE" };
-        //    int counter = 0;
-
-        //    var structure = (Structure)structureValue;
-
-        //    for (int j = 0; j < 9; j++)
-        //    {
-        //        for (int i = 0; i < 9; i++)
-        //        {
-        //            var tile = new Tile(true)
-        //            {
-        //                ChunkX = chunk.ChunkCoordX,
-        //                ChunkY = chunk.ChunkCoordY,
-        //                xIndex = i + x,
-        //                yIndex = j + y,
-        //                //Position = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize) + chunk.Position,
-        //                LocalPosition = new Vector2((i + x) * settings.TileSize, (j + y) * settings.TileSize),
-        //                Size = new Vector2(settings.TileSize, settings.TileSize),
-        //                Texture = Global.SpriteLibrary.GetSprite($"castle-01-{i}-{j}"),
-        //                WorldTileType = WorldTileType.Forest,
-        //                Biome = (Biome)chunk.BiomeData[i + x, j + y],
-        //                Frames = new List<Texture2D>()
-        //            };
-
-        //            map.Map[i + x, j + y] = tile;
-        //            counter++;
-        //        }
-        //    }
-
-        //    var entryRectX = x * Global.TileSize + (4 * Global.TileSize);
-        //    var entryRectY = y * Global.TileSize + (8 * Global.TileSize);
-
-        //    var scrollBoundsX = (int)chunk.Position.X + (x * Global.TileSize - (1 * Global.TileSize)); // = World Position X
-        //    var scrollBoundsY = (int)chunk.Position.Y + (y * Global.TileSize - (1 * Global.TileSize)); // = World Position Y
-
-        //    var structureData = new StructureData
-        //    {
-        //        ScrollBounds = new Rectangle(scrollBoundsX, scrollBoundsY, Global.TileSize * 11, Global.TileSize * 11),
-        //        Bounds = new Rectangle(entryRectX, entryRectY, Global.TileSize, Global.TileSize),
-        //        Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
-        //        Instance = new InstanceScene(SceneType.Instance)
-        //    };
-
-        //    structureData.Instance.Initialize();
-        //    structureData.Instance.LoadContent();
-
-        //    //chunk.Structures.Add(structureData);
-        //}
-
-        private Texture2D DetermineTexture(Structure structure, string direction)
+        private WorldChunk CullScenaryAtCastleLocation(Rectangle castleBounds, WorldChunk chunk)
         {
-            switch (structure)
+            var sceneObjectsToCull = new List<ISceneObject>();
+            foreach (var objList in chunk.SceneObjects?.Values)
             {
-                case Structure.Castle:
-                    return Global.SpriteLibrary.GetSprite($"castle-01-{direction}");
-
-                case Structure.Town:
-                    return Global.SpriteLibrary.GetSprite($"town-01-{direction}");
-
-                default:
-                    return Global.SpriteLibrary.GetSprite("grasslands");
-            }
-        }
-
-        private List<Texture2D> GetFrames(Structure structure, string direction, int frameCount)
-        {
-            var results = new List<Texture2D>();
-
-            switch (structure)
-            {
-                case Structure.Castle:
-                    for (int i = 0; i < frameCount; i++)
+                foreach (var obj in objList)
+                {
+                    if (castleBounds.Intersects(obj.Bounds))
                     {
-                        var key = $"castle-{i + 1:D2}-{direction}";
-                        results.Add(Global.SpriteLibrary.GetSprite(key));
+                        sceneObjectsToCull.Add(obj);
                     }
-                    break;
+                }
+            }
 
-                case Structure.Town:
-                    for (int i = 0; i < frameCount; i++)
+            foreach (var obj in sceneObjectsToCull)
+            {
+                foreach (var kvp in chunk.SceneObjects)
+                {
+                    if (kvp.Value.Remove(obj))
                     {
-                        var key = $"town-{i + 1:D2}-{direction}";
-                        results.Add(Global.SpriteLibrary.GetSprite(key));
+                        break;
                     }
-                    break;
+                }
             }
 
-            return results;
-        }
-
-        private Rectangle GetStructureBounds(WorldChunk chunk, int x, int y)
-        {
-            var posX = x;
-            var posY = y;
-
-            int structureWidth = 0;
-            int structureHeight = 0;
-
-            var widthFound = false;
-            while (!widthFound)
+            var mineablesToCull = new List<IMineable>();
+            foreach (var objList in chunk.MineableObjects?.Values)
             {
-                if (chunk.StructureData[posX, posY] == 0)
+                foreach (var obj in objList)
                 {
-                    widthFound = true;
-                }
-                else
-                {
-                    structureWidth++;
-                    posX++;
+                    if (castleBounds.Intersects(obj.InteractBounds))
+                    {
+                        mineablesToCull.Add(obj);
+                    }
                 }
             }
 
-            var heightFound = false;
-            while (!heightFound)
+            foreach (var obj in mineablesToCull)
             {
-                if (chunk.StructureData[posX, posY] == 0)
+                foreach (var kvp in chunk.MineableObjects)
                 {
-                    heightFound = true;
-                }
-                else
-                {
-                    structureHeight++;
-                    posY++;
+                    if (kvp.Value.Remove(obj))
+                    {
+                        break;
+                    }
                 }
             }
 
-            var chunkPosX = settings.TileSize * x;
-            var chunkPosY = settings.TileSize * y;
-
-            return new Rectangle(
-                chunkPosX, 
-                chunkPosY, 
-                structureWidth * settings.TileSize, 
-                structureHeight * settings.TileSize);
+            return chunk;
         }
     }
 }

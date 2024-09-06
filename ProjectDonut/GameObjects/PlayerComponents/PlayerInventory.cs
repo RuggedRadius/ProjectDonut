@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Input;
 using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.GameObjects.PlayerComponents

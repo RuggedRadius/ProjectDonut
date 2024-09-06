@@ -5,7 +5,6 @@ using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Debugging;
 using ProjectDonut.Debugging.Console;
-using ProjectDonut.GameObjects;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Pathfinding;
 using ProjectDonut.ProceduralGeneration;

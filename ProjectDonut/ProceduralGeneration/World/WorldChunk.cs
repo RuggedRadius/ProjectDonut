@@ -196,7 +196,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            objs
+                .OrderBy(x => x.Position.Y)
+                .ThenByDescending(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
             Global.SpriteBatch.End();
         }
 
@@ -211,7 +215,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            objs
+                .OrderBy(x => x.Position.Y)
+                .ThenByDescending(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
             Global.SpriteBatch.End();
         }
 
@@ -226,7 +234,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            objs
+                .OrderBy(x => x.Position.Y)
+                .ThenByDescending(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
             Global.SpriteBatch.End();
         }
 
@@ -241,7 +253,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            objs.OrderBy(x => x.ZIndex).ToList().ForEach(x => x.Draw(gameTime));
+            objs
+                .OrderBy(x => x.Position.Y)
+                .ThenByDescending(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
             Global.SpriteBatch.End();
         }
 

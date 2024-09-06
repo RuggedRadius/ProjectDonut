@@ -205,7 +205,8 @@ namespace ProjectDonut
 
             _gameObjects
                 .Select(x => x.Value)
-                .OrderByDescending(x => x.ZIndex)
+                .OrderBy(x => x.Position.Y)
+                .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 

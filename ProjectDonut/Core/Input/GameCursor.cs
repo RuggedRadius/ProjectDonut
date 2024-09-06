@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
 
-namespace ProjectDonut.GameObjects
+namespace ProjectDonut.Core.Input
 {
     public class GameCursor : IScreenObject
     {
         public Vector2 Position { get; set; }
+        public Vector2 CursorWorldPosition { get; set; }
         public int ZIndex { get; set; }
 
         public bool IsClicked { get; set; }
@@ -27,7 +29,7 @@ namespace ProjectDonut.GameObjects
 
         public GameCursor(Game1 game)
         {
-            this._game = game;
+            _game = game;
         }
 
         public void Initialize()
@@ -49,6 +51,12 @@ namespace ProjectDonut.GameObjects
         public void Update(GameTime gameTime)
         {
             Position = Vector2.Transform(Mouse.GetState().Position.ToVector2(), Matrix.Invert(Matrix.Identity));
+
+            CursorWorldPosition = Global.Camera.OrthoCamera.ScreenToWorld(
+                new Vector2(
+                    InputManager.MouseState.X,
+                    InputManager.MouseState.Y
+                    ));
         }
 
         public void Draw(GameTime gameTime)
