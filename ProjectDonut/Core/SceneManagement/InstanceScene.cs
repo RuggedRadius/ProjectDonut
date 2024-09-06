@@ -212,7 +212,7 @@ namespace ProjectDonut.Core.SceneManagement
                 }
             }
 
-            UpdateVisibility(Global.Player.Position, Global.FOG_OF_WAR_INSTANCE_RADIUS);
+            UpdateVisibility(Global.Player.Position, 8);
         }
 
 
@@ -222,6 +222,8 @@ namespace ProjectDonut.Core.SceneManagement
         {
             int playerTileX = (int)(playerPosition.X / Global.TileSize);
             int playerTileY = (int)(playerPosition.Y / Global.TileSize);
+
+
 
             // Clear current visibility
             foreach (var tile in _tilemap.Map)
@@ -259,19 +261,75 @@ namespace ProjectDonut.Core.SceneManagement
                 if (_tilemap.Map[tileX, tileY] == null)
                     break;
 
-                // Stop ray if it hits a blocked tile
-                if (_tilemap.Map[tileX, tileY].IsBlocked)
-                    break;
-
                 _tilemap.Map[tileX, tileY].IsVisible = true;
                 _tilemap.Map[tileX, tileY].IsExplored = true;
 
-
+                // Stop ray if it hits a blocked tile
+                if (_tilemap.Map[tileX, tileY].IsBlocked)
+                    break;
 
                 x += deltaX;
                 y += deltaY;
             }
         }
+
+
+        //public void UpdateVisibility()
+        //{
+        //    var visibleTiles = new HashSet<Rectangle>();
+        //    foreach (var tile in _tilemap.Map)
+        //    {
+        //        if (tile == null)
+        //            continue;
+
+        //        if (!Global.Player.VisibilityRect.Contains(tile.Position))                
+        //            continue;                
+
+        //        if (IsTileVisible(Global.Player.VisibilityRect, tile.Bounds, WallPositions))
+        //        {
+        //            tile.IsVisible = true;
+        //            tile.IsExplored = true;
+        //            visibleTiles.Add(tile.Bounds);
+        //        }
+        //        else
+        //        {
+        //            tile.IsVisible = false;
+        //        }
+        //    }
+
+        //    UpdateTileVisibility(visibleTiles);
+        //}
+
+        //private void UpdateTileVisibility(HashSet<Rectangle> visibleTiles)
+        //{
+        //    foreach (var tile in _tilemap.Map)
+        //    {
+        //        if (tile == null)
+        //            continue;
+
+        //        tile.IsVisible = visibleTiles.Contains(tile.Bounds);
+        //    }
+        //}
+
+        //public static bool IsTileVisible(Rectangle playerBounds, Rectangle tileBounds, List<Rectangle> obstacles)
+        //{
+        //    Rectangle intersection = Rectangle.Intersect(playerBounds, tileBounds);
+
+        //    if (intersection.IsEmpty)
+        //    {
+        //        return true; // No intersection, tile is visible
+        //    }
+
+        //    foreach (var obstacle in obstacles)
+        //    {
+        //        if (obstacle.Intersects(intersection))
+        //        {
+        //            return false; // Obstacle in the way
+        //        }
+        //    }
+
+        //    return true; // No obstacles, tile is visible
+        //}
 
         public override void Draw(GameTime gameTime)
         {
