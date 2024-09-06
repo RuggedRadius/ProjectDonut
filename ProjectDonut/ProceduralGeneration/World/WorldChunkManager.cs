@@ -7,6 +7,7 @@ using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
@@ -150,10 +151,15 @@ namespace ProjectDonut.ProceduralGeneration.World
                 CurrentChunks[i].Draw(gameTime);
             }
 
-            foreach (var structure in StructuresInCenterChunk)
+            for (int i = 0; i < CurrentChunks.Count; i++)
             {
-                Global.SpriteBatch.Draw(tempTexture, structure.Rectangle, Color.White);
+                CurrentChunks[i].MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
             }
+
+            //foreach (var structure in StructuresInCenterChunk)
+            //{
+            //    Global.SpriteBatch.Draw(tempTexture, structure.Rectangle, Color.White);
+            //}
         }
 
         public void Initialize()

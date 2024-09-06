@@ -17,6 +17,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public bool Visible { get; set; }
         public bool Explored { get; set; }
+        public bool IsExplored { get; set; }
 
         public event EventHandler<EventArgs> DrawOrderChanged;
         public event EventHandler<EventArgs> VisibleChanged;

@@ -35,6 +35,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Texture2D InventoryIcon { get; set; }
         public Vector2 Position { get; set; }
 
+        public bool IsExplored { get; set; }
         public bool InRangeOfPlayer { get; set; }
         public Rectangle InteractBounds { get; set; }
         public int Health { get; set; }

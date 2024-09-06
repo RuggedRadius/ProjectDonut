@@ -1,24 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.UI.ScrollDisplay;
-using Microsoft.Xna.Framework.Input;
-using ProjectDonut.GameObjects;
-using ProjectDonut.ProceduralGeneration.World.Generators;
-using System.Diagnostics;
-using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
-using MonoGame.Extended.Timers;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -80,7 +69,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             get; 
             set; 
         }
-        public int ZIndex // TODO: Currently not used
+        public int ZIndex // TODO: Currently not used, well.. defaults to 0
         { 
             get; 
             set; 
@@ -167,9 +156,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            var treeCount = MineableObjects["trees"].Count;
+
             MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Update(gameTime)));
-            MineableObjects["trees"].Where(x => x.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x));
+            MineableObjects.Values.ToList().ForEach(x => x.Where(y => y.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x)));
+            //MineableObjects["trees"].Where(x => x.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x));
         }
 
         public void Draw(GameTime gameTime)
@@ -190,7 +180,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 DrawChunkOutline(gameTime);
             }
 
-            MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
+            //MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
 
             return;
         }

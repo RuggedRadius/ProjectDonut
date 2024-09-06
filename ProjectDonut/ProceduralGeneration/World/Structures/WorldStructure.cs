@@ -27,7 +27,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         public Texture2D Texture { get; set; }
 
         public bool PlayerWithinScrollBounds { get; set; }
-
+        public bool IsExplored { get; set; }
 
         public WorldStructure(Vector2 chunkPosition, WorldChunk chunk)
         {
