@@ -12,7 +12,7 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Core.Input
 {
-    public class InputManager : Microsoft.Xna.Framework.IGameComponent
+    public class InputManager : Interfaces.IGameComponent
     {
         public static InputManager Instance;
 
@@ -35,7 +35,7 @@ namespace ProjectDonut.Core.Input
             
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {            
         }
 
@@ -43,11 +43,9 @@ namespace ProjectDonut.Core.Input
         {
             KeyboardState = Keyboard.GetState();
             MouseState = Mouse.GetState();
-
-
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime)
         {
         }
 

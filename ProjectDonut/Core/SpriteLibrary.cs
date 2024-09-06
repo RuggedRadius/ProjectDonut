@@ -26,6 +26,7 @@ namespace ProjectDonut.Core
         private Dictionary<string, Texture2D> sheets;
         public Dictionary<string, List<Texture2D>> DungeonSprites;
         public Dictionary<string, List<Texture2D>> WorldMapSprites;
+        public Dictionary<string, Texture2D> ItemsSprites;
 
 
         private Dictionary<string, Texture2D> lib;
@@ -54,6 +55,7 @@ namespace ProjectDonut.Core
             LoadCoast();
             LoadForest();
             LoadMountain();
+            LoadGrass();
 
             LoadBiomeGrasslands();
 
@@ -66,6 +68,24 @@ namespace ProjectDonut.Core
             lib.Add("desert", ExtractBiomeSprite(1, 0));
             lib.Add("winterlands", ExtractBiomeSprite(2, 0));
 
+            
+
+            LoadDungeonSprites();
+            LoadDungeonPopulationSprites();
+
+            LoadItems();
+        }
+
+        private void LoadItems()
+        {
+            ItemsSprites = new Dictionary<string, Texture2D>();
+
+            ItemsSprites.Add("wood-log", Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01"));
+
+        }
+
+        private void LoadGrass()
+        {
             // Grass
             lib.Add("grass-NW", ExtractTileSprite(6, 0));
             lib.Add("grass-N", ExtractTileSprite(7, 0));
@@ -87,9 +107,6 @@ namespace ProjectDonut.Core
             lib.Add("grass-inv-SW", ExtractTileSprite(9, 2));
             lib.Add("grass-inv-S", ExtractTileSprite(10, 2));
             lib.Add("grass-inv-SE", ExtractTileSprite(11, 2));
-
-            LoadDungeonSprites();
-            LoadDungeonPopulationSprites();
         }
 
         private void LoadWorldMapSprites()
@@ -440,6 +457,21 @@ namespace ProjectDonut.Core
             x *= width;
             y *= height;
 
+            Rectangle sourceRectangle = new Rectangle(x, y, width, height);
+
+            // Extract the pixel data from the spritesheet
+            Color[] data = new Color[width * height];
+            spriteSheet.GetData(0, sourceRectangle, data, 0, data.Length);
+
+            // Create a new texture for the sprite and set the pixel data
+            Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
+            sprite.SetData(data);
+
+            return sprite;
+        }
+
+        public static Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y, int width, int height)
+        {
             Rectangle sourceRectangle = new Rectangle(x, y, width, height);
 
             // Extract the pixel data from the spritesheet

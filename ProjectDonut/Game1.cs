@@ -19,6 +19,7 @@ using ProjectDonut.Tools;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.Core.Input;
 
 namespace ProjectDonut
 {
@@ -90,9 +91,12 @@ namespace ProjectDonut
 
             // Camera
             Global.Camera = new Camera();
-            
+
+            Global.InputManager = new InputManager();
+
             _gameComponents.Add("sceneManager", Global.SceneManager);
             _gameComponents.Add("camera", Global.Camera);
+            _gameComponents.Add("input", Global.InputManager);
         }
 
         private void CreateScreenObjects()
@@ -140,6 +144,8 @@ namespace ProjectDonut
 
         protected override void Update(GameTime gameTime)
         {
+            Global.InputManager.Update(gameTime);
+
             var kbState = Keyboard.GetState();
 
             if (kbState.IsKeyDown(Keys.F8))

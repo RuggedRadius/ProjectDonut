@@ -40,6 +40,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public bool IsVisible { get; set; }
 
+        public static SpriteFont QuantityFont { get; set; }
+
         public PlayerInventory(ContentManager content, GameCursor cursor)
         {
             State = UIComponentState.Hidden;
@@ -140,7 +142,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                     return 1;
 
                 case ItemType.Consumable:
-                    return 10;
+                    return 50;
 
                 case ItemType.Armor:
                     return 1;
@@ -161,6 +163,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             Texture = Global.ContentManager.Load<Texture2D>("Sprites/UI/PlayerInventory");
             _slotTexture = Global.ContentManager.Load<Texture2D>("Sprites/UI/PlayerInventorySlot");
             _emptySlotTexture = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/empty-slot");
+            QuantityFont = Global.ContentManager.Load<SpriteFont>("Fonts/Default");
 
             var x = Global.ScreenWidth - Texture.Width - 50;
             var y = Global.ScreenHeight - Texture.Height - 50;

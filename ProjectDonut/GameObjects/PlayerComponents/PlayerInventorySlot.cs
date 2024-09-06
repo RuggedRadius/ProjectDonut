@@ -48,6 +48,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             if (Item != null)
             {
                 Global.SpriteBatch.Draw(Item.Icon, Item.Position, Color.White);
+
+                if (Item.Quantity > 1)
+                {
+                    Global.SpriteBatch.DrawString(PlayerInventory.QuantityFont, Item.Quantity.ToString(), new Vector2(Item.Position.X + 20, Item.Position.Y + 20), Color.White);
+                }
             }
         }
     }

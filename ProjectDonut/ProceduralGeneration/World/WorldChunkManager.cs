@@ -73,19 +73,6 @@ namespace ProjectDonut.ProceduralGeneration.World
             rulesGrasslands = new GrasslandsRules(spriteLib);
         }
 
-        public void Draw(GameTime gameTime)
-        {
-            for (int i = 0; i < CurrentChunks.Count; i++)
-            {
-                CurrentChunks[i].Draw(gameTime);
-            }
-
-            foreach (var structure in StructuresInCenterChunk)
-            {
-                Global.SpriteBatch.Draw(tempTexture, structure.Rectangle, Color.White);
-            }
-        }
-
         public void Update(GameTime gameTime)
         {
             var chunkPosChanged = false;
@@ -156,6 +143,19 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
+        public void Draw(GameTime gameTime)
+        {
+            for (int i = 0; i < CurrentChunks.Count; i++)
+            {
+                CurrentChunks[i].Draw(gameTime);
+            }
+
+            foreach (var structure in StructuresInCenterChunk)
+            {
+                Global.SpriteBatch.Draw(tempTexture, structure.Rectangle, Color.White);
+            }
+        }
+
         public void Initialize()
         {
             //ChunksBeingGenerated = new List<(int, int)>();
@@ -208,12 +208,15 @@ namespace ProjectDonut.ProceduralGeneration.World
             //chunk.Tilemaps.Add("structures", tilemapStructures);
 
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
-            chunk.SceneObjects.Add("trees", _genScenary.GenerateTrees(chunk));
-            chunk.SceneObjects.Add("trees-winter", _genScenary.GenerateWinterTrees(chunk));
+            
+            chunk.SceneObjects.Add("trees", _genScenary.GenerateWinterTrees(chunk));
             chunk.SceneObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
-            chunk.SceneObjects.Add("trees-loose", _genScenary.GenerateLooseTrees(chunk));
+            //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
             chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
             chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
+
+            chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
+            chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
 
             chunk.Initialize();
             chunk.LoadContent();

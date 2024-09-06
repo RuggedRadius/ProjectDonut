@@ -55,6 +55,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Texture2D debugTexture;
 
         public Rectangle VisibilityRect;
+        public Rectangle InteractBounds { get; set; }
 
         public int ChunkPosX { get; set; }
         public int ChunkPosY { get; set; }
@@ -63,7 +64,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         //private SpriteLibrary _spriteLib;
 
-        private PlayerInventory _inventory;
+        public static PlayerInventory Inventory;
         private GameCursor _cursor;
 
         private Dictionary<string, Texture2D> _textures;
@@ -91,8 +92,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             debugTexture = CreateTexture(Global.GraphicsDevice, 1, 1, Color.White);
 
-            _inventory = new PlayerInventory(Global.ContentManager, _cursor);
-            _inventory.Initialize();
+            Inventory = new PlayerInventory(Global.ContentManager, _cursor);
+            Inventory.Initialize();
         }
 
         Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
@@ -115,7 +116,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
 
-            _inventory.LoadContent();
+            Inventory.LoadContent();
 
             Texture = _textures["walk-south-01"];
         }
@@ -147,7 +148,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             DebugWindow.Lines[1] = $"World Position: [{(int)Position.X}, {(int)Position.Y}]";
             DebugWindow.Lines[2] = $"Chunk Position: [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";            
 
-            _inventory.Update(gameTime);
+            Inventory.Update(gameTime);
 
             VisibilityRect = new Rectangle(
                 (int)Position.X - 500,
@@ -155,6 +156,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 1000,
                 1000
                 );
+
+            //InteractBounds = new Rectangle(
+            //    (int)Position.X - Global.TileSize,
+            //    (int)Position.Y - Global.TileSize,
+            //    Global.TileSize * 3,
+            //    Global.TileSize * 3);
+            InteractBounds = new Rectangle(
+                (int)Position.X - (Global.TileSize / 2),
+                (int)Position.Y - (Global.TileSize / 2),
+                Global.TileSize,
+                Global.TileSize);
         }
 
         private void HandleInput(GameTime gameTime)
@@ -226,9 +238,10 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
             Global.SpriteBatch.Draw(Texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
+            Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Green * 0.25f);
             Global.SpriteBatch.End();
 
-            _inventory.Draw(gameTime);
+            Inventory.Draw(gameTime);
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)

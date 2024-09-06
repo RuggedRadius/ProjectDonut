@@ -44,6 +44,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private Texture2D tempTexture;
 
         public Dictionary<string, List<ISceneObject>> SceneObjects;
+        public Dictionary<string, List<IMineable>> MineableObjects;
 
         public int Width
         {
@@ -165,9 +166,11 @@ namespace ProjectDonut.ProceduralGeneration.World
                     Global.ScrollDisplay.HideScroll();
                 }
             }
+
+            var treeCount = MineableObjects["trees"].Count;
+            MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Update(gameTime)));
+            MineableObjects["trees"].Where(x => x.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x));
         }
-
-
 
         public void Draw(GameTime gameTime)
         {
@@ -186,6 +189,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 DrawChunkOutline(gameTime);
             }
+
+            MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
 
             return;
         }

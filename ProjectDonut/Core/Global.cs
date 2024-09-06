@@ -30,6 +30,9 @@ namespace ProjectDonut.Core
         public static int TileSize = 64;
         public static int ChunkSize = 50;
 
+        // MINING
+        public static int TEMP_PLAYER_DAMAGE = 10;
+
         // FOG OF WAR SETTINGS
         public static bool SHOW_FOG_OF_WAR = true;
         public static int FOG_OF_WAR_RADIUS = 2000;
@@ -50,7 +53,12 @@ namespace ProjectDonut.Core
         public static GraphicsDeviceManager GraphicsDeviceManager;
 
         public static Player Player;
-        public static PlayerInventory PlayerInventory;
+        public static class PlayerComponents
+        {            
+            public static PlayerInventory Inventory;
+        }
+
+
         public static Camera Camera;
         public static GameCursor GameCursor;
         public static SpriteLibrary SpriteLibrary;
