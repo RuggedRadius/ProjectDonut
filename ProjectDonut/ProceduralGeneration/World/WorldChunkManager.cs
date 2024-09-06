@@ -158,9 +158,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Initialize()
         {
-            //ChunksBeingGenerated = new List<(int, int)>();
-
-            //// Player chunk position
+            // Player chunk position
             PlayerChunkPosition = (Global.Player.ChunkPosX, Global.Player.ChunkPosY);
 
             // All chunks dictionary - initialised with starting 9 chunks
@@ -183,8 +181,6 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
-
-        //private bool tempONETREEONLY = false;
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
             var chunk = new WorldChunk(chunkX, chunkY, this);
@@ -207,13 +203,15 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.Tilemaps.Add("mountains", tilemapMountains);
             //chunk.Tilemaps.Add("structures", tilemapStructures);
 
-            chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
-            chunk.SceneObjects.Add("trees", _genScenary.GenerateTrees(chunk));
-            chunk.SceneObjects.Add("trees-winter", _genScenary.GenerateWinterTrees(chunk));
-            chunk.SceneObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
-            chunk.SceneObjects.Add("trees-loose", _genScenary.GenerateLooseTrees(chunk));
-            chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
-            chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
+            chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>
+            {
+                { "trees", _genScenary.GenerateTrees(chunk) },
+                { "trees-winter", _genScenary.GenerateWinterTrees(chunk) },
+                { "rocks", _genScenary.GenerateRocks(chunk) },
+                { "trees-loose", _genScenary.GenerateLooseTrees(chunk) },
+                { "cactus", _genScenary.GenerateCactai(chunk) },
+                { "castles", genStructure.GenerateCastles(chunk) }
+            };
 
             chunk.Initialize();
             chunk.LoadContent();
@@ -268,9 +266,6 @@ namespace ProjectDonut.ProceduralGeneration.World
             else
             {
                 return null;
-                //var newChunk = CreateChunk(chunkCoords.Item1, chunkCoords.Item2);
-                //AllChunks.Add(chunkCoords, newChunk);
-                //return newChunk;
             }
         }
     }
