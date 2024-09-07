@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
+using Penumbra;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Debugging;
@@ -70,6 +71,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private Dictionary<string, Texture2D> _textures;
 
+        private PointLight _light;
+
         public Player()
         {
         }
@@ -95,6 +98,18 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             Inventory = new PlayerInventory(Global.ContentManager, _cursor);
             Inventory.Initialize();
+
+            _light = new PointLight
+            {
+                Position = this.Position,
+                Scale = new Vector2(3000),
+                Color = Color.White,
+                Intensity = 1f,
+                //Radius = 500,
+
+                ShadowType = ShadowType.Illuminated
+            };
+            Global.Penumbra.Lights.Add(_light);
         }
 
         Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
@@ -124,6 +139,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Update(GameTime gameTime)
         {
+
+
             var chunkCoords = GetWorldChunkCoords();
             ChunkPosX = chunkCoords.Item1;
             ChunkPosY = chunkCoords.Item2;
@@ -168,6 +185,9 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 (int)Position.Y - (Global.TileSize / 2),
                 Global.TileSize,
                 Global.TileSize);
+
+            _light.Position = Position;
+            Global.Penumbra.Transform = Global.Camera.GetTransformationMatrix();
         }
 
         private void HandleInput(GameTime gameTime)

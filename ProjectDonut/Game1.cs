@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
 using ProjectDonut.Interfaces;
@@ -11,15 +10,12 @@ using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
-using IDrawable = ProjectDonut.Interfaces.IDrawable;
 using IScreenObject = ProjectDonut.Interfaces.IScreenObject;
 using ProjectDonut.Debugging.Console;
 using ProjectDonut.UI.ScrollDisplay;
-using ProjectDonut.Tools;
 using Microsoft.Xna.Framework.Input;
-using ProjectDonut.ProceduralGeneration.World.Structures;
-using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Core.Input;
+using Penumbra;
 
 namespace ProjectDonut
 {
@@ -36,6 +32,7 @@ namespace ProjectDonut
 
         private List<IGameObject> _objectsToDraw;
 
+        
 
         public Game1()
         {
@@ -45,6 +42,9 @@ namespace ProjectDonut
 
             Global.GraphicsDeviceManager.PreferredBackBufferWidth = Global.ScreenWidth;
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
+
+            Global.Penumbra = new PenumbraComponent(this);
+            Components.Add(Global.Penumbra);
         }
 
         protected override void Initialize()
@@ -60,6 +60,7 @@ namespace ProjectDonut
 
             Global.Player = new Player();
             Global.Player.Initialize();
+
 
 
 
@@ -199,6 +200,8 @@ namespace ProjectDonut
 
         protected override void Draw(GameTime gameTime)
         {
+            Global.Penumbra.BeginDraw();
+
             GraphicsDevice.Clear(Color.Black);
 
             Global.SceneManager.Draw(gameTime);
@@ -237,6 +240,8 @@ namespace ProjectDonut
                 .ForEach(x => x.Draw(gameTime));
 
             base.Draw(gameTime);
+
+            //Global.Penumbra.Draw(gameTime);
         }
     }
 }

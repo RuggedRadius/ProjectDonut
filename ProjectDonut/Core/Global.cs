@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Penumbra;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Debugging;
@@ -21,6 +22,8 @@ namespace ProjectDonut.Core
 {
     public static class Global
     {
+        public static PenumbraComponent Penumbra;
+
         // SCREEN SETTINGS
         public static int ScreenWidth = 1920;
         public static int ScreenHeight = 1080;
@@ -34,7 +37,7 @@ namespace ProjectDonut.Core
 
         // FOG OF WAR SETTINGS
         public static int INSTANCE_SIGHT_RADIUS = 8;
-        public static bool SHOW_FOG_OF_WAR = false;
+        public static bool SHOW_FOG_OF_WAR = true;
         public static int FOG_OF_WAR_RADIUS = 1500;
 
         // DEBUG SETTINGS
@@ -52,6 +55,7 @@ namespace ProjectDonut.Core
         public static SpriteBatch SpriteBatch;
         public static GraphicsDevice GraphicsDevice;
         public static GraphicsDeviceManager GraphicsDeviceManager;
+
 
         public static Player Player;
         public static class PlayerComponents
