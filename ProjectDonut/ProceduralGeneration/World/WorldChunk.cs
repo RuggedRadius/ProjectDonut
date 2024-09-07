@@ -8,6 +8,8 @@ using ProjectDonut.UI.ScrollDisplay;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
+using ProjectDonut.Core.Input;
+using ProjectDonut.ProceduralGeneration.World.Generators;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {

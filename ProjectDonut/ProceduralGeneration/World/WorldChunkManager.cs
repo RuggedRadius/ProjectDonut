@@ -220,10 +220,12 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.SceneObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
             //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
             chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
+
+            chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
             chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
 
             
-            chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
+            
 
             chunk.Initialize();
             chunk.LoadContent();
