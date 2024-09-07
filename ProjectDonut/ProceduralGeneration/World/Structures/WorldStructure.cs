@@ -5,59 +5,103 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Interfaces;
+using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
 
 namespace ProjectDonut.ProceduralGeneration.World.Structures
 {
+    public enum WorldStructureType
+    {        
+        Village,
+        Town,
+        City,
+        Castle,
+    }
+
     public class WorldStructure : ISceneObject
     {
-        public string Name { get; set; }
+        public string StructureName { get; set; }
 
+        // Properties
         public WorldChunk WorldChunk { get; set; }
         public InstanceScene Instance { get; set; }
+        public WorldStructureType StructureType { get; set; }
 
+        // Position
         public Vector2 WorldPosition { get; set; }
         public Vector2 ChunkPosition { get; set; }
-        public Vector2 Position { get; set; } // NOT USED?? - HMM not liking this, should more specific, world, local, chunk or whatever
 
+        // Bounds
         public Rectangle TextureBounds { get; set; }
         public Rectangle EntryBounds { get; set; }
         public Rectangle InteractBounds { get; set; }
 
+        // Drawing
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
 
+        // State
         public bool PlayerWithinScrollBounds { get; set; }
         public bool IsExplored { get; set; }
         public bool IsVisible { get; set; }
-        public Rectangle Bounds { get; set; }
 
-        public WorldStructure(Vector2 worldPosition, WorldChunk chunk)
+        private Random _random = new Random();
+
+        public WorldStructure(Vector2 worldPosition, WorldChunk chunk, WorldStructureType structureType)
         {
             WorldChunk = chunk;
             WorldPosition = worldPosition;
+            StructureType = structureType;
         }
 
         public void Initialize()
         {
-            // World Position
-            //var worldPositionX = (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize) + ChunkPosition.X;
-            //var worldPositionY = (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize) + ChunkPosition.Y;
-            //WorldPosition = new Vector2(worldPositionX, worldPositionY);
+            switch (StructureType)
+            {
+                case WorldStructureType.Village:
+                    break;
 
+                case WorldStructureType.Town:
+                    break;
+
+                case WorldStructureType.City:
+                    break;
+
+                case WorldStructureType.Castle:
+                    StructureName = "Castle " + NameGenerator.GenerateRandomName(_random.Next(2, 5));
+                    Instance = new InstanceScene(SceneType.Instance);
+                    Texture = Global.SpriteLibrary.GetSprite("castle");
+                    break;
+            }
+
+            CalculateBounds();
+            Instance.Initialize();
+        }
+
+        public void LoadContent()
+        {
+        }
+
+        private void CalculateBounds()
+        {
             // Chunk position
             var chunkPosX = WorldPosition.X - (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize);
             var chunkPosY = WorldPosition.Y - (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize);
             ChunkPosition = new Vector2(chunkPosX, chunkPosY);
 
-            TextureBounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Texture.Width, Texture.Height);
+            // Texture Rect
+            TextureBounds = new Rectangle(
+                (int)WorldPosition.X, 
+                (int)WorldPosition.Y, 
+                Texture.Width, 
+                Texture.Height);
 
-            // Entry Rect - MAY BE WRONG
+            // Entry Rect
             var entryRectX = WorldPosition.X + (4 * Global.TileSize);
             var entryRectY = WorldPosition.Y + (8 * Global.TileSize);
             EntryBounds = new Rectangle(
-                (int)entryRectX, 
-                (int)entryRectY, 
+                (int)entryRectX,
+                (int)entryRectY,
                 Global.TileSize * 1,
                 Global.TileSize * 1);
 
@@ -68,19 +112,15 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 (int)WorldPosition.Y - bufferZoneSize,
                 Texture.Width + bufferZoneSize * 2,
                 Texture.Height + bufferZoneSize * 2);
-
-            Bounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Texture.Width, Texture.Height);
-
-            Instance.Initialize();
         }
 
         public void Update(GameTime gameTime)
         {
-            if (EntryBounds.Contains(Global.Player.Position.X, Global.Player.Position.Y))
+            if (EntryBounds.Contains(Global.Player.WorldPosition.X, Global.Player.WorldPosition.Y))
             {
                 var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.Position.X;
+                var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.WorldPosition.X;
                 var worldExitPointY = EntryBounds.Bottom + Global.TileSize;
                 worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
 
@@ -131,10 +171,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         {
             float[] distances = 
             [
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Top))),
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Top))),
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Bottom))),
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Bottom))),
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
             ];
 
             if (distances.Min() <= (Global.FOG_OF_WAR_RADIUS))
@@ -147,10 +187,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         {
             //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
 
-            if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
+            if (Global.DRAW_STRUCTURE_DEBUG)
             {
                 Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Red * 0.25f);
-                //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
+                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
             }
 
             if (!IsExplored)
@@ -163,12 +203,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
             }
             else
             {
-                //if (Global.DRAW_STRUCTURE_ENTRY_OUTLINE)
-                //{
-                //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Red * 0.25f);
-                //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
-                //}
-
                 Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
             }
 

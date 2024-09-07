@@ -193,13 +193,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var sceneObject in SceneObjects)
             {
-                var validObjs = sceneObject.Value.Where(x => x.ZIndex <= Global.Player.Position.Y).ToList();
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex <= Global.Player.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
-                .OrderBy(x => x.Position.Y)
+                .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
@@ -212,13 +212,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var mineableObj in MineableObjects)
             {
-                var validObjs = mineableObj.Value.Where(x => x.ZIndex <= Global.Player.Position.Y).ToList();
+                var validObjs = mineableObj.Value.Where(x => x.ZIndex <= Global.Player.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
-                .OrderBy(x => x.Position.Y)
+                .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
@@ -231,13 +231,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var sceneObject in SceneObjects)
             {
-                var validObjs = sceneObject.Value.Where(x => x.ZIndex > Global.Player.Position.Y).ToList();
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex > Global.Player.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
-                .OrderBy(x => x.Position.Y)
+                .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
@@ -250,13 +250,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var mineableObj in MineableObjects)
             {
-                var validObjs = mineableObj.Value.Where(x => x.ZIndex > Global.Player.Position.Y).ToList();
+                var validObjs = mineableObj.Value.Where(x => x.ZIndex > Global.Player.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
-                .OrderBy(x => x.Position.Y)
+                .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));

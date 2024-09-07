@@ -33,8 +33,8 @@ namespace ProjectDonut.GameObjects
 
         public void UpdateFogOfWar()
         {
-            var playerX = (int)Global.Player.Position.X / Global.TileSize;
-            var playerY = (int)Global.Player.Position.X / Global.TileSize;
+            var playerX = (int)Global.Player.WorldPosition.X / Global.TileSize;
+            var playerY = (int)Global.Player.WorldPosition.X / Global.TileSize;
 
             for (int i = playerX - sightRadius; i < playerX + sightRadius; i++)
             {

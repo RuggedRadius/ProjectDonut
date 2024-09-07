@@ -39,7 +39,7 @@ namespace ProjectDonut.ProceduralGeneration
         public int yIndex { get; set; }
         public Vector2 LocalPosition { get; set; }
         public Vector2 Size { get; set; }
-        public Vector2 Position
+        public Vector2 WorldPosition
         {
             get
             {
@@ -83,7 +83,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Initialize()
         {
-            Bounds = new Rectangle((int)Position.X, (int)Position.Y, Global.TileSize, Global.TileSize);
+            Bounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Global.TileSize, Global.TileSize);
         }
 
         public void LoadContent()
@@ -131,7 +131,7 @@ namespace ProjectDonut.ProceduralGeneration
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
+            float distance = Math.Abs(Vector2.Distance(Global.Player.WorldPosition, WorldPosition));
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)
@@ -148,25 +148,25 @@ namespace ProjectDonut.ProceduralGeneration
             {
                 if (!IsVisible)                    
                 {
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White * 0.05f);
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
                 }
                 else 
                 { 
-                    var dist = Vector2.Distance(Position, Global.Player.Position);
+                    var dist = Vector2.Distance(WorldPosition, Global.Player.WorldPosition);
                     var absValue = Math.Abs(dist);
                     var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * alphaValue);
                 }
             }
             else if (Global.SceneManager.CurrentScene is WorldScene)
             {
                 if (!IsVisible)
                 {
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.Gray);                    
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);                    
                 }
                 else
                 {
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White);
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
                     //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
                 }
             }

@@ -33,7 +33,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
         public Texture2D InventoryIcon { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
 
         public bool IsVisible { get; set; }
         public bool IsExplored { get; set; }
@@ -44,7 +44,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         //public MineableObjectAnimationState MineableObjectAnimationState { get; set; }
         public MineableObjectType MineableObjectType { get; set; }
-        public Rectangle Bounds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Rectangle TextureBounds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private SpriteSheet _spriteSheet;
         private AnimationController _animControllerHit;
@@ -58,8 +58,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         public void Intialize()
         {
             InteractBounds = new Rectangle(
-                (int)Position.X + (Global.TileSize / 2),// - Global.TileSize, 
-                (int)Position.Y + ((Global.TileSize / 2) * 3),// - Global.TileSize,
+                (int)WorldPosition.X + (Global.TileSize / 2),// - Global.TileSize, 
+                (int)WorldPosition.Y + ((Global.TileSize / 2) * 3),// - Global.TileSize,
                 Global.TileSize,// + (2 * Global.TileSize),
                 Global.TileSize);// + (2 * Global.TileSize));
 
@@ -143,7 +143,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
+            float distance = Math.Abs(Vector2.Distance(Global.Player.WorldPosition, WorldPosition));
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)
@@ -204,12 +204,12 @@ namespace ProjectDonut.ProceduralGeneration.World
             else if (!IsVisible)
             {
                 _tree.Color = Color.Gray;
-                Global.SpriteBatch.Draw(_tree, Position, 0.0f, Vector2.One);
+                Global.SpriteBatch.Draw(_tree, WorldPosition, 0.0f, Vector2.One);
             }
             else
             {
                 _tree.Color = Color.White;
-                Global.SpriteBatch.Draw(_tree, Position, 0.0f, Vector2.One);
+                Global.SpriteBatch.Draw(_tree, WorldPosition, 0.0f, Vector2.One);
                 Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
             }
 

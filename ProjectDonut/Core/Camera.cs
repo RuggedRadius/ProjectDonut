@@ -47,7 +47,7 @@ namespace ProjectDonut.Core
             }
 
             var viewport = OrthoCamera.BoundingRectangle;
-            OrthoCamera.LookAt(Global.Player.Position);
+            OrthoCamera.LookAt(Global.Player.WorldPosition);
 
             DebugWindow.Lines[6] = $"Camera Position: {OrthoCamera.Position:N0}";
         }

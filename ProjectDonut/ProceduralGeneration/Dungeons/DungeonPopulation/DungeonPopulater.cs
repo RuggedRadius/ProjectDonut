@@ -50,7 +50,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 
                 var enemy = new OrcGrunt()
                 {
-                    Position = new Vector2(randomCoord.x * Global.TileSize, randomCoord.y * Global.TileSize),
+                    WorldPosition = new Vector2(randomCoord.x * Global.TileSize, randomCoord.y * Global.TileSize),
                     ZIndex = 0
                 };
 

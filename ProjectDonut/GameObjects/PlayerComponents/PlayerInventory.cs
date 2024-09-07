@@ -30,7 +30,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Texture2D _slotTexture;
         private Texture2D _emptySlotTexture;
 
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
 
         public List<PlayerInventorySlot> Slots { get; set; }
         
@@ -168,7 +168,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             var x = Global.ScreenWidth - Texture.Width - 50;
             var y = Global.ScreenHeight - Texture.Height - 50;
-            Position = new Vector2(x, y);
+            WorldPosition = new Vector2(x, y);
         }
 
         public void ToggleInventory()
@@ -258,7 +258,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             }
 
             Global.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
-            Global.SpriteBatch.Draw(Texture, Position, Color.White);
+            Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
 
             DrawSlots(gameTime);
 
@@ -289,12 +289,12 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var cellSpacing = 0;
             var outerSpacing = startWidth;
 
-            var maxPosition = Position.X + Texture.Width - outerSpacing - _emptySlotTexture.Width;
+            var maxPosition = WorldPosition.X + Texture.Width - outerSpacing - _emptySlotTexture.Width;
 
             foreach (var slot in Slots)
             {
-                var x = Position.X + startWidth + offsetX;
-                var y = Position.Y + startHeight + offsetY;
+                var x = WorldPosition.X + startWidth + offsetX;
+                var y = WorldPosition.Y + startHeight + offsetY;
 
                 var drawPos = new Vector2(x, y);
                 var rect = new Rectangle((int)drawPos.X, (int)drawPos.Y, _emptySlotTexture.Width, _emptySlotTexture.Height);

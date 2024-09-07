@@ -220,7 +220,7 @@ namespace ProjectDonut.Core.SceneManagement
 
             foreach (var exitPoint in ExitLocations)
             {
-                if (exitPoint.Value.Contains(Global.Player.Position))
+                if (exitPoint.Value.Contains(Global.Player.WorldPosition))
                 {
 
                     Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
@@ -228,7 +228,7 @@ namespace ProjectDonut.Core.SceneManagement
                 }
             }
 
-            UpdateVisibility(Global.Player.Position, Global.INSTANCE_SIGHT_RADIUS);
+            UpdateVisibility(Global.Player.WorldPosition, Global.INSTANCE_SIGHT_RADIUS);
         }
 
 
@@ -402,7 +402,7 @@ namespace ProjectDonut.Core.SceneManagement
         {
             base.PrepareForPlayerEntry();
 
-            Global.Player.Position = new Vector2(EntryLocation.X, EntryLocation.Y);
+            Global.Player.WorldPosition = new Vector2(EntryLocation.X, EntryLocation.Y);
         }
     }
 }

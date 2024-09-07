@@ -21,7 +21,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 {
     public class Player : IGameObject
     {
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public Vector2 ChunkPosition
         {
             get
@@ -29,7 +29,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 var offsetX = ChunkPosX * Global.ChunkSize * Global.TileSize;
                 var offsetY = ChunkPosY * Global.ChunkSize * Global.TileSize;
                 var offset = new Vector2(offsetX, offsetY);
-                return Position - offset;
+                return WorldPosition - offset;
             }
         }
         public int ZIndex { get; set; }
@@ -80,7 +80,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         public void Initialize()
         {
             IsVisible = true;
-            Position = new Vector2(50, 50);
+            WorldPosition = new Vector2(50, 50);
             speed = 200;
             spriteSize = new Vector2(Global.TileSize, Global.TileSize);
             ZIndex = 0;
@@ -101,7 +101,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             Light = new PointLight
             {
-                Position = this.Position,
+                Position = this.WorldPosition,
                 Scale = new Vector2(3000),
                 Color = Color.White,
                 Intensity = 1f,
@@ -163,14 +163,14 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             HandleInput(gameTime);
 
             DebugWindow.Lines[0] = $"World Chunk: [{ChunkPosX}, {ChunkPosY}]";
-            DebugWindow.Lines[1] = $"World Position: [{(int)Position.X}, {(int)Position.Y}]";
+            DebugWindow.Lines[1] = $"World Position: [{(int)WorldPosition.X}, {(int)WorldPosition.Y}]";
             DebugWindow.Lines[2] = $"Chunk Position: [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";            
 
             Inventory.Update(gameTime);
 
             VisibilityRect = new Rectangle(
-                (int)Position.X - 500,
-                (int)Position.Y - 500,
+                (int)WorldPosition.X - 500,
+                (int)WorldPosition.Y - 500,
                 1000,
                 1000
                 );
@@ -181,12 +181,12 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             //    Global.TileSize * 3,
             //    Global.TileSize * 3);
             InteractBounds = new Rectangle(
-                (int)Position.X - (Global.TileSize / 2),
-                (int)Position.Y - (Global.TileSize / 2),
+                (int)WorldPosition.X - (Global.TileSize / 2),
+                (int)WorldPosition.Y - (Global.TileSize / 2),
                 Global.TileSize,
                 Global.TileSize);
 
-            Light.Position = Position;
+            Light.Position = WorldPosition;
             Global.Penumbra.Transform = Global.Camera.GetTransformationMatrix();
         }
 
@@ -225,7 +225,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             UpdateAnimationFrame(movement);
 
-            Position += movement;
+            WorldPosition += movement;
         }
 
         private Vector2 _textureOrigin;
@@ -258,7 +258,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
-            Global.SpriteBatch.Draw(Texture, Position, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
+            Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
             Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Green * 0.25f);
             Global.SpriteBatch.End();
 
@@ -282,21 +282,21 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var playerStartPosX = settings.Width * Global.TileSize / 2;
             var playerStartPosY = settings.Height * Global.TileSize / 2;
 
-            Position = new Vector2(playerStartPosX, playerStartPosY);
+            WorldPosition = new Vector2(playerStartPosX, playerStartPosY);
         }
 
         public (int, int) GetWorldChunkCoords()
         {
 
-            var x = (int)(Position.X / (Global.TileSize * Global.ChunkSize));
-            var y = (int)(Position.Y / (Global.TileSize * Global.ChunkSize));
+            var x = (int)(WorldPosition.X / (Global.TileSize * Global.ChunkSize));
+            var y = (int)(WorldPosition.Y / (Global.TileSize * Global.ChunkSize));
 
-            if (Position.X < 0)
+            if (WorldPosition.X < 0)
             {
                 x--;
             }
 
-            if (Position.Y < 0)
+            if (WorldPosition.Y < 0)
             {
                 y--;
             }

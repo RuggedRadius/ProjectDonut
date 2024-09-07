@@ -45,7 +45,7 @@ namespace ProjectDonut.UI.ScrollDisplay
             DisplayX = Global.GraphicsDeviceManager.PreferredBackBufferWidth / 2;
             DisplayY = Global.GraphicsDeviceManager.PreferredBackBufferHeight - 200;            
             
-            ScrollText = CurrentStructure?.Name;
+            ScrollText = CurrentStructure?.StructureName;
             textDimensions = scrollFont.MeasureString(ScrollText);
             DisplayWidth = (int)textDimensions.X + 7 * scale;
 
@@ -91,7 +91,7 @@ namespace ProjectDonut.UI.ScrollDisplay
                 case ScrollShowState.Hidden:
                     if (CurrentStructure != null)
                     {
-                        ScrollText = CurrentStructure.Name;
+                        ScrollText = CurrentStructure.StructureName;
                         DisplayScroll();
                     }
                     break;

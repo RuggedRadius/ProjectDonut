@@ -95,17 +95,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
 
             var viableLocation = viableLocations[random.Next(0, viableLocations.Count)];
-            var position = viableLocation.Position;
+            var position = viableLocation.WorldPosition;
             viableLocations.Remove(viableLocation);
 
-            var castle = new WorldStructure(position, chunk)
-            {
-                Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
-                Instance = new InstanceScene(SceneType.Instance),
-                Texture = Global.SpriteLibrary.GetSprite("castle"),
-            };
+            var castle = new WorldStructure(position, chunk, WorldStructureType.Castle);
 
             castle.Initialize();
+            castle.LoadContent();
             chunk = CullScenaryAtCastleLocation(castle, chunk);
             structures.Add(castle);
 
@@ -119,7 +115,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 foreach (var obj in objList)
                 {
-                    if (castle.InteractBounds.Intersects(obj.Bounds))
+                    if (castle.InteractBounds.Intersects(obj.TextureBounds))
                     {
                         sceneObjectsToCull.Add(obj);
                     }
