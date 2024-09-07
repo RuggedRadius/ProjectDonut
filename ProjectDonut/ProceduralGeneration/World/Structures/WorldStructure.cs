@@ -87,6 +87,26 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         private void CalculateBounds()
         {
+            switch (StructureType)
+            {
+                case WorldStructureType.Village:
+                    break;
+
+                case WorldStructureType.Town:
+                    CalculateTownBounds();
+                    break;
+
+                case WorldStructureType.City: // ??? really needed?
+                    break;
+
+                case WorldStructureType.Castle:
+                    CalculateCastleBounds();
+                    break;
+            }
+        }
+
+        private void CalculateTownBounds()
+        {
             // Chunk position
             var chunkPosX = WorldPosition.X - (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize);
             var chunkPosY = WorldPosition.Y - (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize);
@@ -94,9 +114,35 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
             // Texture Rect
             TextureBounds = new Rectangle(
-                (int)WorldPosition.X, 
-                (int)WorldPosition.Y, 
-                Texture.Width, 
+                (int)WorldPosition.X,
+                (int)WorldPosition.Y,
+                Texture.Width,
+                Texture.Height);
+
+            // Entry Rect
+            EntryBounds = TextureBounds;
+
+            // Scroll Rect
+            var bufferZoneSize = 2 * Global.TileSize;
+            InteractBounds = new Rectangle(
+                (int)WorldPosition.X - bufferZoneSize,
+                (int)WorldPosition.Y - bufferZoneSize,
+                Texture.Width + bufferZoneSize * 2,
+                Texture.Height + bufferZoneSize * 2);
+        }
+
+        private void CalculateCastleBounds()
+        {
+            // Chunk position
+            var chunkPosX = WorldPosition.X - (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize);
+            var chunkPosY = WorldPosition.Y - (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize);
+            ChunkPosition = new Vector2(chunkPosX, chunkPosY);
+
+            // Texture Rect
+            TextureBounds = new Rectangle(
+                (int)WorldPosition.X,
+                (int)WorldPosition.Y,
+                Texture.Width,
                 Texture.Height);
 
             // Entry Rect
