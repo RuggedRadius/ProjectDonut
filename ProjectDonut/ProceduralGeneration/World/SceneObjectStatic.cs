@@ -9,7 +9,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 {
     public class SceneObjectStatic : ISceneObject
     {
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public Texture2D Texture { get; set; }
         public int ZIndex { get; set; }
 
@@ -24,7 +24,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Initialize()
         {
-            Bounds = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            Bounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Texture.Width, Texture.Height);
         }
 
         public void LoadContent()
@@ -44,13 +44,13 @@ namespace ProjectDonut.ProceduralGeneration.World
             if (!IsVisible)
             {
                 //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-                Global.SpriteBatch.Draw(Texture, Position, Color.Gray);
+                Global.SpriteBatch.Draw(Texture, WorldPosition, Color.Gray);
                 //Global.SpriteBatch.End();
             }
             else
             {
                 //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-                Global.SpriteBatch.Draw(Texture, Position, Color.White);
+                Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
                 //Global.SpriteBatch.End();
             }
         }
@@ -64,7 +64,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
+            float distance = Math.Abs(Vector2.Distance(Global.Player.WorldPosition, WorldPosition));
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)

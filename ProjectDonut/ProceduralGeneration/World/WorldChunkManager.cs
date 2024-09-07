@@ -15,7 +15,7 @@ namespace ProjectDonut.ProceduralGeneration.World
     public class WorldChunkManager :  IGameObject
     {
         public (int, int) PlayerChunkPosition { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
         public bool IsVisible { get; set; }

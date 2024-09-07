@@ -18,7 +18,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         public Vector2 WorldPosition { get; set; }
         public Vector2 ChunkPosition { get; set; }
-        public Vector2 Position { get; set; } // NOT USED?? - HMM not liking this, should more specific, world, local, chunk or whatever
 
         public Rectangle TextureBounds { get; set; }
         public Rectangle EntryBounds { get; set; }
@@ -76,11 +75,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         public void Update(GameTime gameTime)
         {
-            if (EntryBounds.Contains(Global.Player.Position.X, Global.Player.Position.Y))
+            if (EntryBounds.Contains(Global.Player.WorldPosition.X, Global.Player.WorldPosition.Y))
             {
                 var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.Position.X;
+                var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.WorldPosition.X;
                 var worldExitPointY = EntryBounds.Bottom + Global.TileSize;
                 worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
 
@@ -131,10 +130,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         {
             float[] distances = 
             [
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Top))),
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Top))),
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Bottom))),
-                Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Bottom))),
+                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
             ];
 
             if (distances.Min() <= (Global.FOG_OF_WAR_RADIUS))

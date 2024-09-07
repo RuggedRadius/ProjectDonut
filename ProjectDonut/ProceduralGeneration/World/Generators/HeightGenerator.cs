@@ -80,6 +80,39 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 }
             }
 
+            for (int z = 0; z < 5; z++)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < height; j++)
+                    {
+                        var cellValue = result[i, j];
+
+                        for (int x = -1; x < 2; x++)
+                        {
+                            for (int y = -1; y < 2; y++)
+                            {
+                                if (i + x < 0 || j + y < 0 || i + x >= width || j + y >= height)
+                                {
+                                    continue;
+                                }
+
+                                if (cellValue - result[i + x, j + y] > 1)
+                                {
+                                    result[i + x, j + y]++;
+                                }
+
+                                if (cellValue - result[i + x, j + y] < -1)
+                                {
+                                    result[i + x, j + y]--;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
             return result;
         }
 
@@ -176,10 +209,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         //Position = new Vector2(i * settings.TileSize, j * settings.TileSize) + chunk.Position,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = DetermineTexture(i, j, biomeValue, heightValue),
+                        Texture = DetermineTexture(i, j, biomeValue, chunk.HeightData),
                         TileType = TileType.World,
                         WorldTileType = DetermineTileType(i, j, heightValue),
-                        Biome = (Biome)chunk.BiomeData[i, j]
+                        Biome = (Biome)chunk.BiomeData[i, j],
+                        HeightValue = heightValue,
                     };
 
                     if (tile.WorldTileType == WorldTileType.Water)
@@ -196,25 +230,38 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return tmBase;
         }
 
-        private Texture2D DetermineTexture(int x, int y, int biomeValue, int heightValue)
+        private Texture2D DetermineTexture(int x, int y, int biomeValue, int[,] heightData)
         {
+            int heightValue = heightData[x, y];
             var biome = (Biome)biomeValue;
 
             if (heightValue >= settings.GroundHeightMin)
             {
-                switch (biome)
+                if (heightValue >= 30 && heightValue < 34)
                 {
-                    case Biome.Desert:
-                        return Global.SpriteLibrary.GetSprite("desert");
+                    return Global.SpriteLibrary.GetSprite("beach");
+                }
 
-                    case Biome.Grasslands:
-                        return Global.SpriteLibrary.GetSprite("grasslands");
+                //if (heightValue > 30 && heightValue % 10 == 0)
+                //{
+                //    return DetermineCliffTexture(x, y, heightData);
+                //}
+                else
+                {
+                    switch (biome)
+                    {
+                        case Biome.Desert:
+                            return Global.SpriteLibrary.GetSprite("desert");
 
-                    case Biome.Winterlands:
-                        return Global.SpriteLibrary.GetSprite("winterlands");
+                        case Biome.Grasslands:
+                            return Global.SpriteLibrary.GetSprite("grasslands");
 
-                    default:
-                        return Global.SpriteLibrary.GetSprite("grasslands");
+                        case Biome.Winterlands:
+                            return Global.SpriteLibrary.GetSprite("winterlands");
+
+                        default:
+                            return Global.SpriteLibrary.GetSprite("grasslands");
+                    }
                 }
             }
             else
@@ -228,6 +275,53 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     return Global.SpriteLibrary.GetSprite("deepwater-C");
                 }
             }
+        }
+
+        private Texture2D DetermineCliffTexture(int x, int y, int[,] heightData)
+        {
+            var nw = false;
+            var n = false;
+            var ne = false;
+            var w = false;
+            var e = false;
+            var sw = false;
+            var s = false;
+            var se = false;
+
+            if (x > 0 && y > 0)
+                nw = heightData[x - 1, y - 1] == heightData[x, y];
+
+            if (y > 0)
+                n = heightData[x, y - 1] == heightData[x, y];
+
+            if (x < heightData.GetLength(0) - 1 && y > 0)
+                ne = heightData[x + 1, y - 1] == heightData[x, y];
+
+            if (x > 0)
+                w = heightData[x - 1, y] == heightData[x, y];
+
+            if (x < heightData.GetLength(0) - 1)
+                e = heightData[x + 1, y] == heightData[x, y];
+
+            if (x > 0 && y < heightData.GetLength(1) - 1)
+                sw = heightData[x - 1, y + 1] == heightData[x, y];
+
+            if (y < heightData.GetLength(1) - 1)
+                s = heightData[x, y + 1] == heightData[x, y];
+
+            if (x < heightData.GetLength(0) - 1 && y < heightData.GetLength(1) - 1)
+                se = heightData[x + 1, y + 1] == heightData[x, y];
+
+            if (!n && e && !s && !w)
+            {
+                return Global.SpriteLibrary.GetSprite("cliff-face-nw");
+            }
+            else
+            {
+                return Global.SpriteLibrary.GetSprite("cliff-face-n");
+            }
+
+            
         }
 
         private WorldTileType DetermineTileType(int x, int y, int heightValue)

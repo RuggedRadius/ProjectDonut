@@ -17,7 +17,7 @@ namespace ProjectDonut.Environment
 
         public bool IsVisible { get; set; }
         public Texture2D Texture { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public int ZIndex { get; set; }
 
         private Rectangle DebugRect;

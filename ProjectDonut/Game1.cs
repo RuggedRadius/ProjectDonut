@@ -164,7 +164,7 @@ namespace ProjectDonut
             if (kbState.IsKeyDown(Keys.F9))
             {
                 var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, Global.TileSize, Global.TileSize);
+                worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
                 Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
@@ -214,7 +214,7 @@ namespace ProjectDonut
 
             _gameObjects
                 .Select(x => x.Value)
-                .OrderBy(x => x.Position.Y)
+                .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));

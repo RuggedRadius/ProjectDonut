@@ -65,15 +65,38 @@ namespace ProjectDonut.Core
 
             // Biomes
             lib.Add("grasslands", ExtractBiomeSprite(0, 0));
-            lib.Add("desert", ExtractBiomeSprite(1, 0));
-            lib.Add("winterlands", ExtractBiomeSprite(2, 0));
-
-            
+            lib.Add("beach", ExtractBiomeSprite(1, 0));
+            lib.Add("desert", ExtractBiomeSprite(3, 0));
+            lib.Add("winterlands", ExtractBiomeSprite(2, 0));            
 
             LoadDungeonSprites();
             LoadDungeonPopulationSprites();
 
             LoadItems();
+
+            LoadNEWOverworldTEST();
+        }
+
+        private void LoadNEWOverworldTEST()
+        {
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Overworld");
+
+            lib.Add("cliff-nw", ExtractSprite(sheet, 4, 9));
+            lib.Add("cliff-w", ExtractSprite(sheet, 4, 10));
+            lib.Add("cliff-sw", ExtractSprite(sheet, 4, 11));
+
+            lib.Add("cliff-n", ExtractSprite(sheet, 5, 9));
+            lib.Add("cliff-c", ExtractSprite(sheet, 5, 10));
+            lib.Add("cliff-s", ExtractSprite(sheet, 5, 11));
+
+            lib.Add("cliff-ne", ExtractSprite(sheet, 6, 9));
+            lib.Add("cliff-e", ExtractSprite(sheet, 6, 10));
+            lib.Add("cliff-se", ExtractSprite(sheet, 6, 11));
+
+            lib.Add("cliff-face-nw", ExtractSprite(sheet, 4, 14));
+            lib.Add("cliff-face-n", ExtractSprite(sheet, 5, 14));        
+            lib.Add("cliff-face-ne", ExtractSprite(sheet, 6, 14));        
+                   
         }
 
         private void LoadItems()

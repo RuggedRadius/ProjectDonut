@@ -11,7 +11,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
     {
         private FastNoiseLite[] _noise;
         private WorldMapSettings settings;
-        private float OctaveBlendAmount = 0.125f;
+        private float OctaveBlendAmount = 1f;
 
         public BiomeGenerator(WorldMapSettings settings)
         {
@@ -37,14 +37,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise[1] = new FastNoiseLite();
             _noise[1].SetNoiseType(FastNoiseLite.NoiseType.Cellular);
             _noise[1].SetSeed(random.Next(int.MinValue, int.MaxValue));
-            _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Hybrid);
+            _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Manhattan);
             _noise[1].SetCellularJitter(1.0f);
             _noise[1].SetCellularReturnType(FastNoiseLite.CellularReturnType.CellValue);
             _noise[1].SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
             _noise[1].SetDomainWarpAmp(100.0f);
-            _noise[1].SetFrequency(0.0075f);
-            _noise[1].SetFractalGain(3.5f);
-            _noise[1].SetFractalType(FastNoiseLite.FractalType.FBm);
+            _noise[1].SetFrequency(0.005f);
+            _noise[1].SetFractalGain(0.25f);
+            _noise[1].SetFractalType(FastNoiseLite.FractalType.PingPong);
             _noise[1].SetFractalOctaves(3);
             _noise[1].SetFractalLacunarity(4.0f);
             _noise[1].SetFractalWeightedStrength(0);

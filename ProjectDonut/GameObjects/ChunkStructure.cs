@@ -16,7 +16,7 @@ namespace ProjectDonut.GameObjects
         public string StructureName { get; set; }
         public Structure StructureType { get; set; }
         public Rectangle Rectangle { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
         public bool IsVisible { get; set; }

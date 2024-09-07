@@ -95,7 +95,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
 
             var viableLocation = viableLocations[random.Next(0, viableLocations.Count)];
-            var position = viableLocation.Position;
+            var position = viableLocation.WorldPosition;
             viableLocations.Remove(viableLocation);
 
             var castle = new WorldStructure(position, chunk)

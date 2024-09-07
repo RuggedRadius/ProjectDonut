@@ -55,7 +55,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                         var tree = new SceneObjectStatic
                         {
-                            Position = new Vector2(worldXPos, worldYPos),
+                            WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
                             ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
                         };
@@ -80,6 +80,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     {
                         continue;
                     }
+
+                    //if (chunk.HeightData[i, j] % 10 == 1)
+                    //{
+                    //    continue;
+                    //}
 
                     if (chunk.BiomeData[i, j] != (int)Biome.Grasslands)
                     {
@@ -110,7 +115,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                         var tree = new MineableObject(MineableObjectType.Tree)
                         {
-                            Position = new Vector2(worldXPos, worldYPos),
+                            WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
                             ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
                             InventoryIcon = Global.SpriteLibrary.ItemsSprites["wood-log"],
@@ -185,7 +190,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                     var tree = new SceneObjectStatic
                     {
-                        Position = new Vector2(worldXPos, worldYPos),
+                        WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
                         ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
                     };
@@ -240,7 +245,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                     var cactus = new SceneObjectStatic
                     {
-                        Position = new Vector2(worldXPos, worldYPos),
+                        WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
                         ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
                     };
@@ -289,7 +294,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                     var rock = new SceneObjectStatic
                     {
-                        Position = new Vector2(worldXPos, worldYPos),
+                        WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
                         ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
                     };

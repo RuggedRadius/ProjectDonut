@@ -118,7 +118,7 @@ namespace ProjectDonut.Core.SceneManagement
         {
             base.PrepareForPlayerEntry();
 
-            Global.Player.Position = new Vector2(LastExitLocation.X, LastExitLocation.Y);
+            Global.Player.WorldPosition = new Vector2(LastExitLocation.X, LastExitLocation.Y);
         }
     }
 }
