@@ -1,0 +1,139 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core;
+using ProjectDonut.Interfaces;
+
+namespace ProjectDonut.Environment
+{
+    public class DayNightCycle : IGameObject
+    {
+        private float timeOfDay = 0f; // Start at midnight
+        private float timeSpeed = 1f; // Speed of time (how fast time passes)
+
+        public bool IsVisible { get; set; }
+        public Texture2D Texture { get; set; }
+        public Vector2 Position { get; set; }
+        public int ZIndex { get; set; }
+
+        private Rectangle DebugRect;
+        private Rectangle TintRect;
+
+        private float TargetFOW;
+        private float TargetLightScale;
+
+        public void Initialize()
+        {
+            DebugRect = new Rectangle(
+                Global.ScreenWidth - 200,
+                0,
+                200,
+                50
+                );
+
+            TintRect = new Rectangle(0, 0, Global.ScreenWidth, Global.ScreenHeight);
+        }
+
+        public void LoadContent()
+        {
+            Texture = new Texture2D(Global.GraphicsDevice, 1, 1);
+            Texture.SetData(new[] { Color.White });
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            // Update the time of day based on timeSpeed
+            timeOfDay += timeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Keep timeOfDay within a 24-hour range
+            if (timeOfDay >= 24f)
+                timeOfDay -= 24f;
+
+            if (timeOfDay < 6f || timeOfDay >= 20f)
+            {
+                TargetFOW = 500;
+                TargetLightScale = 1000f;
+
+                //Global.Player.Light.Scale = new Vector2(1000);
+                //Global.FOG_OF_WAR_RADIUS = 500;
+
+                // Night time: Increase time speed
+                //timeSpeed = 0.1f;
+            }
+            else
+            {
+                TargetFOW = 1500;
+                TargetLightScale = 3000f;
+
+                //Global.Player.Light.Scale = new Vector2(3000);
+                //Global.FOG_OF_WAR_RADIUS = 1500;
+                // Day time: Normal time speed
+                //timeSpeed = 1f;
+            }
+
+            if (TargetFOW < Global.FOG_OF_WAR_RADIUS)
+            {
+                Global.FOG_OF_WAR_RADIUS -= 10;
+            }
+            else if (TargetFOW > Global.FOG_OF_WAR_RADIUS)
+            {
+                Global.FOG_OF_WAR_RADIUS += 10;
+            }
+
+            if (TargetLightScale < Global.Player.Light.Scale.X)
+            {
+                Global.Player.Light.Scale = new Vector2(Global.Player.Light.Scale.X - 10);
+            }
+            else if (TargetLightScale > Global.Player.Light.Scale.X)
+            {
+                Global.Player.Light.Scale = new Vector2(Global.Player.Light.Scale.X + 10);
+            }
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            Global.SpriteBatch.Begin();
+
+            // Apply time-of-day tint to your environment rendering
+            Color timeOfDayTint = GetTimeOfDayColor();
+            Global.SpriteBatch.Draw(Texture, TintRect, timeOfDayTint * 0.15f);
+
+            Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, DebugRect, Color.Black);
+            Global.SpriteBatch.DrawString(Global.FontDebug, $"{timeOfDay}", new Vector2(DebugRect.X + 10, DebugRect.Y + 10), Color.White);
+
+            // Draw the rest of your game as normal (characters, objects, etc.)
+            // They could also use `timeOfDayTint` if you want everything tinted.
+
+            Global.SpriteBatch.End();
+        }
+
+
+        public Color GetTimeOfDayColor()
+        {
+            if (timeOfDay >= 6f && timeOfDay < 18f)
+            {
+                // Daytime: Bright and natural lighting
+                return Color.White;
+            }
+            else if (timeOfDay >= 18f && timeOfDay < 20f)
+            {
+                // Evening: Darker, more orange/red lighting
+                return new Color(255, 200, 150); // Orange tint
+            }
+            else if (timeOfDay >= 4f && timeOfDay < 6f)
+            {
+                // Early morning: Slightly blue tint
+                return new Color(180, 220, 255); // Light blue tint
+            }
+            else
+            {
+                // Night: Dark and bluish
+                return new Color(50, 50, 100); // Dark blue tint
+            }
+        }
+    }
+}
