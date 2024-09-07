@@ -14,7 +14,7 @@ namespace ProjectDonut.Debugging
     {
         public bool IsShown { get; set; }
 
-        private SpriteFont debugFont;
+        
         private Texture2D debugTexture;
         private Rectangle debugRect;
         private int maxWindowWidth;
@@ -31,7 +31,7 @@ namespace ProjectDonut.Debugging
 
         public void LoadContent()
         {
-            debugFont = Global.ContentManager.Load<SpriteFont>("Fonts/Default");
+            Global.FontDebug = Global.ContentManager.Load<SpriteFont>("Fonts/Default");
             debugTexture = CreateTexture(Global.GraphicsDevice, 1, 1, Color.Black);
         }
 
@@ -69,7 +69,7 @@ namespace ProjectDonut.Debugging
                     continue;
                 }
 
-                var length = (int)debugFont.MeasureString(line).X + 10;
+                var length = (int)Global.FontDebug.MeasureString(line).X + 10;
                 if (length > maxWindowWidth)
                 {
                     maxWindowWidth = length;
@@ -95,7 +95,7 @@ namespace ProjectDonut.Debugging
 
                 // Debug Text
                 var pos = new Vector2(debugRect.X + 10, debugRect.Y + 5 + 30 * i);
-                Global.SpriteBatch.DrawString(debugFont, Lines[i], pos, Color.White);
+                Global.SpriteBatch.DrawString(Global.FontDebug, Lines[i], pos, Color.White);
             }
 
             Global.SpriteBatch.End();

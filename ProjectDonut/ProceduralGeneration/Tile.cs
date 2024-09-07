@@ -158,15 +158,16 @@ namespace ProjectDonut.ProceduralGeneration
                     Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
                 }
             }
-            else
+            else if (Global.SceneManager.CurrentScene is WorldScene)
             {
                 if (!IsVisible)
                 {
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.Gray);
+                    Global.SpriteBatch.Draw(Texture, Position, null, Color.Gray);                    
                 }
                 else
                 {
                     Global.SpriteBatch.Draw(Texture, Position, null, Color.White);
+                    //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
                 }
             }
         }

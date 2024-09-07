@@ -199,7 +199,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
-            genStructure.GenerateStructureData(chunk);
+            //genStructure.GenerateStructureData(chunk);
 
             var tilemapBase = genHeight.CreateBaseTilemap(chunk);
             //var tilemapForest = genForest.CreateTileMap(chunk);

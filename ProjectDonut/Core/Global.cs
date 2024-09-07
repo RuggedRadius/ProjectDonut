@@ -34,8 +34,8 @@ namespace ProjectDonut.Core
 
         // FOG OF WAR SETTINGS
         public static int INSTANCE_SIGHT_RADIUS = 8;
-        public static bool SHOW_FOG_OF_WAR = true;
-        public static int FOG_OF_WAR_RADIUS = 1000;
+        public static bool SHOW_FOG_OF_WAR = false;
+        public static int FOG_OF_WAR_RADIUS = 1500;
 
         // DEBUG SETTINGS
         public static Texture2D DEBUG_TEXTURE;
@@ -44,6 +44,7 @@ namespace ProjectDonut.Core
         public static bool DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE = true;
 
         // DEBUG
+        public static SpriteFont FontDebug;
         public static DevConsole Console;
         public static DebugWindow DebugWindow;
 

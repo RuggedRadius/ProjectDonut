@@ -156,6 +156,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         {
             var tmBase = new Tilemap(chunk.Width, chunk.Height);
 
+            var waterTileCount = 0;
+            var groundTileCount = 0;
+            var mountainTileCount = 0;
+
             for (int i = 0; i < chunk.Width; i++)
             {
                 for (int j = 0; j < chunk.Height; j++)
@@ -177,6 +181,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         WorldTileType = DetermineTileType(i, j, heightValue),
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };
+
+                    if (tile.WorldTileType == WorldTileType.Water)
+                        waterTileCount++;
+                    else if (tile.WorldTileType == WorldTileType.Ground)
+                        groundTileCount++;
+                    else
+                        mountainTileCount++;
 
                     tmBase.Map[i, j] = tile;
                 }

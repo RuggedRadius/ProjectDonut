@@ -37,11 +37,11 @@ namespace ProjectDonut.Core
         {
             var state = Keyboard.GetState();
             float zoomPerTick = 0.01f;
-            if (state.IsKeyDown(Keys.Z))
+            if (state.IsKeyDown(Keys.X))
             {
                 OrthoCamera.ZoomIn(zoomPerTick);
             }
-            if (state.IsKeyDown(Keys.X))
+            if (state.IsKeyDown(Keys.Z))
             {
                 OrthoCamera.ZoomOut(zoomPerTick);
             }

@@ -32,18 +32,23 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         public bool IsVisible { get; set; }
         public Rectangle Bounds { get; set; }
 
-        public WorldStructure(Vector2 chunkPosition, WorldChunk chunk)
+        public WorldStructure(Vector2 worldPosition, WorldChunk chunk)
         {
             WorldChunk = chunk;
-            ChunkPosition = chunkPosition;
+            WorldPosition = worldPosition;
         }
 
         public void Initialize()
         {
             // World Position
-            var worldPositionX = (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize) + ChunkPosition.X;
-            var worldPositionY = (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize) + ChunkPosition.Y;
-            WorldPosition = new Vector2(worldPositionX, worldPositionY);
+            //var worldPositionX = (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize) + ChunkPosition.X;
+            //var worldPositionY = (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize) + ChunkPosition.Y;
+            //WorldPosition = new Vector2(worldPositionX, worldPositionY);
+
+            // Chunk position
+            var chunkPosX = WorldPosition.X - (WorldChunk.ChunkCoordX * Global.ChunkSize * Global.TileSize);
+            var chunkPosY = WorldPosition.Y - (WorldChunk.ChunkCoordY * Global.ChunkSize * Global.TileSize);
+            ChunkPosition = new Vector2(chunkPosX, chunkPosY);
 
             TextureBounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Texture.Width, Texture.Height);
 
@@ -75,9 +80,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
             {
                 var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                var worldExitPointX = (EntryBounds.Width / 2) + EntryBounds.X + (Global.Player.ChunkPosX * Global.TileSize * WorldChunk.Width);
-                var worldExitPointY = EntryBounds.Bottom + Global.TileSize + (Global.Player.ChunkPosY * Global.TileSize * WorldChunk.Height);
-                worldScene.LastExitLocation = new Rectangle(worldExitPointX, worldExitPointY, Global.TileSize, Global.TileSize);
+                var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.Position.X;
+                var worldExitPointY = EntryBounds.Bottom + Global.TileSize;
+                worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
 
                 Global.ScrollDisplay.HideScroll();
                 Global.SceneManager.SetCurrentScene(Instance, SceneType.Instance);
@@ -132,13 +137,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
             ];
 
-            //;
-
-            //float topLeft = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Top)));
-            //float topRight = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Top)));
-            //float bottomRight = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Right, TextureBounds.Bottom)));
-            //float bottomLeft = Math.Abs(Vector2.Distance(Global.Player.Position, new Vector2(TextureBounds.Left, TextureBounds.Bottom)));
-
             if (distances.Min() <= (Global.FOG_OF_WAR_RADIUS))
                 return true;
             else
@@ -177,12 +175,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
 
             //Global.SpriteBatch.End();
-        }
-
-        // **** BEWARE: THIS IS VERY BROKEN ***
-        private void HandleScrollDisplay()
-        {
-
         }
     }
 }

@@ -36,115 +36,167 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             this.settings = settings;
         }
 
-        public void GenerateStructureData(WorldChunk chunk)
+        //public void GenerateStructureData(WorldChunk chunk)
+        //{
+        //    chunk.StructureData = new int[chunk.Width, chunk.Height];
+
+        //    var viableLocations = GetViableStructureLocations(chunk);
+
+        //    var townChance = random.Next(1, 101);
+        //    var castleChance = random.Next(1, 101);
+
+        //    var castleCount = castleChance > 0 ? 0 : 0;
+        //    var townCount = townChance > 0 ? 1 : 0;
+
+        //    for (int i = 0; i < castleCount; i++)
+        //    {
+        //        if (viableLocations.Count == 0)
+        //        {
+        //            break;
+        //        }
+
+        //        var location = viableLocations[random.Next(0, viableLocations.Count)];
+        //        viableLocations.Remove(location);
+
+        //        chunk.StructureData[location.Item1, location.Item2] = 1;
+        //    }
+
+        //    for (int i = 0; i < townCount; i++)
+        //    {
+        //        if (viableLocations.Count == 0)
+        //        {
+        //            break;
+        //        }
+
+        //        var location = viableLocations[random.Next(0, viableLocations.Count)];
+        //        viableLocations.Remove(location);
+
+        //        chunk.StructureData[location.Item1, location.Item2] = 2;
+        //    }
+
+        //    //chunk.Structures = GetStructuresData(chunk);
+        //}
+
+        private List<Tile> GetPossibleLocations(WorldChunk chunk)
         {
-            chunk.StructureData = new int[chunk.Width, chunk.Height];
+            var allGroundTiles = chunk.Tilemaps["base"].Map
+                .Cast<Tile>()
+                .Where(x => x.WorldTileType == WorldTileType.Ground)
+                .ToList();
 
-            var viableLocations = GetViableStructureLocations(chunk);
-
-            var townChance = random.Next(1, 101);
-            var castleChance = random.Next(1, 101);
-
-            var castleCount = castleChance > 0 ? 0 : 0;
-            var townCount = townChance > 0 ? 1 : 0;
-
-            for (int i = 0; i < castleCount; i++)
+            var checkedPos = new List<Tile>();
+            foreach (var pos in allGroundTiles)
             {
-                if (viableLocations.Count == 0)
+                var allGround = true;
+
+                for (int x = 0; x < 13; x++)
                 {
-                    break;
-                }
-
-                var location = viableLocations[random.Next(0, viableLocations.Count)];
-                viableLocations.Remove(location);
-
-                chunk.StructureData[location.Item1, location.Item2] = 1;
-            }
-
-            for (int i = 0; i < townCount; i++)
-            {
-                if (viableLocations.Count == 0)
-                {
-                    break;
-                }
-
-                var location = viableLocations[random.Next(0, viableLocations.Count)];
-                viableLocations.Remove(location);
-
-                chunk.StructureData[location.Item1, location.Item2] = 2;
-            }
-
-            //chunk.Structures = GetStructuresData(chunk);
-        }
-
-        private List<(int, int)> GetViableStructureLocations(WorldChunk chunk)
-        {
-            var results = new List<(int, int)>();
-            var exclusions = new List<(int, int)>();
-
-            for (int i = 0; i < chunk.Width; i++)
-            {
-                for (int j = 0; j < chunk.Height; j++)
-                {
-                    if (IsCellSuitable(chunk, i, j) == false)
+                    for (int y = 0; y < 13; y++)
                     {
-                        continue;
-                    }
-
-                    if (exclusions.Contains((i, j)))
-                    {
-                        continue;
-                    }
-
-                    for (int x = -1; x <= 1; x++)
-                    {
-                        for (int y = -1; y <= 1; y++)
+                        // Check its within chunk bounds
+                        if (pos.xIndex + x < 0 || pos.yIndex + y < 0 || pos.xIndex + x >= chunk.Width || pos.yIndex + y >= chunk.Height)
                         {
-                            if (x != 0 || y != 0)
-                            {
-                                exclusions.Add((i + x, j + y));
-                            }
+                            allGround = false;
+                            break;
+                        }
+
+                        // Check if its a ground tile
+                        if (chunk.Tilemaps["base"].Map[pos.xIndex + x, pos.yIndex + y].WorldTileType != WorldTileType.Ground)
+                        {
+                            allGround = false;
+                            break;
                         }
                     }
-
-                    results.Add((i, j));
                 }
-            }
 
-            return results;
-        }
-
-        private bool IsCellSuitable(WorldChunk chunk, int i, int j)
-        {
-            for (int x = 0; x < 9; x++)
-            {
-                for (int y = 0; y < 9; y++)
+                if (allGround)
                 {
-                    if (i + x < 0 || j + y < 0 || i + x >= chunk.Width || j + y >= chunk.Height)
-                    {
-                        return false; // Out of bounds
-                    }
-
-                    if (chunk.StructureData[i + x, j + y] != 0)
-                    {
-                        return false; // Structure already exists there
-                    }
-
-                    if (chunk.HeightData[i + x, j + y] < settings.GroundHeightMin ||
-                        chunk.HeightData[i + x, j + y] > settings.GroundHeightMax)
-                    {
-                        return false;  // Not suitable ground height
-                    }
-
-                    if (chunk.ForestData[i + x, j + y] != 0)
-                    {
-                        return false; // Intersects with forest
-                    }
+                    checkedPos.Add(pos);
                 }
             }
 
-            return true;
+            return checkedPos;
         }
+
+        //private List<(int, int)> GetViableStructureLocations(WorldChunk chunk)
+        //{
+        //    var results = new List<(int, int)>();
+        //    var exclusions = new List<(int, int)>();
+
+        //    for (int i = 0; i < chunk.Width; i++)
+        //    {
+        //        for (int j = 0; j < chunk.Height; j++)
+        //        {
+        //            if (IsCellSuitable(chunk, i, j) == false)
+        //            {
+        //                continue;
+        //            }
+
+        //            if (exclusions.Contains((i, j)))
+        //            {
+        //                continue;
+        //            }
+
+        //            for (int x = 0; x < 9; x++)
+        //            {
+        //                for (int y = 0; y < 9; y++)
+        //                {
+        //                    //if (x != 0 || y != 0)
+        //                    //{
+        //                        exclusions.Add((i + x, j + y));
+        //                    //}
+        //                }
+        //            }
+
+        //            //for (int x = -1; x <= 1; x++)
+        //            //{
+        //            //    for (int y = -1; y <= 1; y++)
+        //            //    {
+        //            //        if (x != 0 || y != 0)
+        //            //        {
+        //            //            exclusions.Add((i + x, j + y));
+        //            //        }
+        //            //    }
+        //            //}
+
+        //            results.Add((i, j));
+        //        }
+        //    }
+
+        //    return results;
+        //}
+
+        //private bool IsCellSuitable(WorldChunk chunk, int i, int j)
+        //{
+        //    for (int x = 0; x < 9; x++)
+        //    {
+        //        for (int y = 0; y < 9; y++)
+        //        {
+        //            if (i + x < 0 || j + y < 0 || i + x >= chunk.Width || j + y >= chunk.Height)
+        //            {
+        //                return false; // Out of bounds
+        //            }
+
+        //            if (chunk.StructureData[i + x, j + y] != 0)
+        //            {
+        //                return false; // Structure already exists there
+        //            }
+
+        //            if (chunk.HeightData[i + x, j + y] < settings.GroundHeightMin ||
+        //                chunk.HeightData[i + x, j + y] > settings.GroundHeightMax)
+        //            {
+        //                return false;  // Not suitable ground height
+        //            }
+
+        //            if (chunk.ForestData[i + x, j + y] != 0)
+        //            {
+        //                return false; // Intersects with forest
+        //            }
+        //        }
+        //    }
+
+        //    return true;
+        //}
 
         public List<ISceneObject> GenerateCastles(WorldChunk chunk)
         {
@@ -155,7 +207,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 return structures;
             }
 
-            var viableLocations = GetViableStructureLocations(chunk);
+            //var viableLocations = GetViableStructureLocations(chunk);
+            var viableLocations = GetPossibleLocations(chunk);
 
             if (viableLocations.Count == 0)
             {
@@ -163,7 +216,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
 
             var viableLocation = viableLocations[random.Next(0, viableLocations.Count)];
-            var position = new Vector2(viableLocation.Item1, viableLocation.Item2);
+            var position = viableLocation.Position;
             viableLocations.Remove(viableLocation);
 
             var castle = new WorldStructure(position, chunk)
