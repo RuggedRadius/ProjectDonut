@@ -6,6 +6,7 @@ using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Debugging;
 using ProjectDonut.Debugging.Console;
+using ProjectDonut.Environment;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Pathfinding;
 using ProjectDonut.ProceduralGeneration;
@@ -22,6 +23,10 @@ namespace ProjectDonut.Core
 {
     public static class Global
     {
+        // DAY/NIGHT
+        public static DayNightCycle DayNightCycle;
+
+        // LIGHTING
         public static PenumbraComponent Penumbra;
 
         // SCREEN SETTINGS

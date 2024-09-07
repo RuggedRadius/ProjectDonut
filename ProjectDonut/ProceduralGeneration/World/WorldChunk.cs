@@ -149,7 +149,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             if (Global.SceneManager.CurrentScene is WorldScene && 
-                Global.WorldChunkManager.PlayerChunk == this)
+                Global.WorldChunkManager.CurrentChunks.Contains(this))
             {
                 if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
                 {

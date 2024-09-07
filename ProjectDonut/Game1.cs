@@ -16,6 +16,7 @@ using ProjectDonut.UI.ScrollDisplay;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
 using Penumbra;
+using ProjectDonut.Environment;
 
 namespace ProjectDonut
 {
@@ -61,6 +62,8 @@ namespace ProjectDonut
             Global.Player = new Player();
             Global.Player.Initialize();
 
+            
+
 
 
 
@@ -95,6 +98,8 @@ namespace ProjectDonut
 
             Global.InputManager = new InputManager();
 
+
+
             _gameComponents.Add("sceneManager", Global.SceneManager);
             _gameComponents.Add("camera", Global.Camera);
             _gameComponents.Add("input", Global.InputManager);
@@ -128,7 +133,8 @@ namespace ProjectDonut
         {
             _gameObjects = new Dictionary<string, IGameObject>();
 
-
+            Global.DayNightCycle = new DayNightCycle();
+            _gameObjects.Add("day-night", Global.DayNightCycle);
         }
 
         protected override void LoadContent()

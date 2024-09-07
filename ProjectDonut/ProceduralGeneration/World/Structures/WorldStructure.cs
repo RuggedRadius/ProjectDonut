@@ -89,9 +89,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             }
 
-            if (Global.SceneManager.CurrentScene is WorldScene && Global.WorldChunkManager.PlayerChunk == WorldChunk)
+            if (Global.SceneManager.CurrentScene is WorldScene && Global.WorldChunkManager.CurrentChunks.Contains(WorldChunk))
             {
-                //if (ScrollBounds.Contains(Global.Player.Position))
+                // PROBLEM MAYBE HERE WITH WRONG BOUNDS/COORDS!!! VVVVV
                 if (InteractBounds.Contains(Global.GameCursor.CursorWorldPosition))
                 {
                     PlayerWithinScrollBounds = true;

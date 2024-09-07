@@ -71,7 +71,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private Dictionary<string, Texture2D> _textures;
 
-        private PointLight _light;
+        public PointLight Light;
 
         public Player()
         {
@@ -99,7 +99,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             Inventory = new PlayerInventory(Global.ContentManager, _cursor);
             Inventory.Initialize();
 
-            _light = new PointLight
+            Light = new PointLight
             {
                 Position = this.Position,
                 Scale = new Vector2(3000),
@@ -109,7 +109,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
                 ShadowType = ShadowType.Illuminated
             };
-            Global.Penumbra.Lights.Add(_light);
+            Global.Penumbra.Lights.Add(Light);
         }
 
         Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
@@ -186,7 +186,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 Global.TileSize,
                 Global.TileSize);
 
-            _light.Position = Position;
+            Light.Position = Position;
             Global.Penumbra.Transform = Global.Camera.GetTransformationMatrix();
         }
 
