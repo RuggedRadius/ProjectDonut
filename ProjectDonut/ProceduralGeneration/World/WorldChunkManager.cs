@@ -223,6 +223,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
             chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
+            chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
 
             
             

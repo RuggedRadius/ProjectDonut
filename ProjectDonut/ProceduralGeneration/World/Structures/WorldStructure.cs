@@ -62,9 +62,12 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                     break;
 
                 case WorldStructureType.Town:
+                    StructureName = "Town of " + NameGenerator.GenerateRandomName(_random.Next(2, 5));
+                    Instance = new InstanceScene(SceneType.Instance);
+                    Texture = Global.SpriteLibrary.GetSprite("town");
                     break;
 
-                case WorldStructureType.City:
+                case WorldStructureType.City: // ??? really needed?
                     break;
 
                 case WorldStructureType.Castle:

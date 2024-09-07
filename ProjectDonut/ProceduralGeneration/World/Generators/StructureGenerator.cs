@@ -77,11 +77,42 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return checkedPos;
         }
 
+        public List<ISceneObject> GenerateTowns(WorldChunk chunk)
+        {
+            var structures = new List<ISceneObject>();
+
+            if (random.Next(0, 100) < 50) // 50% chance of creating a town in a chunk
+            {
+                return structures;
+            }
+
+            //var viableLocations = GetViableStructureLocations(chunk);
+            var viableLocations = GetPossibleLocations(chunk);
+
+            if (viableLocations.Count == 0)
+            {
+                return structures;
+            }
+
+            var viableLocation = viableLocations[random.Next(0, viableLocations.Count)];
+            var position = viableLocation.WorldPosition;
+            viableLocations.Remove(viableLocation);
+
+            var town = new WorldStructure(position, chunk, WorldStructureType.Town);
+
+            town.Initialize();
+            town.LoadContent();
+            chunk = CullScenaryInRectangle(town.InteractBounds, chunk);
+            structures.Add(town);
+
+            return structures;
+        }
+
         public List<ISceneObject> GenerateCastles(WorldChunk chunk)
         {
             var structures = new List<ISceneObject>();
 
-            if (random.Next(0, 100) < 50) // 50% chance of creating a castle in a chunk
+            if (random.Next(0, 100) < 90) // 50% chance of creating a castle in a chunk
             {
                 return structures;
             }
@@ -102,20 +133,20 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
             castle.Initialize();
             castle.LoadContent();
-            chunk = CullScenaryAtCastleLocation(castle, chunk);
+            chunk = CullScenaryInRectangle(castle.InteractBounds, chunk);
             structures.Add(castle);
 
             return structures;
         }
 
-        private WorldChunk CullScenaryAtCastleLocation(WorldStructure castle, WorldChunk chunk)
+        private WorldChunk CullScenaryInRectangle(Rectangle bounds, WorldChunk chunk)
         {
             var sceneObjectsToCull = new List<ISceneObject>();
             foreach (var objList in chunk.SceneObjects?.Values)
             {
                 foreach (var obj in objList)
                 {
-                    if (castle.InteractBounds.Intersects(obj.TextureBounds))
+                    if (bounds.Intersects(obj.TextureBounds))
                     {
                         sceneObjectsToCull.Add(obj);
                     }
@@ -143,7 +174,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 foreach (var obj in objList)
                 {
-                    if (castle.InteractBounds.Intersects(obj.InteractBounds))
+                    if (bounds.Intersects(obj.InteractBounds))
                     {
                         mineablesToCull.Add(obj);
                     }

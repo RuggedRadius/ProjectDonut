@@ -65,8 +65,9 @@ namespace ProjectDonut.Core
 
             // Biomes
             lib.Add("grasslands", ExtractBiomeSprite(0, 0));
-            lib.Add("desert", ExtractBiomeSprite(1, 0));
+            lib.Add("beach", ExtractBiomeSprite(1, 0));
             lib.Add("winterlands", ExtractBiomeSprite(2, 0));
+            lib.Add("desert", ExtractBiomeSprite(3, 0));
 
             
 
@@ -361,21 +362,22 @@ namespace ProjectDonut.Core
         private void LoadStructureTown()
         {
             spriteSheetTown = Global.ContentManager.Load<Texture2D>("Sprites/WorldStructures/Town01");
+            lib.Add("town", spriteSheetTown);
 
-            for (int i = 0; i < 4; i++)
-            {
-                lib.Add($"town-{i + 1:D2}-NW", ExtractSprite(spriteSheetTown, 0 + i * 3, 0));
-                lib.Add($"town-{i + 1:D2}-N", ExtractSprite(spriteSheetTown, 1 + i * 3, 0));
-                lib.Add($"town-{i + 1:D2}-NE", ExtractSprite(spriteSheetTown, 2 + i * 3, 0));
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    lib.Add($"town-{i + 1:D2}-NW", ExtractSprite(spriteSheetTown, 0 + i * 3, 0));
+            //    lib.Add($"town-{i + 1:D2}-N", ExtractSprite(spriteSheetTown, 1 + i * 3, 0));
+            //    lib.Add($"town-{i + 1:D2}-NE", ExtractSprite(spriteSheetTown, 2 + i * 3, 0));
 
-                lib.Add($"town-{i + 1:D2}-W", ExtractSprite(spriteSheetTown, 0 + i * 3, 1));
-                lib.Add($"town-{i + 1:D2}-C", ExtractSprite(spriteSheetTown, 1 + i * 3, 1));
-                lib.Add($"town-{i + 1:D2}-E", ExtractSprite(spriteSheetTown, 2 + i * 3, 1));
+            //    lib.Add($"town-{i + 1:D2}-W", ExtractSprite(spriteSheetTown, 0 + i * 3, 1));
+            //    lib.Add($"town-{i + 1:D2}-C", ExtractSprite(spriteSheetTown, 1 + i * 3, 1));
+            //    lib.Add($"town-{i + 1:D2}-E", ExtractSprite(spriteSheetTown, 2 + i * 3, 1));
 
-                lib.Add($"town-{i + 1:D2}-SW", ExtractSprite(spriteSheetTown, 0 + i * 3, 2));
-                lib.Add($"town-{i + 1:D2}-S", ExtractSprite(spriteSheetTown, 1 + i * 3, 2));
-                lib.Add($"town-{i + 1:D2}-SE", ExtractSprite(spriteSheetTown, 2 + i * 3, 2));
-            }
+            //    lib.Add($"town-{i + 1:D2}-SW", ExtractSprite(spriteSheetTown, 0 + i * 3, 2));
+            //    lib.Add($"town-{i + 1:D2}-S", ExtractSprite(spriteSheetTown, 1 + i * 3, 2));
+            //    lib.Add($"town-{i + 1:D2}-SE", ExtractSprite(spriteSheetTown, 2 + i * 3, 2));
+            //}
         }
 
         private void LoadStructureCastle()
