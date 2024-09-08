@@ -7,8 +7,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Pathfinding;
-using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.NPCs.Enemy
 {
@@ -52,7 +52,7 @@ namespace ProjectDonut.NPCs.Enemy
                     //if (CurrentPath == null && DistanceToPlayer <= DetectionDistance)
                     if (DistanceToPlayer <= DetectionDistance)
                     {                        
-                        var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
+                        var curInstanceScene = (DungeonScene)Global.SceneManager.CurrentScene;
                         var curPlayerNode = new Node((int)Global.Player.WorldPosition.X / Global.TileSize, (int)Global.Player.WorldPosition.Y / Global.TileSize);
                         var curNode = new Node((int)WorldPosition.X / Global.TileSize, (int)WorldPosition.Y / Global.TileSize);
                         CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
@@ -88,7 +88,7 @@ namespace ProjectDonut.NPCs.Enemy
                             MoveTimer = 0;
                             WorldPosition = new Vector2(NextPosition.X, NextPosition.Y);
 
-                            var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
+                            var curInstanceScene = (DungeonScene)Global.SceneManager.CurrentScene;
                             var curPlayerNode = new Node((int)Global.Player.WorldPosition.X / Global.TileSize, (int)Global.Player.WorldPosition.Y / Global.TileSize);
                             var curNode = new Node((int)WorldPosition.X / Global.TileSize, (int)WorldPosition.Y / Global.TileSize);
                             CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);

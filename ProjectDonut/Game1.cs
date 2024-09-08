@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
 using Penumbra;
 using ProjectDonut.Environment;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut
 {
@@ -155,19 +156,19 @@ namespace ProjectDonut
 
             var kbState = Keyboard.GetState();
 
-            if (kbState.IsKeyDown(Keys.F8))
-            {
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
-                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            }
+            //if (kbState.IsKeyDown(Keys.F8))
+            //{
+            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
+            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+            //}
 
-            if (kbState.IsKeyDown(Keys.F9))
-            {
-                var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-                worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
-                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            }
+            //if (kbState.IsKeyDown(Keys.F9))
+            //{
+            //    var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+            //    worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
+            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
+            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+            //}
 
             if (kbState.IsKeyDown(Keys.O))
             {

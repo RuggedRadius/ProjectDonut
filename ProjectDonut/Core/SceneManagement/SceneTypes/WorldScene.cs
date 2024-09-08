@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -6,13 +7,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Debugging;
 using ProjectDonut.GameObjects;
+using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
-namespace ProjectDonut.Core.SceneManagement
+namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
-    public class WorldScene : Scene
+    public class WorldScene : BaseScene
     {
         public static WorldScene Instance;
 
@@ -25,7 +28,6 @@ namespace ProjectDonut.Core.SceneManagement
         public Rectangle LastExitLocation;
 
 
-
         public WorldScene(SceneType sceneType)
         {
             if (Instance == null)
@@ -33,7 +35,7 @@ namespace ProjectDonut.Core.SceneManagement
                 Instance = this;
             }
 
-            base.SceneType = sceneType;
+            SceneType = sceneType;
         }
 
         public override void Initialize()
@@ -58,7 +60,7 @@ namespace ProjectDonut.Core.SceneManagement
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);            
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
@@ -119,6 +121,11 @@ namespace ProjectDonut.Core.SceneManagement
             base.PrepareForPlayerEntry();
 
             Global.Player.WorldPosition = new Vector2(LastExitLocation.X, LastExitLocation.Y);
+        }
+
+        public override void PrepareForPlayerExit()
+        {
+            base.PrepareForPlayerExit();
         }
     }
 }

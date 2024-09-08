@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Core.Input
@@ -49,21 +50,21 @@ namespace ProjectDonut.Core.Input
         {
         }
 
-        private void HandleDebugInput()
-        {
-            if (KeyboardState.IsKeyDown(Keys.F8))
-            {
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
-                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            }
+        //private void HandleDebugInput()
+        //{
+        //    if (KeyboardState.IsKeyDown(Keys.F8))
+        //    {
+        //        Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+        //        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+        //    }
 
-            if (KeyboardState.IsKeyDown(Keys.F9))
-            {
-                var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-                worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
-                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            }
-        }
+        //    if (KeyboardState.IsKeyDown(Keys.F9))
+        //    {
+        //        var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+        //        worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
+        //        Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
+        //        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+        //    }
+        //}
     }
 }

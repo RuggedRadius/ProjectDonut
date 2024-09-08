@@ -20,10 +20,12 @@ using ProjectDonut.ProceduralGeneration.Dungeons;
 using System.IO;
 using ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation;
 using ProjectDonut.NPCs.Enemy;
+using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
+using ProjectDonut.Core.Input;
 
-namespace ProjectDonut.Core.SceneManagement
+namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
-    public class InstanceScene : Scene
+    public class DungeonScene : BaseScene
     {
         //private FogOfWar _fog;
         private Random random = new Random();
@@ -47,9 +49,9 @@ namespace ProjectDonut.Core.SceneManagement
         private int mapWidth;
         private int mapHeight;
 
-        public InstanceScene(SceneType sceneType)
+        public DungeonScene()
         {
-            SceneType = sceneType;
+            SceneType = SceneType.Dungeon;
             _bsp = new BSP();
         }
 
@@ -92,7 +94,7 @@ namespace ProjectDonut.Core.SceneManagement
             {
                 _gameObjects.Add($"enemy-{i + 1}", enemies[i]);
                 Enemies.Add(enemies[i]);
-            }            
+            }
 
             var stairsLocation = dungeonPopulater.GetStairsLocation();
             EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, Global.TileSize, Global.TileSize);
@@ -182,38 +184,37 @@ namespace ProjectDonut.Core.SceneManagement
         {
             base.Update(gameTime);
 
-            var kbState = Keyboard.GetState();
 
-            if (kbState.IsKeyDown(Keys.F1))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.F1))
             {
                 GenerateDungeon(false, false);
             }
 
-            if (kbState.IsKeyDown(Keys.F2))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.F2))
             {
-                _gameObjects.Clear();                
+                _gameObjects.Clear();
                 GenerateDungeon(false, true);
             }
 
-            if (kbState.IsKeyDown(Keys.F4))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.F4))
             {
                 var path = @"C:\DungeonData.txt";
                 DataMap = Debugging.DebugWindow.LoadIntArrayFromFile(path);
                 _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
             }
 
-            if (kbState.IsKeyDown(Keys.F5))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.F5))
             {
                 var path = @"C:\DungeonData.txt";
                 Debugging.DebugWindow.SaveIntArrayToFile(DataMap, path);
             }
 
-            if (kbState.IsKeyDown(Keys.C))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.C))
             {
                 Global.INSTANCE_SIGHT_RADIUS -= 1;
             }
 
-            if (kbState.IsKeyDown(Keys.V))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.V))
             {
                 Global.INSTANCE_SIGHT_RADIUS += 1;
             }
@@ -223,16 +224,13 @@ namespace ProjectDonut.Core.SceneManagement
                 if (exitPoint.Value.Contains(Global.Player.WorldPosition))
                 {
 
-                    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
-                    ((WorldScene)Global.SceneManager.CurrentScene).PrepareForPlayerEntry();
+                    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
+                    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
                 }
             }
 
             UpdateVisibility(Global.Player.WorldPosition, Global.INSTANCE_SIGHT_RADIUS);
         }
-
-
-        // This function performs raycasting from the player position
 
         public void UpdateVisibility(Vector2 playerPosition, int viewDistance)
         {
@@ -255,7 +253,8 @@ namespace ProjectDonut.Core.SceneManagement
             }
         }
 
-        // Raycasting logic
+        // TODO: Refactor this function to use a more efficient algorithm, maybe Bresenham's line algorithm?
+        // May be analysing the same tile multiple times
         private void CastRay(int startX, int startY, float angle, int viewDistance)
         {
             float x = startX + 0.5f;
@@ -293,64 +292,6 @@ namespace ProjectDonut.Core.SceneManagement
                 y += deltaY;
             }
         }
-
-
-        //public void UpdateVisibility()
-        //{
-        //    var visibleTiles = new HashSet<Rectangle>();
-        //    foreach (var tile in _tilemap.Map)
-        //    {
-        //        if (tile == null)
-        //            continue;
-
-        //        if (!Global.Player.VisibilityRect.Contains(tile.Position))                
-        //            continue;                
-
-        //        if (IsTileVisible(Global.Player.VisibilityRect, tile.Bounds, WallPositions))
-        //        {
-        //            tile.IsVisible = true;
-        //            tile.IsExplored = true;
-        //            visibleTiles.Add(tile.Bounds);
-        //        }
-        //        else
-        //        {
-        //            tile.IsVisible = false;
-        //        }
-        //    }
-
-        //    UpdateTileVisibility(visibleTiles);
-        //}
-
-        //private void UpdateTileVisibility(HashSet<Rectangle> visibleTiles)
-        //{
-        //    foreach (var tile in _tilemap.Map)
-        //    {
-        //        if (tile == null)
-        //            continue;
-
-        //        tile.IsVisible = visibleTiles.Contains(tile.Bounds);
-        //    }
-        //}
-
-        //public static bool IsTileVisible(Rectangle playerBounds, Rectangle tileBounds, List<Rectangle> obstacles)
-        //{
-        //    Rectangle intersection = Rectangle.Intersect(playerBounds, tileBounds);
-
-        //    if (intersection.IsEmpty)
-        //    {
-        //        return true; // No intersection, tile is visible
-        //    }
-
-        //    foreach (var obstacle in obstacles)
-        //    {
-        //        if (obstacle.Intersects(intersection))
-        //        {
-        //            return false; // Obstacle in the way
-        //        }
-        //    }
-
-        //    return true; // No obstacles, tile is visible
-        //}
 
         public override void Draw(GameTime gameTime)
         {
@@ -403,6 +344,11 @@ namespace ProjectDonut.Core.SceneManagement
             base.PrepareForPlayerEntry();
 
             Global.Player.WorldPosition = new Vector2(EntryLocation.X, EntryLocation.Y);
+        }
+
+        public override void PrepareForPlayerExit()
+        {
+            base.PrepareForPlayerExit();
         }
     }
 }

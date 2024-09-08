@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite;
 using ProjectDonut.Core;
-using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
@@ -144,14 +144,14 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            if (Global.SceneManager.CurrentScene is InstanceScene)
+            if (Global.SceneManager.CurrentScene is DungeonScene)
             {
-                if (!IsVisible)                    
+                if (!IsVisible)
                 {
                     Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
                 }
-                else 
-                { 
+                else
+                {
                     var dist = Vector2.Distance(WorldPosition, Global.Player.WorldPosition);
                     var absValue = Math.Abs(dist);
                     var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
@@ -162,12 +162,25 @@ namespace ProjectDonut.ProceduralGeneration
             {
                 if (!IsVisible)
                 {
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);                    
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);
                 }
                 else
                 {
                     Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
                     //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
+                }
+            }
+            else if (Global.SceneManager.CurrentScene is TownScene)
+            {
+                if (!IsVisible)
+                {
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);
+                }
+                else
+                {
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
+                    //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
+
                 }
             }
         }

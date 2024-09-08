@@ -4,9 +4,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Interfaces;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
+using IScene = ProjectDonut.Core.SceneManagement.IScene;
 
 namespace ProjectDonut.ProceduralGeneration.World.Structures
 {
@@ -24,7 +26,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         // Properties
         public WorldChunk WorldChunk { get; set; }
-        public InstanceScene Instance { get; set; }
+        public IScene Instance { get; set; }
         public WorldStructureType StructureType { get; set; }
 
         // Position
@@ -63,7 +65,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
                 case WorldStructureType.Town:
                     StructureName = "Town of " + NameGenerator.GenerateRandomName(_random.Next(2, 5));
-                    Instance = new InstanceScene(SceneType.Instance);
+                    Instance = new TownScene();
                     Texture = Global.SpriteLibrary.GetSprite("town");
                     break;
 
@@ -72,13 +74,15 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
                 case WorldStructureType.Castle:
                     StructureName = "Castle " + NameGenerator.GenerateRandomName(_random.Next(2, 5));
-                    Instance = new InstanceScene(SceneType.Instance);
+                    Instance = new DungeonScene();
                     Texture = Global.SpriteLibrary.GetSprite("castle");
                     break;
             }
+            
+            Instance.Initialize();
+            Instance.LoadContent();
 
             CalculateBounds();
-            Instance.Initialize();
         }
 
         public void LoadContent()
@@ -165,35 +169,38 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         public void Update(GameTime gameTime)
         {
-            if (EntryBounds.Contains(Global.Player.WorldPosition.X, Global.Player.WorldPosition.Y))
+            if (Global.SceneManager.CurrentScene is WorldScene)
             {
-                var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-
-                var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.WorldPosition.X;
-                var worldExitPointY = EntryBounds.Bottom + Global.TileSize;
-                worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
-
-                Global.ScrollDisplay.HideScroll();
-                Global.SceneManager.SetCurrentScene(Instance, SceneType.Instance);
-                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            }
-
-            if (Global.SceneManager.CurrentScene is WorldScene && Global.WorldChunkManager.CurrentChunks.Contains(WorldChunk))
-            {
-                // PROBLEM MAYBE HERE WITH WRONG BOUNDS/COORDS!!! VVVVV
-                if (InteractBounds.Contains(Global.GameCursor.CursorWorldPosition))
+                if (EntryBounds.Contains(Global.Player.WorldPosition.X, Global.Player.WorldPosition.Y))
                 {
-                    PlayerWithinScrollBounds = true;
+                    var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                    if (ScrollDisplayer.CurrentStructure != this)
-                    {
-                        Global.ScrollDisplay.HideScroll();
-                        ScrollDisplayer.CurrentStructure = this;
-                    }
+                    var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.WorldPosition.X;
+                    var worldExitPointY = EntryBounds.Bottom + Global.TileSize;
+                    worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
+
+                    Global.ScrollDisplay.HideScroll();
+                    Global.SceneManager.SetCurrentScene(Instance);
+                    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
                 }
-                else
+
+                if (Global.WorldChunkManager.CurrentChunks.Contains(WorldChunk))
                 {
-                    PlayerWithinScrollBounds = false;
+                    // PROBLEM MAYBE HERE WITH WRONG BOUNDS/COORDS!!! VVVVV
+                    if (InteractBounds.Contains(Global.GameCursor.CursorWorldPosition))
+                    {
+                        PlayerWithinScrollBounds = true;
+
+                        if (ScrollDisplayer.CurrentStructure != this)
+                        {
+                            Global.ScrollDisplay.HideScroll();
+                            ScrollDisplayer.CurrentStructure = this;
+                        }
+                    }
+                    else
+                    {
+                        PlayerWithinScrollBounds = false;
+                    }
                 }
             }
 

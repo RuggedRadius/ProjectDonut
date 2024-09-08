@@ -1,27 +1,21 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Interfaces;
-using ProjectDonut.ProceduralGeneration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using ProjectDonut.Interfaces;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
-namespace ProjectDonut.Core.SceneManagement
+namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
-    public class Scene : IGameComponent
+    public abstract class BaseScene : IScene
     {
         public SceneType SceneType { get; set; }
-        public Dictionary<string, IGameObject> _gameObjects;
-        public Dictionary<string, IScreenObject> _screenObjects;
-        public Dictionary<string, IGameComponent> _gameComponents;
-        //public Dictionary<string, ISceneObject> _sceneObjects;
-
         public Vector2 Position { get; set; }
-        public int ZIndex { get; set; }
+        public Dictionary<string, IGameObject> _gameObjects { get; set; }
+        public Dictionary<string, IScreenObject> _screenObjects { get; set; }
+        public Dictionary<string, Interfaces.IGameComponent> _gameComponents { get; set; }
 
 
 
@@ -30,7 +24,6 @@ namespace ProjectDonut.Core.SceneManagement
             _gameObjects = new Dictionary<string, IGameObject>();
             _screenObjects = new Dictionary<string, IScreenObject>();
             _gameComponents = new Dictionary<string, IGameComponent>();
-            //_sceneObjects = new Dictionary<string, ISceneObject>();
         }
 
         public virtual void LoadContent()
@@ -66,6 +59,11 @@ namespace ProjectDonut.Core.SceneManagement
         }
 
         public virtual void PrepareForPlayerEntry()
+        {
+
+        }
+
+        public virtual void PrepareForPlayerExit()
         {
 
         }

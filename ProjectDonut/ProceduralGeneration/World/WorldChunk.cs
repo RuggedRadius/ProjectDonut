@@ -5,11 +5,11 @@ using System.Linq;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.UI.ScrollDisplay;
-using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.World.Generators;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
