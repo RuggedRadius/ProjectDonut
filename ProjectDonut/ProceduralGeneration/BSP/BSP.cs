@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Microsoft.Xna.Framework;
+using ProjectDonut.ProceduralGeneration.Dungeons;
 
-namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
+namespace ProjectDonut.ProceduralGeneration.BSP
 {
     public class BSP
     {
@@ -205,7 +206,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
 
         private bool IsRoomPartitionableHorizontally(Room room)
         {
-            var horizontalSizeAppropriate = room.Bounds.Width > (_roomMinSize.X * 2);
+            var horizontalSizeAppropriate = room.Bounds.Width > _roomMinSize.X * 2;
 
             if (horizontalSizeAppropriate)
             {
@@ -219,7 +220,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
 
         private bool IsRoomPartitionableVertically(Room room)
         {
-            var verticalSizeAppropriate = room.Bounds.Height > (_roomMinSize.Y * 2);
+            var verticalSizeAppropriate = room.Bounds.Height > _roomMinSize.Y * 2;
 
             if (verticalSizeAppropriate)
             {
@@ -346,7 +347,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
          * 1 = Wall
          * 2 = Floor
          */
-        public int[,] CreateDataMap(List<Room> rooms, int width, int height)
+        public int[,] CreateDataMap(List<Room> rooms, int width, int height, int wallPadding)
         {
             // Initialise canvas
             int[,] canvas = new int[width, height];
@@ -366,14 +367,20 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                     for (int x = room.Bounds.Left; x < room.Bounds.Right; x++)
                     {
                         // Check if the current position is on the edge of the room
-                        if (x == room.Bounds.Left || 
+                        if (x == room.Bounds.Left ||
                             x == room.Bounds.Right - 1 ||
-                            y == room.Bounds.Top || 
+                            y == room.Bounds.Top ||
                             y == room.Bounds.Bottom - 1)
                         {
-                            if (x >= 0 && x < width && y >= 0 && y < height)
+                            for (int i = -wallPadding; i < wallPadding + 1; i++)
                             {
-                                canvas[x, y] = 1;
+                                for (int j = -wallPadding; j < wallPadding + 1; j++)
+                                {
+                                    if (x + i >= 0 && x + i < width && y + j >= 0 && y + j < height)
+                                    {
+                                        canvas[x + i, y + j] = 1;
+                                    }
+                                }
                             }
                         }
                         else
@@ -386,7 +393,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
 
             return canvas;
         }
-    
+
         private List<List<(int, int)>> _paths;
         public int[,] LinkAllRooms(List<(Rectangle, Rectangle)> rooms, int[,] datamap)
         {
@@ -435,7 +442,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
                 {
                     break;
                 }
-            } 
+            }
             while (!TestPathDoesntCollide(datamap, path));
 
             canvas = WallAroundPath(datamap, canvas, path);

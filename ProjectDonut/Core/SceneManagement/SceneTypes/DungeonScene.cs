@@ -14,7 +14,6 @@ using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
-using ProjectDonut.ProceduralGeneration.Dungeons.BSP;
 using System.Diagnostics;
 using ProjectDonut.ProceduralGeneration.Dungeons;
 using System.IO;
@@ -22,6 +21,7 @@ using ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation;
 using ProjectDonut.NPCs.Enemy;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using ProjectDonut.Core.Input;
+using ProjectDonut.ProceduralGeneration.BSP;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -156,7 +156,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 }
 
                 // Generate data map
-                dataMap = _bsp.CreateDataMap(rooms[rooms.Count - 1], width, height);
+                dataMap = _bsp.CreateDataMap(rooms[rooms.Count - 1], width, height, 0);
 
                 // Link rooms
                 var rects = rooms[rooms.Count - 1].Select(x => x.Bounds).ToList();

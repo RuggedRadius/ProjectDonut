@@ -67,28 +67,28 @@ namespace ProjectDonut.Core.SceneManagement
             return scene;
         }
 
-        public IScene CreateInstanceScene(SceneType sceneType)
-        {
-            IScene scene;
+        //public IScene CreateInstanceScene(SceneType sceneType)
+        //{
+        //    IScene scene;
 
-            switch (sceneType)
-            {
-                case SceneType.Dungeon:
-                    scene = new DungeonScene();
-                    break;
+        //    switch (sceneType)
+        //    {
+        //        case SceneType.Dungeon:
+        //            scene = new DungeonScene();
+        //            break;
 
-                case SceneType.Town:
-                    scene = new TownScene();
-                    break;
+        //        case SceneType.Town:
+        //            scene = new TownScene();
+        //            break;
 
-                default:
-                    return null;
-            }
+        //        default:
+        //            return null;
+        //    }
 
-            scene.Initialize();
-            scene.LoadContent();
+        //    scene.Initialize();
+        //    scene.LoadContent();
 
-            return scene;
-        }
+        //    return scene;
+        //}
     }
 }

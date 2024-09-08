@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace ProjectDonut.ProceduralGeneration.Dungeons.BSP
+namespace ProjectDonut.ProceduralGeneration.BSP
 {
     public class Room
     {
