@@ -68,7 +68,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
                     var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                    // TODO: Probably set the corresponding world position here, depending on which exit was used
                     switch (exitPoint.Key)
                     {
                         case "north":

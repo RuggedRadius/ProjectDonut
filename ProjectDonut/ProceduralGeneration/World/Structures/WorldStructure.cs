@@ -35,7 +35,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
         // Bounds
         public Rectangle TextureBounds { get; set; }
-        public Rectangle EntryBounds { get; set; }
+        public Rectangle[] EntryBounds { get; set; }
         public Rectangle InteractBounds { get; set; }
 
         // Drawing
@@ -124,7 +124,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 Texture.Height);
 
             // Entry Rect
-            EntryBounds = TextureBounds;
+            EntryBounds = CreateEntryBounds();
 
             // Scroll Rect
             var bufferZoneSize = 2 * Global.TileSize;
@@ -133,6 +133,49 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 (int)WorldPosition.Y - bufferZoneSize,
                 Texture.Width + bufferZoneSize * 2,
                 Texture.Height + bufferZoneSize * 2);
+        }
+
+        private Rectangle[] CreateEntryBounds()
+        {
+            var entries = new Rectangle[4];
+
+            // North
+            var entryRectX = WorldPosition.X;// + (Texture.Width / 2) - (Global.TileSize / 2);
+            var entryRectY = WorldPosition.Y;
+            entries[0] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize * 3,
+                Global.TileSize);
+
+            // East
+            entryRectX = WorldPosition.X + Texture.Width - Global.TileSize;
+            entryRectY = WorldPosition.Y;// + (Texture.Height / 2) - (Global.TileSize / 2);
+            entries[1] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize,
+                Global.TileSize * 3);
+
+            // South
+            entryRectX = WorldPosition.X;// + (Texture.Width / 2) - (Global.TileSize / 2);
+            entryRectY = WorldPosition.Y + Texture.Height - Global.TileSize;
+            entries[2] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize * 3,
+                Global.TileSize);
+
+            // West
+            entryRectX = WorldPosition.X;
+            entryRectY = WorldPosition.Y;// + (Texture.Height / 2) - (Global.TileSize / 2);
+            entries[3] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize,
+                Global.TileSize * 3);
+
+            return entries;
         }
 
         private void CalculateCastleBounds()
@@ -150,9 +193,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 Texture.Height);
 
             // Entry Rect
+            EntryBounds = new Rectangle[1];
             var entryRectX = WorldPosition.X + (4 * Global.TileSize);
             var entryRectY = WorldPosition.Y + (8 * Global.TileSize);
-            EntryBounds = new Rectangle(
+            EntryBounds[0] = new Rectangle(
                 (int)entryRectX,
                 (int)entryRectY,
                 Global.TileSize * 1,
@@ -171,17 +215,50 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         {
             if (Global.SceneManager.CurrentScene is WorldScene)
             {
-                if (EntryBounds.Contains(Global.Player.WorldPosition.X, Global.Player.WorldPosition.Y))
+                foreach (var entry in EntryBounds)
                 {
-                    var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+                    if (entry.Contains(Global.Player.WorldPosition.X, Global.Player.WorldPosition.Y))
+                    {
+                        var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                    var worldExitPointX = (EntryBounds.Width / 2) - Global.TileSize + Global.Player.WorldPosition.X;
-                    var worldExitPointY = EntryBounds.Bottom + Global.TileSize;
-                    worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
+                        var worldExitPointX = (entry.Width / 2) - Global.TileSize + Global.Player.WorldPosition.X;
+                        var worldExitPointY = entry.Bottom + Global.TileSize;
+                        worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
 
-                    Global.ScrollDisplay.HideScroll();
-                    Global.SceneManager.SetCurrentScene(Instance);
-                    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+                        Global.ScrollDisplay.HideScroll();
+                        Global.SceneManager.SetCurrentScene(Instance);
+                        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+
+                        if (StructureType != WorldStructureType.Town)
+                        {
+                            break;
+                        }
+
+                        if (entry == EntryBounds[0]) // North
+                        {
+                            var xPos = 50 * Global.TileSize;
+                            var yPos = 1 * Global.TileSize;
+                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                        }
+                        else if (entry == EntryBounds[1]) // East
+                        {
+                            var xPos = (100 * Global.TileSize) - (1 * Global.TileSize);
+                            var yPos = 50 * Global.TileSize;
+                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                        }
+                        else if (entry == EntryBounds[2]) // South
+                        {
+                            var xPos = 50 * Global.TileSize;
+                            var yPos = (100 * Global.TileSize) - (1 * Global.TileSize);
+                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                        }
+                        else if (entry == EntryBounds[3]) // West
+                        {
+                            var xPos = 1 * Global.TileSize;
+                            var yPos = 50 * Global.TileSize;
+                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                        }
+                    }
                 }
 
                 if (Global.WorldChunkManager.CurrentChunks.Contains(WorldChunk))
@@ -246,7 +323,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
             if (Global.DRAW_STRUCTURE_DEBUG)
             {
                 Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Red * 0.25f);
-                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, EntryBounds, Color.White * 0.5f);
+
+                foreach (var entry in EntryBounds)
+                {
+                    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, entry, Color.White * 0.5f);
+                }                
             }
 
             if (!IsExplored)
