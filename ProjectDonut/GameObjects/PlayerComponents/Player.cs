@@ -259,7 +259,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
             Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
-            Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Green * 0.25f);
+            //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Green * 0.25f);
             Global.SpriteBatch.End();
 
             Inventory.Draw(gameTime);

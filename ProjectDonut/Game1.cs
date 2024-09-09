@@ -44,6 +44,7 @@ namespace ProjectDonut
 
             Global.GraphicsDeviceManager.PreferredBackBufferWidth = Global.ScreenWidth;
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
+            Global.GraphicsDeviceManager.SupportedOrientations = DisplayOrientation.Portrait;
 
             Global.Penumbra = new PenumbraComponent(this);
             Components.Add(Global.Penumbra);
@@ -170,16 +171,16 @@ namespace ProjectDonut
             //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
             //}
 
-            if (kbState.IsKeyDown(Keys.O))
-            {
-                //testScroll.DisplayScroll(500, 300, "Flandaria");                
-                Global.ScrollDisplay.DisplayScroll();
-            }
+            //if (kbState.IsKeyDown(Keys.O))
+            //{
+            //    //testScroll.DisplayScroll(500, 300, "Flandaria");                
+            //    Global.ScrollDisplay.DisplayScroll();
+            //}
 
-            if (kbState.IsKeyDown(Keys.P))
-            {
-                Global.ScrollDisplay.HideScroll();
-            }
+            //if (kbState.IsKeyDown(Keys.P))
+            //{
+            //    Global.ScrollDisplay.HideScroll();
+            //}zz
 
             Global.SceneManager.Update(gameTime);
             Global.Player.Update(gameTime);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,12 @@ namespace ProjectDonut.Core.Input
         public static InputManager Instance;
 
         public static KeyboardState KeyboardState;
+        public static KeyboardState LastKeyboardState;
+
         public static MouseState MouseState;
+        public static MouseState LastMouseState;
+
+        public static int ScrollWheelDelta;
 
         public InputManager()
         {
@@ -42,8 +48,26 @@ namespace ProjectDonut.Core.Input
 
         public void Update(GameTime gameTime)
         {
+            // Store the previous states
+            LastKeyboardState = KeyboardState;
+            LastMouseState = MouseState;
+
+            // Update the current states
             KeyboardState = Keyboard.GetState();
             MouseState = Mouse.GetState();
+
+            // Calculate scroll delta
+            ScrollWheelDelta = MouseState.ScrollWheelValue - LastMouseState.ScrollWheelValue;
+
+            // Detect scroll direction based on ScrollWheelDelta
+            if (ScrollWheelDelta > 0)
+            {
+                Debug.WriteLine("Mouse wheel scrolled up");
+            }
+            else if (ScrollWheelDelta < 0)
+            {
+                Debug.WriteLine("Mouse wheel scrolled down");
+            }
         }
 
         public void Draw(GameTime gameTime)

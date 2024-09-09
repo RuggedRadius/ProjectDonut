@@ -86,6 +86,7 @@ namespace ProjectDonut.Core
 
             var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Town01");
 
+            // Grass
             TownSprites.Add("grass-nw", ExtractSprite(sheet, 0, 0));
             TownSprites.Add("grass-n", ExtractSprite(sheet, 1, 0));
             TownSprites.Add("grass-ne", ExtractSprite(sheet, 2, 0));
@@ -96,6 +97,7 @@ namespace ProjectDonut.Core
             TownSprites.Add("grass-s", ExtractSprite(sheet, 1, 2));
             TownSprites.Add("grass-se", ExtractSprite(sheet, 2, 2));
 
+            // Dirt
             TownSprites.Add("dirt-nw", ExtractSprite(sheet, 3, 0));
             TownSprites.Add("dirt-n", ExtractSprite(sheet, 4, 0));
             TownSprites.Add("dirt-ne", ExtractSprite(sheet, 5, 0));
@@ -106,6 +108,7 @@ namespace ProjectDonut.Core
             TownSprites.Add("dirt-s", ExtractSprite(sheet, 4, 2));
             TownSprites.Add("dirt-se", ExtractSprite(sheet, 5, 2));
 
+            // Fences
             TownSprites.Add("fence-nw", ExtractSprite(sheet, 6, 0));
             TownSprites.Add("fence-n", ExtractSprite(sheet, 7, 0));
             TownSprites.Add("fence-ne", ExtractSprite(sheet, 8, 0));
@@ -115,6 +118,11 @@ namespace ProjectDonut.Core
             TownSprites.Add("fence-sw", ExtractSprite(sheet, 6, 2));
             TownSprites.Add("fence-s", ExtractSprite(sheet, 7, 2));
             TownSprites.Add("fence-se", ExtractSprite(sheet, 8, 2));
+
+            // Houses
+            TownSprites.Add("house-01", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House01"));
+            TownSprites.Add("house-02", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House02"));
+            TownSprites.Add("sign-forsale", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Sign_ForSale"));
         }
 
         private void LoadItems()

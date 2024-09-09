@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.BSP;
-using ProjectDonut.ProceduralGeneration.Dungeons;
+using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.ProceduralGeneration.World.Structures;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Room = ProjectDonut.ProceduralGeneration.BSP.Room;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -21,12 +17,18 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private BSP _bsp;
 
         private Tilemap _tilemap;
+        private Tilemap _tilemapFences;
 
         private Dictionary<string, Rectangle> ExitLocations;
 
         public List<IGameObject> NPCs { get; set; }
 
         private WorldStructure _worldStructure;
+
+        private List<Room> _plots;
+        private List<ISceneObject> _sceneObjs;
+
+        private Vector2 MapSize = new Vector2(100, 100);
 
         public TownScene(WorldStructure worldStructure)
         {
@@ -47,8 +49,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             base.LoadContent();
 
             GenerateDataMap();
+            AddFenceData();
             GenerateTileMap(DataMap);
+            GenerateFencesTileMap(DataMap);
             GenerateExitLocations();
+            GenerateStructures();
         }
 
         public override void Update(GameTime gameTime)
@@ -57,6 +62,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             foreach (var tile in _tilemap.Map)
             {
+                if (tile == null)
+                {
+                    continue;
+                }
+
                 tile.Update(gameTime);
             }
 
@@ -124,6 +134,26 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 tile.Draw(gameTime);
             }
 
+            foreach (var tile in _tilemapFences.Map)
+            {
+                if (tile == null)
+                {
+                    continue;
+                }
+
+                tile.Draw(gameTime);
+            }
+
+            foreach (var structure in _sceneObjs)
+            {
+                if (structure == null)
+                {
+                    continue;
+                }
+
+                structure.Draw(gameTime);
+            }
+
             if (Global.DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE)
             {
                 foreach (var exitPoint in ExitLocations)
@@ -188,22 +218,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public void GenerateDataMap()
         {
-            var width = 100;
-            var height = 100;
+            var width = (int)MapSize.X;
+            var height = (int)MapSize.Y;
 
-            // Generate data map
             var areaGens = _bsp.GenerateRooms(width, height);
-            var areas = _bsp.SquashRooms(areaGens[areaGens.Count - 1], width, height);
-            var map = _bsp.CreateDataMap(areas, width, height, 1);
-
-            //// Link rooms
-            //var rects = areas.Select(x => x.Bounds).ToList();
-            //var rectLinker = new RectangleLinker();
-            //var links = rectLinker.LinkRectangles(rects);
-            //var linkages = _bsp.LinkAllRooms(links, map);
-            //map = BSP.MergeArrays(map, linkages);
-
-            DataMap = map;
+            _plots = _bsp.SquashRooms(areaGens[areaGens.Count - 1], width, height);
+            DataMap = _bsp.CreateDataMap(_plots, width, height, 1);
         }
 
         private void GenerateTileMap(int[,] data)
@@ -243,6 +263,43 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _tilemap = tilemap;
         }
 
+        private void GenerateFencesTileMap(int[,] data)
+        {
+            var width = data.GetLength(0);
+            var height = data.GetLength(1);
+
+            var tilemap = new Tilemap(width, height);
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (data[i, j] != 3)
+                    {
+                        continue;
+                    }
+
+                    var tile = new Tile(false)
+                    {
+                        ChunkX = 0,
+                        ChunkY = 0,
+                        xIndex = i,
+                        yIndex = j,
+                        LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
+                        Size = new Vector2(Global.TileSize, Global.TileSize),
+                        Texture = DetermineFenceTexture(data, i, j),
+                        TileType = TileType.Instance,
+                        IsExplored = true
+                        //DungeonTileType = DetermineTileType(data, i, j)
+                    };
+
+                    tilemap.Map[i, j] = tile;
+                }
+            }
+
+            _tilemapFences = tilemap;
+        }
+
         private Texture2D DetermineTexture(int[,] map, int x, int y)
         {
             var cellValue = map[x, y];
@@ -256,18 +313,65 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                     return Global.SpriteLibrary.TownSprites["dirt-c"];
 
                 case 2:
-                    if (IsNeighbourCellRoad(map, x, y))
-                    {
-                        return Global.SpriteLibrary.TownSprites["fence-s"];
-                    }
-                    else
-                    {
-                        return Global.SpriteLibrary.TownSprites["grass-c"];
-                    }
+                    return Global.SpriteLibrary.TownSprites["grass-c"];
+
+                case 3:
+                    return Global.SpriteLibrary.TownSprites["grass-c"];
 
                 default:
                     return Global.SpriteLibrary.TownSprites["dirt-c"];
             }
+        }
+
+        private void AddFenceData()
+        {
+            for (int i = 0; i < MapSize.X; i++)
+            {
+                for (int j = 0; j < MapSize.Y; j++)
+                {
+                    if (DataMap[i, j] == 2)
+                    {
+                        if (IsNeighbourCellRoad(DataMap, i, j))
+                        {
+                            DataMap[i, j] = 3;
+                        }
+                    }
+                }
+            }
+        }
+
+        private Texture2D DetermineFenceTexture(int[,] map, int x, int y)
+        {
+            var n = map[x, y - 1] == 3;
+            var e = map[x + 1, y] == 3;
+            var s = map[x, y + 1] == 3;
+            var w = map[x - 1, y] == 3;
+
+            if (!n && e && s && !w)
+                return Global.SpriteLibrary.TownSprites["fence-nw"];
+            if (!n && e && !s && w)
+            {
+                if (map[x, y - 1] == 2)
+                    return Global.SpriteLibrary.TownSprites["fence-s"];
+                else
+                    return Global.SpriteLibrary.TownSprites["fence-n"];
+            }
+                
+            if (!n && !e && s && w)
+                return Global.SpriteLibrary.TownSprites["fence-ne"];
+            if (n && !e && s && !w)
+            {
+                if (map[x - 1, y] == 2)
+                    return Global.SpriteLibrary.TownSprites["fence-e"];
+                else
+                    return Global.SpriteLibrary.TownSprites["fence-w"];
+            }                
+            if (n && e && !s && !w)
+                return Global.SpriteLibrary.TownSprites["fence-sw"];
+            if (n && !e && !s && w)
+                return Global.SpriteLibrary.TownSprites["fence-se"];
+            else
+                return Global.SpriteLibrary.TownSprites["fence-s"];
         }
 
         private bool IsNeighbourCellRoad(int[,] map, int x, int y)
@@ -287,6 +391,45 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 s = map[x, y + 1];
 
             return n == 1 || e == 1 || s == 1 || w == 1;
+        }
+    
+        private void GenerateStructures()
+        {
+            _sceneObjs = new List<ISceneObject>();
+
+            foreach (var plot in _plots)
+            {
+                Texture2D texture = null;
+                var textureIndex = new Random().Next(0, 3);
+                switch (textureIndex)
+                {
+                    case 0:
+                        texture = Global.SpriteLibrary.TownSprites["house-01"];
+                        break;
+
+                    case 1:
+                        texture = Global.SpriteLibrary.TownSprites["house-02"];
+                        break;
+
+                    case 2:
+                        texture = Global.SpriteLibrary.TownSprites["sign-forsale"];
+                        break;
+                }
+
+                var posX = plot.Bounds.X * Global.TileSize + ((plot.Bounds.Width * Global.TileSize) / 2) - (texture.Width / 2);
+                var posY = plot.Bounds.Y * Global.TileSize + ((plot.Bounds.Height * Global.TileSize) / 2) - (texture.Height / 2);
+
+                var structure = new SceneObjectStatic()
+                {
+                    WorldPosition = new Vector2(posX, posY),
+                    Texture = texture,
+                    TextureBounds = new Rectangle(plot.Bounds.X * Global.TileSize, plot.Bounds.Y * Global.TileSize, plot.Bounds.Width, plot.Bounds.Height),
+                    IsVisible = true,
+                    IsExplored = true
+                };
+
+                _sceneObjs.Add(structure);
+            }
         }
     }
 }
