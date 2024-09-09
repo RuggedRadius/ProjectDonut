@@ -133,6 +133,8 @@ namespace ProjectDonut
             Global.Player.Inventory = new PlayerInventory();
             Global.Player.Inventory.Initialize();
             _screenObjects.Add("inventory", Global.Player.Inventory);
+
+
         }
 
         private void CreateGameObjects()
@@ -141,6 +143,10 @@ namespace ProjectDonut
 
             Global.DayNightCycle = new DayNightCycle();
             _gameObjects.Add("day-night", Global.DayNightCycle);
+
+            Global.Player.TextDisplay = new PlayerTextDisplay();
+            Global.Player.TextDisplay.Initialize();
+            _gameObjects.Add("playerTextDisplay", Global.Player.TextDisplay);
         }
 
         protected override void LoadContent()

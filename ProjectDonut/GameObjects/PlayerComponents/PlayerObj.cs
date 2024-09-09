@@ -1,21 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Input.Touch;
 using Penumbra;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
-using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
 {

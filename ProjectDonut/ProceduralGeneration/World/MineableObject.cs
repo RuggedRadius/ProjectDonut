@@ -44,7 +44,6 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int Health { get; set; }
         public int MaxHealth { get; set; }
 
-        //public MineableObjectAnimationState MineableObjectAnimationState { get; set; }
         public MineableObjectType MineableObjectType { get; set; }
         public Rectangle TextureBounds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -60,10 +59,10 @@ namespace ProjectDonut.ProceduralGeneration.World
         public void Intialize()
         {
             InteractBounds = new Rectangle(
-                (int)WorldPosition.X + (Global.TileSize / 2),// - Global.TileSize, 
-                (int)WorldPosition.Y + ((Global.TileSize / 2) * 3),// - Global.TileSize,
-                Global.TileSize,// + (2 * Global.TileSize),
-                Global.TileSize);// + (2 * Global.TileSize));
+                (int)WorldPosition.X + (Global.TileSize / 2),
+                (int)WorldPosition.Y + ((Global.TileSize / 2) * 3),
+                Global.TileSize,
+                Global.TileSize);
 
             MaxHealth = 1000;
             Health = MaxHealth;
@@ -240,6 +239,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }                
 
                 Global.Player.Inventory.AddItemToInventory(mineableItem);
+                Global.Player.TextDisplay.AddText("+1 " + mineableItem.Name, 2, 10, 0, true, Color.Green);
 
                 switch (MineableObjectType)
                 {

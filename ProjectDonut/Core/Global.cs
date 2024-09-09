@@ -66,6 +66,7 @@ namespace ProjectDonut.Core
         public static class Player
         {            
             public static PlayerInventory Inventory;
+            public static PlayerTextDisplay TextDisplay;
         }
 
 
@@ -73,10 +74,6 @@ namespace ProjectDonut.Core
         public static GameCursor GameCursor;
         public static SpriteLibrary SpriteLibrary;
         public static ScrollDisplayer ScrollDisplay;
-
-
-        
-        //public static Astar Pathfinding;
 
         public static WorldChunkManager WorldChunkManager;
 
