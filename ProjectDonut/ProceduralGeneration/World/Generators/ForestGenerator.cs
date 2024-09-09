@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
 using System;
@@ -105,15 +106,17 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
+                    var positionVariantX = _random.Next(-settings.TileSize / 4, settings.TileSize / 4);
+                    var positionVariantY = _random.Next(-settings.TileSize / 4, settings.TileSize / 4);
+
                     var tile = new Tile(false)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,
                         xIndex = i,
                         yIndex = j,
-                        LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
+                        LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize) + new Vector2(positionVariantX, positionVariantY),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        //Texture = DetermineTexture(i, j, chunk.BiomeData),
                         Texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0],
                         TileType = TileType.World,
                         WorldTileType = WorldTileType.Forest,

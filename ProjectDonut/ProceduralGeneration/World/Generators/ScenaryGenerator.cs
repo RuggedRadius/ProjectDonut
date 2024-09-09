@@ -16,9 +16,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             this.settings = settings;
         }
 
-        public List<ISceneObject> GenerateWinterTrees(WorldChunk chunk)
+        public List<IMineable> GenerateWinterTrees(WorldChunk chunk)
         {
-            var trees = new List<ISceneObject>();
+            var trees = new List<IMineable>();
 
             for (int i = 0; i < chunk.Width; i++)
             {
@@ -34,7 +34,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
-                    var treeCount = _random.Next(2, 4);
+                    //var treeCount = _random.Next(2, 4);
+                    var treeCount = 1;
                     var halfTileSize = Global.TileSize / 2;
 
                     for (int k = 0; k < treeCount; k++)
@@ -42,24 +43,30 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var chunkPosX = i * Global.TileSize;
                         var chunkPosY = j * Global.TileSize;
 
-                        var randomiseX = _random.Next(-halfTileSize, halfTileSize);
-                        var randomiseY = _random.Next(-halfTileSize, halfTileSize);
+                        var positionVariantX = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
+                        var positionVariantY = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
 
                         var globaliseX = chunk.ChunkCoordX * Global.TileSize * Global.ChunkSize;
                         var globaliseY = chunk.ChunkCoordY * Global.TileSize * Global.ChunkSize;
 
-                        var worldXPos = chunkPosX + randomiseX + globaliseX;
-                        var worldYPos = chunkPosY + randomiseY + globaliseY;
+                        var offsetX = -Global.TileSize;
+                        var offsetY = -Global.TileSize * 2;
+
+                        var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;
+                        var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
                         var texture = Global.SpriteLibrary.WorldMapSprites["tree-02-winter"][0];
 
-                        var tree = new SceneObjectStatic
+                        var tree = new MineableObject(MineableObjectType.Tree)
                         {
                             WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
-                            ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                            ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                            InventoryIcon = Global.SpriteLibrary.ItemsSprites["wood-log"],
                         };
 
+                        tree.Intialize();
+                        tree.LoadContent();
                         trees.Add(tree);
                     }
                 }
@@ -67,6 +74,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
             return trees;
         }
+
+        //var texture = Global.SpriteLibrary.WorldMapSprites["tree-02-winter"][0];
 
         public List<IMineable> GenerateTrees(WorldChunk chunk)
         {
@@ -95,16 +104,17 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var chunkPosX = i * Global.TileSize;
                         var chunkPosY = j * Global.TileSize;
 
-                        //var randomiseX = _random.Next(-halfTileSize, halfTileSize);
-                        //var randomiseY = _random.Next(-halfTileSize, halfTileSize);
+                        var positionVariantX = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
+                        var positionVariantY = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
 
                         var globaliseX = chunk.ChunkCoordX * Global.TileSize * Global.ChunkSize;
                         var globaliseY = chunk.ChunkCoordY * Global.TileSize * Global.ChunkSize;
 
-                        //var worldXPos = chunkPosX + randomiseX + globaliseX;
-                        //var worldYPos = chunkPosY + randomiseY + globaliseY;
-                        var worldXPos = chunkPosX + globaliseX + halfTileSize;                        
-                        var worldYPos = chunkPosY + globaliseY + halfTileSize;
+                        var offsetX = -Global.TileSize;
+                        var offsetY = -Global.TileSize * 2;
+
+                        var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;                        
+                        var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
                         var texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0];
 

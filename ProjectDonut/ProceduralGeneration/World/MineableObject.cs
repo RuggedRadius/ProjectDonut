@@ -17,6 +17,7 @@ namespace ProjectDonut.ProceduralGeneration.World
     public enum MineableObjectType
     {
         Tree,
+        TreeWinter,
         Rock,
         Ore,
         Bush
@@ -73,36 +74,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             switch (MineableObjectType) 
             {
                 case MineableObjectType.Tree:
-                    InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
+                    InitialiseTreeAnimations();
+                    break;
 
-                    var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-Sheet-export");
-                    var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
-                    _spriteSheet = new SpriteSheet("SpriteSheet/tree", atlas);
-
-                    _spriteSheet.DefineAnimation("idle", builder =>
-                    {
-                        builder.IsLooping(false)
-                            .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1));
-                    });
-
-                    _spriteSheet.DefineAnimation("hit", builder =>
-                    {
-                        builder.IsLooping(false)
-                            .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(0.1))
-                            .AddFrame(1, duration: TimeSpan.FromSeconds(0.1))
-                            .AddFrame(2, duration: TimeSpan.FromSeconds(0.1))
-                            .AddFrame(3, duration: TimeSpan.FromSeconds(0.1));
-                    });
-
-                    _tree = new AnimatedSprite(_spriteSheet, "idle");
-                    _tree.SetAnimation("hit").OnAnimationEvent += (sender, trigger) =>
-                    {
-                        if (trigger == AnimationEventTrigger.AnimationCompleted)
-                        {
-                            //Debug.WriteLine("Animation completed");
-                            _tree.SetAnimation("idle");
-                        }
-                    };
+                case MineableObjectType.TreeWinter:
+                    InitialiseWinterTreeAnimations();
                     break;
 
                 case MineableObjectType.Rock:
@@ -114,6 +90,80 @@ namespace ProjectDonut.ProceduralGeneration.World
                 case MineableObjectType.Bush:
                     break;
             }
+        }
+
+        private void InitialiseTreeAnimations()
+        {
+            InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
+
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-Sheet-export");
+            var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
+            _spriteSheet = new SpriteSheet("SpriteSheet/tree", atlas);
+
+            _spriteSheet.DefineAnimation("idle", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1));
+            });
+
+            var cellTime = 0.25f;
+
+            _spriteSheet.DefineAnimation("hit", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(1, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            _tree = new AnimatedSprite(_spriteSheet, "idle");
+            _tree.SetAnimation("hit").OnAnimationEvent += (sender, trigger) =>
+            {
+                if (trigger == AnimationEventTrigger.AnimationCompleted)
+                {
+                    //Debug.WriteLine("Animation completed");
+                    _tree.SetAnimation("idle");
+                }
+            };
+        }
+
+        private void InitialiseWinterTreeAnimations()
+        {
+            InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
+
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-winter");
+            var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
+            _spriteSheet = new SpriteSheet("SpriteSheet/tree", atlas);
+
+            _spriteSheet.DefineAnimation("idle", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1));
+            });
+
+            var cellTime = 0.25f;
+
+            _spriteSheet.DefineAnimation("hit", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(1, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            _tree = new AnimatedSprite(_spriteSheet, "idle");
+            _tree.SetAnimation("hit").OnAnimationEvent += (sender, trigger) =>
+            {
+                if (trigger == AnimationEventTrigger.AnimationCompleted)
+                {
+                    //Debug.WriteLine("Animation completed");
+                    _tree.SetAnimation("idle");
+                }
+            };
         }
 
 
