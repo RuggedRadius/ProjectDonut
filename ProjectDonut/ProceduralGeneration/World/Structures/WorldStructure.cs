@@ -217,11 +217,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
             {
                 foreach (var entry in EntryBounds)
                 {
-                    if (entry.Contains(Global.Player.WorldPosition.X, Global.Player.WorldPosition.Y))
+                    if (entry.Contains(Global.PlayerObj.WorldPosition.X, Global.PlayerObj.WorldPosition.Y))
                     {
                         var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
 
-                        var worldExitPointX = (entry.Width / 2) - Global.TileSize + Global.Player.WorldPosition.X;
+                        var worldExitPointX = (entry.Width / 2) - Global.TileSize + Global.PlayerObj.WorldPosition.X;
                         var worldExitPointY = entry.Bottom + Global.TileSize;
                         worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
 
@@ -238,25 +238,25 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                         {
                             var xPos = 50 * Global.TileSize;
                             var yPos = 1 * Global.TileSize;
-                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                            Global.PlayerObj.WorldPosition = new Vector2(xPos, yPos);
                         }
                         else if (entry == EntryBounds[1]) // East
                         {
                             var xPos = (100 * Global.TileSize) - (1 * Global.TileSize);
                             var yPos = 50 * Global.TileSize;
-                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                            Global.PlayerObj.WorldPosition = new Vector2(xPos, yPos);
                         }
                         else if (entry == EntryBounds[2]) // South
                         {
                             var xPos = 50 * Global.TileSize;
                             var yPos = (100 * Global.TileSize) - (1 * Global.TileSize);
-                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                            Global.PlayerObj.WorldPosition = new Vector2(xPos, yPos);
                         }
                         else if (entry == EntryBounds[3]) // West
                         {
                             var xPos = 1 * Global.TileSize;
                             var yPos = 50 * Global.TileSize;
-                            Global.Player.WorldPosition = new Vector2(xPos, yPos);
+                            Global.PlayerObj.WorldPosition = new Vector2(xPos, yPos);
                         }
                     }
                 }
@@ -304,10 +304,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         {
             float[] distances = 
             [
-                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Top))),
-                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Top))),
-                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Bottom))),
-                Math.Abs(Vector2.Distance(Global.Player.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
+                Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Top))),
+                Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, new Vector2(TextureBounds.Right, TextureBounds.Bottom))),
+                Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, new Vector2(TextureBounds.Left, TextureBounds.Bottom)))
             ];
 
             if (distances.Min() <= (Global.FOG_OF_WAR_RADIUS))

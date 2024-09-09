@@ -62,8 +62,8 @@ namespace ProjectDonut.Core
         public static GraphicsDeviceManager GraphicsDeviceManager;
 
 
-        public static Player Player;
-        public static class PlayerComponents
+        public static PlayerObj PlayerObj;
+        public static class Player
         {            
             public static PlayerInventory Inventory;
         }

@@ -83,13 +83,13 @@ namespace ProjectDonut.Environment
                 Global.FOG_OF_WAR_RADIUS += 10;
             }
 
-            if (TargetLightScale < Global.Player.Light.Scale.X)
+            if (TargetLightScale < Global.PlayerObj.Light.Scale.X)
             {
-                Global.Player.Light.Scale = new Vector2(Global.Player.Light.Scale.X - 10);
+                Global.PlayerObj.Light.Scale = new Vector2(Global.PlayerObj.Light.Scale.X - 10);
             }
-            else if (TargetLightScale > Global.Player.Light.Scale.X)
+            else if (TargetLightScale > Global.PlayerObj.Light.Scale.X)
             {
-                Global.Player.Light.Scale = new Vector2(Global.Player.Light.Scale.X + 10);
+                Global.PlayerObj.Light.Scale = new Vector2(Global.PlayerObj.Light.Scale.X + 10);
             }
 
         }

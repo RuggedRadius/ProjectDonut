@@ -46,7 +46,7 @@ namespace ProjectDonut.NPCs.Enemy
 
         public void UpdateObjectVisibility()
         {
-            float distance = Vector2.Distance(Global.Player.WorldPosition, WorldPosition);
+            float distance = Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition);
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
         }
     }

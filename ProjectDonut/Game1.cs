@@ -61,8 +61,8 @@ namespace ProjectDonut
             Global.SpriteLibrary = new SpriteLibrary();
             Global.SpriteLibrary.LoadSpriteLibrary();
 
-            Global.Player = new Player();
-            Global.Player.Initialize();
+            Global.PlayerObj = new PlayerObj();
+            Global.PlayerObj.Initialize();
 
             
 
@@ -129,6 +129,10 @@ namespace ProjectDonut
 
             Global.ScrollDisplay = new ScrollDisplayer();
             _screenObjects.Add("scrollDisplay", Global.ScrollDisplay);
+
+            Global.Player.Inventory = new PlayerInventory();
+            Global.Player.Inventory.Initialize();
+            _screenObjects.Add("inventory", Global.Player.Inventory);
         }
 
         private void CreateGameObjects()
@@ -143,7 +147,7 @@ namespace ProjectDonut
         {
             Global.SceneManager.LoadContent();
 
-            Global.Player.LoadContent();
+            Global.PlayerObj.LoadContent();
             _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
@@ -183,7 +187,7 @@ namespace ProjectDonut
             //}zz
 
             Global.SceneManager.Update(gameTime);
-            Global.Player.Update(gameTime);
+            Global.PlayerObj.Update(gameTime);
 
             _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
@@ -230,7 +234,7 @@ namespace ProjectDonut
                 }
             }
 
-            Global.Player.Draw(gameTime);
+            Global.PlayerObj.Draw(gameTime);
 
             if (Global.SceneManager.CurrentSceneType == SceneType.World)
             {

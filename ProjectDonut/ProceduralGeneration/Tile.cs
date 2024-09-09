@@ -131,7 +131,7 @@ namespace ProjectDonut.ProceduralGeneration
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.WorldPosition, WorldPosition));
+            float distance = Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition));
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)
@@ -152,7 +152,7 @@ namespace ProjectDonut.ProceduralGeneration
                 }
                 else
                 {
-                    var dist = Vector2.Distance(WorldPosition, Global.Player.WorldPosition);
+                    var dist = Vector2.Distance(WorldPosition, Global.PlayerObj.WorldPosition);
                     var absValue = Math.Abs(dist);
                     var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
                     Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * alphaValue);

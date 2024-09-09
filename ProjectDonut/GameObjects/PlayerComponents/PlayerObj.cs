@@ -19,7 +19,7 @@ using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
 {
-    public class Player : IGameObject
+    public class PlayerObj : IGameObject
     {
         public Vector2 WorldPosition { get; set; }
         public Vector2 ChunkPosition
@@ -64,16 +64,10 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public bool IsVisible { get; set; }
 
-        //private SpriteLibrary _spriteLib;
-
-        public static PlayerInventory Inventory;
-        private GameCursor _cursor;
-
         private Dictionary<string, Texture2D> _textures;
-
         public PointLight Light;
 
-        public Player()
+        public PlayerObj()
         {
         }
 
@@ -95,9 +89,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             _textures = new Dictionary<string, Texture2D>();
 
             debugTexture = CreateTexture(Global.GraphicsDevice, 1, 1, Color.White);
-
-            Inventory = new PlayerInventory(Global.ContentManager, _cursor);
-            Inventory.Initialize();
 
             Light = new PointLight
             {
@@ -132,8 +123,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
 
-            Inventory.LoadContent();
-
             Texture = _textures["walk-south-01"];
         }
 
@@ -145,28 +134,13 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             ChunkPosX = chunkCoords.Item1;
             ChunkPosY = chunkCoords.Item2;
 
-            // Update the timer
             _timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            // Check if it's time to switch to the next frame
-            //if (_timer >= _frameTime)
-            //{
-            //    _currentFrame++;
-            //    if (_currentFrame >= _frameCount)
-            //    {
-            //        _currentFrame = 0; // Loop back to the first frame
-            //    }
-            //    _timer = 0f; // Reset the timer
-            //}
-
 
             HandleInput(gameTime);
 
             DebugWindow.Lines[0] = $"World Chunk: [{ChunkPosX}, {ChunkPosY}]";
             DebugWindow.Lines[1] = $"World Position: [{(int)WorldPosition.X}, {(int)WorldPosition.Y}]";
             DebugWindow.Lines[2] = $"Chunk Position: [{(int)ChunkPosition.X}, {(int)ChunkPosition.Y}]";            
-
-            Inventory.Update(gameTime);
 
             VisibilityRect = new Rectangle(
                 (int)WorldPosition.X - 500,
@@ -192,32 +166,31 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private void HandleInput(GameTime gameTime)
         {
-            var state = Keyboard.GetState();
             var movement = new Vector2();
 
-            if (state.IsKeyDown(Keys.W))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.W))
             {
                 movement.Y -= speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
-            if (state.IsKeyDown(Keys.S))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.S))
             {
                 movement.Y += speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
-            if (state.IsKeyDown(Keys.D))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.D))
             {
                 movement.X += speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
-            if (state.IsKeyDown(Keys.A))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.A))
             {
                 movement.X -= speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
             // TODO: REMOVE THIS LATER ***********************************************************
-            if (state.IsKeyDown(Keys.K))
+            if (InputManager.KeyboardState.IsKeyDown(Keys.K))
             {
                 speed -= 5;
             }
-            else if (state.IsKeyDown(Keys.L))
+            else if (InputManager.KeyboardState.IsKeyDown(Keys.L))
             {
                 speed += 5;
             }
@@ -261,8 +234,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
             //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Green * 0.25f);
             Global.SpriteBatch.End();
-
-            Inventory.Draw(gameTime);
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)

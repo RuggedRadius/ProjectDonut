@@ -193,7 +193,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var sceneObject in SceneObjects)
             {
-                var validObjs = sceneObject.Value.Where(x => x.ZIndex <= Global.Player.WorldPosition.Y).ToList();
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex <= Global.PlayerObj.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 
@@ -212,7 +212,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var mineableObj in MineableObjects)
             {
-                var validObjs = mineableObj.Value.Where(x => x.ZIndex <= Global.Player.WorldPosition.Y).ToList();
+                var validObjs = mineableObj.Value.Where(x => x.ZIndex <= Global.PlayerObj.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 
@@ -231,7 +231,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var sceneObject in SceneObjects)
             {
-                var validObjs = sceneObject.Value.Where(x => x.ZIndex > Global.Player.WorldPosition.Y).ToList();
+                var validObjs = sceneObject.Value.Where(x => x.ZIndex > Global.PlayerObj.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 
@@ -250,7 +250,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var mineableObj in MineableObjects)
             {
-                var validObjs = mineableObj.Value.Where(x => x.ZIndex > Global.Player.WorldPosition.Y).ToList();
+                var validObjs = mineableObj.Value.Where(x => x.ZIndex > Global.PlayerObj.WorldPosition.Y).ToList();
                 objs.AddRange(validObjs);
             }
 

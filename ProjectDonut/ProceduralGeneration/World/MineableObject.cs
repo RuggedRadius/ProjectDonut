@@ -123,7 +123,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             UpdateObjectVisibility();
 
-            InRangeOfPlayer = InteractBounds.Intersects(Global.Player.InteractBounds);
+            InRangeOfPlayer = InteractBounds.Intersects(Global.PlayerObj.InteractBounds);
 
             if (!InRangeOfPlayer) 
                 return;
@@ -143,7 +143,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.WorldPosition, WorldPosition));
+            float distance = Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition));
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)
@@ -188,7 +188,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                         break;
                 }                
 
-                Player.Inventory.AddItemToInventory(mineableItem);
+                Global.Player.Inventory.AddItemToInventory(mineableItem);
             }
         }
 

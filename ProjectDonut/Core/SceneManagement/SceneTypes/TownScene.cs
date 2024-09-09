@@ -72,7 +72,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             foreach (var exitPoint in ExitLocations)
             {
-                if (exitPoint.Value.Contains(Global.Player.WorldPosition))
+                if (exitPoint.Value.Contains(Global.PlayerObj.WorldPosition))
                 {
                     Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
 
@@ -169,7 +169,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         {
             base.PrepareForPlayerEntry();
 
-            Global.Player.WorldPosition = new Vector2(500, 500); // TEMP
+            Global.PlayerObj.WorldPosition = new Vector2(500, 500); // TEMP
         }
 
         public override void PrepareForPlayerExit()

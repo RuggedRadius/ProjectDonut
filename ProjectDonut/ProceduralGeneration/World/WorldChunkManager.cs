@@ -78,27 +78,27 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var chunkPosChanged = false;
 
-            if (Global.Player.ChunkPosX != PlayerChunkPosition.Item1)
+            if (Global.PlayerObj.ChunkPosX != PlayerChunkPosition.Item1)
             {
                 chunkPosChanged = true;
             }
 
-            if (Global.Player.ChunkPosY != PlayerChunkPosition.Item2)
+            if (Global.PlayerObj.ChunkPosY != PlayerChunkPosition.Item2)
             {
                 chunkPosChanged = true;
             }
 
             if (chunkPosChanged)
             {
-                PlayerChunkPosition = (Global.Player.ChunkPosX, Global.Player.ChunkPosY);
+                PlayerChunkPosition = (Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY);
 
 
                 for (int i = -1; i < 2; i++)
                 {
                     for (int j = -1; j < 2; j++)
                     {
-                        var x = Global.Player.ChunkPosX + i;
-                        var y = Global.Player.ChunkPosY + j;
+                        var x = Global.PlayerObj.ChunkPosX + i;
+                        var y = Global.PlayerObj.ChunkPosY + j;
 
                         var chunk = GetChunk((x, y));
                         if (chunk == null)
@@ -167,7 +167,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             //ChunksBeingGenerated = new List<(int, int)>();
 
             //// Player chunk position
-            PlayerChunkPosition = (Global.Player.ChunkPosX, Global.Player.ChunkPosY);
+            PlayerChunkPosition = (Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY);
 
             // All chunks dictionary - initialised with starting 9 chunks
             _chunks = new Dictionary<(int, int), WorldChunk>();
@@ -244,7 +244,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public WorldChunk GetCurrentChunk()
         {
-            return _chunks[(Global.Player.ChunkPosX, Global.Player.ChunkPosY)];
+            return _chunks[(Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY)];
         }
 
         private List<WorldChunk> GetPlayerSurroundingChunks()
@@ -255,8 +255,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int j = -surroundChunkCount; j <= surroundChunkCount; j++)
                 {
-                    var chunkX = Global.Player.ChunkPosX + i;
-                    var chunkY = Global.Player.ChunkPosY + j;
+                    var chunkX = Global.PlayerObj.ChunkPosX + i;
+                    var chunkY = Global.PlayerObj.ChunkPosY + j;
 
                     if (_chunks.ContainsKey((chunkX, chunkY)))
                     {

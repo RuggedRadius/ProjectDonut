@@ -21,7 +21,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         Hidden
     }
 
-    public class PlayerInventory : IGameObject
+    public class PlayerInventory : IScreenObject
     {
         public UIComponentState State { get; set; }
         public int ZIndex { get; set; }
@@ -43,7 +43,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public static SpriteFont QuantityFont { get; set; }
 
-        public PlayerInventory(ContentManager content, GameCursor cursor)
+        public PlayerInventory()
         {
             State = UIComponentState.Hidden;
             ZIndex = 100;

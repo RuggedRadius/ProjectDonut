@@ -64,7 +64,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.WorldPosition, WorldPosition));
+            float distance = Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition));
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)

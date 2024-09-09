@@ -120,7 +120,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         {
             base.PrepareForPlayerEntry();
 
-            Global.Player.WorldPosition = new Vector2(LastExitLocation.X, LastExitLocation.Y);
+            Global.PlayerObj.WorldPosition = new Vector2(LastExitLocation.X, LastExitLocation.Y);
         }
 
         public override void PrepareForPlayerExit()

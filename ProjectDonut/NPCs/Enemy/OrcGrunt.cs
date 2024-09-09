@@ -43,7 +43,7 @@ namespace ProjectDonut.NPCs.Enemy
 
         public override void Update(GameTime gameTime)
         {
-            DistanceToPlayer = Distance(WorldPosition, Global.Player.WorldPosition) / Global.TileSize;
+            DistanceToPlayer = Distance(WorldPosition, Global.PlayerObj.WorldPosition) / Global.TileSize;
 
             switch (State)
             {
@@ -53,7 +53,7 @@ namespace ProjectDonut.NPCs.Enemy
                     if (DistanceToPlayer <= DetectionDistance)
                     {                        
                         var curInstanceScene = (DungeonScene)Global.SceneManager.CurrentScene;
-                        var curPlayerNode = new Node((int)Global.Player.WorldPosition.X / Global.TileSize, (int)Global.Player.WorldPosition.Y / Global.TileSize);
+                        var curPlayerNode = new Node((int)Global.PlayerObj.WorldPosition.X / Global.TileSize, (int)Global.PlayerObj.WorldPosition.Y / Global.TileSize);
                         var curNode = new Node((int)WorldPosition.X / Global.TileSize, (int)WorldPosition.Y / Global.TileSize);
                         CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
                         
@@ -89,7 +89,7 @@ namespace ProjectDonut.NPCs.Enemy
                             WorldPosition = new Vector2(NextPosition.X, NextPosition.Y);
 
                             var curInstanceScene = (DungeonScene)Global.SceneManager.CurrentScene;
-                            var curPlayerNode = new Node((int)Global.Player.WorldPosition.X / Global.TileSize, (int)Global.Player.WorldPosition.Y / Global.TileSize);
+                            var curPlayerNode = new Node((int)Global.PlayerObj.WorldPosition.X / Global.TileSize, (int)Global.PlayerObj.WorldPosition.Y / Global.TileSize);
                             var curNode = new Node((int)WorldPosition.X / Global.TileSize, (int)WorldPosition.Y / Global.TileSize);
                             CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
                         }
