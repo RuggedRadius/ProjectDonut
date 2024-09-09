@@ -195,6 +195,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Map/World/Rock01.png
 
+#begin Sprites/Map/World/Tree-stump-export.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Map/World/Tree-stump-export.png
+
 #begin Sprites/Map/World/Tree2-Sheet-export.png
 /importer:TextureImporter
 /processor:TextureProcessor

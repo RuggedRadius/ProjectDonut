@@ -10,6 +10,7 @@ using System;
 using MonoGame.Extended.Animations;
 using System.Diagnostics.Tracing;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -189,6 +190,39 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }                
 
                 Global.Player.Inventory.AddItemToInventory(mineableItem);
+
+                switch (MineableObjectType)
+                {
+                    case MineableObjectType.Tree:
+                        var replacementTree = new SceneObjectStatic()
+                        {
+                            WorldPosition = WorldPosition,
+                            Texture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree-stump-export"),
+                            IsVisible = IsVisible,
+                            IsExplored = IsExplored
+                        };
+                        replacementTree.Initialize();
+
+                        //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH
+                        if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("tree-stump"))
+                        {
+                            Global.SceneManager.CurrentScene._sceneObjects["tree-stump"].Add(replacementTree);
+                        }
+                        else
+                        {
+                            Global.SceneManager.CurrentScene._sceneObjects.Add("tree-stump", new List<ISceneObject> { replacementTree });
+                        }                        
+                        break;
+
+                    case MineableObjectType.Rock:
+                        break;
+
+                    case MineableObjectType.Ore:
+                        break;
+
+                    case MineableObjectType.Bush:
+                        break;
+                }
             }
         }
 

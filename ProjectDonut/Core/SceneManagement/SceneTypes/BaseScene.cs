@@ -15,7 +15,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public Vector2 Position { get; set; }
         public Dictionary<string, IGameObject> _gameObjects { get; set; }
         public Dictionary<string, IScreenObject> _screenObjects { get; set; }
-        public Dictionary<string, Interfaces.IGameComponent> _gameComponents { get; set; }
+        public Dictionary<string, IGameComponent> _gameComponents { get; set; }
+        public Dictionary<string, List<ISceneObject>> _sceneObjects { get; set; }
 
 
 
@@ -24,19 +25,20 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _gameObjects = new Dictionary<string, IGameObject>();
             _screenObjects = new Dictionary<string, IScreenObject>();
             _gameComponents = new Dictionary<string, IGameComponent>();
+            _sceneObjects = new Dictionary<string, List<ISceneObject>>();
         }
 
         public virtual void LoadContent()
         {
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
-            //_sceneObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent(content));
+            //_sceneObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
         }
 
         public virtual void Update(GameTime gameTime)
         {
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
-            //_sceneObjects.Select(x => x.Value).ToList().ForEach(x => x.Update());
+            _sceneObjects.Select(x => x.Value).ToList().ForEach(x => x.ForEach(x => x.Update(gameTime)));
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
         }
 
@@ -48,6 +50,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
+            //Global.SpriteBatch.End();
+
+            // SceneObjects
+            _sceneObjects
+                .Select(x => x.Value)
+                //.OrderByDescending(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.ForEach(x => x.Draw(gameTime)));
+
             Global.SpriteBatch.End();
 
             // ScreenObjects

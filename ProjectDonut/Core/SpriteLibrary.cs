@@ -164,6 +164,10 @@ namespace ProjectDonut.Core
             trees.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2"));
             WorldMapSprites.Add("tree-02", trees);
 
+            var treeStumps = new List<Texture2D>();
+            treeStumps.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree-stump-export"));
+            WorldMapSprites.Add("tree-stump", treeStumps);
+
             var treesWinter = new List<Texture2D>();
             treesWinter.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-winter"));
             WorldMapSprites.Add("tree-02-winter", treesWinter);

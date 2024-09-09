@@ -17,9 +17,7 @@ namespace ProjectDonut.Core.SceneManagement
         Dictionary<string, IGameObject> _gameObjects { get; set; }
         Dictionary<string, IScreenObject> _screenObjects { get; set; }
         Dictionary<string, IGameComponent> _gameComponents { get; set; }
-        //public Dictionary<string, ISceneObject> _sceneObjects;
-
-
+        Dictionary<string, List<ISceneObject>> _sceneObjects{ get; set; }
 
         void PrepareForPlayerEntry();
         void PrepareForPlayerExit();
