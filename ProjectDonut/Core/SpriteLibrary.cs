@@ -28,6 +28,7 @@ namespace ProjectDonut.Core
         public Dictionary<string, List<Texture2D>> WorldMapSprites;
         public Dictionary<string, Texture2D> ItemsSprites;
         public Dictionary<string, Texture2D> TownSprites;
+        public Dictionary<string, Texture2D> BuildingBlockSprites;
 
 
         private Dictionary<string, Texture2D> lib;
@@ -123,6 +124,21 @@ namespace ProjectDonut.Core
             TownSprites.Add("house-01", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House01"));
             TownSprites.Add("house-02", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House02"));
             TownSprites.Add("sign-forsale", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Sign_ForSale"));
+        
+            // Building Blocks
+            var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/BuildingTiles");
+            BuildingBlockSprites = new Dictionary<string, Texture2D>();
+            BuildingBlockSprites.Add("building-wall-nw", ExtractSprite(blockSheet, 0, 0));
+            BuildingBlockSprites.Add("building-wall-n", ExtractSprite(blockSheet, 1, 0));
+            BuildingBlockSprites.Add("building-wall-ne", ExtractSprite(blockSheet, 2, 0));
+            BuildingBlockSprites.Add("building-wall-w", ExtractSprite(blockSheet, 0, 1));
+            BuildingBlockSprites.Add("building-floor", ExtractSprite(blockSheet, 1, 1));
+            BuildingBlockSprites.Add("building-wall-e", ExtractSprite(blockSheet, 2, 1));
+            BuildingBlockSprites.Add("building-wall-sw", ExtractSprite(blockSheet, 0, 2));
+            BuildingBlockSprites.Add("building-wall-s", ExtractSprite(blockSheet, 1, 2));
+            BuildingBlockSprites.Add("building-wall-se", ExtractSprite(blockSheet, 2, 2));
+            BuildingBlockSprites.Add("building-roof-thatching", ExtractSprite(blockSheet, 3, 0));
+
         }
 
         private void LoadItems()

@@ -17,7 +17,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private BSP _bsp;
 
         private Tilemap _tilemap;
-        private Tilemap _tilemapFences;
+        private Tilemap _tilemapFences; 
+
+        private Tilemap[] _tilemapsBuildings; 
 
         private Dictionary<string, Rectangle> ExitLocations;
 
@@ -53,7 +55,18 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             GenerateTileMap(DataMap);
             GenerateFencesTileMap(DataMap);
             GenerateExitLocations();
-            GenerateStructures();
+            //GenerateStructures();
+
+            _tilemapsBuildings = new Tilemap[3];
+            for (int i = 0; i < _tilemapsBuildings.Length; i++)
+            {
+                _tilemapsBuildings[i] = new Tilemap((int)MapSize.X, (int)MapSize.Y);
+            }
+
+            foreach (var plot in _plots)
+            {
+                BuildTESTHouse(plot);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -144,15 +157,62 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 tile.Draw(gameTime);
             }
 
-            foreach (var structure in _sceneObjs)
+            foreach (var tile in _tilemapsBuildings[0].Map)
             {
-                if (structure == null)
+                if (tile == null)
                 {
                     continue;
                 }
 
-                structure.Draw(gameTime);
+                tile.Draw(gameTime);
             }
+
+            foreach (var tile in _tilemapsBuildings[1].Map)
+            {
+                if (tile == null)
+                {
+                    continue;
+                }
+
+                tile.Draw(gameTime);
+            }
+
+            //if (IsPlayerInsideBuilding() == false)
+            //{
+                foreach (var tile in _tilemapsBuildings[2].Map)
+                {
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+
+                    //tile.Draw(gameTime);
+                    Global.SpriteBatch.Draw(tile.Texture, tile.WorldPosition, null, Color.White);
+                }
+            //}
+
+            //foreach (var plot in _plots)
+            //{
+            //    var rect = new Rectangle(
+            //        plot.Bounds.X * Global.TileSize,
+            //        plot.Bounds.Y * Global.TileSize,
+            //        plot.Bounds.Width * Global.TileSize,
+            //        plot.Bounds.Height * Global.TileSize);
+
+            //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, plot.Bounds, Color.Magenta);
+            //    Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, rect, Color.Blue);
+            //}
+
+
+            //foreach (var structure in _sceneObjs)
+            //{
+            //    if (structure == null)
+            //    {
+            //        continue;
+            //    }
+
+            //    structure.Draw(gameTime);
+            //}
 
             if (Global.DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE)
             {
@@ -163,6 +223,25 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             }
 
             Global.SpriteBatch.End();
+        }
+
+        private bool IsPlayerInsideBuilding()
+        {
+            foreach (var plot in _plots)
+            {
+                var rect = new Rectangle(
+                    plot.Bounds.X * Global.TileSize,
+                    plot.Bounds.Y * Global.TileSize,
+                    plot.Bounds.Width * Global.TileSize,
+                    plot.Bounds.Height * Global.TileSize);
+                
+                if (rect.Contains(Global.PlayerObj.WorldPosition))
+                {
+                   return true;
+                }
+            }
+
+            return false;
         }
 
         public override void PrepareForPlayerEntry()
@@ -429,6 +508,183 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 };
 
                 _sceneObjs.Add(structure);
+            }
+        }
+
+        private void BuildTESTHouse(Room plot)
+        {
+            var topLeftX = plot.Bounds.X + 6;// / Global.TileSize;
+            var topLeftY = plot.Bounds.Y + 6;// / Global.TileSize;
+
+            var baseWidth = 12;
+            var baseHeight = 10;
+
+            // Floor
+            for (var i = 0; i < baseWidth; i++)
+            {
+                for (var j = 0; j < baseHeight; j++)
+                {
+                    _tilemapsBuildings[0].Map[topLeftX + i, topLeftY + j] = new Tile(false)
+                    {
+                        ChunkX = 0,
+                        ChunkY = 0,
+                        xIndex = topLeftX + i,
+                        yIndex = topLeftY + j,
+                        LocalPosition = new Vector2((topLeftX + i) * Global.TileSize, (topLeftY + j) * Global.TileSize),
+                        Size = new Vector2(Global.TileSize, Global.TileSize),
+                        Texture = Global.SpriteLibrary.BuildingBlockSprites["building-floor"],
+                        TileType = TileType.Instance,
+                        IsExplored = true
+                    };
+                }
+            }
+
+            // Walls - NE
+            _tilemapsBuildings[1].Map[topLeftX, topLeftY] = new Tile(false)
+            {
+                ChunkX = 0,
+                ChunkY = 0,
+                xIndex = topLeftX,
+                yIndex = topLeftY,
+                LocalPosition = new Vector2((topLeftX) * Global.TileSize, (topLeftY) * Global.TileSize),
+                Size = new Vector2(Global.TileSize, Global.TileSize),
+                Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-nw"],
+                TileType = TileType.Instance,
+                IsExplored = true
+            };
+
+            // Walls - N
+            for (int i = 1; i < baseWidth - 1; i++)
+            {
+                _tilemapsBuildings[1].Map[topLeftX + i, topLeftY] = new Tile(false)
+                {
+                    ChunkX = 0,
+                    ChunkY = 0,
+                    xIndex = topLeftX + i,
+                    yIndex = topLeftY,
+                    LocalPosition = new Vector2((topLeftX + i) * Global.TileSize, (topLeftY) * Global.TileSize),
+                    Size = new Vector2(Global.TileSize, Global.TileSize),
+                    Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-n"],
+                    TileType = TileType.Instance,
+                    IsExplored = true
+                };
+            }
+
+            // Walls - NE
+            _tilemapsBuildings[1].Map[topLeftX + baseWidth - 1, topLeftY] = new Tile(false)
+            {
+                ChunkX = 0,
+                ChunkY = 0,
+                xIndex = topLeftX + baseWidth - 1,
+                yIndex = topLeftY,
+                LocalPosition = new Vector2((topLeftX + baseWidth - 1) * Global.TileSize, (topLeftY) * Global.TileSize),
+                Size = new Vector2(Global.TileSize, Global.TileSize),
+                Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-ne"],
+                TileType = TileType.Instance,
+                IsExplored = true
+            };
+
+
+
+            // Walls - SW
+            _tilemapsBuildings[1].Map[topLeftX, topLeftY + baseHeight - 1] = new Tile(false)
+            {
+                ChunkX = 0,
+                ChunkY = 0,
+                xIndex = topLeftX,
+                yIndex = topLeftY + baseHeight - 1,
+                LocalPosition = new Vector2((topLeftX) * Global.TileSize, (topLeftY + baseHeight - 1) * Global.TileSize),
+                Size = new Vector2(Global.TileSize, Global.TileSize),
+                Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-sw"],
+                TileType = TileType.Instance,
+                IsExplored = true
+            };
+
+            // Walls - S
+            for (int i = 1; i < baseWidth - 1; i++)
+            {
+                _tilemapsBuildings[1].Map[topLeftX + i, topLeftY + baseHeight - 1] = new Tile(false)
+                {
+                    ChunkX = 0,
+                    ChunkY = 0,
+                    xIndex = topLeftX + i,
+                    yIndex = topLeftY + baseHeight - 1,
+                    LocalPosition = new Vector2((topLeftX + i) * Global.TileSize, (topLeftY + baseHeight - 1) * Global.TileSize),
+                    Size = new Vector2(Global.TileSize, Global.TileSize),
+                    Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-s"],
+                    TileType = TileType.Instance,
+                    IsExplored = true
+                };
+            }
+
+            // Walls - SE
+            _tilemapsBuildings[1].Map[topLeftX + baseWidth - 1, topLeftY + baseHeight - 1] = new Tile(false)
+            {
+                ChunkX = 0,
+                ChunkY = 0,
+                xIndex = topLeftX + baseWidth - 1,
+                yIndex = topLeftY + baseHeight - 1,
+                LocalPosition = new Vector2((topLeftX + baseWidth - 1) * Global.TileSize, (topLeftY + baseHeight - 1) * Global.TileSize),
+                Size = new Vector2(Global.TileSize, Global.TileSize),
+                Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-se"],
+                TileType = TileType.Instance,
+                IsExplored = true
+            };
+
+
+            // Walls - W
+            for (int i = 1; i < baseHeight - 1; i++)
+            {
+                _tilemapsBuildings[1].Map[topLeftX, topLeftY + i] = new Tile(false)
+                {
+                    ChunkX = 0,
+                    ChunkY = 0,
+                    xIndex = topLeftX,
+                    yIndex = topLeftY + i,
+                    LocalPosition = new Vector2((topLeftX) * Global.TileSize, (topLeftY + i) * Global.TileSize),
+                    Size = new Vector2(Global.TileSize, Global.TileSize),
+                    Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-w"],
+                    TileType = TileType.Instance,
+                    IsExplored = true
+                };
+            }
+
+            // Walls - E
+            for (int i = 1; i < baseHeight - 1; i++)
+            {
+                _tilemapsBuildings[1].Map[topLeftX + baseWidth - 1, topLeftY + i] = new Tile(false)
+                {
+                    ChunkX = 0,
+                    ChunkY = 0,
+                    xIndex = topLeftX + baseWidth - 1,
+                    yIndex = topLeftY + i,
+                    LocalPosition = new Vector2((topLeftX + baseWidth - 1) * Global.TileSize, (topLeftY + i) * Global.TileSize),
+                    Size = new Vector2(Global.TileSize, Global.TileSize),
+                    Texture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-e"],
+                    TileType = TileType.Instance,
+                    IsExplored = true
+                };
+            }
+
+
+            // Roof
+            for (var i = 0; i < baseWidth / 2; i++)
+            {
+                for (var j = 0; j < (baseHeight / 2) - 1; j++)
+                {
+                    _tilemapsBuildings[2].Map[topLeftX + i, topLeftY + j] = new Tile(false)
+                    {
+                        ChunkX = 0,
+                        ChunkY = 0,
+                        xIndex = topLeftX + i,
+                        yIndex = topLeftY + j,
+                        LocalPosition = new Vector2((topLeftX + i) * Global.TileSize, (topLeftY + j) * Global.TileSize),
+                        Size = new Vector2(Global.TileSize, Global.TileSize),
+                        Texture = Global.SpriteLibrary.BuildingBlockSprites["building-roof-thatching"],
+                        TileType = TileType.Instance,
+                        IsExplored = true
+                    };
+                }
             }
         }
     }

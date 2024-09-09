@@ -58,7 +58,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                         var texture = Global.SpriteLibrary.WorldMapSprites["tree-02-winter"][0];
 
-                        var tree = new MineableObject(MineableObjectType.Tree)
+                        var tree = new MineableTreeWinter()
                         {
                             WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
@@ -117,7 +117,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                         var texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0];
 
-                        var tree = new MineableObject(MineableObjectType.Tree)
+                        var tree = new MineableTree()
                         {
                             WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
@@ -194,7 +194,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                     var texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0];
 
-                    var tree = new MineableObject(MineableObjectType.Tree)
+                    var tree = new MineableTree()
                     {
                         WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
@@ -302,7 +302,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     //var texture = Global.SpriteLibrary.WorldMapSprites["rock-01"][0];
                     var texture = Global.SpriteLibrary.ItemsSprites["rock"];
 
-                    var rock = new MineableObject(MineableObjectType.Rock)
+                    var rock = new MineableRock()
                     {
                         WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,

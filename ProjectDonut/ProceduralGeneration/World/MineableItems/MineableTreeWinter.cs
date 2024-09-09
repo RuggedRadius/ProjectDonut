@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using MonoGame.Extended.Animations;
 using MonoGame.Extended.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
+using Microsoft.Xna.Framework.Input;
 
 namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 {
-    public class MineableTree : IMineable
+    public class MineableTreeWinter : IMineable
     {
         public bool InRangeOfPlayer { get; set; }
         public Rectangle InteractBounds { get; set; }
@@ -50,7 +53,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
         {
             InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
 
-            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-Sheet-export");
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-winter");
             var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
             _spriteSheet = new SpriteSheet("SpriteSheet/tree", atlas);
 
@@ -77,6 +80,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             {
                 if (trigger == AnimationEventTrigger.AnimationCompleted)
                 {
+                    //Debug.WriteLine("Animation completed");
                     _sprite.SetAnimation("idle");
                 }
             };
