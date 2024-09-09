@@ -4,6 +4,7 @@ using ProjectDonut.Core;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
 using System;
 using System.Collections.Generic;
@@ -217,7 +218,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
 
             
-            chunk.SceneObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
+            chunk.MineableObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
             //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
             chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
 

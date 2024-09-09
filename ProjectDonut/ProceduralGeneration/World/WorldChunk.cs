@@ -10,6 +10,7 @@ using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -161,6 +162,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Update(gameTime)));
             MineableObjects.Values.ToList().ForEach(x => x.Where(y => y.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x)));
+            MineableObjects.Values.ToList().ForEach(x => x.Where(y => y.Health <= 0).ToList().ForEach(x => MineableObjects["rocks"].Remove(x)));
             //MineableObjects["trees"].Where(x => x.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x));
         }
 

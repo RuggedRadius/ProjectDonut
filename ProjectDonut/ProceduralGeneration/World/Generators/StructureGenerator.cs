@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.Tools;
 

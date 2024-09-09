@@ -130,7 +130,7 @@ namespace ProjectDonut.Core
             ItemsSprites = new Dictionary<string, Texture2D>();
 
             ItemsSprites.Add("wood-log", Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01"));
-
+            ItemsSprites.Add("rock", ExtractSprite(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01"), 0, 0, 64, 64));
         }
 
         private void LoadGrass()
@@ -179,6 +179,11 @@ namespace ProjectDonut.Core
             var cactus = new List<Texture2D>();
             cactus.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Cactus01"));
             WorldMapSprites.Add("cactus-01", cactus);
+
+            var rockSmashed = new List<Texture2D>();
+            var rockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
+            rockSmashed.Add(ExtractSprite(rockSheet, 4 * 64, 0, 64, 64));
+            WorldMapSprites.Add("rock-smashed", rockSmashed);
         }
 
         private void LoadSpriteSheets()

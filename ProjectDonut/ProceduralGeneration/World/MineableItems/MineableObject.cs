@@ -12,7 +12,7 @@ using System.Diagnostics.Tracing;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace ProjectDonut.ProceduralGeneration.World
+namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 {
     public enum MineableObjectType
     {
@@ -47,20 +47,22 @@ namespace ProjectDonut.ProceduralGeneration.World
         public MineableObjectType MineableObjectType { get; set; }
         public Rectangle TextureBounds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        private SpriteSheet _spriteSheet;
+        private SpriteSheet _spriteSheetTree;
+        private SpriteSheet _spriteSheetRock;
         private AnimationController _animControllerHit;
         private AnimatedSprite _tree;
 
         public MineableObject(MineableObjectType objectType)
         {
-            this.MineableObjectType = objectType;
+            MineableObjectType = objectType;
         }
 
         public void Intialize()
         {
             InteractBounds = new Rectangle(
-                (int)WorldPosition.X + (Global.TileSize / 2),
-                (int)WorldPosition.Y + ((Global.TileSize / 2) * 3),
+                (int)WorldPosition.X + Global.TileSize / 2,
+                //(int)WorldPosition.Y + ((Global.TileSize / 2) * 3),
+                (int)WorldPosition.Y + Global.TileSize / 2 * 1,
                 Global.TileSize,
                 Global.TileSize);
 
@@ -70,7 +72,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void LoadContent()
         {
-            switch (MineableObjectType) 
+            switch (MineableObjectType)
             {
                 case MineableObjectType.Tree:
                     InitialiseTreeAnimations();
@@ -81,6 +83,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     break;
 
                 case MineableObjectType.Rock:
+                    InitialiseRockAnimations();
                     break;
 
                 case MineableObjectType.Ore:
@@ -91,15 +94,15 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
-        private void InitialiseTreeAnimations()
+        private void InitialiseRockAnimations()
         {
-            InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
+            InventoryIcon = Global.SpriteLibrary.ItemsSprites["rock"];
 
-            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-Sheet-export");
-            var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
-            _spriteSheet = new SpriteSheet("SpriteSheet/tree", atlas);
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
+            var atlas = Texture2DAtlas.Create("rock", sheetTexture, 64, 64);
+            _spriteSheetRock = new SpriteSheet("SpriteSheet/rock", atlas);
 
-            _spriteSheet.DefineAnimation("idle", builder =>
+            _spriteSheetRock.DefineAnimation("idle", builder =>
             {
                 builder.IsLooping(false)
                     .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1));
@@ -107,7 +110,43 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             var cellTime = 0.25f;
 
-            _spriteSheet.DefineAnimation("hit", builder =>
+            _spriteSheetRock.DefineAnimation("hit", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(1, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(0, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            _tree = new AnimatedSprite(_spriteSheetRock, "idle");
+            _tree.SetAnimation("hit").OnAnimationEvent += (sender, trigger) =>
+            {
+                if (trigger == AnimationEventTrigger.AnimationCompleted)
+                {
+                    _tree.SetAnimation("idle");
+                }
+            };
+        }
+
+        private void InitialiseTreeAnimations()
+        {
+            InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
+
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-Sheet-export");
+            var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
+            _spriteSheetTree = new SpriteSheet("SpriteSheet/tree", atlas);
+
+            _spriteSheetTree.DefineAnimation("idle", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1));
+            });
+
+            var cellTime = 0.25f;
+
+            _spriteSheetTree.DefineAnimation("hit", builder =>
             {
                 builder.IsLooping(false)
                     .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime))
@@ -117,7 +156,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime));
             });
 
-            _tree = new AnimatedSprite(_spriteSheet, "idle");
+            _tree = new AnimatedSprite(_spriteSheetTree, "idle");
             _tree.SetAnimation("hit").OnAnimationEvent += (sender, trigger) =>
             {
                 if (trigger == AnimationEventTrigger.AnimationCompleted)
@@ -134,9 +173,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-winter");
             var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
-            _spriteSheet = new SpriteSheet("SpriteSheet/tree", atlas);
+            _spriteSheetTree = new SpriteSheet("SpriteSheet/tree", atlas);
 
-            _spriteSheet.DefineAnimation("idle", builder =>
+            _spriteSheetTree.DefineAnimation("idle", builder =>
             {
                 builder.IsLooping(false)
                     .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1));
@@ -144,7 +183,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             var cellTime = 0.25f;
 
-            _spriteSheet.DefineAnimation("hit", builder =>
+            _spriteSheetTree.DefineAnimation("hit", builder =>
             {
                 builder.IsLooping(false)
                     .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime))
@@ -154,7 +193,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                     .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime));
             });
 
-            _tree = new AnimatedSprite(_spriteSheet, "idle");
+            _tree = new AnimatedSprite(_spriteSheetTree, "idle");
             _tree.SetAnimation("hit").OnAnimationEvent += (sender, trigger) =>
             {
                 if (trigger == AnimationEventTrigger.AnimationCompleted)
@@ -175,13 +214,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             InRangeOfPlayer = InteractBounds.Intersects(Global.PlayerObj.InteractBounds);
 
-            if (!InRangeOfPlayer) 
+            if (!InRangeOfPlayer)
                 return;
 
             if (InputManager.KeyboardState.IsKeyDown(Keys.E))
             {
                 HandleAction();
-            }            
+            }
         }
 
         public void UpdateObjectVisibility()
@@ -194,7 +233,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             float distance = Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition));
-            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+            IsVisible = distance <= Global.FOG_OF_WAR_RADIUS ? true : false;
 
             if (IsVisible && !IsExplored)
                 IsExplored = true;
@@ -202,69 +241,24 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         private void HandleAction()
         {
-            //MineableObjectAnimationState = MineableObjectAnimationState.Hit;
-
             _tree.SetAnimation("hit");
 
             Health -= Global.TEMP_PLAYER_DAMAGE;
 
             if (Health <= 0)
             {
-                var mineableItem = new InventoryItem();
-                switch (MineableObjectType)
-                {
-                    case MineableObjectType.Tree:
-                        mineableItem.Name = "Wood Log";
-                        mineableItem.Icon = InventoryIcon;
-                        mineableItem.ItemType = ItemType.Consumable;
-                        break;
-
-                    case MineableObjectType.Rock:
-                        mineableItem.Name = "Stone";
-                        mineableItem.Icon = InventoryIcon;
-                        mineableItem.ItemType = ItemType.Consumable;
-                        break;
-
-                    case MineableObjectType.Ore:
-                        mineableItem.Name = "Ore";
-                        mineableItem.Icon = InventoryIcon;
-                        mineableItem.ItemType = ItemType.Consumable;
-                        break;
-
-                    case MineableObjectType.Bush:
-                        mineableItem.Name = "Berry";
-                        mineableItem.Icon = InventoryIcon;
-                        mineableItem.ItemType = ItemType.Consumable;
-                        break;
-                }                
-
+                var mineableItem = CreateInventoryItem();
                 Global.Player.Inventory.AddItemToInventory(mineableItem);
                 Global.Player.TextDisplay.AddText("+1 " + mineableItem.Name, 2, 10, 0, true, Color.Green);
 
                 switch (MineableObjectType)
                 {
                     case MineableObjectType.Tree:
-                        var replacementTree = new SceneObjectStatic()
-                        {
-                            WorldPosition = WorldPosition,
-                            Texture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree-stump-export"),
-                            IsVisible = IsVisible,
-                            IsExplored = IsExplored
-                        };
-                        replacementTree.Initialize();
-
-                        //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH
-                        if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("tree-stump"))
-                        {
-                            Global.SceneManager.CurrentScene._sceneObjects["tree-stump"].Add(replacementTree);
-                        }
-                        else
-                        {
-                            Global.SceneManager.CurrentScene._sceneObjects.Add("tree-stump", new List<ISceneObject> { replacementTree });
-                        }                        
+                        CreateReplacementTreeStump();
                         break;
 
                     case MineableObjectType.Rock:
+                        CreateReplacementRockRubble();
                         break;
 
                     case MineableObjectType.Ore:
@@ -273,6 +267,90 @@ namespace ProjectDonut.ProceduralGeneration.World
                     case MineableObjectType.Bush:
                         break;
                 }
+            }
+        }
+
+        private InventoryItem CreateInventoryItem()
+        {
+            var mineableItem = new InventoryItem();
+
+            switch (MineableObjectType)
+            {
+                case MineableObjectType.Tree:
+                    mineableItem.Name = "Wood Log";
+                    mineableItem.Icon = InventoryIcon;
+                    mineableItem.ItemType = ItemType.Consumable;
+                    break;
+
+                case MineableObjectType.Rock:
+                    mineableItem.Name = "Stone";
+                    mineableItem.Icon = InventoryIcon;
+                    mineableItem.ItemType = ItemType.Consumable;
+                    break;
+
+                case MineableObjectType.Ore:
+                    mineableItem.Name = "Ore";
+                    mineableItem.Icon = InventoryIcon;
+                    mineableItem.ItemType = ItemType.Consumable;
+                    break;
+
+                case MineableObjectType.Bush:
+                    mineableItem.Name = "Berry";
+                    mineableItem.Icon = InventoryIcon;
+                    mineableItem.ItemType = ItemType.Consumable;
+                    break;
+
+                default:
+                    mineableItem.Name = "UNDEFINED";
+                    mineableItem.Icon = Global.DEBUG_TEXTURE;
+                    mineableItem.ItemType = ItemType.Consumable;
+                    break;
+            }
+
+            return mineableItem;
+        }
+
+        private void CreateReplacementTreeStump()
+        {
+            var replacementTree = new SceneObjectStatic()
+            {
+                WorldPosition = WorldPosition,
+                Texture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree-stump-export"),
+                IsVisible = IsVisible,
+                IsExplored = IsExplored
+            };
+            replacementTree.Initialize();
+
+            //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH
+            if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("tree-stump"))
+            {
+                Global.SceneManager.CurrentScene._sceneObjects["tree-stump"].Add(replacementTree);
+            }
+            else
+            {
+                Global.SceneManager.CurrentScene._sceneObjects.Add("tree-stump", new List<ISceneObject> { replacementTree });
+            }
+        }
+
+        private void CreateReplacementRockRubble()
+        {
+            var replacementRockRubble = new SceneObjectStatic()
+            {
+                WorldPosition = WorldPosition,
+                Texture = Global.SpriteLibrary.WorldMapSprites["rock-smashed"][0],
+                IsVisible = IsVisible,
+                IsExplored = IsExplored
+            };
+            replacementRockRubble.Initialize();
+
+            //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH
+            if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("rock-rubble"))
+            {
+                Global.SceneManager.CurrentScene._sceneObjects["rock-rubble"].Add(replacementRockRubble);
+            }
+            else
+            {
+                Global.SceneManager.CurrentScene._sceneObjects.Add("rock-rubble", new List<ISceneObject> { replacementRockRubble });
             }
         }
 

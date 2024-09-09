@@ -1,12 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.Interfaces
+namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 {
     public interface IMineable : ISceneObject
     {
