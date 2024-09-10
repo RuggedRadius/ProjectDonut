@@ -173,6 +173,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void ToggleInventory()
         {
+            if (Global.Debug.Console.IsVisible)
+            {
+                return;
+            }
+
             if (_toggleTimer < _toggleTimeout)
             {
                 return;

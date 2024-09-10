@@ -152,11 +152,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             if (Global.SceneManager.CurrentScene is WorldScene && 
                 Global.WorldChunkManager.CurrentChunks.Contains(this))
             {
-                if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
-                {
-                    ScrollDisplayer.CurrentStructure = null;
-                    Global.ScrollDisplay.HideScroll();
-                }
+                //if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
+                //{
+                //    ScrollDisplayer.CurrentStructure = null;
+                //    Global.ScrollDisplay.HideScroll();
+                //}
             }
 
 

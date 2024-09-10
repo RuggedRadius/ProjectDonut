@@ -34,7 +34,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Vector2 spriteSize;
         private Rectangle currentFrame;
 
-        private int speed;
+        public int MovementSpeed;
 
         private int _frameWidth;
         private int _frameHeight;
@@ -70,7 +70,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             IsVisible = true;
             WorldPosition = new Vector2(50, 50);
-            speed = 200;
+            MovementSpeed = 200;
             spriteSize = new Vector2(Global.TileSize, Global.TileSize);
             ZIndex = 0;
 
@@ -161,33 +161,38 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private void HandleInput(GameTime gameTime)
         {
+            if (Global.Debug.Console.IsVisible)
+            {
+                return;
+            }
+
             var movement = new Vector2();
 
             if (InputManager.KeyboardState.IsKeyDown(Keys.W))
             {
-                movement.Y -= speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                movement.Y -= MovementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             if (InputManager.KeyboardState.IsKeyDown(Keys.S))
             {
-                movement.Y += speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                movement.Y += MovementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             if (InputManager.KeyboardState.IsKeyDown(Keys.D))
             {
-                movement.X += speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                movement.X += MovementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             if (InputManager.KeyboardState.IsKeyDown(Keys.A))
             {
-                movement.X -= speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                movement.X -= MovementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
             // TODO: REMOVE THIS LATER ***********************************************************
             if (InputManager.KeyboardState.IsKeyDown(Keys.K))
             {
-                speed -= 5;
+                MovementSpeed -= 5;
             }
             else if (InputManager.KeyboardState.IsKeyDown(Keys.L))
             {
-                speed += 5;
+                MovementSpeed += 5;
             }
             // ***********************************************************************************
 

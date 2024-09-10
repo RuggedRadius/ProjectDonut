@@ -13,6 +13,7 @@ using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.UI.DialogueSystem;
 using ProjectDonut.UI.ScrollDisplay;
+using QuakeConsole;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,7 @@ namespace ProjectDonut.Core
         public static int FOG_OF_WAR_RADIUS = 1500;
 
         // DEBUG SETTINGS
+        public static bool LIGHTING_ENABLED = false;
         public static Texture2D DEBUG_TEXTURE;
         public static bool DRAW_WORLD_CHUNK_OUTLINE = false;
         public static bool DRAW_STRUCTURE_DEBUG = true;
@@ -53,8 +55,12 @@ namespace ProjectDonut.Core
 
         // DEBUG
         public static SpriteFont FontDebug;
-        public static DevConsole Console;
         public static DebugWindow DebugWindow;
+
+        public static class Debug
+        {
+            public static ConsoleComponent Console;
+        }
 
         public static ContentManager ContentManager;
         public static SpriteBatch SpriteBatch;

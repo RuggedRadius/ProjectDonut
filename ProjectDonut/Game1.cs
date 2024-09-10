@@ -18,6 +18,7 @@ using ProjectDonut.Core.Input;
 using Penumbra;
 using ProjectDonut.Environment;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
+using QuakeConsole;
 
 namespace ProjectDonut
 {
@@ -47,7 +48,9 @@ namespace ProjectDonut
             Global.GraphicsDeviceManager.SupportedOrientations = DisplayOrientation.Portrait;
 
             Global.Penumbra = new PenumbraComponent(this);
-            Components.Add(Global.Penumbra);
+            //Components.Add(Global.Penumbra);
+
+            DevConsole.InitialiseConsole(this);
         }
 
         protected override void Initialize()
@@ -63,13 +66,6 @@ namespace ProjectDonut
 
             Global.PlayerObj = new PlayerObj();
             Global.PlayerObj.Initialize();
-
-            
-
-
-
-
-            
 
             CreateGameComponents();
             CreateGameObjects();
@@ -87,6 +83,7 @@ namespace ProjectDonut
 
             base.Initialize();
         }
+
         private void CreateGameComponents()
         {
             _gameComponents = new Dictionary<string, IGameComponent>();
@@ -118,10 +115,6 @@ namespace ProjectDonut
             // Game cursor
             Global.GameCursor = new GameCursor(this);
             _screenObjects.Add("cursor", Global.GameCursor);
-
-            Global.Console = new DevConsole();
-            Global.Console.Initialize();
-            _screenObjects.Add("console", Global.Console);
 
             Global.DebugWindow = new DebugWindow();
             Global.DebugWindow.Initialize();
@@ -166,6 +159,12 @@ namespace ProjectDonut
             Global.InputManager.Update(gameTime);
 
             var kbState = Keyboard.GetState();
+
+            if (InputManager.LastKeyboardState.IsKeyUp(Keys.OemTilde) &&
+                InputManager.KeyboardState.IsKeyDown(Keys.OemTilde))
+            {
+                Global.Debug.Console.ToggleOpenClose();
+            }
 
             //if (kbState.IsKeyDown(Keys.F8))
             //{
@@ -218,7 +217,10 @@ namespace ProjectDonut
 
         protected override void Draw(GameTime gameTime)
         {
-            Global.Penumbra.BeginDraw();
+            if (Global.LIGHTING_ENABLED)
+            {
+                Global.Penumbra.BeginDraw();
+            }
 
             GraphicsDevice.Clear(Color.Black);
 
@@ -251,7 +253,18 @@ namespace ProjectDonut
                 }
             }
 
-            Global.Penumbra.Draw(gameTime);
+            //if (Global.LIGHTING_ENABLED == false)
+            //{
+            //    //Global.SpriteBatch.Begin();
+            //    Global.Penumbra.BeginDraw();
+            //}
+            base.Draw(gameTime);
+            //if (Global.LIGHTING_ENABLED == false)
+            //{
+            //    //Global.Penumbra.Draw(gameTime);
+            //    //Global.SpriteBatch.End();
+            //}
+            //Global.Penumbra.Draw(gameTime);
 
             _screenObjects
                 .Select(x => x.Value)
