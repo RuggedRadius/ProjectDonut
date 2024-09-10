@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
@@ -77,6 +78,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
+            if (Global.SceneManager.CurrentScene is not WorldScene)
+                return;
+
             var chunkPosChanged = false;
 
             if (Global.PlayerObj.ChunkPosX != PlayerChunkPosition.Item1)
