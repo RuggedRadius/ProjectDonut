@@ -153,11 +153,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         private Tilemap GenerateGroundTilemap(int[,] map)
         {
-            var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
+            var extra = 5;
+            var tm = new Tilemap(map.GetLength(0) + extra, map.GetLength(1) + extra);
 
-            for (int i = 0; i < map.GetLength(0); i++)
+            for (int i = 0; i < tm.Map.GetLength(0); i++)
             {
-                for (int j = 0; j < map.GetLength(1); j++)
+                for (int j = 0; j < tm.Map.GetLength(1); j++)
                 {
                     var tile = new Tile(false)
                     {
@@ -177,26 +178,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             }
 
             return tm;
-        }
-
-
-        private bool IsPlayerInsideBuilding()
-        {
-            foreach (var plot in _plots)
-            {
-                var rect = new Rectangle(
-                    plot.Area.Bounds.X * Global.TileSize,
-                    plot.Area.Bounds.Y * Global.TileSize,
-                    plot.Area.Bounds.Width * Global.TileSize,
-                    plot.Area.Bounds.Height * Global.TileSize);
-                
-                if (rect.Contains(Global.PlayerObj.WorldPosition))
-                {
-                   return true;
-                }
-            }
-
-            return false;
         }
 
         public override void PrepareForPlayerEntry()
@@ -269,10 +250,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             foreach (var area in areas)
             {
                 area.Bounds = new Rectangle(
-                    area.Bounds.X - 1, 
-                    area.Bounds.Y -1, 
-                    area.Bounds.Width - 1, 
-                    area.Bounds.Height - 1);
+                    area.Bounds.X + 3, 
+                    area.Bounds.Y + 3, 
+                    area.Bounds.Width - 2, 
+                    area.Bounds.Height - 2);
 
                 plots.Add(new Plot(area, this)
                 {

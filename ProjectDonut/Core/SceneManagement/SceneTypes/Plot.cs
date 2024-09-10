@@ -66,23 +66,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _tilemaps.Add(GenerateHouseFloorMap(HouseMap[0]));
             _tilemaps.Add(GenerateHouseWallMap(HouseMap[1]));
             _tilemaps.Add(GenerateHouseRoofMap(HouseMap[2]));
+
+            PlaceExternalDoor(_tilemaps[3]);
         }
-
-        public void BuildHouse()
-        {
-            // Generate house map data
-            // ...
-
-            _baseWidth = 12; // set these to data map values
-            _baseHeight = 10; // set these to data map values
-
-            HouseBounds = new Rectangle(
-                Area.Bounds.X + 6,
-                Area.Bounds.Y + 6,
-                _baseWidth * Global.TileSize,
-                _baseHeight * Global.TileSize);
-        }
-
 
         public void GenerateDataMaps()
         {
@@ -161,9 +147,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             var roofMap = new int[width, height];
             for (int i = 0; i < houseWidth; i++)
             {
-                for (int j = 0; j < houseHeight - 1; j++)
+                for (int j = 0; j < houseHeight; j++)
                 {
-                    roofMap[i + widthOffset, j + heightOffset] = 1;
+                    roofMap[i + widthOffset, j + heightOffset - 1] = 1;
                 }
             }
 
@@ -335,6 +321,25 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             }
 
             return tm;
+        }
+
+        private void PlaceExternalDoor(Tilemap bottomFloorWallTileMap)
+        {
+            var targetTexture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-s"];
+            var southWalls = new List<Tile>();
+            foreach (var tile in bottomFloorWallTileMap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                if (tile.Texture == targetTexture)
+                {
+                    southWalls.Add(tile);
+                }
+            }
+
+            var doorTile = southWalls[_random.Next(0, southWalls.Count)];
+            doorTile.Texture = Global.SpriteLibrary.BuildingBlockSprites["building-door-ext"];
         }
 
         private Texture2D DetermineFenceTexture(int[,] map, int x, int y)

@@ -138,6 +138,7 @@ namespace ProjectDonut.Core
             BuildingBlockSprites.Add("building-wall-s", ExtractSprite(blockSheet, 1, 2));
             BuildingBlockSprites.Add("building-wall-se", ExtractSprite(blockSheet, 2, 2));
             BuildingBlockSprites.Add("building-roof-thatching", ExtractSprite(blockSheet, 3, 0));
+            BuildingBlockSprites.Add("building-door-ext", ExtractSprite(blockSheet, 3, 2));
 
         }
 
