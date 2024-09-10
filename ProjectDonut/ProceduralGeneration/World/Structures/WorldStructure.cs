@@ -24,6 +24,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
     {
         public string StructureName { get; set; }
 
+
         // Properties
         public WorldChunk WorldChunk { get; set; }
         public IScene Instance { get; set; }
@@ -47,6 +48,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
         public bool IsExplored { get; set; }
         public bool IsVisible { get; set; }
 
+        private ScrollDisplay _associatedScrollDisplay;
+
         private Random _random = new Random();
 
         public WorldStructure(Vector2 worldPosition, WorldChunk chunk, WorldStructureType structureType)
@@ -64,7 +67,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                     break;
 
                 case WorldStructureType.Town:
-                    StructureName = "Town of " + NameGenerator.GenerateRandomName(_random.Next(2, 5));
+                    StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new TownScene(this);
                     Texture = Global.SpriteLibrary.GetSprite("town");
                     break;
@@ -73,7 +76,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                     break;
 
                 case WorldStructureType.Castle:
-                    StructureName = "Castle " + NameGenerator.GenerateRandomName(_random.Next(2, 5));
+                    StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new DungeonScene();
                     Texture = Global.SpriteLibrary.GetSprite("castle");
                     break;
@@ -225,7 +228,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                         var worldExitPointY = entry.Bottom + Global.TileSize;
                         worldScene.LastExitLocation = new Rectangle((int)worldExitPointX, (int)worldExitPointY, Global.TileSize, Global.TileSize);
 
-                        Global.ScrollDisplay.HideScroll();
+                        Global.ScrollDisplay.ClearAllScrolls();
                         Global.SceneManager.SetCurrentScene(Instance);
                         Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
 
@@ -263,20 +266,29 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
 
                 if (Global.WorldChunkManager.CurrentChunks.Contains(WorldChunk))
                 {
-                    // PROBLEM MAYBE HERE WITH WRONG BOUNDS/COORDS!!! VVVVV
                     if (InteractBounds.Contains(Global.GameCursor.CursorWorldPosition))
                     {
-                        PlayerWithinScrollBounds = true;
-
-                        if (ScrollDisplayer.CurrentStructure != this)
+                        if (_associatedScrollDisplay == null)
                         {
-                            Global.ScrollDisplay.HideScroll();
-                            ScrollDisplayer.CurrentStructure = this;
+                            _associatedScrollDisplay = new ScrollDisplay()
+                            {
+                                Text = StructureName,
+                                SubText = StructureType.ToString(),
+                                IsTimed = false,
+                                ScrollOutDuration = 1f,
+                                ShowDuration = 5f
+                            };
+
+                            Global.ScrollDisplay.DisplayScroll(_associatedScrollDisplay);
                         }
                     }
                     else
                     {
-                        PlayerWithinScrollBounds = false;
+                        if (_associatedScrollDisplay != null)
+                        {
+                            Global.ScrollDisplay.HideScroll(_associatedScrollDisplay);
+                            _associatedScrollDisplay = null;
+                        }
                     }
                 }
             }

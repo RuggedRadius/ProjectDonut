@@ -27,6 +27,13 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/OldeEnglishDesc.spritefont
 
+#begin Fonts/OldeEnglishDescSubText.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/OldeEnglishDescSubText.spritefont
+
 #begin Sprites/Enemy/Test_Grunt.png
 /importer:TextureImporter
 /processor:TextureProcessor

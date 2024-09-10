@@ -127,17 +127,19 @@ namespace ProjectDonut.Debugging.Console
 
                 if (args.Length == 1 && args[0] == "hide")
                 {
-                    Global.ScrollDisplay.HideScroll();
+                    Global.ScrollDisplay.ClearAllScrolls();
                     return;
                 }
 
-                var message = string.Join(" ", args);
-
-                ScrollDisplayer.CurrentStructure = new WorldStructure(Vector2.Zero, null, WorldStructureType.Castle)
+                var scroll = new ScrollDisplay()
                 {
-                    StructureName = message,
+                    Text = string.Join(" ", args),
+                    SubText = "Console Message",
+                    IsTimed = true,
+                    ShowDuration = 5f,
+                    ScrollOutDuration = 1f
                 };
-                Global.ScrollDisplay.DisplayScroll();
+                Global.ScrollDisplay.DisplayScroll(scroll);
             });
 
             interpreter.RegisterCommand("speed", (args) =>
