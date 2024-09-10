@@ -13,11 +13,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
     public class Plot : IGameObject
     {
-        public Room Area { get; set; }
         public TownScene Town { get; set; }
-        public Vector2 WorldPosition { get; set; }
 
         // Plot
+        public Room Area { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public int[,] PlotMap { get; set; }
         public int[,] FenceMap { get; set; }
 
@@ -41,20 +41,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private BSP _bsp;
         private Random _random;
 
-
-
-        
-
         // Shouldnt need these...
         public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool IsVisible => throw new NotImplementedException();
         public Texture2D Texture { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-
-
-
-
-
 
 
         public Plot(Room area, TownScene town)
@@ -70,7 +60,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public void Build()
         {
             GenerateDataMaps();
-
 
             _tilemaps.Add(GenerateGroundTilemap(PlotMap));
             _tilemaps.Add(GenerateFenceTilemap(FenceMap));
@@ -134,7 +123,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 }
             }
 
-            // House
+            // House - bit of shuffling to do here
             var houseWidth = 12;
             var houseHeight = 8;
 
@@ -172,7 +161,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             var roofMap = new int[width, height];
             for (int i = 0; i < houseWidth; i++)
             {
-                for (int j = 0; j < houseHeight; j++)
+                for (int j = 0; j < houseHeight - 1; j++)
                 {
                     roofMap[i + widthOffset, j + heightOffset] = 1;
                 }
@@ -416,7 +405,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             if (!n && e && !s && w)
             {
-                if (map[x, y - 1] == 1)
+                if (HouseMap[0][x, y - 1] == 1)
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-s"];
                 else
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-n"];
@@ -427,7 +416,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             if (n && !e && s && !w)
             {
-                if (HouseMap[0][x - 1, y] == 1) // useless broken check
+                if (HouseMap[0][x - 1, y] == 1)
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-e"];
                 else
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-w"];
