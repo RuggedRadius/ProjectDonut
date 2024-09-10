@@ -177,6 +177,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 tile.Draw(gameTime);
             }
 
+            Global.SpriteBatch.End();
+
+
+            base.Draw(gameTime);
+
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             //if (IsPlayerInsideBuilding() == false)
             //{
             foreach (var tile in _tilemapsBuildings[2].Map)
@@ -192,8 +198,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             Global.SpriteBatch.End();
 
-
-            base.Draw(gameTime);
             //}
 
             //foreach (var plot in _plots)
