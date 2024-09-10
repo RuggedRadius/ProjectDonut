@@ -72,7 +72,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             WorldPosition = new Vector2(50, 50);
             MovementSpeed = 200;
             spriteSize = new Vector2(Global.TileSize, Global.TileSize);
-            ZIndex = 0;
+            ZIndex = 100;
 
             _frameWidth = Global.TileSize; // Width of a single frame
             _frameHeight = Global.TileSize; // Height of a single frame
@@ -229,11 +229,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             //_spriteBatch.Draw(spriteSheet, Position, currentFrame, Color.White);
             Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White, 0, _textureOrigin, 1f, SpriteEffects.None, 0);
             //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Green * 0.25f);
-            Global.SpriteBatch.End();
+            //Global.SpriteBatch.End();
         }
 
         private void DrawDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)

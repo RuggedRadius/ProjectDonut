@@ -133,7 +133,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
+            
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             
@@ -179,16 +179,21 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             //if (IsPlayerInsideBuilding() == false)
             //{
-                foreach (var tile in _tilemapsBuildings[2].Map)
+            foreach (var tile in _tilemapsBuildings[2].Map)
+            {
+                if (tile == null)
                 {
-                    if (tile == null)
-                    {
-                        continue;
-                    }
-
-                    //tile.Draw(gameTime);
-                    Global.SpriteBatch.Draw(tile.Texture, tile.WorldPosition, null, Color.White);
+                    continue;
                 }
+
+                //tile.Draw(gameTime);
+                Global.SpriteBatch.Draw(tile.Texture, tile.WorldPosition, null, Color.White);
+            }
+
+            Global.SpriteBatch.End();
+
+
+            base.Draw(gameTime);
             //}
 
             //foreach (var plot in _plots)
@@ -216,13 +221,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             if (Global.DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE)
             {
+                Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
                 foreach (var exitPoint in ExitLocations)
                 {
                     Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, exitPoint.Value, Color.White);
                 }
+                Global.SpriteBatch.End();
             }
 
-            Global.SpriteBatch.End();
+            //Global.SpriteBatch.End();
         }
 
         private bool IsPlayerInsideBuilding()

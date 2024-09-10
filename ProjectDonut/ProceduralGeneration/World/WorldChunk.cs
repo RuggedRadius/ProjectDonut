@@ -168,6 +168,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Draw(GameTime gameTime)
         {
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             foreach (var tilemap in Tilemaps)
             {
                 foreach (var tile in tilemap.Value.Map)
@@ -179,10 +180,30 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
+            // TODO: Stop creating a variable every frame for this
+            var objs = new List<ISceneObject>();
+            SceneObjects
+                .Select(x => x.Value)
+                .ToList()
+                .ForEach(x => objs.AddRange(x));
+
+            MineableObjects
+                .Select(x => x.Value)
+                .ToList()
+                .ForEach(x => objs.AddRange(x));
+
+            objs
+                .OrderBy(x => x.ZIndex)
+                .ThenBy(x => x.WorldPosition.Y)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
+
             if (Global.DRAW_WORLD_CHUNK_OUTLINE)
             {
                 DrawChunkOutline(gameTime);
             }
+
+            //Global.SpriteBatch.End();
 
             //MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
 
@@ -199,13 +220,13 @@ namespace ProjectDonut.ProceduralGeneration.World
                 objs.AddRange(validObjs);
             }
 
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
                 .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
-            Global.SpriteBatch.End();
+            //Global.SpriteBatch.End();
         }
 
         public void DrawMineableObjectsBelowPlayer(GameTime gameTime)
@@ -218,13 +239,13 @@ namespace ProjectDonut.ProceduralGeneration.World
                 objs.AddRange(validObjs);
             }
 
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
                 .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
-            Global.SpriteBatch.End();
+            //Global.SpriteBatch.End();
         }
 
         public void DrawSceneObjectsAbovePlayer(GameTime gameTime)
@@ -237,13 +258,13 @@ namespace ProjectDonut.ProceduralGeneration.World
                 objs.AddRange(validObjs);
             }
 
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
                 .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
-            Global.SpriteBatch.End();
+            //Global.SpriteBatch.End();
         }
 
         public void DrawMineableObjectsAbovePlayer(GameTime gameTime)
@@ -256,13 +277,13 @@ namespace ProjectDonut.ProceduralGeneration.World
                 objs.AddRange(validObjs);
             }
 
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+            //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             objs
                 .OrderBy(x => x.WorldPosition.Y)
                 .ThenByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
-            Global.SpriteBatch.End();
+            //Global.SpriteBatch.End();
         }
 
         private void DrawChunkOutline(GameTime gameTime)

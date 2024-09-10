@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Penumbra;
 using ProjectDonut.Interfaces;
+using IDrawable = ProjectDonut.Interfaces.IDrawable;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
@@ -42,22 +44,37 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
         }
 
+        private List<IDrawable> toDraw = new List<IDrawable>();
         public virtual void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-            _gameObjects
-                .Select(x => x.Value)
-                .OrderByDescending(x => x.ZIndex)
-                .ToList()
-                .ForEach(x => x.Draw(gameTime));
-            //Global.SpriteBatch.End();
+            toDraw.Clear();
 
-            // SceneObjects
+            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
+
+            toDraw.Add(Global.PlayerObj);
+            toDraw.AddRange(_gameObjects.Values);
             _sceneObjects
                 .Select(x => x.Value)
-                //.OrderByDescending(x => x.ZIndex)
                 .ToList()
-                .ForEach(x => x.ForEach(x => x.Draw(gameTime)));
+                .ForEach(x => toDraw.AddRange(x));
+
+            toDraw
+                .OrderBy(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
+
+            //_gameObjects
+            //    .Select(x => x.Value)
+            //    .OrderByDescending(x => x.ZIndex)
+            //    .ToList()
+            //    .ForEach(x => x.Draw(gameTime));
+
+            // SceneObjects
+            //_sceneObjects
+            //    .Select(x => x.Value)
+            //    //.OrderByDescending(x => x.ZIndex)
+            //    .ToList()
+            //    .ForEach(x => x.ForEach(x => x.Draw(gameTime)));
 
             Global.SpriteBatch.End();
 

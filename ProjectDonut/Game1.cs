@@ -229,29 +229,29 @@ namespace ProjectDonut
             _gameObjects
                 .Select(x => x.Value)
                 .OrderBy(x => x.WorldPosition.Y)
-                .ThenByDescending(x => x.ZIndex)
+                .ThenBy(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            {
-                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-                {
-                    chunk.DrawMineableObjectsBelowPlayer(gameTime);    
-                    chunk.DrawSceneObjectsBelowPlayer(gameTime);
-                }
-            }
+            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            //{
+            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+            //    {
+            //        chunk.DrawMineableObjectsBelowPlayer(gameTime);    
+            //        chunk.DrawSceneObjectsBelowPlayer(gameTime);
+            //    }
+            //}
 
-            Global.PlayerObj.Draw(gameTime);
+            //Global.PlayerObj.Draw(gameTime);
 
-            if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            {
-                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-                {
-                    chunk.DrawMineableObjectsAbovePlayer(gameTime);
-                    chunk.DrawSceneObjectsAbovePlayer(gameTime);
-                }
-            }
+            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            //{
+            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+            //    {
+            //        chunk.DrawMineableObjectsAbovePlayer(gameTime);
+            //        chunk.DrawSceneObjectsAbovePlayer(gameTime);
+            //    }
+            //}
 
             //if (Global.LIGHTING_ENABLED == false)
             //{
