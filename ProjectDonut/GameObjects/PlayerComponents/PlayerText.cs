@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Input;
 using ProjectDonut.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,8 +15,10 @@ namespace ProjectDonut.GameObjects.PlayerComponents
     public class PlayerText
     {
         public bool MoveVertical { get; set; }
+
         public string Text { get; set; }
         public float RemainingDuration { get; set; }
+        public float TotalDuration { get; set; }
         public Color TextColour { get; set; }
 
         public int OffsetX { get; set; }
@@ -23,6 +27,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
     public class PlayerTextDisplay : IGameObject
     {
+        public Queue<PlayerText> TextQueue { get; set; }
         public List<PlayerText> Texts { get; set; }
 
         public bool IsVisible => throw new NotImplementedException();
@@ -33,24 +38,32 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public int ZIndex { get; set; }
 
+        private float _baseDuration = 2;
+        private int _baseOffsetX = 5;
+        private int _baseOffsetY = 5;
+
         public PlayerTextDisplay()
         {
             Texts = new List<PlayerText>();
+            TextQueue = new Queue<PlayerText>();
         }
 
-        public void AddText(string text, int duration, int offsetX, int offsetY, bool moveVertical, Color textColour)
+        public void AddText(string text, int durationMod, Vector2 offsetMod, Color textColour, bool moveVertical = true)
         {
             var playerText = new PlayerText
             {
                 Text = text,
-                RemainingDuration = duration,
-                OffsetX = offsetX,
-                OffsetY = offsetY,
+                TextColour = textColour,
+                RemainingDuration = _baseDuration + durationMod,
+                TotalDuration = _baseDuration + durationMod,
                 MoveVertical = moveVertical,
-                TextColour = textColour
+
+                OffsetX = (int)(_baseOffsetX + offsetMod.X),
+                OffsetY = (int)(_baseOffsetY + offsetMod.Y),
             };
 
-            Texts.Add(playerText);
+            //Texts.Add(playerText);
+            TextQueue.Enqueue(playerText);
         }
 
         public void Initialize()
@@ -65,6 +78,24 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Update(GameTime gameTime)
         {
+            if (InputManager.KeyboardState.IsKeyDown(Keys.G))
+            {
+                AddText("Testing 123", 0, Vector2.Zero, Color.White);
+            }
+
+            if (TextQueue.Count > 0)
+            {
+                var text = TextQueue.Dequeue();
+                //text.OffsetY -= (20 * Texts.Count);
+
+                foreach (var txt in Texts)
+                {
+                    txt.OffsetY -= 20;
+                }
+
+                Texts.Add(text);
+            }
+
             for (int i = 0; i < Texts.Count; i++)
             {
                 var text = Texts[i];
@@ -95,7 +126,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                     new Vector2(
                         Global.PlayerObj.WorldPosition.X + text.OffsetX, 
                         Global.PlayerObj.WorldPosition.Y + text.OffsetY), 
-                    text.TextColour);
+                    text.TextColour * (text.RemainingDuration/text.TotalDuration));
             }
 
             Global.SpriteBatch.End();

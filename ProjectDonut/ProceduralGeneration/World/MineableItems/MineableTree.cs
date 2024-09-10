@@ -39,8 +39,8 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             InteractBounds = new Rectangle(
                 (int)WorldPosition.X + Global.TileSize / 2,
                 (int)WorldPosition.Y + ((Global.TileSize / 2) * 3),
-                Global.TileSize,
-                Global.TileSize);
+                Global.TileSize / 2,
+                Global.TileSize / 2);
 
             MaxHealth = 1000;
             Health = MaxHealth;
@@ -93,8 +93,12 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             if (!InRangeOfPlayer)
                 return;
 
+            if (PlayerObj.CurrentInteractedObject != null)
+                return;
+
             if (InputManager.KeyboardState.IsKeyDown(Keys.E))
             {
+                PlayerObj.CurrentInteractedObject = this;
                 HandleAction();
             }
         }
@@ -144,7 +148,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             {
                 var mineableItem = CreateInventoryItem();
                 Global.Player.Inventory.AddItemToInventory(mineableItem);
-                Global.Player.TextDisplay.AddText("+1 " + mineableItem.Name, 2, 10, 0, true, Color.Green);
+                Global.Player.TextDisplay.AddText("+1 " + mineableItem.Name, 0, Vector2.Zero, Color.White);
 
                 CreateReplacementTreeStump();
             }

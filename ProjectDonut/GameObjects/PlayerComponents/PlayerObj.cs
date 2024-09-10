@@ -7,6 +7,7 @@ using ProjectDonut.Core.Input;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using System.Collections.Generic;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
@@ -58,6 +59,8 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private Dictionary<string, Texture2D> _textures;
         public PointLight Light;
+
+        public static IMineable CurrentInteractedObject { get; set; }
 
         public PlayerObj()
         {
@@ -120,7 +123,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Update(GameTime gameTime)
         {
-
+            CurrentInteractedObject = null;
 
             var chunkCoords = GetWorldChunkCoords();
             ChunkPosX = chunkCoords.Item1;

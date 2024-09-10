@@ -251,15 +251,18 @@ namespace ProjectDonut
                 }
             }
 
+            Global.Penumbra.Draw(gameTime);
+
             _screenObjects
                 .Select(x => x.Value)
                 .OrderByDescending(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            base.Draw(gameTime);
+            //Global.SpriteBatch.Begin();
+            //base.Draw(gameTime);
+            //Global.SpriteBatch.End();
 
-            //Global.Penumbra.Draw(gameTime);
         }
     }
 }
