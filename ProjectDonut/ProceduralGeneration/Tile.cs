@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;

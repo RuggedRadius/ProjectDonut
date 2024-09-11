@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;

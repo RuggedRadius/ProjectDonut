@@ -13,8 +13,8 @@ namespace ProjectDonut.ProceduralGeneration.BSP
     {
         private Dictionary<int, List<Room>> _roomsGenerations = new Dictionary<int, List<Room>>();
         private List<Room> _rooms = new List<Room>();
-        private Vector2 _roomMinSize = new Vector2(20, 20);
-        private Vector2 _room2MinSize = new Vector2(10, 10);
+        public Vector2 _roomMinSize = new Vector2(20, 20);
+        public Vector2 _room2MinSize = new Vector2(10, 10);
         private Random _random = new Random();
 
         private int _roomCounter = 0;
@@ -170,8 +170,18 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             return rooms;
         }
 
-        public Dictionary<int, List<Room>> GenerateRooms(int xTileCount, int yTileCount)
+        public Dictionary<int, List<Room>> GenerateRooms(
+            int xTileCount, 
+            int yTileCount, 
+            Vector2? room1MinSize = null,
+            Vector2? room2MinSize = null)
         {
+            if (room1MinSize == null)
+                room1MinSize = new Vector2(20, 20);
+
+            if (room2MinSize == null)
+                room2MinSize = new Vector2(10, 10);
+
             _roomsGenerations = new Dictionary<int, List<Room>>();
             _roomCounter = 0;
 
@@ -230,6 +240,53 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             {
                 return false;
             }
+        }
+
+        private List<Room> PartitionRoom(Room room)
+        {
+            var roomsList = new List<Room>();
+
+            if (!room.CanSplitHorizontal && !room.CanSplitVertical)
+            {
+                roomsList.Add(room);
+                return roomsList;
+            }
+
+            var originalCount = roomsList.Count;
+
+            var coinFlip = _random.Next(0, 2);
+
+            if (coinFlip == 0)
+            {
+                if (room.CanSplitHorizontal)
+                {
+                    roomsList.AddRange(SplitHorizontally(room));
+                }
+                else
+                {
+                    roomsList.AddRange(SplitVertically(room));
+                }
+            }
+            else
+            {
+                if (room.CanSplitVertical)
+                {
+                    roomsList.AddRange(SplitVertically(room));
+                }
+                else
+                {
+                    roomsList.AddRange(SplitHorizontally(room));
+                }
+            }
+
+            // If no rooms were added, it means the room couldn't be partitioned.
+            if (roomsList.Count == originalCount)
+            {
+                roomsList.Add(room);
+            }
+            
+
+            return roomsList;
         }
 
         private List<Room> PartitionRooms(List<Room> rooms)

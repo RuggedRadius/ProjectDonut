@@ -8,7 +8,7 @@ using ProjectDonut.ProceduralGeneration.BSP;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using Tilemap = ProjectDonut.ProceduralGeneration.Tilemap;
 
-namespace ProjectDonut.Core.SceneManagement.SceneTypes
+namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
 {
     public class TownScene : BaseScene
     {
@@ -84,32 +84,32 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                     {
                         case "north":
                             worldScene.LastExitLocation = new Rectangle(
-                                (int)_worldStructure.TextureBounds.Left + (_worldStructure.TextureBounds.Width / 2),
-                                (int)_worldStructure.TextureBounds.Top - Global.TileSize,
+                                _worldStructure.TextureBounds.Left + _worldStructure.TextureBounds.Width / 2,
+                                _worldStructure.TextureBounds.Top - Global.TileSize,
                                 Global.TileSize,
                                 Global.TileSize);
                             break;
 
                         case "south":
                             worldScene.LastExitLocation = new Rectangle(
-                                (int)_worldStructure.TextureBounds.Left + (_worldStructure.TextureBounds.Width / 2),
-                                (int)_worldStructure.TextureBounds.Bottom + Global.TileSize,
+                                _worldStructure.TextureBounds.Left + _worldStructure.TextureBounds.Width / 2,
+                                _worldStructure.TextureBounds.Bottom + Global.TileSize,
                                 Global.TileSize,
                                 Global.TileSize);
                             break;
 
                         case "east":
                             worldScene.LastExitLocation = new Rectangle(
-                                (int)_worldStructure.TextureBounds.Right + Global.TileSize,
-                                (int)_worldStructure.TextureBounds.Top + (_worldStructure.TextureBounds.Height / 2),
+                                _worldStructure.TextureBounds.Right + Global.TileSize,
+                                _worldStructure.TextureBounds.Top + _worldStructure.TextureBounds.Height / 2,
                                 Global.TileSize,
                                 Global.TileSize);
                             break;
 
                         case "west":
                             worldScene.LastExitLocation = new Rectangle(
-                                (int)_worldStructure.TextureBounds.Left - Global.TileSize,
-                                (int)_worldStructure.TextureBounds.Top + (_worldStructure.TextureBounds.Height / 2),
+                                _worldStructure.TextureBounds.Left - Global.TileSize,
+                                _worldStructure.TextureBounds.Top + _worldStructure.TextureBounds.Height / 2,
                                 Global.TileSize,
                                 Global.TileSize);
                             break;
@@ -122,7 +122,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public override void Draw(GameTime gameTime)
         {
-            
+
 
             Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
 
@@ -166,7 +166,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                         ChunkY = 0,
                         xIndex = i,
                         yIndex = j,
-                        LocalPosition = new Vector2((i * Global.TileSize), j * Global.TileSize),
+                        LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
                         Size = new Vector2(Global.TileSize, Global.TileSize),
                         Texture = Global.SpriteLibrary.TownSprites["dirt-c"],
                         TileType = TileType.Instance,
@@ -250,9 +250,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             foreach (var area in areas)
             {
                 area.Bounds = new Rectangle(
-                    area.Bounds.X + 3, 
-                    area.Bounds.Y + 3, 
-                    area.Bounds.Width - 2, 
+                    area.Bounds.X + 3,
+                    area.Bounds.Y + 3,
+                    area.Bounds.Width - 2,
                     area.Bounds.Height - 2);
 
                 plots.Add(new Plot(area, this)

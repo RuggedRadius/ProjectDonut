@@ -1,4 +1,6 @@
-﻿namespace ProjectDonut.ProceduralGeneration
+﻿using Microsoft.Xna.Framework;
+
+namespace ProjectDonut.ProceduralGeneration
 {
     public class Tilemap
     {
@@ -12,6 +14,33 @@
         public Tile GetTile(int x, int y)
         {
             return Map[x, y];
+        }
+
+        public void SetTile(int x, int y, Tile tile)
+        {
+            Map[x, y] = tile;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            foreach (var tile in Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.Update(gameTime);
+            }
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            foreach (var tile in Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.Draw(gameTime);
+            }
         }
     }
 }
