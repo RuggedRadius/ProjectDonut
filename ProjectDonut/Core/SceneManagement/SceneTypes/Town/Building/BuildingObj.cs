@@ -163,30 +163,19 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         {
             for (var i = 0; i < FloorTileMaps.Count; i++)
             {
-                if (PlayerOccupyLevel >= i)
-                {
-                    break;
-                }
+                //if (PlayerOccupyLevel >= i)
+                //{
+                //    break;
+                //}
 
                 // Floor
-                foreach (var tile in FloorTileMaps[i].Map)
-                {
-                    tile.Draw(gameTime);
-                }
-
-                // Wall
-                foreach (var tile in WallTileMaps[i].Map)
-                {
-                    tile.Draw(gameTime);
-                }
+                FloorTileMaps[i].Draw(gameTime);
+                WallTileMaps[i].Draw(gameTime);
 
                 // Stairs
                 if (i < StairDataMaps.Count)
                 {
-                    foreach (var tile in StairTileMaps[i].Map)
-                    {
-                        tile.Draw(gameTime);
-                    }
+                    StairTileMaps[i].Draw(gameTime);
                 }
             }
 

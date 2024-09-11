@@ -36,27 +36,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             foreach (var room in roomBounds)
             {
-                var startXPos = room.X;
-                var startYPos = room.Y;
+                var offsetX = room.X - buildingBounds.X;
+                var offsetY = room.Y - buildingBounds.Y;
 
-                var endXPos = room.X + room.Width;
-                var endYPos = room.Y + room.Height;
-
-                if (endYPos > buildingBounds.Height)
+                for (int i = room.X; i < room.Width; i++)
                 {
-                    throw new Exception("Room is too large for plot bounds.");
-                }
-
-                if (endXPos > buildingBounds.Width)
-                {
-                    throw new Exception("Room is too large for plot bounds.");
-                }
-
-                for (int i = startXPos; i < endXPos; i++)
-                {
-                    for (int j = startYPos; j < endYPos; j++)
+                    for (int j = room.Y; j < room.Height; j++)
                     {
-                        map[i, j] = 1;
+                        map[i + offsetX, j + offsetY] = 1;
                     }
                 }
             }
@@ -64,29 +51,26 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             return map;
         }
 
-        public static int[,] GenerateWallDataMap(Rectangle plotBounds, List<Rectangle> roomBounds)
+        public static int[,] GenerateWallDataMap(Rectangle buildingBounds, List<Rectangle> roomBounds)
         {
-            var map = new int[plotBounds.Width, plotBounds.Height];
+            var map = new int[buildingBounds.Width, buildingBounds.Height];
 
             foreach (var room in roomBounds)
             {
-                var startXPos = room.X / Global.TileSize;
-                var startYPos = room.Y / Global.TileSize;
+                var offsetX = room.X - buildingBounds.X;
+                var offsetY = room.Y - buildingBounds.Y;
 
-                var endXPos = (room.X + room.Width - 1) / Global.TileSize;
-                var endYPos = (room.Y + room.Height - 1) / Global.TileSize;
-
-                for (int i = startXPos; i < endXPos; i++)
+                for (int i = room.X; i < room.Width; i++)
                 {
-                    for (int j = startYPos; j < endYPos; j++)
+                    for (int j = room.Y; j < room.Height; j++)
                     {
-                        if (i == startXPos || i == endXPos - 1 || j == startYPos || j == endYPos - 1)
+                        if (i == room.X || i == room.Width - 1 || j == room.Y || j == room.Height - 1)
                         {
-                            map[i, j] = 1;
+                            map[i + offsetX, j + offsetY] = 1;
                         }
                         else
                         {
-                            map[i, j] = 0;
+                            map[i + offsetX, j + offsetY] = 0;
                         }
                     }
                 }
@@ -94,6 +78,40 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             return map;
         }
+
+        //public static int[,] GenerateWallDataMap(Rectangle buildingBounds, List<Rectangle> roomBounds)
+        //{
+        //    var map = new int[buildingBounds.Width, buildingBounds.Height];
+
+        //    foreach (var room in roomBounds)
+        //    {
+        //        var startXPos = room.X;
+        //        var startYPos = room.Y;
+
+        //        var endXPos = room.X + room.Width;
+        //        var endYPos = room.Y + room.Height;
+
+        //        var offsetX = room.X - buildingBounds.X;
+        //        var offsetY = room.Y - buildingBounds.Y;
+
+        //        for (int i = startXPos; i < endXPos; i++)
+        //        {
+        //            for (int j = startYPos; j < endYPos; j++)
+        //            {
+        //                if (i == startXPos || i == endXPos - 1 || j == startYPos || j == endYPos - 1)
+        //                {
+        //                    map[i + offsetX, j + offsetY] = 1;
+        //                }
+        //                else
+        //                {
+        //                    map[i + offsetX, j + offsetY] = 0;
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return map;
+        //}
 
         public static int[,] GenerateStairDataMap(Rectangle plotBounds, List<Rectangle> roomBounds)
         {
