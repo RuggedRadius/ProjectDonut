@@ -19,10 +19,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
     {
         public Plot Plot { get; set; }
         public Rectangle BuildingBounds { get; set; }
-        
+        public int LevelCount { get; set; }
         public int PlayerOccupyLevel { get; set; }
 
         public Dictionary<int, List<Rectangle>> Rooms { get; set; }
+        public List<BuildingRoom> BuildingRooms { get; set; }
+
         public Dictionary<int, int[,]> FloorDataMaps { get; set; }
         public Dictionary<int, int[,]> WallDataMaps { get; set; }
         public Dictionary<int, int[,]> WallCapDataMaps { get; set; }
@@ -48,16 +50,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             Plot = plot;
             _random = new Random();
 
+            LevelCount = levels;
             BuildingBounds = BuildingDataMapper.CalculateHouseBounds(Plot);
+        }
 
-            if (plot.PlotBounds.Contains(BuildingBounds) == false)
-            {
-                throw new Exception("Building out of plot bounds");
-            }
-
-            MakeRooms(levels);
-            GenerateLayerData(levels);
-            GenerateLayerTilemaps();
+        public void Build()
+        {
+            MakeRooms(LevelCount);
+            //GenerateLayerData(LevelCount);
+            //GenerateLayerTilemaps();
             //PlaceExternalDoor(WallTileMaps[0]);
         }
 
@@ -88,6 +89,20 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
                 Rooms.Add(i, roomBounds);
             }
+
+            BuildingRooms = new List<BuildingRoom>();
+            foreach (var room in Rooms) 
+            {
+                foreach (var r in room.Value)
+                {
+                    BuildingRooms.Add(new BuildingRoom(this, r, room.Key));
+                }
+            }
+
+            foreach (var room in BuildingRooms)
+            {
+                room.Initialize();
+            }
         }
 
         private void GenerateLayerData(int levels)
@@ -107,8 +122,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 var wallData = BuildingDataMapper.GenerateWallDataMap(Plot, Rooms[i]);
                 WallDataMaps.Add(i, wallData);
 
-                var wallCapData = BuildingDataMapper.GenerateWallCapDataMap(Plot, Rooms[i]);
-                WallCapDataMaps.Add(i, wallCapData);
+                //var wallCapData = BuildingDataMapper.GenerateWallCapDataMap(Plot, Rooms[i]);
+                //WallCapDataMaps.Add(i, wallCapData);
 
                 if (i >= levels - 1)
                 {
@@ -144,7 +159,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             for (int i = 0; i < WallCapDataMaps.Count; i++)
             {
-                WallCapTileMaps.Add(i, BuildingTileMapper.GenerateWallCapTileMap(WallCapDataMaps[i], FloorDataMaps[i], Plot));
+                WallCapTileMaps.Add(i, BuildingTileMapper.GenerateWallCapTileMap(WallCapDataMaps[i], FloorDataMaps[i], i, Plot));
             }
 
             for (int i = 0; i < StairDataMaps.Count; i++)
@@ -158,61 +173,66 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         // TODO: later, not being used
         public void Initialize()
         {
-            //foreach (var layer in Layers)
-            //{
-            //    layer.Initialize();
-            //}
+            foreach (var room in BuildingRooms)
+            {
+                room.Initialize();
+            }
         }
 
         // TODO: later, not being used
         public void LoadContent()
         {
-            //foreach (var layer in Layers)
-            //{
-            //    layer.LoadContent();
-            //}
+            foreach (var room in BuildingRooms)
+            {
+                room.LoadContent();
+            }
         }
 
         // TODO: later, not being used
         public void Update(GameTime gameTime)
         {
-            //foreach (var layer in Layers)
-            //{
-            //    layer.Update(gameTime);
-            //}
+            foreach (var room in BuildingRooms)
+            {
+                room.Update(gameTime);
+            }
         }
 
         public void Draw(GameTime gameTime)
         {
-            for (var i = 0; i < FloorTileMaps.Count; i++)
+            foreach (var room in BuildingRooms)
             {
-                //if (PlayerOccupyLevel >= i)
-                //{
-                //    break;
-                //}
-
-                // Floor
-                FloorTileMaps[i].Draw(gameTime);
-                WallTileMaps[i].Draw(gameTime);
-                WallCapTileMaps[i].Draw(gameTime);
-
-                // Stairs
-                if (i < StairDataMaps.Count)
-                {
-                    StairTileMaps[i].Draw(gameTime);
-                }
+                room.Draw(gameTime);
             }
 
-            // Roof
-            if (BuildingBounds.Contains(Global.PlayerObj.WorldPosition) == false)
-            {
-                ;
-                //RoofTileMap.Draw(gameTime);
+            //for (var i = 0; i < FloorTileMaps.Count; i++)
+            //{
+            //    //if (PlayerOccupyLevel >= i)
+            //    //{
+            //    //    break;
+            //    //}
+
+            //    // Floor
+            //    FloorTileMaps[i].Draw(gameTime);
+            //    WallTileMaps[i].Draw(gameTime);
+            //    //WallCapTileMaps[i].Draw(gameTime);
+
+            //    // Stairs
+            //    if (i < StairDataMaps.Count)
+            //    {
+            //        StairTileMaps[i].Draw(gameTime);
+            //    }
+            //}
+
+            //// Roof
+            //if (BuildingBounds.Contains(Global.PlayerObj.WorldPosition) == false)
+            //{
+            //    ;
+            //    //RoofTileMap.Draw(gameTime);
                 
-            }
+            //}
 
-            if (Global.SHOW_GRID_OUTLINE)
-                RoofTileMap.DrawOutline(gameTime);
+            //if (Global.SHOW_GRID_OUTLINE)
+            //    RoofTileMap.DrawOutline(gameTime);
         }
 
 

@@ -59,6 +59,29 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             return map;
         }
 
+        public static int[,] GenerateRoomDataMap(Plot plot, Rectangle roomBounds)
+        {
+            var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
+
+
+            for (int i = 0; i < plot.PlotBounds.Width; i++)
+            {
+                for (int j = 0; j < plot.PlotBounds.Height; j++)
+                {
+                    var adjustedRoomBounds = new Rectangle(roomBounds.X, roomBounds.Y, roomBounds.Width + 1, roomBounds.Height);
+
+                    if (adjustedRoomBounds.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
+                    {
+                        map[i, j] = 1;
+                    }
+                }
+            }
+
+            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_floorDataMap");
+
+            return map;
+        }
+
         public static int[,] GenerateWallDataMap(Plot plot, List<Rectangle> roomBounds)
         {
             var map = new int[
@@ -75,6 +98,28 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         {
                             map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
                         }
+                    }
+                }
+            }
+
+            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_wallDataMap");
+
+            return map;
+        }
+
+        public static int[,] GenerateRoomWallDataMap(Plot plot, Rectangle roomBounds)
+        {
+            var map = new int[
+                plot.PlotBounds.Width,
+                plot.PlotBounds.Height];
+
+            for (int i = roomBounds.Left; i <= roomBounds.Right; i++)
+            {
+                for (int j = roomBounds.Top; j <= roomBounds.Bottom; j++)
+                {
+                    if (i == roomBounds.Left || i == roomBounds.Right || j == roomBounds.Top || j == roomBounds.Bottom)
+                    {
+                        map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
                     }
                 }
             }

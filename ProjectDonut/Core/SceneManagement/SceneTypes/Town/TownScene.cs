@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using AsepriteDotNet;
 using Microsoft.Xna.Framework;
-using Penumbra;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.BSP;

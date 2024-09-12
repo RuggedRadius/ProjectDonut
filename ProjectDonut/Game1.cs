@@ -17,8 +17,6 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
 using Penumbra;
 using ProjectDonut.Environment;
-using ProjectDonut.Core.SceneManagement.SceneTypes;
-using QuakeConsole;
 
 namespace ProjectDonut
 {
@@ -70,6 +68,20 @@ namespace ProjectDonut
 
             Global.DEBUG_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
             Global.DEBUG_TEXTURE.SetData(new[] { Color.Magenta });
+            Global.MISSING_TEXTURE = new Texture2D(Global.GraphicsDevice, 64, 64);
+            var missingColours = new Color[64 * 64];
+            for (int i = 0; i < missingColours.Length; i++)
+            {
+                int row = i / 64;
+                int col = i % 64;
+                int squareSize = 16; // Change the square size here
+                if ((row / squareSize + col / squareSize) % 2 == 0)
+                    missingColours[i] = new Color(0, 0, 0, 0); // Color.Blue;
+                else
+                    missingColours[i] = Color.Red;
+            }
+            Global.MISSING_TEXTURE.SetData(missingColours);
+
             Global.SpriteLibrary = new SpriteLibrary();
             Global.SpriteLibrary.LoadSpriteLibrary();
 

@@ -1,16 +1,10 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Transactions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Aseprite;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
-using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;

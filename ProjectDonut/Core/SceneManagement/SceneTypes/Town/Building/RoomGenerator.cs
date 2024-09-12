@@ -166,7 +166,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             var split = random.Next(minValue, maxValue);
 
             var roomA = new Rectangle(room.X, room.Y, room.Width, split);
-            var roomB = new Rectangle(room.X, room.Y + split, room.Width, room.Height - split);
+            var roomB = new Rectangle(room.X, room.Y + split + 1, room.Width, room.Height - split - 1);
 
             return new List<Rectangle>() { roomA, roomB };
         }
@@ -185,7 +185,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             var split = random.Next(minValue, maxValue);
 
             var roomA = new Rectangle(room.X, room.Y, split, room.Height);
-            var roomB = new Rectangle(room.X + split, room.Y, room.Width - split, room.Height);
+            var roomB = new Rectangle(room.X + split + 1, room.Y, room.Width - split - 1, room.Height);
 
             return new List<Rectangle>() { roomA, roomB };
         }
