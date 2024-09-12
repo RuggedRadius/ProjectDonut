@@ -73,7 +73,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
             _groundTileMap = GenerateGroundTilemap(PlotMap);
             _fenceTileMap = GenerateFenceTilemap(FenceMap);
 
-            Building = new BuildingObj(this, 2);
+            Building = new BuildingObj(this, 1);
         }
 
         private Tilemap GenerateGroundTilemap(int[,] map)

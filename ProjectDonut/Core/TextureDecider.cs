@@ -32,8 +32,8 @@ namespace ProjectDonut.Core
             {
                 if (y == 0)
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-n"];
-                if (floorMap[x, y - 1] == 1)
-                    return Global.SpriteLibrary.BuildingBlockSprites["building-wall-s"];
+                //if (floorMap[x, y - 1] == 1) TEMP DISABLE
+                //    return Global.SpriteLibrary.BuildingBlockSprites["building-wall-s"];
                 else
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-n"];
             }
@@ -45,8 +45,8 @@ namespace ProjectDonut.Core
             {
                 if (x == 0)
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-w"];
-                if (floorMap[x - 1, y] == 1)
-                    return Global.SpriteLibrary.BuildingBlockSprites["building-wall-e"];
+                //if (floorMap[x - 1, y] == 1) // TEMP DISABLE
+                //    return Global.SpriteLibrary.BuildingBlockSprites["building-wall-e"];
                 else
                     return Global.SpriteLibrary.BuildingBlockSprites["building-wall-w"];
             }

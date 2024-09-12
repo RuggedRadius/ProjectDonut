@@ -46,6 +46,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static Tilemap GenerateFenceTilemap(int[,] map, Plot plot)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
+            var tilePlaced = false;
 
             for (int i = 0; i < map.GetLength(0); i++)
             {
@@ -70,7 +71,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     };
 
                     tm.Map[i, j] = tile;
+                    tilePlaced = true;
                 }
+            }
+
+            if (!tilePlaced)
+            {
+                ;
             }
 
             return tm;
@@ -79,6 +86,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static Tilemap GenerateHouseFloorMap(int[,] map, Plot plot)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
+            var tilePlaced = false;
 
             for (int i = 0; i < map.GetLength(0); i++)
             {
@@ -103,7 +111,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     };
 
                     tm.Map[i, j] = tile;
+                    tilePlaced = true;
                 }
+            }
+
+            if (!tilePlaced)
+            {
+                ;
             }
 
             return tm;
@@ -112,6 +126,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static Tilemap GenerateHouseWallMap(int[,] wallMap, int[,] floorMap, Plot plot)
         {
             var tm = new Tilemap(wallMap.GetLength(0), wallMap.GetLength(1));
+            var tilePlaced = false;
 
             for (int i = 0; i < wallMap.GetLength(0); i++)
             {
@@ -136,7 +151,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     };
 
                     tm.Map[i, j] = tile;
+                    tilePlaced = true;
                 }
+            }
+
+            if (!tilePlaced)
+            {
+                ;
             }
 
             return tm;

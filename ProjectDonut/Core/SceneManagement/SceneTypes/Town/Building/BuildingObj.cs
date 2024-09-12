@@ -61,6 +61,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         private void MakeRooms(int levels)
         {
+            // ************ TEMPORARY ************
+            Rooms = new Dictionary<int, List<Rectangle>>();
+            Rooms.Add(0, new List<Rectangle>() { BuildingBounds });
+            return;
+            // ***********************************
+
+
             Rooms = new Dictionary<int, List<Rectangle>>();
 
             for (int i = 0; i < levels; i++)
@@ -87,16 +94,16 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             for (int i = 0; i < levels; i++)
             {
-                var floorData = BuildingDataMapper.GenerateFloorDataMap(Plot.PlotBounds, Rooms[i]);
+                var floorData = BuildingDataMapper.GenerateFloorDataMap(Plot, Rooms[i]);
                 FloorDataMaps.Add(i, floorData);
 
                 var wallData = BuildingDataMapper.GenerateWallDataMap(Plot.PlotBounds, Rooms[i]);
                 WallDataMaps.Add(i, wallData);
 
-                if (i == levels - 1)
+                if (i >= levels - 1)
                 {
                     // Create roof
-                    var roofData = BuildingDataMapper.GenerateRoofDataMap(Plot.PlotBounds, Rooms[i]);
+                    var roofData = BuildingDataMapper.GenerateRoofDataMap(Plot, Rooms[i]);
                     RoofDataMap = roofData;
                 }
                 else
@@ -182,7 +189,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             // Roof
             if (BuildingBounds.Contains(Global.PlayerObj.WorldPosition) == false)
             {
-                RoofTileMap.Draw(gameTime);
+                ;
+                //RoofTileMap.Draw(gameTime);
             }
         }
 
