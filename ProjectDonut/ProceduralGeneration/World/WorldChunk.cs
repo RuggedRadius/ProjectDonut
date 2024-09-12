@@ -132,13 +132,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             // Update each tile
             foreach (var tilemap in Tilemaps)
             {
-                foreach (var tile in tilemap.Value.Map)
-                {
-                    if (tile == null)
-                        continue;
-
-                    tile.Update(gameTime);
-                }
+                tilemap.Value.Update(gameTime);
             }
 
             foreach (var kvp in SceneObjects)
@@ -171,13 +165,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             foreach (var tilemap in Tilemaps)
             {
-                foreach (var tile in tilemap.Value.Map)
-                {
-                    if (tile == null)
-                        continue;
-
-                    tile.Draw(gameTime);
-                }
+                tilemap.Value.Draw(gameTime);
             }
 
             // TODO: Stop creating a variable every frame for this

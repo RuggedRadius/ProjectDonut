@@ -83,7 +83,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             return tm;
         }
 
-        public static Tilemap GenerateHouseFloorMap(int[,] map, Plot plot)
+        public static Tilemap GenerateFloorTileMap(int[,] map, Plot plot)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
             var tilePlaced = false;
@@ -105,7 +105,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = Global.SpriteLibrary.BuildingBlockSprites["building-floor"],
+                        Texture = Global.SpriteLibrary.BuildingBlockSprites["floor-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
@@ -123,7 +123,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             return tm;
         }
 
-        public static Tilemap GenerateHouseWallMap(int[,] wallMap, int[,] floorMap, Plot plot)
+        public static Tilemap GenerateWallTileMap(int[,] wallMap, int[,] floorMap, Plot plot)
         {
             var tm = new Tilemap(wallMap.GetLength(0), wallMap.GetLength(1));
             var tilePlaced = false;
@@ -163,9 +163,73 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             return tm;
         }
 
-        public static Tilemap GenerateHouseRoofMap(int[,] map, Plot plot)
+        public static Tilemap GenerateWallCapTileMap(int[,] wallMap, int[,] floorMap, Plot plot)
+        {
+            var tm = new Tilemap(wallMap.GetLength(0), wallMap.GetLength(1));
+            var tilePlaced = false;
+
+            for (int i = 0; i < wallMap.GetLength(0); i++)
+            {
+                for (int j = 0; j < wallMap.GetLength(1); j++)
+                {
+                    if (wallMap[i, j] == 0)
+                    {
+                        continue;
+                    }
+
+                    if (wallMap[i, j] == 1)
+                    {
+                        var tile = new Tile(false)
+                        {
+                            ChunkX = 0,
+                            ChunkY = 0,
+                            xIndex = i,
+                            yIndex = j - 1,
+                            LocalPosition = new Vector2(i * Global.TileSize, (j - 1) * Global.TileSize) + plot.WorldPosition,
+                            Size = new Vector2(Global.TileSize, Global.TileSize),
+                            Texture = TextureDecider.DetermineBuildingWallCapTexture(wallMap, floorMap, i, j),
+                            TileType = TileType.Instance,
+                            IsExplored = true
+                        };
+
+                        tm.Map[i, j] = tile;
+                        tilePlaced = true;
+                    }
+                    else if (wallMap[i, j] == 2)
+                    {
+                        var tile = new Tile(false)
+                        {
+                            ChunkX = 0,
+                            ChunkY = 0,
+                            xIndex = i,
+                            yIndex = j - 1,
+                            LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
+                            Size = new Vector2(Global.TileSize, Global.TileSize),
+                            Texture = TextureDecider.DetermineBuildingWallCapTexture(wallMap, floorMap, i, j),
+                            TileType = TileType.Instance,
+                            IsExplored = true
+                        };
+
+                        tm.Map[i, j] = tile;
+                        tilePlaced = true;
+                    }
+
+
+                }
+            }
+
+            if (!tilePlaced)
+            {
+                ;
+            }
+
+            return tm;
+        }
+
+        public static Tilemap GenerateRoofTileMap(int[,] map, Plot plot)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
+            tm.WorldPosition = plot.WorldPosition;
 
             for (int i = 0; i < map.GetLength(0); i++)
             {

@@ -30,6 +30,26 @@ namespace ProjectDonut.Debugging.Console
 
         private static void RegisterCommands(ManualInterpreter interpreter, Game1 game)
         {
+            interpreter.RegisterCommand("grid", (args) =>
+            {
+                if (args.Length != 1)
+                {
+                    Global.Debug.Console.Output.Append("Usage: grid <value> i.e. \"grid on\" , \"grid off\"");
+                    return;
+                }
+
+                switch (args[0].ToLower())
+                {
+                    case "on":
+                        Global.SHOW_GRID_OUTLINE = true;
+                        break;
+
+                    case "off":
+                        Global.SHOW_GRID_OUTLINE = false;
+                        break;
+                }
+            });
+
             interpreter.RegisterCommand("fog", (args) =>
             {
                 if (args.Length != 1)

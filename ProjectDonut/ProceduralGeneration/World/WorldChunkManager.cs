@@ -78,7 +78,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
-            if (Global.SceneManager.CurrentScene is not WorldScene)
+            if (Global.SceneManager.CurrentScene.SceneType != Core.SceneManagement.SceneType.World)
                 return;
 
             var chunkPosChanged = false;
@@ -195,7 +195,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         }
 
 
-        //private bool tempONETREEONLY = false;
+        // TODO: convert sceneobjects into mineables
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
             var chunk = new WorldChunk(chunkX, chunkY, this);

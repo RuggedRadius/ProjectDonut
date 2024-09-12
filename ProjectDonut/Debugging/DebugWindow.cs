@@ -12,7 +12,7 @@ namespace ProjectDonut.Debugging
 {
     public class DebugWindow : IScreenObject
     {
-        public bool IsShown { get; set; }
+        public static bool IsShown { get; set; }
 
         
         private Texture2D debugTexture;

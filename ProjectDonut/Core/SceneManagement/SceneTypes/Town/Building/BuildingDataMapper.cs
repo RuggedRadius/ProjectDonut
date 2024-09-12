@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
+using ProjectDonut.Debugging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ProjectDonut.Core.Global;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 {
@@ -33,7 +35,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static int[,] GenerateFloorDataMap(Plot plot, List<Rectangle> roomBounds)
         {
             var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
-            var dataMapped = false;
+
 
             for (int i = 0; i < plot.PlotBounds.Width; i++)
             {
@@ -41,82 +43,75 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 {
                     foreach (var room in roomBounds)
                     {
-                        if (room.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
+                        var adjustedRoomBounds = new Rectangle(
+                            room.X, room.Y, room.Width + 1, room.Height);
+
+                        if (adjustedRoomBounds.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
                         {
                             map[i, j] = 1;
-                            dataMapped = true;
                         }
                     }
                 }
             }
 
-            
-            //foreach (var room in roomBounds)
-            //{
-            //    //var offsetX = room.X - buildingBounds.X - 1;
-            //    //var offsetY = room.Y - buildingBounds.Y - 1;
-
-            //    for (int i = room.X; i < room.X + room.Width - 1; i++)
-            //    {
-            //        for (int j = room.Y; j < room.Y + room.Height - 1; j++)
-            //        {
-            //            map[i, j] = 1;
-            //            //map[i + offsetX, j + offsetY] = 1;
-            //            dataMapped = true;
-            //        }
-            //    }
-            //}
-
-            if (!dataMapped)
-            {
-                ;
-            }
+            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_floorDataMap");
 
             return map;
         }
 
-        public static int[,] GenerateWallDataMap(Rectangle b, List<Rectangle> roomBounds)
+        public static int[,] GenerateWallDataMap(Plot plot, List<Rectangle> roomBounds)
         {
-            // Create an int[,] the same size as rectangle b
-            var tileMap = new int[b.X + b.Width, b.Y + b.Height];
+            var map = new int[
+                plot.PlotBounds.Width,
+                plot.PlotBounds.Height];
 
-            // Loop over each room's bounds
-            foreach (var a in roomBounds)
+            foreach (var room in roomBounds)
             {
-                for (int i = 0; i < a.X + a.Width; i++)
+                for (int i = room.Left; i <= room.Right; i++)
                 {
-                    for (int j = 0; j < a.Y + a.Height; j++)
+                    for (int j = room.Top; j <= room.Bottom; j++)
                     {
-                        if (i == a.Left || i == a.Right || j == a.Top || j == a.Bottom)
+                        if (i == room.Left || i == room.Right || j == room.Top || j == room.Bottom)
                         {
-                            tileMap[i, j] = 1;
+                            map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
                         }
                     }
                 }
             }
 
+            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_wallDataMap");
 
-            //    // Find the bounds of rectangle a within rectangle b
-            //    int startX = Math.Max(0, a.X - b.X);
-            //    int startY = Math.Max(0, a.Y - b.Y);
-            //    int endX = Math.Min(b.Width - 1, startX + a.Width - 1);
-            //    int endY = Math.Min(b.Height - 1, startY + a.Height - 1);
+            return map;
+        }
 
-            //    // Mark the boundaries of rectangle a with 1s, ensuring that we don't go out of bounds
-            //    for (int x = startX; x <= endX && x < b.Width; x++)
-            //    {
-            //        if (startY >= 0 && startY < b.Height) tileMap[startY, x] = 1; // Top boundary
-            //        if (endY >= 0 && endY < b.Height) tileMap[endY, x] = 1;       // Bottom boundary
-            //    }
+        public static int[,] GenerateWallCapDataMap(Plot plot, List<Rectangle> roomBounds)
+        {
+            var map = new int[
+                plot.PlotBounds.Width,
+                plot.PlotBounds.Height];
 
-            //    for (int y = startY; y <= endY && y < b.Height; y++)
-            //    {
-            //        if (startX >= 0 && startX < b.Width) tileMap[y, startX] = 1;  // Left boundary
-            //        if (endX >= 0 && endX < b.Width) tileMap[y, endX] = 1;        // Right boundary
-            //    }
-            //}
+            foreach (var room in roomBounds)
+            {
+                for (int i = room.Left; i <= room.Right; i++)
+                {
+                    for (int j = room.Top; j <= room.Bottom; j++)
+                    {
+                        if (i == room.Left || i == room.Right)
+                        {
+                            map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
+                        }
 
-            return tileMap;
+                        if (j == room.Top || j == room.Bottom)
+                        {
+                            map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
+                        }
+                    }
+                }
+            }
+
+            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_wallCapDataMap");
+
+            return map;
         }
 
 
@@ -142,7 +137,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static int[,] GenerateRoofDataMap(Plot plot, List<Rectangle> roomBounds)
         {
             var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
-            var dataMapped = false;
 
             for (int i = 0; i < plot.PlotBounds.Width; i++)
             {
@@ -153,15 +147,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         if (room.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
                         {
                             map[i, j] = 1;
-                            dataMapped = true;
                         }
                     }
                 }
-            }
-
-            if (!dataMapped)
-            {
-                ;
             }
 
             return map;

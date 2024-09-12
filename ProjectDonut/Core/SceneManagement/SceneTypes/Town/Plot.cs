@@ -79,6 +79,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         private Tilemap GenerateGroundTilemap(int[,] map)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
+            tm.WorldPosition = WorldPosition;
 
             for (int i = 0; i < map.GetLength(0); i++)
             {
@@ -208,38 +209,39 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         //    return tm;
         //}
 
-        private Tilemap GenerateHouseRoofMap(int[,] map)
-        {
-            var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
+        //private Tilemap GenerateHouseRoofMap(int[,] map)
+        //{
+        //    var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
+            
 
-            for (int i = 0; i < map.GetLength(0); i++)
-            {
-                for (int j = 0; j < map.GetLength(1); j++)
-                {
-                    if (map[i, j] == 0)
-                    {
-                        continue;
-                    }
+        //    for (int i = 0; i < map.GetLength(0); i++)
+        //    {
+        //        for (int j = 0; j < map.GetLength(1); j++)
+        //        {
+        //            if (map[i, j] == 0)
+        //            {
+        //                continue;
+        //            }
 
-                    var tile = new Tile(false)
-                    {
-                        ChunkX = 0,
-                        ChunkY = 0,
-                        xIndex = i,
-                        yIndex = j,
-                        LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + WorldPosition,
-                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = Global.SpriteLibrary.BuildingBlockSprites["building-roof-thatching"],
-                        TileType = TileType.Instance,
-                        IsExplored = true
-                    };
+        //            var tile = new Tile(false)
+        //            {
+        //                ChunkX = 0,
+        //                ChunkY = 0,
+        //                xIndex = i,
+        //                yIndex = j,
+        //                LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + WorldPosition,
+        //                Size = new Vector2(Global.TileSize, Global.TileSize),
+        //                Texture = Global.SpriteLibrary.BuildingBlockSprites["building-roof-thatching"],
+        //                TileType = TileType.Instance,
+        //                IsExplored = true
+        //            };
 
-                    tm.Map[i, j] = tile;
-                }
-            }
+        //            tm.Map[i, j] = tile;
+        //        }
+        //    }
 
-            return tm;
-        }
+        //    return tm;
+        //}
 
 
         public void Initialize()

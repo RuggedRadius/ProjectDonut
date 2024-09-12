@@ -51,6 +51,15 @@ namespace ProjectDonut
             //Components.Add(Global.Penumbra);
 
             DevConsole.InitialiseConsole(this);
+
+
+            // ****************** TEMP DEBUG ***********************
+            if (System.IO.Directory.Exists($@"C:\Users\benro\Documents\DEBUG"))
+            {
+                System.IO.Directory.Delete($@"C:\Users\benro\Documents\DEBUG", true);
+            }
+            System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG");
+            // ****************** TEMP DEBUG ***********************
         }
 
         protected override void Initialize()
@@ -164,6 +173,7 @@ namespace ProjectDonut
                 InputManager.KeyboardState.IsKeyDown(Keys.OemTilde))
             {
                 Global.Debug.Console.ToggleOpenClose();
+                DebugWindow.IsShown = !DebugWindow.IsShown;
             }
 
             //if (kbState.IsKeyDown(Keys.F8))

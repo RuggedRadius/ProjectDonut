@@ -25,11 +25,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public Dictionary<int, List<Rectangle>> Rooms { get; set; }
         public Dictionary<int, int[,]> FloorDataMaps { get; set; }
         public Dictionary<int, int[,]> WallDataMaps { get; set; }
+        public Dictionary<int, int[,]> WallCapDataMaps { get; set; }
         public Dictionary<int, int[,]> StairDataMaps { get; set; }
         public int[,] RoofDataMap { get; set; }
 
         public Dictionary<int, Tilemap> FloorTileMaps { get; set; }
         public Dictionary<int, Tilemap> WallTileMaps { get; set; }
+        public Dictionary<int, Tilemap> WallCapTileMaps { get; set; }
         public Dictionary<int, Tilemap> StairTileMaps { get; set; }
         public Tilemap RoofTileMap { get; set; }
 
@@ -61,18 +63,18 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         private void MakeRooms(int levels)
         {
-            // ************ TEMPORARY ************
-            Rooms = new Dictionary<int, List<Rectangle>>();
-            Rooms.Add(0, new List<Rectangle>() { BuildingBounds });
-            return;
-            // ***********************************
+            //// ************ TEMPORARY ************
+            //Rooms = new Dictionary<int, List<Rectangle>>();
+            //Rooms.Add(0, new List<Rectangle>() { BuildingBounds });
+            //return;
+            //// ***********************************
 
 
             Rooms = new Dictionary<int, List<Rectangle>>();
 
             for (int i = 0; i < levels; i++)
             {
-                var roomBounds = RoomGenerator.GenerateRooms(BuildingBounds, new Vector2(5 * Global.TileSize, 3 * Global.TileSize));
+                var roomBounds = RoomGenerator.GenerateRooms(BuildingBounds, new Vector2(6, 6));
 
                 foreach (var rect in roomBounds)
                 {
@@ -82,14 +84,19 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     }
                 }
 
+                roomBounds.Remove(roomBounds[_random.Next(0, roomBounds.Count)]);
+
                 Rooms.Add(i, roomBounds);
             }
         }
 
         private void GenerateLayerData(int levels)
         {
+
+
             FloorDataMaps = new Dictionary<int, int[,]>();
             WallDataMaps = new Dictionary<int, int[,]>();
+            WallCapDataMaps = new Dictionary<int, int[,]>();
             StairDataMaps = new Dictionary<int, int[,]>();
 
             for (int i = 0; i < levels; i++)
@@ -97,8 +104,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 var floorData = BuildingDataMapper.GenerateFloorDataMap(Plot, Rooms[i]);
                 FloorDataMaps.Add(i, floorData);
 
-                var wallData = BuildingDataMapper.GenerateWallDataMap(Plot.PlotBounds, Rooms[i]);
+                var wallData = BuildingDataMapper.GenerateWallDataMap(Plot, Rooms[i]);
                 WallDataMaps.Add(i, wallData);
+
+                var wallCapData = BuildingDataMapper.GenerateWallCapDataMap(Plot, Rooms[i]);
+                WallCapDataMaps.Add(i, wallCapData);
 
                 if (i >= levels - 1)
                 {
@@ -119,24 +129,30 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         {
             FloorTileMaps = new Dictionary<int, Tilemap>();
             WallTileMaps = new Dictionary<int, Tilemap>();
+            WallCapTileMaps = new Dictionary<int, Tilemap>();
             StairTileMaps = new Dictionary<int, Tilemap>();
 
             for (int i = 0; i < FloorDataMaps.Count; i++)
             {
-                FloorTileMaps.Add(i, BuildingTileMapper.GenerateHouseFloorMap(FloorDataMaps[i], Plot));
+                FloorTileMaps.Add(i, BuildingTileMapper.GenerateFloorTileMap(FloorDataMaps[i], Plot));
             }
 
             for (int i = 0; i < WallDataMaps.Count; i++)
             {
-                WallTileMaps.Add(i, BuildingTileMapper.GenerateHouseWallMap(WallDataMaps[i], FloorDataMaps[i], Plot));
+                WallTileMaps.Add(i, BuildingTileMapper.GenerateWallTileMap(WallDataMaps[i], FloorDataMaps[i], Plot));
+            }
+
+            for (int i = 0; i < WallCapDataMaps.Count; i++)
+            {
+                WallCapTileMaps.Add(i, BuildingTileMapper.GenerateWallCapTileMap(WallCapDataMaps[i], FloorDataMaps[i], Plot));
             }
 
             for (int i = 0; i < StairDataMaps.Count; i++)
             {
                 StairTileMaps.Add(i, BuildingTileMapper.GenerateStairsTileMap(StairDataMaps[i]));
             }
-
-            RoofTileMap = BuildingTileMapper.GenerateHouseRoofMap(RoofDataMap, Plot);
+                        
+            RoofTileMap = BuildingTileMapper.GenerateRoofTileMap(RoofDataMap, Plot);
         }
 
         // TODO: later, not being used
@@ -178,6 +194,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 // Floor
                 FloorTileMaps[i].Draw(gameTime);
                 WallTileMaps[i].Draw(gameTime);
+                WallCapTileMaps[i].Draw(gameTime);
 
                 // Stairs
                 if (i < StairDataMaps.Count)
@@ -191,14 +208,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             {
                 ;
                 //RoofTileMap.Draw(gameTime);
+                
             }
+
+            if (Global.SHOW_GRID_OUTLINE)
+                RoofTileMap.DrawOutline(gameTime);
         }
 
-        #region Datamap Generation
 
-        #endregion
-
-        #region Tilemap Generation
+        // TODO: Fix and implement this
         private void PlaceExternalDoor(Tilemap bottomFloorWallTileMap)
         {
             var targetTexture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-s"];
@@ -217,6 +235,5 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             var doorTile = southWalls[_random.Next(0, southWalls.Count)];
             doorTile.Texture = Global.SpriteLibrary.BuildingBlockSprites["building-door-ext"];
         }
-        #endregion
     }
 }

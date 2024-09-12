@@ -47,6 +47,7 @@ namespace ProjectDonut.Core
         public static int FOG_OF_WAR_RADIUS = 1500;
 
         // DEBUG SETTINGS
+        public static bool SHOW_GRID_OUTLINE = true;
         public static bool LIGHTING_ENABLED = false;
         public static Texture2D DEBUG_TEXTURE;
         public static bool DRAW_WORLD_CHUNK_OUTLINE = false;
@@ -60,6 +61,7 @@ namespace ProjectDonut.Core
         public static class Debug
         {
             public static ConsoleComponent Console;
+            //public static DebugWindow DebugWindow;
         }
 
         public static ContentManager ContentManager;
