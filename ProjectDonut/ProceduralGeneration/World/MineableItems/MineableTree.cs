@@ -51,7 +51,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             InventoryIcon = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01");
 
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-Sheet-export");
-            var atlas = Texture2DAtlas.Create("tree", sheetTexture, 128, 128);
+            var atlas = Texture2DAtlas.Create("tree", sheetTexture, 64, 64);
             _spriteSheet = new SpriteSheet("SpriteSheet/tree", atlas);
 
             _spriteSheet.DefineAnimation("idle", builder =>

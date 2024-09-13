@@ -34,7 +34,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private SpriteLibrary spriteLib;
         private FastNoiseLite _noise;
 
-        private HeightGenerator genHeight;
+        private TerrainGenerator genHeight;
         private BiomeGenerator genBiomes;
         private ForestGenerator genForest;
         private RiverGenerator genRiver;
@@ -65,7 +65,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             tempTexture.SetData(new[] { Color.Green });
 
             //WorldGen = new WorldGenerator(settings);
-            genHeight = new HeightGenerator(settings);
+            genHeight = new TerrainGenerator(settings);
             genBiomes = new BiomeGenerator(settings);
             genForest = new ForestGenerator(settings);
             genRiver = new RiverGenerator(settings);
@@ -206,7 +206,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             genForest.GenerateForestData(chunk);
             //genStructure.GenerateStructureData(chunk);
 
-            var tilemapBase = genHeight.CreateBaseTilemap(chunk);
+            var tilemapBase = genHeight.CreateTerrainTilemap(chunk);
             //var tilemapForest = genForest.CreateTileMap(chunk);
             //var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);

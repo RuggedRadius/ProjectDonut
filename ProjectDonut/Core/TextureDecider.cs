@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.ProceduralGeneration;
+using ProjectDonut.ProceduralGeneration.World;
 using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;
 
 namespace ProjectDonut.Core
@@ -338,6 +339,57 @@ namespace ProjectDonut.Core
                 return Global.SpriteLibrary.TownSprites["fence-se"];
             else
                 return Global.SpriteLibrary.TownSprites["fence-s"];
+        }
+    
+    
+        public static class World
+        {
+            public static Texture2D DetermineTerrainTexture(int x, int y, int biomeValue, int[,] heightData, WorldMapSettings settings)
+            {
+                int heightValue = heightData[x, y];
+                var biome = (Biome)biomeValue;
+
+                if (heightValue >= settings.GroundHeightMin)
+                {
+                    if (heightValue >= 30 && heightValue < 34)
+                    {
+                        return Global.SpriteLibrary.GetSprite("beach");
+                    }
+
+                    //if (heightValue > 30 && heightValue % 10 == 0)
+                    //{
+                    //    return DetermineCliffTexture(x, y, heightData);
+                    //}
+                    else
+                    {
+                        switch (biome)
+                        {
+                            case Biome.Desert:
+                                return Global.SpriteLibrary.GetSprite("desert");
+
+                            case Biome.Grasslands:
+                                return Global.SpriteLibrary.GetSprite("grasslands");
+
+                            case Biome.Winterlands:
+                                return Global.SpriteLibrary.GetSprite("winterlands");
+
+                            default:
+                                return Global.SpriteLibrary.GetSprite("grasslands");
+                        }
+                    }
+                }
+                else
+                {
+                    if (heightValue >= settings.WaterHeightMin)
+                    {
+                        return Global.SpriteLibrary.GetSprite("coast-inv");
+                    }
+                    else
+                    {
+                        return Global.SpriteLibrary.GetSprite("deepwater-C");
+                    }
+                }
+            }
         }
     }
 }

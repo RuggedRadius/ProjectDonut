@@ -64,9 +64,9 @@ namespace ProjectDonut.Core
             lib.Add("winterlands", ExtractBiomeSprite(2, 0));
             lib.Add("desert", ExtractBiomeSprite(3, 0));
 
-            
 
-            LoadDungeonSprites();
+            LoadDungeonSpritesORIGINALWORKING();
+            //LoadDungeonSprites();
             LoadDungeonPopulationSprites();
 
             LoadItems();
@@ -217,7 +217,7 @@ namespace ProjectDonut.Core
             ItemsSprites = new Dictionary<string, Texture2D>();
 
             ItemsSprites.Add("wood-log", Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/wood-log-01"));
-            ItemsSprites.Add("rock", ExtractSprite(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01"), 0, 0, 64, 64));
+            ItemsSprites.Add("rock", ExtractSprite(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01"), 0, 0, Global.TileSize, Global.TileSize));
         }
 
         private void LoadGrass()
@@ -269,7 +269,7 @@ namespace ProjectDonut.Core
 
             var rockSmashed = new List<Texture2D>();
             var rockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
-            rockSmashed.Add(ExtractSprite(rockSheet, 4 * 64, 0, 64, 64));
+            rockSmashed.Add(ExtractSprite(rockSheet, 4 * Global.TileSize, 0, Global.TileSize, Global.TileSize));
             WorldMapSprites.Add("rock-smashed", rockSmashed);
         }
 
@@ -286,6 +286,37 @@ namespace ProjectDonut.Core
         }
 
         private void LoadDungeonSprites()
+        {
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/dungeon_tiles");            
+
+            DungeonSprites = new Dictionary<string, List<Texture2D>>
+            {
+                { "wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) } },
+                { "wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) } },
+                { "wall-ne", new List<Texture2D> { ExtractSprite(sheet, 4, 0) } },
+                { "wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) } },
+                { "wall-e", new List<Texture2D> { ExtractSprite(sheet, 4, 1) } },
+                { "wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 4) } },
+                { "wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 4) } },
+                { "wall-se", new List<Texture2D> { ExtractSprite(sheet, 4, 4) } },
+
+                { "wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 5, 0) } },
+                { "wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 7, 0) } },
+                { "wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 5, 2) } },
+                { "wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 5, 2) } },
+                { "floor-01", new List<Texture2D>() }
+            };
+
+            for (int i = 1; i < 4; i++)
+            {
+                for (int j = 1; j < 4; j++)
+                {
+                    DungeonSprites["floor-01"].Add(ExtractSprite(sheet, i, j));
+                }
+            }
+        }
+
+        private void LoadDungeonSpritesORIGINALWORKING()
         {
             var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/sheet");
             sheets.Add("dungeon-layout", sheet);

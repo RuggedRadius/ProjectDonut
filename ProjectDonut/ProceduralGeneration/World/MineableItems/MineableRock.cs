@@ -53,7 +53,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             InventoryIcon = Global.SpriteLibrary.ItemsSprites["rock"];
 
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
-            var atlas = Texture2DAtlas.Create("rock", sheetTexture, 64, 64);
+            var atlas = Texture2DAtlas.Create("rock", sheetTexture, Global.TileSize, Global.TileSize);
             _spriteSheetRock = new SpriteSheet("SpriteSheet/rock", atlas);
 
             _spriteSheetRock.DefineAnimation("idle", builder =>

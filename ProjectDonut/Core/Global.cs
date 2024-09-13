@@ -35,7 +35,7 @@ namespace ProjectDonut.Core
         public static int ScreenHeight = 1080;
 
         // MAP SETTINGS
-        public static int TileSize = 64;
+        public static int TileSize = 32;
         public static int ChunkSize = 50;
 
         // MINING

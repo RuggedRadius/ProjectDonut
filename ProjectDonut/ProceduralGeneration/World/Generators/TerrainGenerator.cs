@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
-    public class HeightGenerator
+    public class TerrainGenerator
     {
         private WorldMapSettings settings;
         private FastNoiseLite[] _noise;
 
         private float OctaveBlend = 0.0525f;
 
-        public HeightGenerator(WorldMapSettings settings)
+        public TerrainGenerator(WorldMapSettings settings)
         {
             this.settings = settings;
 
@@ -152,7 +152,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         }
 
 
-        public Tilemap CreateBaseTilemap(WorldChunk chunk)
+        public Tilemap CreateTerrainTilemap(WorldChunk chunk)
         {
             var tmBase = new Tilemap(chunk.Width, chunk.Height);
 
@@ -176,7 +176,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         //Position = new Vector2(i * settings.TileSize, j * settings.TileSize) + chunk.Position,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = DetermineTexture(i, j, biomeValue, chunk.HeightData),
+                        Texture = TextureDecider.World.DetermineTerrainTexture(i, j, biomeValue, chunk.HeightData, settings),
                         TileType = TileType.World,
                         WorldTileType = DetermineTileType(i, j, heightValue),
                         Biome = (Biome)chunk.BiomeData[i, j]
@@ -196,52 +196,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return tmBase;
         }
 
-        private Texture2D DetermineTexture(int x, int y, int biomeValue, int[,] heightData)
-        {
-            int heightValue = heightData[x, y];
-            var biome = (Biome)biomeValue;
-
-            if (heightValue >= settings.GroundHeightMin)
-            {
-                if (heightValue >= 30 && heightValue < 34)
-                {
-                    return Global.SpriteLibrary.GetSprite("beach");
-                }
-
-                //if (heightValue > 30 && heightValue % 10 == 0)
-                //{
-                //    return DetermineCliffTexture(x, y, heightData);
-                //}
-                else
-                {
-                    switch (biome)
-                    {
-                        case Biome.Desert:
-                            return Global.SpriteLibrary.GetSprite("desert");
-
-                        case Biome.Grasslands:
-                            return Global.SpriteLibrary.GetSprite("grasslands");
-
-                        case Biome.Winterlands:
-                            return Global.SpriteLibrary.GetSprite("winterlands");
-
-                        default:
-                            return Global.SpriteLibrary.GetSprite("grasslands");
-                    }
-                }
-            }
-            else
-            {
-                if (heightValue >= settings.WaterHeightMin)
-                {
-                    return Global.SpriteLibrary.GetSprite("coast-inv");
-                }
-                else
-                {
-                    return Global.SpriteLibrary.GetSprite("deepwater-C");
-                }
-            }
-        }
+        
     
 
         private WorldTileType DetermineTileType(int x, int y, int heightValue)
