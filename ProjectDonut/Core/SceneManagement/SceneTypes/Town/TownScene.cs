@@ -28,7 +28,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         private List<Plot> _plots;
         private List<ISceneObject> _sceneObjs;
 
-        private Vector2 MapSize = new Vector2(100, 100);
+        public Vector2 MapSize = new Vector2(100, 100);
 
         public TownScene(WorldStructure worldStructure)
         {

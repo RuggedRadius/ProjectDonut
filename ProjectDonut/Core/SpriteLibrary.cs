@@ -114,49 +114,68 @@ namespace ProjectDonut.Core
             TownSprites.Add("fence-se", ExtractSprite(sheet, 8, 2));
 
             // Houses
-            TownSprites.Add("house-01", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House01"));
-            TownSprites.Add("house-02", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House02"));
+            //TownSprites.Add("house-01", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House01"));
+            //TownSprites.Add("house-02", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House02"));
             TownSprites.Add("sign-forsale", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Sign_ForSale"));
 
             // Building Blocks
-            var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/sheet");
+            var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites2");
             BuildingBlockSprites = new Dictionary<string, Texture2D>
             {
                 { "wall-nw", ExtractSprite(blockSheet, 0, 0) },
                 { "wall-n", ExtractSprite(blockSheet, 1, 0) },
                 { "wall-ne", ExtractSprite(blockSheet, 2, 0) },
-                { "wall-w", ExtractSprite(blockSheet, 0, 1) },
+                { "wall-w", ExtractSprite(blockSheet, 1, 1) },
                 { "wall-e", ExtractSprite(blockSheet, 2, 1) },
-                { "wall-sw", ExtractSprite(blockSheet, 0, 2) },
-                { "wall-s", ExtractSprite(blockSheet, 1, 2) },
-                { "wall-se", ExtractSprite(blockSheet, 2, 2) },
-                { "wall-ext-nw", ExtractSprite(blockSheet, 3, 0) },
-                { "wall-ext-ne", ExtractSprite(blockSheet, 4, 0) },
-                { "wall-ext-sw", ExtractSprite(blockSheet, 3, 1) },
-                { "wall-ext-se", ExtractSprite(blockSheet, 4, 1) },
+                { "wall-sw", ExtractSprite(blockSheet, 5, 1) },
+                { "wall-s", ExtractSprite(blockSheet, 0, 2) },
+                { "wall-se", ExtractSprite(blockSheet, 1, 2) },
+
+                { "wall-ext-nw", ExtractSprite(blockSheet, 3, 4) },
+                { "wall-ext-ne", ExtractSprite(blockSheet, 4, 4) },
+                { "wall-ext-sw", ExtractSprite(blockSheet, 5, 4) },
+                { "wall-ext-se", ExtractSprite(blockSheet, 0, 5) },
+
+                { "floor-nw", ExtractSprite(blockSheet, 3, 0) },
+                { "floor-n", ExtractSprite(blockSheet, 4, 0)  },
+                { "floor-ne", ExtractSprite(blockSheet, 5, 0)  },
+                { "floor-w", ExtractSprite(blockSheet, 3, 1)  },
+                { "floor-c", ExtractSprite(blockSheet, 0, 1)  },
+                { "floor-e", ExtractSprite(blockSheet, 3, 2)  },
+                { "floor-sw", ExtractSprite(blockSheet, 2, 2)  },
+                { "floor-s", ExtractSprite(blockSheet, 3, 2)  },
+                { "floor-se", ExtractSprite(blockSheet, 4, 2)  },
+
+                { "floor-se-ext", ExtractSprite(blockSheet, 0, 5)  },
+                { "floor-sw-ext", ExtractSprite(blockSheet, 5, 4)  },
+                { "floor-ne-ext", ExtractSprite(blockSheet, 4, 4)  },
+                { "floor-nw-ext", ExtractSprite(blockSheet, 3, 4)  },
+
+                { "roof", Global.MISSING_TEXTURE }
             };
 
-            blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/BuildingTiles2");
-            BuildingBlockSprites.Add("floor-nw-int", ExtractSprite(blockSheet, 3, 0));
-            BuildingBlockSprites.Add("floor-n", ExtractSprite(blockSheet, 4, 0) );
-            BuildingBlockSprites.Add("floor-ne-int", ExtractSprite(blockSheet, 5, 0) );
-            BuildingBlockSprites.Add("floor-w", ExtractSprite(blockSheet, 3, 1) );
-            BuildingBlockSprites.Add("floor-c", ExtractSprite(blockSheet, 4, 1) );
-            BuildingBlockSprites.Add("floor-e", ExtractSprite(blockSheet, 5, 1) );
-            BuildingBlockSprites.Add("floor-sw-int", ExtractSprite(blockSheet, 3, 2) );
-            BuildingBlockSprites.Add("floor-s", ExtractSprite(blockSheet, 4, 2) );
-            BuildingBlockSprites.Add("floor-se-int", ExtractSprite(blockSheet, 5, 2) );
-            BuildingBlockSprites.Add("floor-se-ext", ExtractSprite(blockSheet, 6, 0) );
-            BuildingBlockSprites.Add("floor-sw-ext", ExtractSprite(blockSheet, 7, 0) );
-            BuildingBlockSprites.Add("floor-ne-ext", ExtractSprite(blockSheet, 6, 1) );
-            BuildingBlockSprites.Add("floor-nw-ext", ExtractSprite(blockSheet, 7, 1) );
+            //blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_piece");
+            //BuildingBlockSprites.Add("floor-nw-int", ExtractSprite(blockSheet, 3, 0));
+            //BuildingBlockSprites.Add("floor-n", ExtractSprite(blockSheet, 4, 0) );
+            //BuildingBlockSprites.Add("floor-ne-int", ExtractSprite(blockSheet, 5, 0) );
+            //BuildingBlockSprites.Add("floor-w", ExtractSprite(blockSheet, 3, 1) );
+            //BuildingBlockSprites.Add("floor-c", ExtractSprite(blockSheet, 4, 1) );
+            //BuildingBlockSprites.Add("floor-e", ExtractSprite(blockSheet, 5, 1) );
+            //BuildingBlockSprites.Add("floor-sw-int", ExtractSprite(blockSheet, 3, 2) );
+            //BuildingBlockSprites.Add("floor-s", ExtractSprite(blockSheet, 4, 2) );
+            //BuildingBlockSprites.Add("floor-se-int", ExtractSprite(blockSheet, 5, 2) );
+            //BuildingBlockSprites.Add("floor-se-ext", ExtractSprite(blockSheet, 6, 0) );
+            //BuildingBlockSprites.Add("floor-sw-ext", ExtractSprite(blockSheet, 7, 0) );
+            //BuildingBlockSprites.Add("floor-ne-ext", ExtractSprite(blockSheet, 6, 1) );
+            //BuildingBlockSprites.Add("floor-nw-ext", ExtractSprite(blockSheet, 7, 1) );
 
-            BuildingBlockSprites.Add("roof", ExtractSprite(blockSheet, 2, 3));
+            ////BuildingBlockSprites.Add("roof", ExtractSprite(blockSheet, 2, 3));
+            //BuildingBlockSprites.Add("roof", Global.MISSING_TEXTURE);
 
 
 
 
-            //var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/BuildingTiles2");
+            //var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Build'[ingTiles2");
             //BuildingBlockSprites = new Dictionary<string, Texture2D>()
             //{
             //    { "wall-face", ExtractSprite(blockSheet, 1, 1) },
@@ -198,17 +217,17 @@ namespace ProjectDonut.Core
 
 
 
-            BuildingBlockSprites.Add("building-wall-nw", ExtractSprite(blockSheet, 0, 0));
-            BuildingBlockSprites.Add("building-wall-n", ExtractSprite(blockSheet, 1, 0));
-            BuildingBlockSprites.Add("building-wall-ne", ExtractSprite(blockSheet, 2, 0));
-            BuildingBlockSprites.Add("building-wall-w", ExtractSprite(blockSheet, 0, 1));
-            BuildingBlockSprites.Add("building-floor", ExtractSprite(blockSheet, 1, 1));
-            BuildingBlockSprites.Add("building-wall-e", ExtractSprite(blockSheet, 2, 1));
-            BuildingBlockSprites.Add("building-wall-sw", ExtractSprite(blockSheet, 0, 2));
-            BuildingBlockSprites.Add("building-wall-s", ExtractSprite(blockSheet, 1, 2));
-            BuildingBlockSprites.Add("building-wall-se", ExtractSprite(blockSheet, 2, 2));
-            BuildingBlockSprites.Add("building-roof-thatching", ExtractSprite(blockSheet, 3, 0));
-            BuildingBlockSprites.Add("building-door-ext", ExtractSprite(blockSheet, 3, 2));
+            //BuildingBlockSprites.Add("building-wall-nw", ExtractSprite(blockSheet, 0, 0));
+            //BuildingBlockSprites.Add("building-wall-n", ExtractSprite(blockSheet, 1, 0));
+            //BuildingBlockSprites.Add("building-wall-ne", ExtractSprite(blockSheet, 2, 0));
+            //BuildingBlockSprites.Add("building-wall-w", ExtractSprite(blockSheet, 0, 1));
+            //BuildingBlockSprites.Add("building-floor", ExtractSprite(blockSheet, 1, 1));
+            //BuildingBlockSprites.Add("building-wall-e", ExtractSprite(blockSheet, 2, 1));
+            //BuildingBlockSprites.Add("building-wall-sw", ExtractSprite(blockSheet, 0, 2));
+            //BuildingBlockSprites.Add("building-wall-s", ExtractSprite(blockSheet, 1, 2));
+            //BuildingBlockSprites.Add("building-wall-se", ExtractSprite(blockSheet, 2, 2));
+            //BuildingBlockSprites.Add("building-roof-thatching", ExtractSprite(blockSheet, 3, 0));
+            //BuildingBlockSprites.Add("building-door-ext", ExtractSprite(blockSheet, 3, 2));
 
         }
 

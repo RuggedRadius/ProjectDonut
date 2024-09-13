@@ -601,23 +601,6 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    //if (array2[i, j] == 0)
-                    //{
-                    //    result[i, j] = array1[i, j];
-                    //    continue;
-                    //}
-
-                    //if (array1[i, j] == 1)
-                    //{
-                    //    result[i, j] = array1[i, j];
-                    //    continue;
-                    //}
-
-                    //if (array1[i, j] == 2)
-                    //{
-                    //    result[i, j] = array1[i, j];
-                    //    continue;
-                    //}
                     if (array2[i, j] == 0)
                     {
                         result[i, j] = array1[i, j];

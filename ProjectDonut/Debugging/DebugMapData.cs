@@ -37,6 +37,10 @@ namespace ProjectDonut.Debugging
                     {
                         line += "░░░";
                     }
+                    else if (data[i, j] == 2)
+                    {
+                        line += "###";
+                    }
                     else
                     {
                         line += "▓▓▓";
