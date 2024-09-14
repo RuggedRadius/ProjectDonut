@@ -36,7 +36,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         {
             var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
 
-
             for (int i = 0; i < plot.PlotBounds.Width; i++)
             {
                 for (int j = 0; j < plot.PlotBounds.Height; j++)
@@ -243,7 +242,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 {
                     foreach (var room in roomBounds)
                     {
-                        if (room.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
+                        var adjustedRoomBounds = new Rectangle(
+                            room.X, room.Y, room.Width + 1, room.Height);
+
+                        if (adjustedRoomBounds.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
                         {
                             map[i, j] = 1;
                         }
@@ -251,7 +253,31 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 }
             }
 
+            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_floorDataMap");
+
             return map;
+            //var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
+
+            //for (int i = 0; i < plot.PlotBounds.Width; i++)
+            //{
+            //    for (int j = 0; j < plot.PlotBounds.Height; j++)
+            //    {
+            //        foreach (var room in roomBounds)
+            //        {
+            //            if (room.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
+            //            {
+            //                map[i + 1, j] = 1;
+            //            }
+
+            //            if (room.Contains(plot.PlotBounds.X + i + 1, plot.PlotBounds.Y + j))
+            //            {
+            //                map[i + 1, j] = 1;
+            //            }
+            //        }
+            //    }
+            //}
+
+            //return map;
         }
 
 

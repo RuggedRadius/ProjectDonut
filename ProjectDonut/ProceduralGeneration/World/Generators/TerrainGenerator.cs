@@ -176,7 +176,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         //Position = new Vector2(i * settings.TileSize, j * settings.TileSize) + chunk.Position,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = TextureDecider.World.DetermineTerrainTexture(i, j, biomeValue, chunk.HeightData, settings),
+                        Texture = RuleTiler.World.DetermineTerrainTexture(i, j, biomeValue, chunk.HeightData, settings),
                         TileType = TileType.World,
                         WorldTileType = DetermineTileType(i, j, heightValue),
                         Biome = (Biome)chunk.BiomeData[i, j]

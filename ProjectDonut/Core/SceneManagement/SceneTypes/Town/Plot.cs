@@ -53,12 +53,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         {
             Town = town;
 
-            PlotBounds = new Rectangle(
-                (int)area.Bounds.X,
-                (int)area.Bounds.Y,
-                area.Bounds.Width,
-                area.Bounds.Height
-                );
+            PlotBounds = new Rectangle(area.Bounds.X, area.Bounds.Y, area.Bounds.Width, area.Bounds.Height);
 
             _bsp = new BSP();
             _random = new Random();
@@ -73,7 +68,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
             _groundTileMap = GenerateGroundTilemap(PlotMap);
             _fenceTileMap = GenerateFenceTilemap(FenceMap);
 
-            Building = new BuildingObj(this, 1);
+            Building = new BuildingObj(this, 5);
             Building.Build();
         }
 
@@ -132,7 +127,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = TextureDecider.DetermineTownFenceTexture(map, i, j),
+                        Texture = RuleTiler.Town.FenceTexture(map, i, j),
                         TileType = TileType.Instance,
                         IsExplored = true
                     };

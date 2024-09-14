@@ -1,8 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Core.Input;
+using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.BSP;
+using ProjectDonut.Tools;
 using System;
 using System.Collections.Generic;
 
@@ -10,12 +14,19 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 {
     public class BuildingObj : IGameObject
     {
+        public static int tmpBuildingCounter = 0;
+        public static int tmpBuildingIndex;
+
         public Plot Plot { get; set; }
         public Rectangle BuildingBounds { get; set; }
+        public Rectangle BuildingWorldBounds { get; set; }
         public int LevelCount { get; set; }
         public int PlayerOccupyLevel { get; set; }
 
         public Dictionary<int, BuildingLevel> Levels { get; set; }
+
+        public int[,] RoofDataMap { get; set; }
+        public Tilemap RoofTileMap { get; set; }
 
 
         // Required by IGameObject
@@ -36,6 +47,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             LevelCount = levels;
             BuildingBounds = BuildingDataMapper.CalculateHouseBounds(Plot);
+            BuildingWorldBounds = BuildingBounds.Mutliply(Global.TileSize);
+            tmpBuildingIndex = tmpBuildingCounter;
+            tmpBuildingCounter++;
         }
 
         public void Build()
@@ -48,6 +62,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 level.BuildLevel();
                 Levels.Add(i, level);
             }
+
+            RoofDataMap = BuildingDataMapper.GenerateRoofDataMap(Plot, Levels[0].RoomRects);
+            RoofTileMap = BuildingTileMapper.GenerateRoofTileMap(RoofDataMap, Plot);
+
+            //DebugMapData.WriteMapData(Levels[0].FloorDataMap, $"FloorDataMap_{tmpBuildingIndex}");
+            //DebugMapData.WriteMapData(RoofDataMap, $"RoofDataMap_{tmpBuildingIndex}");
+            
         }
 
         public void Initialize()
@@ -66,20 +87,61 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             }
         }
 
+        private double tmpTimer = 0f;
+        private double levelChangeCoolDown = 0.5f;
         public void Update(GameTime gameTime)
         {
+            tmpTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
             foreach (var level in Levels)
             {
                 level.Value.Update(gameTime);
+            }
+
+            if (BuildingWorldBounds.Contains(Global.PlayerObj.WorldPosition) == true)
+            {
+                DebugWindow.Lines[3] = $"Building Index: {tmpBuildingIndex}";
+
+                if (tmpTimer > levelChangeCoolDown && InputManager.IsKeyPressed(Keys.N))
+                {
+                    if (PlayerOccupyLevel < LevelCount - 1)
+                    {
+                        PlayerOccupyLevel++;
+                        tmpTimer = 0;
+                    }
+                }
+                else if (tmpTimer > levelChangeCoolDown && InputManager.IsKeyPressed(Keys.B))
+                {
+                    if (PlayerOccupyLevel >= 1)
+                    {
+                        PlayerOccupyLevel--;
+                        tmpTimer = 0;
+                    }
+                }
+            }
+            else
+            {
+                PlayerOccupyLevel = 0;
             }
         }
 
         public void Draw(GameTime gameTime)
         {
-            foreach (var level in Levels)
+            if (BuildingWorldBounds.Contains(Global.PlayerObj.WorldPosition) == true)
             {
-                level.Value.Draw(gameTime);
+                Levels[PlayerOccupyLevel].Draw(gameTime);
             }
+            else
+            {
+                foreach (var level in Levels)
+                {
+                    level.Value.Draw(gameTime);
+                }
+
+                RoofTileMap.Draw(gameTime);
+            }
+
+
 
             //for (var i = 0; i < FloorTileMaps.Count; i++)
             //{

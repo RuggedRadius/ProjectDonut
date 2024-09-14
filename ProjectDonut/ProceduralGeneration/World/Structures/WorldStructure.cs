@@ -144,40 +144,24 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
             var entries = new Rectangle[4];
 
             // North
-            var entryRectX = WorldPosition.X;// + (Texture.Width / 2) - (Global.TileSize / 2);
-            var entryRectY = WorldPosition.Y;
-            entries[0] = new Rectangle(
-                (int)entryRectX,
-                (int)entryRectY,
-                Global.TileSize * 3,
-                Global.TileSize);
+            var entryRectX = (int)WorldPosition.X - Global.TileSize;
+            var entryRectY = (int)WorldPosition.Y - Global.TileSize;            
+            entries[0] = new Rectangle(entryRectX, entryRectY, Texture.Width + (2 * Global.TileSize), Global.TileSize);
 
             // East
-            entryRectX = WorldPosition.X + Texture.Width - Global.TileSize;
-            entryRectY = WorldPosition.Y;// + (Texture.Height / 2) - (Global.TileSize / 2);
-            entries[1] = new Rectangle(
-                (int)entryRectX,
-                (int)entryRectY,
-                Global.TileSize,
-                Global.TileSize * 3);
+            entryRectX = (int)WorldPosition.X + Texture.Width;
+            entryRectY = (int)WorldPosition.Y;
+            entries[1] = new Rectangle(entryRectX, entryRectY, Global.TileSize, Texture.Height);
 
             // South
-            entryRectX = WorldPosition.X;// + (Texture.Width / 2) - (Global.TileSize / 2);
-            entryRectY = WorldPosition.Y + Texture.Height - Global.TileSize;
-            entries[2] = new Rectangle(
-                (int)entryRectX,
-                (int)entryRectY,
-                Global.TileSize * 3,
-                Global.TileSize);
+            entryRectX = (int)WorldPosition.X - Global.TileSize;
+            entryRectY = (int)WorldPosition.Y + Texture.Height;
+            entries[2] = new Rectangle(entryRectX, entryRectY, Texture.Width + (2 * Global.TileSize), Global.TileSize);
 
             // West
-            entryRectX = WorldPosition.X;
-            entryRectY = WorldPosition.Y;// + (Texture.Height / 2) - (Global.TileSize / 2);
-            entries[3] = new Rectangle(
-                (int)entryRectX,
-                (int)entryRectY,
-                Global.TileSize,
-                Global.TileSize * 3);
+            entryRectX = (int)WorldPosition.X - Global.TileSize;
+            entryRectY = (int)WorldPosition.Y;
+            entries[3] = new Rectangle(entryRectX, entryRectY, Global.TileSize, Texture.Height);
 
             return entries;
         }

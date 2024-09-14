@@ -136,12 +136,20 @@ namespace ProjectDonut.Core
                 { "wall-ext-sw", ExtractSprite(blockSheet, 5, 4) },
                 { "wall-ext-se", ExtractSprite(blockSheet, 0, 5) },
 
+                { "wall-junc-esw", ExtractSprite(blockSheet, 1, 5) },
+                { "wall-junc-new", ExtractSprite(blockSheet, 2, 5) },
+                { "wall-junc-nes", ExtractSprite(blockSheet, 3, 5) },
+                { "wall-junc-nsw", ExtractSprite(blockSheet, 4, 5) },
+                { "wall-junc-nesw", ExtractSprite(blockSheet, 5, 5) },
+
+
+
                 { "floor-nw", ExtractSprite(blockSheet, 3, 0) },
                 { "floor-n", ExtractSprite(blockSheet, 4, 0)  },
                 { "floor-ne", ExtractSprite(blockSheet, 5, 0)  },
                 { "floor-w", ExtractSprite(blockSheet, 3, 1)  },
                 { "floor-c", ExtractSprite(blockSheet, 0, 1)  },
-                { "floor-e", ExtractSprite(blockSheet, 3, 2)  },
+                { "floor-e", ExtractSprite(blockSheet, 4, 1)  },
                 { "floor-sw", ExtractSprite(blockSheet, 2, 2)  },
                 { "floor-s", ExtractSprite(blockSheet, 3, 2)  },
                 { "floor-se", ExtractSprite(blockSheet, 4, 2)  },

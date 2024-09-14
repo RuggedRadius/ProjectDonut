@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.BSP;
@@ -64,6 +65,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            DebugWindow.Lines[3] = $"Building Index:";
 
             foreach (var plot in _plots)
             {
@@ -192,30 +195,33 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
 
         private void GenerateExitLocations()
         {
+            var width = _baseTilemap.Map.GetLength(0) * Global.TileSize;
+            var height = _baseTilemap.Map.GetLength(1) * Global.TileSize;
+
             // North
             var rectNorth = new Rectangle(
                 0,
-                0 - Global.TileSize,
-                (int)MapSize.X * Global.TileSize,
+                -Global.TileSize,
+                width,
                 Global.TileSize);
 
             ExitLocations.Add("north", rectNorth);
 
             // South
             var rectSouth = new Rectangle(
-                (int)MapSize.X * Global.TileSize,
-                rectNorth.Y + ((int)MapSize.Y + 1) * Global.TileSize,
-                (int)(Global.TileSize * MapSize.X),
+                0,
+                height,
+                width,
                 Global.TileSize);
 
             ExitLocations.Add("south", rectSouth);
 
             // East
             var rectEast = new Rectangle(
-                (int)(Global.TileSize * MapSize.X),
-                (int)MapSize.Y * Global.TileSize,
+                width,
+                0,
                 Global.TileSize,
-                Global.TileSize * (int)MapSize.X);
+                height);
 
             ExitLocations.Add("east", rectEast);
 
@@ -224,7 +230,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                 -Global.TileSize,
                 0,
                 Global.TileSize,
-                (int)(Global.TileSize * MapSize.Y));
+                height);
 
             ExitLocations.Add("west", rectWest);
         }
@@ -236,7 +242,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
             var width = (int)MapSize.X;
             var height = (int)MapSize.Y;
 
-            var areaGens = _bsp.GenerateRooms(width, height);
+            var areaGens = _bsp.GenerateRooms(width, height, new Vector2(5, 5));
 
             return _bsp.SquashRooms(areaGens[areaGens.Count - 1], width, height);
         }

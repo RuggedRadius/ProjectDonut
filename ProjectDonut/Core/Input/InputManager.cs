@@ -74,6 +74,11 @@ namespace ProjectDonut.Core.Input
         {
         }
 
+        public static bool IsKeyPressed(Keys key)
+        {
+            return KeyboardState.IsKeyDown(key) && LastKeyboardState.IsKeyUp(key);
+        }
+
         //private void HandleDebugInput()
         //{
         //    if (KeyboardState.IsKeyDown(Keys.F8))

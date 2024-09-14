@@ -65,7 +65,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = TextureDecider.DetermineTownFenceTexture(map, i, j),
+                        Texture = RuleTiler.Town.FenceTexture(map, i, j),
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
@@ -86,7 +86,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static Tilemap GenerateFloorTileMap(int[,] map, Plot plot)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
-            var tilePlaced = false;
 
             for (int i = 0; i < map.GetLength(0); i++)
             {
@@ -105,19 +104,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = Global.SpriteLibrary.BuildingBlockSprites["floor-c"],
+                        Texture = RuleTiler.Town.FloorTile(map, i, j),// Global.SpriteLibrary.BuildingBlockSprites["floor-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
 
                     tm.Map[i, j] = tile;
-                    tilePlaced = true;
                 }
-            }
-
-            if (!tilePlaced)
-            {
-                ;
             }
 
             return tm;
@@ -144,7 +137,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = TextureDecider.DetermineBuildingWallTexture(wallMap, floorMap, i, j),
+                        Texture = RuleTiler.Town.WallTexture(wallMap, floorMap, i, j),
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
@@ -212,7 +205,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                             yIndex = j - 1,
                             LocalPosition = new Vector2(i * Global.TileSize, (j - 1) * Global.TileSize) + plot.WorldPosition,
                             Size = new Vector2(Global.TileSize, Global.TileSize),
-                            Texture = TextureDecider.DetermineBuildingWallCapTexture(wallMap, floorMap, tm, i, j),
+                            Texture = RuleTiler.DetermineBuildingWallCapTexture(wallMap, floorMap, tm, i, j),
                             TileType = TileType.Instance,
                             IsExplored = true
                         };
@@ -231,7 +224,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     {
                         if (tm.Map[i, j] != null && tm.Map[i, j].Texture == null)
                         {
-                            tm.Map[i, j].Texture = TextureDecider.DetermineBuildingWallCapTexturePass2(wallMap, floorMap, tm, i, j);
+                            tm.Map[i, j].Texture = RuleTiler.DetermineBuildingWallCapTexturePass2(wallMap, floorMap, tm, i, j);
                         }
                     }
                 }
@@ -253,7 +246,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static Tilemap GenerateRoofTileMap(int[,] map, Plot plot)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
-            tm.WorldPosition = plot.WorldPosition;
 
             for (int i = 0; i < map.GetLength(0); i++)
             {
@@ -272,7 +264,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = Global.SpriteLibrary.BuildingBlockSprites["building-roof-thatching"],
+                        Texture = Global.SpriteLibrary.BuildingBlockSprites["roof"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };

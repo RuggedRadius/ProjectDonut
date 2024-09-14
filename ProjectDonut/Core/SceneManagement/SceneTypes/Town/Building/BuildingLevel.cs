@@ -13,13 +13,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
     public class BuildingLevel : IGameObject
     {
         public Plot Plot { get; set; }
-        //public List<BuildingRoom> Rooms { get; set; }
         public BuildingObj ParentBuilding { get; set; }
         public int LevelIndex { get; set; }
 
         public int[,] FloorDataMap { get; set; }
         public int[,] WallDataMap { get; set; }
         public int[,] StairDataMap { get; set; }
+
+        public List<Rectangle> RoomRects { get; set; }
 
         public Tilemap FloorTileMap { get; set; }
         public Tilemap WallTileMap { get; set; }
@@ -34,7 +35,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public BuildingLevel(Plot plot, BuildingObj parentBuilding, int levelIndex)
         {
-            //Rooms = new List<BuildingRoom>();
             Plot = plot;
             ParentBuilding = parentBuilding;
             LevelIndex = levelIndex;
@@ -55,24 +55,20 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 (int)Plot.Town.MapSize.Y];
 
             // Build rooms
-            //Rooms = new List<BuildingRoom>();
-            var roomRects = RoomGenerator.GenerateRooms(ParentBuilding.BuildingBounds, new Vector2(7, 5));
-            foreach (var r in roomRects)
-            {
-                //var newRoom = new BuildingRoom(ParentBuilding, r, LevelIndex);
-                //newRoom.Initialize();
+            RoomRects = RoomGenerator.GenerateRooms(ParentBuilding.BuildingBounds, new Vector2(4, 3));
 
-                //FloorDataMap = FloorDataMap.MergeArrayWith(newRoom.FloorDataMap);
-                //WallDataMap = WallDataMap.MergeArrayWith(newRoom.WallDataMap);
+            FloorDataMap = BuildingDataMapper.GenerateFloorDataMap(Plot, RoomRects);
+            WallDataMap = BuildingDataMapper.GenerateWallDataMap(Plot, RoomRects);
 
-                //Rooms.Add(newRoom);
 
-                var roomDataMap = BuildingDataMapper.GenerateRoomDataMap2(ParentBuilding.Plot, r);
-                var roomWallDataMap = BuildingDataMapper.GenerateRoomWallDataMap2(ParentBuilding.Plot, r);
+            //foreach (var r in RoomRects)
+            //{
+            //    var roomDataMap = BuildingDataMapper.GenerateRoomDataMap2(ParentBuilding.Plot, r);
+            //    var roomWallDataMap = BuildingDataMapper.GenerateRoomWallDataMap2(ParentBuilding.Plot, r);
 
-                FloorDataMap = FloorDataMap.MergeArrayWith(roomDataMap);
-                WallDataMap = WallDataMap.MergeArrayWith(roomWallDataMap);
-            }
+            //    FloorDataMap = FloorDataMap.MergeArrayWith(roomDataMap);
+            //    WallDataMap = WallDataMap.MergeArrayWith(roomWallDataMap);
+            //}
 
             //WallDataMap = RoomLinker2.LinkRooms(Plot, WallDataMap, roomRects);
 
@@ -119,8 +115,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             //}
 
             FloorTileMap.Draw(gameTime);
-            WallTileMap.Draw(gameTime);
-            WallTileMap.DrawOutline(gameTime);
+            //WallTileMap.Draw(gameTime);
+            //WallTileMap.DrawOutline(gameTime);
             StairTileMap.Draw(gameTime);
         }
 
