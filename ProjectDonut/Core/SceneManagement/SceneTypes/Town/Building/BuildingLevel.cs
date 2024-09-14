@@ -72,7 +72,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             WallDataMap = RoomLinker2.LinkRooms(Plot, WallDataMap, FloorDataMap, RoomRects);
 
-            //DebugMapData.WriteMapData(FloorDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_FloorDataMap");
+            DebugMapData.WriteMapData(FloorDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_FloorDataMap");
             //DebugMapData.WriteMapData(WallDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_WallDataMap");
 
             FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot);

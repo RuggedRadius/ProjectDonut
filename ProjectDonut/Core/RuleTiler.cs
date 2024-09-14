@@ -10,13 +10,13 @@ namespace ProjectDonut.Core
         public NeighbourDataTiles(int[,] map, int x, int y)
         {
             if (y > 0 && x > 0)
-                NorthWest = map[x, y - 1] == 1;
+                NorthWest = map[x - 1, y - 1] == 1;
 
             if (y > 0)
                 North = map[x, y - 1] == 1;
 
             if (y > 0 && x < map.GetLength(0) - 1)
-                NorthEast = map[x, y - 1] == 1;
+                NorthEast = map[x + 1, y - 1] == 1;
 
             if (x > 0)
                 West = map[x - 1, y] == 1;
@@ -25,13 +25,13 @@ namespace ProjectDonut.Core
                 East = map[x + 1, y] == 1;
 
             if (y < map.GetLength(1) - 1 && x > 0)
-                SouthWest = map[x, y + 1] == 1;
+                SouthWest = map[x - 1, y + 1] == 1;
 
             if (y < map.GetLength(1) - 1)
                 South = map[x, y + 1] == 1;
 
             if (y < map.GetLength(1) - 1 && x < map.GetLength(0) - 1)
-                SouthEast = map[x, y + 1] == 1;
+                SouthEast = map[x + 1, y + 1] == 1;
         }
 
         public bool NorthWest { get; set; }
@@ -308,31 +308,26 @@ namespace ProjectDonut.Core
 
                 if (nb.North && nb.East && !nb.South && !nb.West) // NE
                 {
-                    //if (!nb.NorthEast)
-                    //{
-                    //    return lib["floor-ne-ext"];
-                    //}
                     
                     return lib["floor-sw"];
                 }
 
-                //// STRAIGHTS
-                //if (!nb.North && nb.East && !nb.South && nb.West) // EW
-                //    return lib["floor-n"];
+                // HALL CORNERS
+                if (nb.North && nb.East && nb.South && nb.West && !nb.SouthWest && !nb.SouthEast)
+                    return lib["floor-doublecorner-bottom"];
 
-                //if (nb.North && !nb.East && nb.South && !nb.West) // NS
-                //    return lib["floor-e"];
+                if (nb.North && nb.East && nb.South && nb.West && !nb.NorthWest && !nb.NorthEast)
+                    return lib["floor-doublecorner-top"];
 
-                //if (nb.North && !nb.East && nb.South && !nb.West) // NS
-                //    return lib["floor-s"];
+                if (nb.North && nb.East && nb.South && nb.West && !nb.NorthEast && !nb.SouthEast)
+                    return lib["floor-doublecorner-right"];
 
-                //if (nb.North && !nb.East && nb.South && !nb.West) // NS
-                //    return lib["floor-w"];
+                if (nb.North && nb.East && nb.South && nb.West && !nb.NorthWest && !nb.SouthWest)
+                    return lib["floor-doublecorner-left"];
+
+
 
                 // JUNCTIONS
-                if (nb.North && nb.East && nb.South && nb.West) // NESW
-                    return lib["floor-c"];
-
                 if (nb.North && nb.East && !nb.South && nb.West) // NEW
                     return lib["floor-s"];
 
@@ -351,12 +346,26 @@ namespace ProjectDonut.Core
                 if (!nb.North && nb.East && !nb.South && nb.West) // NS
                     return lib["floor-junc-ns"];
 
+
+                if (!nb.NorthWest || !nb.North || !nb.NorthEast 
+                    || !nb.West || !nb.East 
+                    || !nb.SouthWest || !nb.South || !nb.SouthEast)
+                    return lib["floor-c"];
+
+
+
+                if (nb.North && nb.East && nb.South && nb.West) // NESW
+                    return lib["floor-c"];
+
+
                 // EXTERNAL CORNERS
                 // ...
 
 
-                return lib["floor-c"];
-                //return Global.MISSING_TEXTURE;
+
+
+                //return lib["floor-c"];
+                return Global.MISSING_TEXTURE;
             }
         }
 

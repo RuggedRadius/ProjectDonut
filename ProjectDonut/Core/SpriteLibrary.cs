@@ -171,6 +171,11 @@ namespace ProjectDonut.Core
                 { "floor-junc-ns", ExtractSprite(blockSheet, 4, 6) },
                 { "floor-junc-ew", ExtractSprite(blockSheet, 5, 6) },
 
+                { "floor-doublecorner-bottom", ExtractSprite(blockSheet, 0, 7) },
+                { "floor-doublecorner-top", ExtractSprite(blockSheet, 1, 7) },
+                { "floor-doublecorner-right", ExtractSprite(blockSheet, 2, 7) },
+                { "floor-doublecorner-left", ExtractSprite(blockSheet, 3, 7) },
+
                 { "roof", Global.MISSING_TEXTURE }
             };
 
