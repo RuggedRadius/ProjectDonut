@@ -55,12 +55,19 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public void Build()
         {
             Levels = new Dictionary<int, BuildingLevel>();
+            var levelsList = new List<BuildingLevel>();
 
             for (int i = 0; i < LevelCount; i++)
             {
                 var level = new BuildingLevel(Plot, this, i);
-                level.BuildLevel(i <= LevelCount - 2);
+                level.BuildLevel();
                 Levels.Add(i, level);
+                levelsList.Add(level);
+            }
+
+            for (int i = 0; i < LevelCount - 1; i++)
+            {
+                Levels[i].BuildStairs(levelsList);
             }
 
             RoofDataMap = BuildingDataMapper.GenerateRoofDataMap(Plot, Levels[0].RoomRects);
@@ -129,7 +136,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         {
             if (BuildingWorldBounds.Contains(Global.PlayerObj.WorldPosition) == true)
             {
-                Levels[PlayerOccupyLevel].Draw(gameTime);
+                for (int i = 0; i < PlayerOccupyLevel + 1; i++)
+                {
+                    Levels[i].Draw(gameTime);
+                }
+
+                //Levels[PlayerOccupyLevel].Draw(gameTime);
             }
             else
             {

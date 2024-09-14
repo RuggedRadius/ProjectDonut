@@ -44,7 +44,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             _random = new Random();
         }
 
-        public void BuildLevel(bool hasNextLevel)
+        public void BuildLevel()
         {
             FloorDataMap = new int[
                 (int)Plot.Town.MapSize.X,
@@ -64,16 +64,27 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             WallDataMap = BuildingDataMapper.GenerateWallDataMap(Plot, RoomRects);
             WallDataMap = RoomLinker2.LinkRooms(Plot, WallDataMap, FloorDataMap, RoomRects);
 
-            if (hasNextLevel)
-                StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, RoomRects);
-
             //DebugMapData.WriteMapData(FloorDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_FloorDataMap");
             //DebugMapData.WriteMapData(WallDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_WallDataMap");
             //DebugMapData.WriteMapData(StairDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_StairDataMap");
 
+            BuildTileMaps();            
+        }
+
+        public void BuildTileMaps()
+        {
             FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot);
             WallTileMap = BuildingTileMapper.GenerateWallTileMap(WallDataMap, FloorDataMap, Plot);
+        }
+
+        public void BuildStairs(List<BuildingLevel> levels)
+        {
+            var levelAbove = levels[LevelIndex + 1];
+
+            StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, RoomRects, ref levelAbove);
             StairTileMap = BuildingTileMapper.GenerateStairsTileMap(StairDataMap, Plot);
+
+            levelAbove.BuildTileMaps();
         }
 
         public void Initialize()
@@ -101,7 +112,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             FloorTileMap.Update(gameTime);
             WallTileMap.Update(gameTime);
-            StairTileMap.Update(gameTime);
+
+            if (StairTileMap != null)
+                StairTileMap.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime)
@@ -114,7 +127,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             FloorTileMap.Draw(gameTime);
             WallTileMap.Draw(gameTime);
             //WallTileMap.DrawOutline(gameTime);
-            StairTileMap.Draw(gameTime);
+            if (StairTileMap != null)
+                StairTileMap.Draw(gameTime);
         }
 
         #region NEW Room Linking

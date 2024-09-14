@@ -219,15 +219,66 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
 
 
-        public static int[,] GenerateStairsDataMap(Plot plot, List<Rectangle> roomBounds)
+        public static int[,] GenerateStairsDataMap(Plot plot, List<Rectangle> roomBounds, ref BuildingLevel levelAbove)
         {
+            var random = new Random();
             var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
-            var randomRoomRect = roomBounds[new Random().Next(roomBounds.Count)];
 
-            map[
-                randomRoomRect.Left - plot.PlotBounds.X + 1, 
-                randomRoomRect.Top - plot.PlotBounds.Y]
-                = 1;
+            var suitablePosFound = false;
+            var maxTries = 10000;
+            (int, int) suitablePos = (0, 0);
+
+            do
+            {
+                var randomRoomRect = roomBounds[random.Next(roomBounds.Count)];
+
+                //var x = randomRoomRect.Left - plot.PlotBounds.X + 1;
+                //var y = randomRoomRect.Top - plot.PlotBounds.Y + 1;
+
+                var x = random.Next(randomRoomRect.Left + 1, randomRoomRect.Left + randomRoomRect.Width - 1) - plot.PlotBounds.X;
+                var y = random.Next(randomRoomRect.Top + 1, randomRoomRect.Top + randomRoomRect.Height - 4) - plot.PlotBounds.Y;
+
+                bool posSuitable = true;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (levelAbove.FloorDataMap[x + i, y + j - 1] != 1)
+                        {
+                            posSuitable = false;
+                        }
+
+                        if (levelAbove.WallDataMap[x + i, y + j - 1] != 0)
+                        {
+                            posSuitable = false;
+                        }
+                    }
+                }
+
+                if (posSuitable)
+                {
+                    suitablePosFound = true;
+                    suitablePos = (x, y);
+                }
+
+                maxTries--;
+
+                if (maxTries <= 0)
+                    throw new Exception("Could not place stairs");
+            }
+            while (suitablePosFound == false);
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    levelAbove.FloorDataMap[suitablePos.Item1 + i, suitablePos.Item2 + j] = 0;
+                    levelAbove.WallDataMap[suitablePos.Item1 + i, suitablePos.Item2 + j] = 0;
+                }
+            }
+
+            map[suitablePos.Item1, suitablePos.Item2] = 1;
 
             return map;
         }
