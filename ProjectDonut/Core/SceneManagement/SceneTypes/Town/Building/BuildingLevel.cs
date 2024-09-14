@@ -55,7 +55,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 (int)Plot.Town.MapSize.Y];
 
             // Build rooms
-            RoomRects = RoomGenerator.GenerateRooms(ParentBuilding.BuildingBounds, new Vector2(4, 3));
+            RoomRects = RoomGenerator.GenerateRooms(ParentBuilding.BuildingBounds, new Vector2(7, 5));
 
             FloorDataMap = BuildingDataMapper.GenerateFloorDataMap(Plot, RoomRects);
             WallDataMap = BuildingDataMapper.GenerateWallDataMap(Plot, RoomRects);
@@ -70,9 +70,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             //    WallDataMap = WallDataMap.MergeArrayWith(roomWallDataMap);
             //}
 
-            //WallDataMap = RoomLinker2.LinkRooms(Plot, WallDataMap, roomRects);
+            WallDataMap = RoomLinker2.LinkRooms(Plot, WallDataMap, FloorDataMap, RoomRects);
 
-            //DebugMapData.WriteMapData(WallDataMap, "WallDataMap");
+            DebugMapData.WriteMapData(FloorDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_FloorDataMap");
+            DebugMapData.WriteMapData(WallDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_WallDataMap");
 
             FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot);
             WallTileMap = BuildingTileMapper.GenerateWallTileMap(WallDataMap, FloorDataMap, Plot);
@@ -115,7 +116,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             //}
 
             FloorTileMap.Draw(gameTime);
-            //WallTileMap.Draw(gameTime);
+            WallTileMap.Draw(gameTime);
             //WallTileMap.DrawOutline(gameTime);
             StairTileMap.Draw(gameTime);
         }

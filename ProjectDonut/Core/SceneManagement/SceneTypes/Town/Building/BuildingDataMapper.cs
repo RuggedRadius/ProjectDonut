@@ -45,6 +45,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         var adjustedRoomBounds = new Rectangle(
                             room.X, room.Y, room.Width + 1, room.Height);
 
+                        adjustedRoomBounds = new Rectangle(
+                            room.X + 1, room.Y + 1, room.Width - 1, room.Height - 1);
+
                         if (adjustedRoomBounds.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
                         {
                             map[i, j] = 1;

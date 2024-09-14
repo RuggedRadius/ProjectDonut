@@ -338,7 +338,8 @@ namespace ProjectDonut.Core
                 // EXTERNAL CORNERS
 
 
-                return Global.MISSING_TEXTURE;
+                return lib["floor-c"];
+                //return Global.MISSING_TEXTURE;
             }
         }
 

@@ -8,16 +8,35 @@ using ProjectDonut.Debugging;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 {
+    public class LinkedRoom
+    {
+        public Rectangle Room { get; set; }
+        public List<LinkedRoom> LinkedRooms { get; set; }
+        public bool IsLinked => LinkedRooms.Count > 0;
+
+        public LinkedRoom(Rectangle room)
+        {
+            Room = room;
+            LinkedRooms = new List<LinkedRoom>();
+        }
+    }
+
     public class RoomLinker2
     {
-        public static int[,] LinkRooms(Plot plot, int[,] map, List<Rectangle> rects)
+        public static int[,] LinkRooms(Plot plot, int[,] wallMap, int[,] floorMap, List<Rectangle> rects)
         {
             var random = new Random();
 
-            //var plotOffsetX = 0;
-            //var plotOffsetY = 0;
             var plotOffsetX = -plot.PlotBounds.X;
             var plotOffsetY = -plot.PlotBounds.Y;
+
+
+
+
+
+
+
+
 
             var unlinkedRooms = new List<Rectangle>(rects);
 
@@ -32,73 +51,58 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     if (r1 == r2)
                         continue;
 
-                    if (unlinkedRooms.Contains(r1) == false)
-                        continue;
-
                     if (unlinkedRooms.Contains(r2) == false)
                         continue;
 
                     if (r1.Top == r2.Bottom)
                     {
-                        // Select a random point on the top edge of r1
                         var x = r1.Left + random.Next(r1.Width - 4) + 2;
                         var y = r1.Top;
 
-                        map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-
-                        DebugMapData.WriteMapData(map, "PlotDebug");
+                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
 
                         unlinkedRooms.Remove(r1);
                         unlinkedRooms.Remove(r2);
-                        //return map;
                         break;
                     }
 
                     if (r1.Bottom == r2.Top)
                     {
-                        // Select a random point on the top edge of r1
                         var x = r1.Left + random.Next(r1.Width - 4) + 2;
                         var y = r1.Bottom;
 
-                        map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-
-                        DebugMapData.WriteMapData(map, "PlotDebug");
+                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
 
                         unlinkedRooms.Remove(r1);
                         unlinkedRooms.Remove(r2);
-                        //return map;
                         break;
                     }
 
                     if (r1.Left == r2.Right)
                     {
-                        // Select a random point on the top edge of r1
                         var x = r1.Left;
                         var y = r1.Top + random.Next(r1.Height - 4) + 2;
 
-                        map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-
-                        DebugMapData.WriteMapData(map, "PlotDebug");
+                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
 
                         unlinkedRooms.Remove(r1);
                         unlinkedRooms.Remove(r2);
-                        //return map;
                         break;
                     }
 
                     if (r1.Right == r2.Left)
                     {
-                        // Select a random point on the top edge of r1
                         var x = r1.Right;
                         var y = r1.Top + random.Next(r1.Height - 4) + 2;
 
-                        map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-
-                        DebugMapData.WriteMapData(map, "PlotDebug");
+                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
 
                         unlinkedRooms.Remove(r1);
                         unlinkedRooms.Remove(r2);
-                        //return map;
                         break;
                     }
                 }
@@ -110,67 +114,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             }
             while (unlinkedRooms.Count > 1);
 
-            //foreach (var r1 in rects)
-            //{
-            //    foreach (var r2 in rects)
-            //    {
-            //        if (r1 == r2)
-            //            continue;
-
-            //        if (unlinkedRooms.Contains(r2) == false)
-            //            continue;
-
-            //        if (r1.Top == r2.Bottom)
-            //        {
-            //            // Select a random point on the top edge of r1
-            //            var x = r1.Left + random.Next(r1.Width - 4) + 2;
-            //            var y = r1.Top;
-
-            //            map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-                    
-            //            unlinkedRooms.Remove(r1);
-            //            unlinkedRooms.Remove(r2);
-            //        }
-
-            //        if (r1.Bottom == r2.Top)
-            //        {
-            //            // Select a random point on the top edge of r1
-            //            var x = r1.Left + random.Next(r1.Width - 4) + 2;
-            //            var y = r1.Bottom;
-
-            //            map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-
-            //            unlinkedRooms.Remove(r1);
-            //            unlinkedRooms.Remove(r2);
-            //        }
-
-            //        if (r1.Left == r2.Right)
-            //        {
-            //            // Select a random point on the top edge of r1
-            //            var x = r1.Left;
-            //            var y = r1.Top + random.Next(r1.Height - 4) + 2;
-
-            //            map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-
-            //            unlinkedRooms.Remove(r1);
-            //            unlinkedRooms.Remove(r2);
-            //        }
-
-            //        if (r1.Right == r2.Left)
-            //        {
-            //            // Select a random point on the top edge of r1
-            //            var x = r1.Right;
-            //            var y = r1.Top + random.Next(r1.Height - 4) + 2;
-
-            //            map[plotOffsetX + x, plotOffsetY + y] = 2; // 2 is a path tile in the tilemap
-
-            //            unlinkedRooms.Remove(r1);
-            //            unlinkedRooms.Remove(r2);
-            //        }
-            //    }
-            //}
-
-            return map;
+            return wallMap;
         }
     }
 
