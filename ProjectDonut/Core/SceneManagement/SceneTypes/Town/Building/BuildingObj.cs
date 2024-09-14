@@ -59,7 +59,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             for (int i = 0; i < LevelCount; i++)
             {
                 var level = new BuildingLevel(Plot, this, i);
-                level.BuildLevel();
+                level.BuildLevel(i <= LevelCount - 2);
                 Levels.Add(i, level);
             }
 

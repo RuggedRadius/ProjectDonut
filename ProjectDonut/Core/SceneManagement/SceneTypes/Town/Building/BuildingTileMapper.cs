@@ -280,13 +280,17 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
 
-            var stairTileNames = new string[,]
+            var stairTiles = new string[]
             {
-                { "stairs-01", "stairs-02" },
-                { "stairs-03", "stairs-04" },
-                { "stairs-05", "stairs-06" },
-                { "stairs-07", "stairs-08" },
-                { "stairs-09", "stairs-10" },
+                "stairs-top-01",
+                "stairs-bottom-01",
+                "stairs-bottom-01",
+                "stairs-top-02",
+                "stairs-bottom-02",
+                "stairs-bottom-02",
+                "stairs-top-03",
+                "stairs-bottom-03",
+                "stairs-bottom-03",
             };
 
             for (int i = 0; i < map.GetLength(0); i++)
@@ -298,26 +302,23 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         continue;
                     }
 
-                    for (int x = 0; x < 2; x++)
+                    int tileNameCounter = 0;
+                    for (int k = 0; k < 3; k++)
                     {
-                        for (int y = 0; y < 5; y++)
+                        for (int l = 0; l < 3; l++)
                         {
-                            var stairTileName = stairTileNames[y, x];
-
-                            var tile = new Tile(false)
+                            tm.Map[i + k, j + l] = new Tile(false)
                             {
-                                ChunkX = 0,
-                                ChunkY = 0,
-                                xIndex = i + x,
-                                yIndex = j + y,
-                                LocalPosition = new Vector2((i + x) * Global.TileSize, (j + y) * Global.TileSize) + plot.WorldPosition,
+                                xIndex = i + k,
+                                yIndex = j + l,
+                                LocalPosition = new Vector2((i + k) * Global.TileSize, (j + l) * Global.TileSize) + plot.WorldPosition,
                                 Size = new Vector2(Global.TileSize, Global.TileSize),
-                                Texture = Global.SpriteLibrary.BuildingBlockSprites[stairTileName],
+                                Texture = Global.SpriteLibrary.BuildingBlockSprites[stairTiles[tileNameCounter]],
                                 TileType = TileType.Instance,
                                 IsExplored = true
                             };
 
-                            tm.Map[i + x, j + y] = tile;
+                            tileNameCounter++;
                         }
                     }
 

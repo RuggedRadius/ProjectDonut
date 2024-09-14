@@ -222,9 +222,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static int[,] GenerateStairsDataMap(Plot plot, List<Rectangle> roomBounds)
         {
             var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
-
-            var possibleRooms = roomBounds.Where(r => r.Height > 6 && plot.PlotBounds.Contains(r)).ToList();
-            var randomRoomRect = possibleRooms[new Random().Next(possibleRooms.Count)];
+            var randomRoomRect = roomBounds[new Random().Next(roomBounds.Count)];
 
             map[
                 randomRoomRect.Left - plot.PlotBounds.X + 1, 

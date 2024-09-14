@@ -44,7 +44,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             _random = new Random();
         }
 
-        public void BuildLevel()
+        public void BuildLevel(bool hasNextLevel)
         {
             FloorDataMap = new int[
                 (int)Plot.Town.MapSize.X,
@@ -63,7 +63,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             FloorDataMap = BuildingDataMapper.GenerateFloorDataMap(Plot, RoomRects);
             WallDataMap = BuildingDataMapper.GenerateWallDataMap(Plot, RoomRects);
             WallDataMap = RoomLinker2.LinkRooms(Plot, WallDataMap, FloorDataMap, RoomRects);
-            StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, RoomRects);
+
+            if (hasNextLevel)
+                StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, RoomRects);
 
             //DebugMapData.WriteMapData(FloorDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_FloorDataMap");
             //DebugMapData.WriteMapData(WallDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_WallDataMap");
