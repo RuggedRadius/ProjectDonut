@@ -26,97 +26,218 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public static int[,] LinkRooms(Plot plot, int[,] wallMap, int[,] floorMap, List<Rectangle> rects)
         {
             var random = new Random();
-
             var plotOffsetX = -plot.PlotBounds.X;
             var plotOffsetY = -plot.PlotBounds.Y;
 
+            // Lists to track linked and unlinked rooms
+            var linked = new List<LinkedRoom>();
+            var unlinked = new List<LinkedRoom>();
 
-
-
-
-
-
-
-
-            var unlinkedRooms = new List<Rectangle>(rects);
-
-            var maxTries = 100;
-
-            do
+            // Initialize all rooms as unlinked
+            foreach (var rect in rects)
             {
-                var r1 = unlinkedRooms[random.Next(unlinkedRooms.Count)];
+                unlinked.Add(new LinkedRoom(rect));
+            }
 
-                foreach (var r2 in rects)
+            // Start by linking the first random room
+            var firstRoom = unlinked[random.Next(unlinked.Count)];
+            linked.Add(firstRoom);
+            unlinked.Remove(firstRoom);
+
+            // Continue linking until all rooms are linked
+            while (unlinked.Count > 0)
+            {
+                // Pick a random unlinked room
+                var roomToLink = unlinked[random.Next(unlinked.Count)];
+
+                // Find the closest linked room to this unlinked room
+                LinkedRoom closestLinkedRoom = null;
+                int shortestDistance = int.MaxValue;
+
+                foreach (var linkedRoom in linked)
                 {
-                    if (r1 == r2)
-                        continue;
+                    int distance = Math.Abs(roomToLink.Room.Center.X - linkedRoom.Room.Center.X) +
+                                   Math.Abs(roomToLink.Room.Center.Y - linkedRoom.Room.Center.Y);
 
-                    if (unlinkedRooms.Contains(r2) == false)
-                        continue;
-
-                    if (r1.Top == r2.Bottom)
+                    if (distance < shortestDistance)
                     {
-                        var x = r1.Left + random.Next(r1.Width - 4) + 2;
-                        var y = r1.Top;
-
-                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
-                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
-
-                        unlinkedRooms.Remove(r1);
-                        unlinkedRooms.Remove(r2);
-                        break;
-                    }
-
-                    if (r1.Bottom == r2.Top)
-                    {
-                        var x = r1.Left + random.Next(r1.Width - 4) + 2;
-                        var y = r1.Bottom;
-
-                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
-                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
-
-                        unlinkedRooms.Remove(r1);
-                        unlinkedRooms.Remove(r2);
-                        break;
-                    }
-
-                    if (r1.Left == r2.Right)
-                    {
-                        var x = r1.Left;
-                        var y = r1.Top + random.Next(r1.Height - 4) + 2;
-
-                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
-                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
-
-                        unlinkedRooms.Remove(r1);
-                        unlinkedRooms.Remove(r2);
-                        break;
-                    }
-
-                    if (r1.Right == r2.Left)
-                    {
-                        var x = r1.Right;
-                        var y = r1.Top + random.Next(r1.Height - 4) + 2;
-
-                        wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
-                        floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
-
-                        unlinkedRooms.Remove(r1);
-                        unlinkedRooms.Remove(r2);
-                        break;
+                        shortestDistance = distance;
+                        closestLinkedRoom = linkedRoom;
                     }
                 }
 
-                maxTries--;
+                // Connect the two rooms with a corridor
+                var x1 = roomToLink.Room.Center.X;
+                var y1 = roomToLink.Room.Center.Y;
+                var x2 = closestLinkedRoom.Room.Center.X;
+                var y2 = closestLinkedRoom.Room.Center.Y;
 
-                if (maxTries <= 0)
-                    break;
+                // Create horizontal corridor
+                for (int x = Math.Min(x1, x2); x <= Math.Max(x1, x2); x++)
+                {
+                    wallMap[plotOffsetX + x, plotOffsetY + y1] = 0;
+                    floorMap[plotOffsetX + x, plotOffsetY + y1] = 1;
+                }
+
+                // Create vertical corridor
+                for (int y = Math.Min(y1, y2); y <= Math.Max(y1, y2); y++)
+                {
+                    wallMap[plotOffsetX + x2, plotOffsetY + y] = 0;
+                    floorMap[plotOffsetX + x2, plotOffsetY + y] = 1;
+                }
+
+                // Mark the rooms as connected
+                closestLinkedRoom.LinkedRooms.Add(roomToLink);
+                roomToLink.LinkedRooms.Add(closestLinkedRoom);
+
+                // Move the room from unlinked to linked
+                linked.Add(roomToLink);
+                unlinked.Remove(roomToLink);
             }
-            while (unlinkedRooms.Count > 1);
 
             return wallMap;
         }
+
+
+        //public static int[,] LinkRooms(Plot plot, int[,] wallMap, int[,] floorMap, List<Rectangle> rects)
+        //{
+        //    var random = new Random();
+
+        //    var plotOffsetX = -plot.PlotBounds.X;
+        //    var plotOffsetY = -plot.PlotBounds.Y;
+
+        //    var linked = new List<LinkedRoom>();
+        //    var unlinked = new List<LinkedRoom>();
+        //    foreach (var rect in rects)
+        //    {
+        //        unlinked.Add(new LinkedRoom(rect));
+        //    }
+
+        //    while (unlinked.Count > 0)
+        //    {
+        //        var room = unlinked[random.Next(unlinked.Count)];
+
+        //        if (linked.Count == 0)
+        //        {
+        //            linked.Add(room);
+        //            unlinked.Remove(room);
+        //            continue;
+        //        }
+
+        //        var linkedRoom = linked[random.Next(linked.Count)];
+
+        //        var x1 = room.Room.Center.X;
+        //        var y1 = room.Room.Center.Y;
+        //        var x2 = linkedRoom.Room.Center.X;
+        //        var y2 = linkedRoom.Room.Center.Y;
+
+        //        if (x1 == x2)
+        //        {
+        //            for (int y = Math.Min(y1, y2); y <= Math.Max(y1, y2); y++)
+        //            {
+        //                wallMap[plotOffsetX + x1, plotOffsetY + y] = 0;
+        //                floorMap[plotOffsetX + x1, plotOffsetY + y] = 1;
+        //            }
+        //        }
+        //        else if (y1 == y2)
+        //        {
+        //            for (int x = Math.Min(x1, x2); x <= Math.Max(x1, x2); x++)
+        //            {
+        //                wallMap[plotOffsetX + x, plotOffsetY + y1] = 0;
+        //                floorMap[plotOffsetX + x, plotOffsetY + y1] = 1;
+        //            }
+        //        }
+
+        //        linkedRoom.LinkedRooms.Add(room);
+        //        room.LinkedRooms.Add(linkedRoom);
+
+        //        linked.Add(room);
+        //        unlinked.Remove(room);
+        //    }
+
+        //    return wallMap;
+        //}
     }
+
+    #region OLD NOT WORKING EITHER
+    //var unlinkedRooms = new List<Rectangle>(rects);
+
+    //var maxTries = 100;
+
+    //do
+    //{
+    //    var r1 = unlinkedRooms[random.Next(unlinkedRooms.Count)];
+
+    //    foreach (var r2 in rects)
+    //    {
+    //        if (r1 == r2)
+    //            continue;
+
+    //        if (unlinkedRooms.Contains(r2) == false)
+    //            continue;
+
+    //        if (r1.Top == r2.Bottom)
+    //        {
+    //            var x = r1.Left + random.Next(r1.Width - 4) + 2;
+    //            var y = r1.Top;
+
+    //            wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+    //            floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
+
+    //            unlinkedRooms.Remove(r1);
+    //            unlinkedRooms.Remove(r2);
+    //            break;
+    //        }
+
+    //        if (r1.Bottom == r2.Top)
+    //        {
+    //            var x = r1.Left + random.Next(r1.Width - 4) + 2;
+    //            var y = r1.Bottom;
+
+    //            wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+    //            floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
+
+    //            unlinkedRooms.Remove(r1);
+    //            unlinkedRooms.Remove(r2);
+    //            break;
+    //        }
+
+    //        if (r1.Left == r2.Right)
+    //        {
+    //            var x = r1.Left;
+    //            var y = r1.Top + random.Next(r1.Height - 4) + 2;
+
+    //            wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+    //            floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
+
+    //            unlinkedRooms.Remove(r1);
+    //            unlinkedRooms.Remove(r2);
+    //            break;
+    //        }
+
+    //        if (r1.Right == r2.Left)
+    //        {
+    //            var x = r1.Right;
+    //            var y = r1.Top + random.Next(r1.Height - 4) + 2;
+
+    //            wallMap[plotOffsetX + x, plotOffsetY + y] = 0;
+    //            floorMap[plotOffsetX + x, plotOffsetY + y] = 1;
+
+    //            unlinkedRooms.Remove(r1);
+    //            unlinkedRooms.Remove(r2);
+    //            break;
+    //        }
+    //    }
+
+    //    maxTries--;
+
+    //    if (maxTries <= 0)
+    //        break;
+    //}
+    //while (unlinkedRooms.Count > 1);
+
+    //return wallMap;
+    #endregion
 
     public class Edge
     {

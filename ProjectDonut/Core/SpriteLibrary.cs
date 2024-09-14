@@ -144,6 +144,15 @@ namespace ProjectDonut.Core
 
 
 
+                { "wall-int-cap-n", ExtractSprite(blockSheet, 2, 6) },
+                { "wall-int-cap-e", ExtractSprite(blockSheet, 1, 6) },                
+                { "wall-int-cap-s", ExtractSprite(blockSheet, 3, 6) },
+                { "wall-int-cap-w", ExtractSprite(blockSheet, 0, 6) },
+
+
+
+
+
                 { "floor-nw", ExtractSprite(blockSheet, 3, 0) },
                 { "floor-n", ExtractSprite(blockSheet, 4, 0)  },
                 { "floor-ne", ExtractSprite(blockSheet, 5, 0)  },
@@ -158,6 +167,9 @@ namespace ProjectDonut.Core
                 { "floor-sw-ext", ExtractSprite(blockSheet, 5, 4)  },
                 { "floor-ne-ext", ExtractSprite(blockSheet, 4, 4)  },
                 { "floor-nw-ext", ExtractSprite(blockSheet, 3, 4)  },
+
+                { "floor-junc-ns", ExtractSprite(blockSheet, 4, 6) },
+                { "floor-junc-ew", ExtractSprite(blockSheet, 5, 6) },
 
                 { "roof", Global.MISSING_TEXTURE }
             };

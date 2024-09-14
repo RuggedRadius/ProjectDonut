@@ -276,6 +276,16 @@ namespace ProjectDonut.Core
                 if (nb.North && !nb.East && nb.South && nb.West) // NSW
                     return lib["wall-junc-nsw"];
 
+                // CAPS
+                if (nb.North && !nb.East && !nb.South && !nb.West)                
+                    return lib["wall-int-cap-n"];
+                if (!nb.North && nb.East && !nb.South && !nb.West)
+                    return lib["wall-int-cap-e"];
+                if (!nb.North && !nb.East && nb.South && !nb.West)
+                    return lib["wall-int-cap-s"];
+                if (!nb.North && !nb.East && !nb.South && nb.West)
+                    return lib["wall-int-cap-w"];
+
                 return Global.MISSING_TEXTURE;
             }
 
@@ -335,7 +345,14 @@ namespace ProjectDonut.Core
                 if (nb.North && !nb.East && nb.South && nb.West) // NSW
                     return lib["floor-e"];
 
+                if (nb.North && !nb.East && nb.South && !nb.West) // NS
+                    return lib["floor-junc-ew"];
+
+                if (!nb.North && nb.East && !nb.South && nb.West) // NS
+                    return lib["floor-junc-ns"];
+
                 // EXTERNAL CORNERS
+                // ...
 
 
                 return lib["floor-c"];
