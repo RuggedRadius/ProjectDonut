@@ -32,6 +32,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private BSP _bsp;
+        private Random _random;
 
         public BuildingLevel(Plot plot, BuildingObj parentBuilding, int levelIndex)
         {
@@ -40,6 +41,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             LevelIndex = levelIndex;
 
             _bsp = new BSP();
+            _random = new Random();
         }
 
         public void BuildLevel()
@@ -55,29 +57,21 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 (int)Plot.Town.MapSize.Y];
 
             // Build rooms
-            RoomRects = RoomGenerator.GenerateRooms(ParentBuilding.BuildingBounds, new Vector2(7, 5));
+            RoomRects = RoomGenerator.GenerateRooms(ParentBuilding.BuildingBounds, Global.TownSettings.MIN_ROOM_SIZE);
+            //RoomRects.Remove(RoomRects[_random.Next(RoomRects.Count)]);
 
             FloorDataMap = BuildingDataMapper.GenerateFloorDataMap(Plot, RoomRects);
             WallDataMap = BuildingDataMapper.GenerateWallDataMap(Plot, RoomRects);
-
-
-            //foreach (var r in RoomRects)
-            //{
-            //    var roomDataMap = BuildingDataMapper.GenerateRoomDataMap2(ParentBuilding.Plot, r);
-            //    var roomWallDataMap = BuildingDataMapper.GenerateRoomWallDataMap2(ParentBuilding.Plot, r);
-
-            //    FloorDataMap = FloorDataMap.MergeArrayWith(roomDataMap);
-            //    WallDataMap = WallDataMap.MergeArrayWith(roomWallDataMap);
-            //}
-
             WallDataMap = RoomLinker2.LinkRooms(Plot, WallDataMap, FloorDataMap, RoomRects);
+            StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, RoomRects);
 
-            DebugMapData.WriteMapData(FloorDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_FloorDataMap");
+            //DebugMapData.WriteMapData(FloorDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_FloorDataMap");
             //DebugMapData.WriteMapData(WallDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_WallDataMap");
+            //DebugMapData.WriteMapData(StairDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_StairDataMap");
 
             FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot);
             WallTileMap = BuildingTileMapper.GenerateWallTileMap(WallDataMap, FloorDataMap, Plot);
-            StairTileMap = BuildingTileMapper.GenerateStairsTileMap(StairDataMap);
+            StairTileMap = BuildingTileMapper.GenerateStairsTileMap(StairDataMap, Plot);
         }
 
         public void Initialize()

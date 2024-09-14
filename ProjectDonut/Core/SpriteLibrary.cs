@@ -176,6 +176,18 @@ namespace ProjectDonut.Core
                 { "floor-doublecorner-right", ExtractSprite(blockSheet, 2, 7) },
                 { "floor-doublecorner-left", ExtractSprite(blockSheet, 3, 7) },
 
+
+                { "stairs-01", ExtractSprite(blockSheet, 6, 0) },
+                { "stairs-02", ExtractSprite(blockSheet, 7, 0) },
+                { "stairs-03", ExtractSprite(blockSheet, 6, 1) },
+                { "stairs-04", ExtractSprite(blockSheet, 7, 1) },
+                { "stairs-05", ExtractSprite(blockSheet, 6, 2) },
+                { "stairs-06", ExtractSprite(blockSheet, 7, 2) },
+                { "stairs-07", ExtractSprite(blockSheet, 6, 3) },
+                { "stairs-08", ExtractSprite(blockSheet, 7, 3) },
+                { "stairs-09", ExtractSprite(blockSheet, 6, 4) },
+                { "stairs-10", ExtractSprite(blockSheet, 7, 4) },
+
                 { "roof", Global.MISSING_TEXTURE }
             };
 

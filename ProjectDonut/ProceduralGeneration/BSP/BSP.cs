@@ -13,7 +13,7 @@ namespace ProjectDonut.ProceduralGeneration.BSP
     {
         private Dictionary<int, List<Room>> _roomsGenerations = new Dictionary<int, List<Room>>();
         private List<Room> _rooms = new List<Room>();
-        public Vector2 _roomMinSize = new Vector2(20, 20);
+
         public Vector2 _room2MinSize = new Vector2(10, 10);
         private Random _random = new Random();
 
@@ -173,15 +173,8 @@ namespace ProjectDonut.ProceduralGeneration.BSP
         public Dictionary<int, List<Room>> GenerateRooms(
             int xTileCount, 
             int yTileCount, 
-            Vector2? room1MinSize = null,
-            Vector2? room2MinSize = null)
+            Vector2 minRoomSize)
         {
-            if (room1MinSize == null)
-                room1MinSize = new Vector2(20, 20);
-
-            if (room2MinSize == null)
-                room2MinSize = new Vector2(10, 10);
-
             _roomsGenerations = new Dictionary<int, List<Room>>();
             _roomCounter = 0;
 
@@ -193,15 +186,15 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             var partitionableRooms = new List<Room>();
             do
             {
-                _rooms = PartitionRooms(_roomsGenerations[genCounter - 1]);
+                _rooms = PartitionRooms(_roomsGenerations[genCounter - 1], minRoomSize);
                 _roomsGenerations.Add(genCounter, _rooms);
                 genCounter++;
 
                 partitionableRooms.Clear();
                 foreach (var room in _rooms)
                 {
-                    room.CanSplitVertical = IsRoomPartitionableVertically(room);
-                    room.CanSplitHorizontal = IsRoomPartitionableHorizontally(room);
+                    room.CanSplitVertical = IsRoomPartitionableVertically(room, minRoomSize);
+                    room.CanSplitHorizontal = IsRoomPartitionableHorizontally(room, minRoomSize);
 
                     if (room.CanSplitHorizontal || room.CanSplitVertical)
                     {
@@ -214,9 +207,9 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             return _roomsGenerations;
         }
 
-        private bool IsRoomPartitionableHorizontally(Room room)
+        private bool IsRoomPartitionableHorizontally(Room room, Vector2 minRoomSize)
         {
-            var horizontalSizeAppropriate = room.Bounds.Width > _roomMinSize.X * 2;
+            var horizontalSizeAppropriate = room.Bounds.Width > minRoomSize.X * 2;
 
             if (horizontalSizeAppropriate)
             {
@@ -228,9 +221,9 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             }
         }
 
-        private bool IsRoomPartitionableVertically(Room room)
+        private bool IsRoomPartitionableVertically(Room room, Vector2 minRoomSize)
         {
-            var verticalSizeAppropriate = room.Bounds.Height > _roomMinSize.Y * 2;
+            var verticalSizeAppropriate = room.Bounds.Height > minRoomSize.Y * 2;
 
             if (verticalSizeAppropriate)
             {
@@ -242,54 +235,54 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             }
         }
 
-        private List<Room> PartitionRoom(Room room)
-        {
-            var roomsList = new List<Room>();
+        //private List<Room> PartitionRoom(Room room, Vector2 minRoomSize)
+        //{
+        //    var roomsList = new List<Room>();
 
-            if (!room.CanSplitHorizontal && !room.CanSplitVertical)
-            {
-                roomsList.Add(room);
-                return roomsList;
-            }
+        //    if (!room.CanSplitHorizontal && !room.CanSplitVertical)
+        //    {
+        //        roomsList.Add(room);
+        //        return roomsList;
+        //    }
 
-            var originalCount = roomsList.Count;
+        //    var originalCount = roomsList.Count;
 
-            var coinFlip = _random.Next(0, 2);
+        //    var coinFlip = _random.Next(0, 2);
 
-            if (coinFlip == 0)
-            {
-                if (room.CanSplitHorizontal)
-                {
-                    roomsList.AddRange(SplitHorizontally(room));
-                }
-                else
-                {
-                    roomsList.AddRange(SplitVertically(room));
-                }
-            }
-            else
-            {
-                if (room.CanSplitVertical)
-                {
-                    roomsList.AddRange(SplitVertically(room));
-                }
-                else
-                {
-                    roomsList.AddRange(SplitHorizontally(room));
-                }
-            }
+        //    if (coinFlip == 0)
+        //    {
+        //        if (room.CanSplitHorizontal)
+        //        {
+        //            roomsList.AddRange(SplitHorizontally(room));
+        //        }
+        //        else
+        //        {
+        //            roomsList.AddRange(SplitVertically(room));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (room.CanSplitVertical)
+        //        {
+        //            roomsList.AddRange(SplitVertically(room));
+        //        }
+        //        else
+        //        {
+        //            roomsList.AddRange(SplitHorizontally(room));
+        //        }
+        //    }
 
-            // If no rooms were added, it means the room couldn't be partitioned.
-            if (roomsList.Count == originalCount)
-            {
-                roomsList.Add(room);
-            }
+        //    // If no rooms were added, it means the room couldn't be partitioned.
+        //    if (roomsList.Count == originalCount)
+        //    {
+        //        roomsList.Add(room);
+        //    }
             
 
-            return roomsList;
-        }
+        //    return roomsList;
+        //}
 
-        private List<Room> PartitionRooms(List<Room> rooms)
+        private List<Room> PartitionRooms(List<Room> rooms, Vector2 minRoomSize)
         {
             var roomsList = new List<Room>();
 
@@ -309,22 +302,22 @@ namespace ProjectDonut.ProceduralGeneration.BSP
                 {
                     if (room.CanSplitHorizontal)
                     {
-                        roomsList.AddRange(SplitHorizontally(room));
+                        roomsList.AddRange(SplitHorizontally(room, minRoomSize));
                     }
                     else
                     {
-                        roomsList.AddRange(SplitVertically(room));
+                        roomsList.AddRange(SplitVertically(room, minRoomSize));
                     }
                 }
                 else
                 {
                     if (room.CanSplitVertical)
                     {
-                        roomsList.AddRange(SplitVertically(room));
+                        roomsList.AddRange(SplitVertically(room, minRoomSize));
                     }
                     else
                     {
-                        roomsList.AddRange(SplitHorizontally(room));
+                        roomsList.AddRange(SplitHorizontally(room, minRoomSize));
                     }
                 }
 
@@ -338,9 +331,9 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             return roomsList;
         }
 
-        private List<Room> SplitVertically(Room room)
+        private List<Room> SplitVertically(Room room, Vector2 minRoomSize)
         {
-            var minValue = (int)_roomMinSize.Y;
+            var minValue = (int)minRoomSize.Y;
             var maxValue = room.Bounds.Height - minValue; // Ensure space for both rooms
 
             if (maxValue <= minValue)
@@ -368,9 +361,9 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             return new List<Room>() { roomA, roomB };
         }
 
-        private List<Room> SplitHorizontally(Room room)
+        private List<Room> SplitHorizontally(Room room, Vector2 minRoomSize)
         {
-            var minValue = (int)_roomMinSize.X;
+            var minValue = (int)minRoomSize.X;
             var maxValue = room.Bounds.Width - minValue; // Ensure space for both rooms
 
             if (maxValue <= minValue)

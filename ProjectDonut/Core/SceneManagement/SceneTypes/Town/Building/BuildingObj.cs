@@ -46,7 +46,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             _bsp = new BSP();
 
             LevelCount = levels;
-            BuildingBounds = BuildingDataMapper.CalculateHouseBounds(Plot);
+            BuildingBounds = BuildingDataMapper.CalculateHouseBounds(Plot, Global.TownSettings.MIN_BUILDING_SIZE);
             BuildingWorldBounds = BuildingBounds.Mutliply(Global.TileSize);
             tmpBuildingIndex = tmpBuildingCounter;
             tmpBuildingCounter++;

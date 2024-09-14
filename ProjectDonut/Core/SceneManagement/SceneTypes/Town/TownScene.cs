@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
@@ -29,12 +30,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         private List<Plot> _plots;
         private List<ISceneObject> _sceneObjs;
 
-        public Vector2 MapSize = new Vector2(100, 100);
+        public Vector2 MapSize;
+        private Random _random = new Random();
 
         public TownScene(WorldStructure worldStructure)
         {
             SceneType = SceneType.Town;
             _worldStructure = worldStructure;
+            MapSize = Global.TownSettings.TOWN_SIZE;
 
             _bsp = new BSP();
             ExitLocations = new Dictionary<string, Rectangle>();
@@ -242,7 +245,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
             var width = (int)MapSize.X;
             var height = (int)MapSize.Y;
 
-            var areaGens = _bsp.GenerateRooms(width, height, new Vector2(5, 5));
+            var areaGens = _bsp.GenerateRooms(width, height, Global.TownSettings.MIN_PLOT_SIZE);
 
             return _bsp.SquashRooms(areaGens[areaGens.Count - 1], width, height);
         }

@@ -24,6 +24,19 @@ namespace ProjectDonut.Core
 {
     public static class Global
     {
+        public static class TownSettings
+        {
+            public static Vector2 TOWN_SIZE = new Vector2(100, 100);
+            public static Vector2 MIN_PLOT_SIZE = new Vector2(30, 20);
+            public static Vector2 MIN_BUILDING_SIZE = new Vector2(25, 15);
+            public static Vector2 MIN_ROOM_SIZE = new Vector2(10, 8);
+        }
+
+        public static class DungeonSettings
+        {
+            public static Vector2 MIN_ROOM_SIZE = new Vector2(20, 20);
+        }
+
         // DAY/NIGHT
         public static DayNightCycle DayNightCycle;
 

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended;
+using MonoGame.Extended.Content.Tiled;
 using ProjectDonut.Debugging;
 using System;
 using System.Collections.Generic;
@@ -11,15 +13,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 {
     public class BuildingDataMapper
     {
-        private static int _minHouseWidth = 12;
-        private static int _minHouseHeight = 8;
-
-        public static Rectangle CalculateHouseBounds(Plot plot)
+        public static Rectangle CalculateHouseBounds(Plot plot, Vector2 minHouseSize)
         {
             var random = new Random();
 
-            var width = random.Next((_minHouseWidth), plot.PlotBounds.Width - 2);
-            var height = random.Next(_minHouseHeight, plot.PlotBounds.Height - 2);
+            var width = random.Next((int)minHouseSize.X, plot.PlotBounds.Width - 2);
+            var height = random.Next((int)minHouseSize.Y, plot.PlotBounds.Height - 2);
 
             var offsetX = random.Next(1, plot.PlotBounds.Width - width - 1);
             var offsetY = random.Next(1, plot.PlotBounds.Height - height - 1);
@@ -42,11 +41,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 {
                     foreach (var room in roomBounds)
                     {
-                        var adjustedRoomBounds = new Rectangle(
-                            room.X, room.Y, room.Width + 1, room.Height);
+                        //var adjustedRoomBounds = new Rectangle(
+                        //    room.X, room.Y, room.Width + 1, room.Height);
 
-                        adjustedRoomBounds = new Rectangle(
-                            room.X + 1, room.Y + 1, room.Width - 1, room.Height - 1);
+                        var adjustedRoomBounds = new Rectangle(
+                            room.X + 1, 
+                            room.Y + 1, 
+                            room.Width - 1, 
+                            room.Height - 1);
 
                         if (adjustedRoomBounds.Contains(plot.PlotBounds.X + i, plot.PlotBounds.Y + j))
                         {
@@ -159,78 +161,75 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             return map;
         }
 
-        public static int[,] GenerateRoomWallDataMap2(Plot plot, Rectangle roomBounds)
+        //public static int[,] GenerateRoomWallDataMap2(Plot plot, Rectangle roomBounds)
+        //{
+        //    var map = new int[
+        //        (int)plot.Town.MapSize.X,
+        //        (int)plot.Town.MapSize.Y];
+
+        //    for (int i = roomBounds.Left; i <= roomBounds.Right; i++)
+        //    {
+        //        for (int j = roomBounds.Top; j <= roomBounds.Bottom; j++)
+        //        {
+        //            if (i == roomBounds.Left || i == roomBounds.Right || j == roomBounds.Top || j == roomBounds.Bottom)
+        //            {
+        //                map[
+        //                    (int)(plot.WorldPosition.X / Global.TileSize / Global.TileSize) + i - plot.PlotBounds.X,
+        //                    (int)(plot.WorldPosition.Y / Global.TileSize / Global.TileSize) + j - plot.PlotBounds.Y] 
+        //                    = 1;
+        //            }
+        //        }
+        //    }
+
+        //    //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_wallDataMap");
+
+        //    return map;
+        //}
+
+
+        //public static int[,] GenerateWallCapDataMap(Plot plot, List<Rectangle> roomBounds)
+        //{
+        //    var map = new int[
+        //        plot.PlotBounds.Width,
+        //        plot.PlotBounds.Height];
+
+        //    foreach (var room in roomBounds)
+        //    {
+        //        for (int i = room.Left; i <= room.Right; i++)
+        //        {
+        //            for (int j = room.Top; j <= room.Bottom; j++)
+        //            {
+        //                if (i == room.Left || i == room.Right)
+        //                {
+        //                    map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
+        //                }
+
+        //                if (j == room.Top || j == room.Bottom)
+        //                {
+        //                    map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_wallCapDataMap");
+
+        //    return map;
+        //}
+
+
+
+        public static int[,] GenerateStairsDataMap(Plot plot, List<Rectangle> roomBounds)
         {
-            var map = new int[
-                (int)plot.Town.MapSize.X,
-                (int)plot.Town.MapSize.Y];
+            var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
 
-            for (int i = roomBounds.Left; i <= roomBounds.Right; i++)
-            {
-                for (int j = roomBounds.Top; j <= roomBounds.Bottom; j++)
-                {
-                    if (i == roomBounds.Left || i == roomBounds.Right || j == roomBounds.Top || j == roomBounds.Bottom)
-                    {
-                        map[
-                            (int)(plot.WorldPosition.X / Global.TileSize / Global.TileSize) + i - plot.PlotBounds.X,
-                            (int)(plot.WorldPosition.Y / Global.TileSize / Global.TileSize) + j - plot.PlotBounds.Y] 
-                            = 1;
-                    }
-                }
-            }
+            var possibleRooms = roomBounds.Where(r => r.Height > 6 && plot.PlotBounds.Contains(r)).ToList();
+            var randomRoomRect = possibleRooms[new Random().Next(possibleRooms.Count)];
 
-            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_wallDataMap");
-
-            return map;
-        }
-
-
-        public static int[,] GenerateWallCapDataMap(Plot plot, List<Rectangle> roomBounds)
-        {
-            var map = new int[
-                plot.PlotBounds.Width,
-                plot.PlotBounds.Height];
-
-            foreach (var room in roomBounds)
-            {
-                for (int i = room.Left; i <= room.Right; i++)
-                {
-                    for (int j = room.Top; j <= room.Bottom; j++)
-                    {
-                        if (i == room.Left || i == room.Right)
-                        {
-                            map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
-                        }
-
-                        if (j == room.Top || j == room.Bottom)
-                        {
-                            map[i - plot.PlotBounds.X, j - plot.PlotBounds.Y] = 1;
-                        }
-                    }
-                }
-            }
-
-            //DebugMapData.WriteMapData(map, $"{plot.WorldPosition.X}-{plot.WorldPosition.Y}_wallCapDataMap");
-
-            return map;
-        }
-
-
-
-        public static int[,] GenerateStairDataMap(Rectangle plotBounds, List<Rectangle> roomBounds)
-        {
-            var map = new int[plotBounds.Width, plotBounds.Height];
-
-            //foreach (var room in roomBounds)
-            //{
-            //    for (int i = room.X; i < room.X + room.Width; i++)
-            //    {
-            //        for (int j = room.Y; j < room.Y + room.Height; j++)
-            //        {
-            //            map[i, j] = 1;
-            //        }
-            //    }
-            //}
+            map[
+                randomRoomRect.Left - plot.PlotBounds.X + 1, 
+                randomRoomRect.Top - plot.PlotBounds.Y]
+                = 1;
 
             return map;
         }

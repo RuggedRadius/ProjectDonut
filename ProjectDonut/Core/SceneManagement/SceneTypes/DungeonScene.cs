@@ -146,7 +146,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             else
             {
                 // Generate rooms
-                var rooms = _bsp.GenerateRooms(width, height);
+                var rooms = _bsp.GenerateRooms(width, height, Global.DungeonSettings.MIN_ROOM_SIZE);
                 rooms[rooms.Count - 1] = _bsp.CreateRoomsWithinAreas(rooms[rooms.Count - 1]);
 
                 // Squash rooms in
