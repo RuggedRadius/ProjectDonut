@@ -79,9 +79,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public void BuildStairs(List<BuildingLevel> levels)
         {
+            var levelBelow = (LevelIndex == 0) ? null : levels[LevelIndex - 1];
+            var level = this;
             var levelAbove = levels[LevelIndex + 1];
 
-            StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, RoomRects, ref levelAbove);
+            StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, ref levelAbove, ref level, ref levelAbove);
             StairTileMap = BuildingTileMapper.GenerateStairsTileMap(StairDataMap, Plot);
 
             levelAbove.BuildTileMaps();

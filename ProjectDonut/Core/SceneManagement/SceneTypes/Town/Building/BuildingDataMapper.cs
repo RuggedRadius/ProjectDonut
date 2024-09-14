@@ -219,7 +219,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
 
 
-        public static int[,] GenerateStairsDataMap(Plot plot, List<Rectangle> roomBounds, ref BuildingLevel levelAbove)
+        public static int[,] GenerateStairsDataMap(Plot plot, ref BuildingLevel levelBelow, ref BuildingLevel level, ref BuildingLevel levelAbove)
         {
             var random = new Random();
             var map = new int[plot.PlotBounds.Width, plot.PlotBounds.Height];
@@ -230,26 +230,56 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             do
             {
-                var randomRoomRect = roomBounds[random.Next(roomBounds.Count)];
+                var randomRoomRect = level.RoomRects[random.Next(level.RoomRects.Count)];
 
-                //var x = randomRoomRect.Left - plot.PlotBounds.X + 1;
-                //var y = randomRoomRect.Top - plot.PlotBounds.Y + 1;
-
-                var x = random.Next(randomRoomRect.Left + 1, randomRoomRect.Left + randomRoomRect.Width - 1) - plot.PlotBounds.X;
-                var y = random.Next(randomRoomRect.Top + 1, randomRoomRect.Top + randomRoomRect.Height - 4) - plot.PlotBounds.Y;
+                var x = random.Next(randomRoomRect.Left + 2, randomRoomRect.Left + randomRoomRect.Width - 2) - plot.PlotBounds.X;
+                var y = random.Next(randomRoomRect.Top + 2, randomRoomRect.Top + randomRoomRect.Height - 4) - plot.PlotBounds.Y;
 
                 bool posSuitable = true;
 
-                for (int i = 0; i < 3; i++)
+                // Check level below for suitability
+                if (levelBelow != null)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        for (int j = 0; j < 3; j++)
+                        {
+                            if (levelBelow.StairDataMap[x + i, y + j] != 0)
+                            {
+                                posSuitable = false;
+                            }
+                        }
+                    }
+                }
+
+                // Check this level for suitability
+                for (int i = 0; i < 3; i++) // to (int i = 0; i < 3; i++) for bare minimum checking if issues pop up
                 {
                     for (int j = 0; j < 3; j++)
                     {
-                        if (levelAbove.FloorDataMap[x + i, y + j - 1] != 1)
+                        if (level.FloorDataMap[x + i, y + j] != 1)
                         {
                             posSuitable = false;
                         }
 
-                        if (levelAbove.WallDataMap[x + i, y + j - 1] != 0)
+                        if (level.WallDataMap[x + i, y + j] != 0)
+                        {
+                            posSuitable = false;
+                        }
+                    }
+                }
+
+                // Check next level for suitability
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (levelAbove.FloorDataMap[x + i, y + j] != 1)
+                        {
+                            posSuitable = false;
+                        }
+
+                        if (levelAbove.WallDataMap[x + i, y + j] != 0)
                         {
                             posSuitable = false;
                         }

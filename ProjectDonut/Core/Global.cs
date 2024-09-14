@@ -26,8 +26,8 @@ namespace ProjectDonut.Core
     {
         public static class TownSettings
         {
-            public static Vector2 TOWN_SIZE = new Vector2(100, 100);
-            public static Vector2 MIN_PLOT_SIZE = new Vector2(30, 20);
+            public static Vector2 TOWN_SIZE = new Vector2(200, 100);
+            public static Vector2 MIN_PLOT_SIZE = new Vector2(60, 40);
             public static Vector2 MIN_BUILDING_SIZE = new Vector2(25, 15);
             public static Vector2 MIN_ROOM_SIZE = new Vector2(10, 8);
         }
