@@ -5,20 +5,12 @@ using Penumbra;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Debugging;
-using ProjectDonut.Debugging.Console;
 using ProjectDonut.Environment;
 using ProjectDonut.GameObjects.PlayerComponents;
-using ProjectDonut.Pathfinding;
-using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.UI.DialogueSystem;
 using ProjectDonut.UI.ScrollDisplay;
 using QuakeConsole;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectDonut.Core
 {
@@ -29,7 +21,7 @@ namespace ProjectDonut.Core
             public static Vector2 TOWN_SIZE = new Vector2(200, 100);
             public static Vector2 MIN_PLOT_SIZE = new Vector2(60, 40);
             public static Vector2 MIN_BUILDING_SIZE = new Vector2(25, 15);
-            public static Vector2 MIN_ROOM_SIZE = new Vector2(10, 8);
+            public static Vector2 MIN_ROOM_SIZE = new Vector2(15, 10);
         }
 
         public static class DungeonSettings

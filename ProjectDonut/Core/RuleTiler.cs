@@ -342,7 +342,8 @@ namespace ProjectDonut.Core
                 {
                     if (!wn.NorthWest && !wn.West && !wn.SouthWest && !wn.South && wn.SouthEast && wn.East && wn.NorthEast)
                     {
-                        return lib["floor-odd-missing-3"];
+                        return lib["floor-odd-missing-nw,n,ne,se,s,sw,w2"];
+                        //return lib["floor-odd-missing-3"];
                     }
                 }
 

@@ -119,187 +119,98 @@ namespace ProjectDonut.Core
             TownSprites.Add("sign-forsale", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Sign_ForSale"));
 
             // Building Blocks
-            var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites2");
+            var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites3");
+            var roofSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/RoofTiles");
             BuildingBlockSprites = new Dictionary<string, Texture2D>
             {
-                { "wall-nw", ExtractSprite(blockSheet, 0, 0) },
-                { "wall-n", ExtractSprite(blockSheet, 1, 0) },
-                { "wall-ne", ExtractSprite(blockSheet, 2, 0) },
-                { "wall-w", ExtractSprite(blockSheet, 1, 1) },
-                { "wall-e", ExtractSprite(blockSheet, 2, 1) },
-                { "wall-sw", ExtractSprite(blockSheet, 5, 1) },
-                { "wall-s", ExtractSprite(blockSheet, 0, 2) },
-                { "wall-se", ExtractSprite(blockSheet, 1, 2) },
+                // Walls
+                { "wall-nw", ExtractSprite(blockSheet, 4, 1) },
+                { "wall-n", ExtractSprite(blockSheet, 5, 1) },
+                { "wall-ne", ExtractSprite(blockSheet, 6, 3) },
+                { "wall-w", ExtractSprite(blockSheet, 4, 2) },
+                { "wall-e", ExtractSprite(blockSheet, 6, 2) },
+                { "wall-sw", ExtractSprite(blockSheet, 4, 3) },
+                { "wall-s", ExtractSprite(blockSheet, 5, 3) },
+                { "wall-se", ExtractSprite(blockSheet, 6, 3) },
 
-                { "wall-ext-nw", ExtractSprite(blockSheet, 3, 4) },
-                { "wall-ext-ne", ExtractSprite(blockSheet, 4, 4) },
-                { "wall-ext-sw", ExtractSprite(blockSheet, 5, 4) },
-                { "wall-ext-se", ExtractSprite(blockSheet, 0, 5) },
+                { "wall-junc-esw", ExtractSprite(blockSheet, 9, 2) },
+                { "wall-junc-new", ExtractSprite(blockSheet, 4, 4) },
+                { "wall-junc-nes", ExtractSprite(blockSheet, 8, 1) },
+                { "wall-junc-nsw", ExtractSprite(blockSheet, 10, 2) },
+                { "wall-junc-nesw", ExtractSprite(blockSheet, 8, 2) },
+                { "wall-int-cap-n", ExtractSprite(blockSheet, 8, 3) },
+                { "wall-int-cap-e", ExtractSprite(blockSheet, 5, 4) },
+                { "wall-int-cap-s", ExtractSprite(blockSheet, 7, 1) },
+                { "wall-int-cap-w", ExtractSprite(blockSheet, 6, 4) },
 
-                { "wall-junc-esw", ExtractSprite(blockSheet, 1, 5) },
-                { "wall-junc-new", ExtractSprite(blockSheet, 2, 5) },
-                { "wall-junc-nes", ExtractSprite(blockSheet, 3, 5) },
-                { "wall-junc-nsw", ExtractSprite(blockSheet, 4, 5) },
-                { "wall-junc-nesw", ExtractSprite(blockSheet, 5, 5) },
+                { "wall-pillar", ExtractSprite(blockSheet, 5, 2) },
 
-
-
-                { "wall-int-cap-n", ExtractSprite(blockSheet, 2, 6) },
-                { "wall-int-cap-e", ExtractSprite(blockSheet, 1, 6) },                
-                { "wall-int-cap-s", ExtractSprite(blockSheet, 3, 6) },
-                { "wall-int-cap-w", ExtractSprite(blockSheet, 0, 6) },
-
-                { "wall-pillar", ExtractSprite(blockSheet, 0, 10) },
-
-
-
-                { "floor-nw", ExtractSprite(blockSheet, 3, 0) },
-                { "floor-n", ExtractSprite(blockSheet, 4, 0)  },
-                { "floor-ne", ExtractSprite(blockSheet, 5, 0)  },
-                { "floor-w", ExtractSprite(blockSheet, 3, 1)  },
-                { "floor-c", ExtractSprite(blockSheet, 0, 1)  },
-                { "floor-e", ExtractSprite(blockSheet, 4, 1)  },
-                { "floor-sw", ExtractSprite(blockSheet, 2, 2)  },
-                { "floor-s", ExtractSprite(blockSheet, 3, 2)  },
-                { "floor-se", ExtractSprite(blockSheet, 4, 2)  },
-
-                { "floor-se-ext", ExtractSprite(blockSheet, 0, 5)  },
-                { "floor-sw-ext", ExtractSprite(blockSheet, 5, 4)  },
-                { "floor-ne-ext", ExtractSprite(blockSheet, 4, 4)  },
-                { "floor-nw-ext", ExtractSprite(blockSheet, 3, 4)  },
-
-                { "floor-junc-ns", ExtractSprite(blockSheet, 4, 6) },
-                { "floor-junc-ew", ExtractSprite(blockSheet, 5, 6) },
-
-                { "floor-doublecorner-bottom", ExtractSprite(blockSheet, 0, 7) },
-                { "floor-doublecorner-top", ExtractSprite(blockSheet, 1, 7) },
-                { "floor-doublecorner-right", ExtractSprite(blockSheet, 2, 7) },
-                { "floor-doublecorner-left", ExtractSprite(blockSheet, 3, 7) },
-
-                { "floor-odd-nsw-only", ExtractSprite(blockSheet, 4, 7) },
-                { "floor-odd-missing-ne,sw,w,nw", ExtractSprite(blockSheet, 5, 7) },
-
-                { "floor-odd-missing-ew", ExtractSprite(blockSheet, 0, 9) },
-                { "floor-odd-missing-w-[o]sw", ExtractSprite(blockSheet, 1, 9) },
-                { "floor-odd-missing-e-[o]se", ExtractSprite(blockSheet, 2, 9) },                
-                { "floor-odd-missing-nw,n,ne,se,s,sw,w", ExtractSprite(blockSheet, 4, 9) },                
-                { "floor-odd-missing-nw,n,ne,se,s,sw,w2", ExtractSprite(blockSheet, 6, 1) },                
-                { "floor-odd-missing-3", ExtractSprite(blockSheet, 6, 1) },                
-                { "floor-odd-missing-4", ExtractSprite(blockSheet, 7, 1) },                
-                { "floor-odd-missing-nw,n,ne,e,se,s,sw", ExtractSprite(blockSheet, 5, 9) },                
-                { "floor-doorway-vertical", ExtractSprite(blockSheet, 3, 9) },
-
-                { "floor-nw-ext-stair", ExtractSprite(blockSheet, 0, 8) },
-                { "floor-ne-ext-stair", ExtractSprite(blockSheet, 1, 8) },
-                { "floor-sw-ext-stair", ExtractSprite(blockSheet, 2, 8) },
-                { "floor-se-ext-stair", ExtractSprite(blockSheet, 3, 8) },
-
+                // FLOOR
+                { "floor-nw", ExtractSprite(blockSheet, 1, 1) },
+                { "floor-n", ExtractSprite(blockSheet, 2, 1)  },
+                { "floor-ne", ExtractSprite(blockSheet, 3, 1)  },
+                { "floor-w", ExtractSprite(blockSheet, 1, 2)  },
+                { "floor-c", ExtractSprite(blockSheet, 2, 2)  },
+                { "floor-e", ExtractSprite(blockSheet, 3, 2)  },
+                { "floor-sw", ExtractSprite(blockSheet, 1, 3)  },
+                { "floor-s", ExtractSprite(blockSheet, 2, 3)  },
+                { "floor-se", ExtractSprite(blockSheet, 3, 3)  },
+                { "floor-se-ext", ExtractSprite(blockSheet, 1, 5)  },
+                { "floor-sw-ext", ExtractSprite(blockSheet, 4, 5)  },
+                { "floor-ne-ext", ExtractSprite(blockSheet, 3, 5)  },
+                { "floor-nw-ext", ExtractSprite(blockSheet, 2, 5)  },
+                { "floor-junc-ns", ExtractSprite(blockSheet, 2, 1) },
+                { "floor-junc-ew", ExtractSprite(blockSheet, 1, 8) },
+                { "floor-doublecorner-bottom", ExtractSprite(blockSheet, 2, 2) },
+                { "floor-doublecorner-top", ExtractSprite(blockSheet, 2, 6) },
+                { "floor-doublecorner-right", ExtractSprite(blockSheet, 3, 6) },
+                { "floor-doublecorner-left", ExtractSprite(blockSheet, 4, 6) },
+                { "floor-odd-nsw-only", ExtractSprite(blockSheet, 5, 6) },
+                { "floor-odd-missing-ne,sw,w,nw", ExtractSprite(blockSheet, 2, 2) }, //?
+                { "floor-odd-missing-ew", ExtractSprite(blockSheet, 1, 8) },
+                { "floor-odd-missing-w-[o]sw", ExtractSprite(blockSheet, 2, 8) },
+                { "floor-odd-missing-e-[o]se", ExtractSprite(blockSheet, 3, 8) },  
+                { "floor-odd-missing-nw,n,ne,se,s,sw,w", ExtractSprite(blockSheet, 5, 8) },                  
+                { "floor-odd-missing-nw,n,ne,se,s,sw,w2", ExtractSprite(blockSheet, 8, 8) },   
+                { "floor-odd-missing-4", ExtractSprite(blockSheet, 7, 8) },    
+                { "floor-odd-missing-nw,n,ne,e,se,s,sw", ExtractSprite(blockSheet, 6, 8) },  
+                { "floor-doorway-vertical", ExtractSprite(blockSheet, 4, 8) },
+                { "floor-nw-ext-stair", ExtractSprite(blockSheet, 1, 7) },
+                { "floor-ne-ext-stair", ExtractSprite(blockSheet, 2, 7) },
+                { "floor-sw-ext-stair", ExtractSprite(blockSheet, 3, 7) },
+                { "floor-se-ext-stair", ExtractSprite(blockSheet, 4, 7) },
                 
+                // STAIRS
+                { "stairs-top-01", ExtractSprite(blockSheet, 8, 5) },
+                { "stairs-top-02", ExtractSprite(blockSheet, 9, 5) },
+                { "stairs-top-03", ExtractSprite(blockSheet, 10, 5) },
+                { "stairs-bottom-01", ExtractSprite(blockSheet, 8, 6) },
+                { "stairs-bottom-02", ExtractSprite(blockSheet, 9, 6) },
+                { "stairs-bottom-03", ExtractSprite(blockSheet, 10, 6) },
+
+                // DOORS
+                { "door-int", ExtractSprite(blockSheet, 1, 4) },
+                //{ "door-ext", ExtractSprite(blockSheet, 2, 4) },
+
+                // ROOF
+                { "roof-back-left", ExtractSprite(roofSheet, 0, 0, 2 * Global.TileSize, 2 * Global.TileSize) },
+                { "roof-back-right", ExtractSprite(roofSheet, 4 * Global.TileSize, 0, 2 * Global.TileSize, 2 * Global.TileSize) },
+
+                { "roof-front-left", ExtractSprite(roofSheet, 0, 3 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize) },
+                { "roof-front-right", ExtractSprite(roofSheet, 4 * Global.TileSize, 3 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize) },
+
+                { "roof-side-left", ExtractSprite(roofSheet, 0, 2 * Global.TileSize, 2 * Global.TileSize, Global.TileSize) },
+                { "roof-side-right", ExtractSprite(roofSheet, 4 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize, 1 * Global.TileSize) },
+
+                { "roof-top-back", ExtractSprite(roofSheet, 2 * Global.TileSize, 0 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize) },
+                { "roof-top-middle", ExtractSprite(roofSheet, 2 * Global.TileSize, 2 * Global.TileSize, 1 * Global.TileSize, 1 * Global.TileSize) },
+                { "roof-top-front", ExtractSprite(roofSheet, 2 * Global.TileSize, 3 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize) },
+                { "roof-top-front2", ExtractSprite(roofSheet, 3 * Global.TileSize, 3 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize) },
 
 
-
-
-                { "stairs-top-01", ExtractSprite(blockSheet, 6, 5) },
-                { "stairs-top-02", ExtractSprite(blockSheet, 7, 5) },
-                { "stairs-top-03", ExtractSprite(blockSheet, 8, 5) },
-                { "stairs-bottom-01", ExtractSprite(blockSheet, 6, 6) },
-                { "stairs-bottom-02", ExtractSprite(blockSheet, 7, 6) },
-                { "stairs-bottom-03", ExtractSprite(blockSheet, 8, 6) },
-
-                { "door-int", ExtractSprite(blockSheet, 0, 3) },
-
-
-
-
-                //{ "stairs-01", ExtractSprite(blockSheet, 6, 0) },
-                //{ "stairs-02", ExtractSprite(blockSheet, 7, 0) },
-                //{ "stairs-03", ExtractSprite(blockSheet, 6, 1) },
-                //{ "stairs-04", ExtractSprite(blockSheet, 7, 1) },
-                //{ "stairs-05", ExtractSprite(blockSheet, 6, 2) },
-                //{ "stairs-06", ExtractSprite(blockSheet, 7, 2) },
-                //{ "stairs-07", ExtractSprite(blockSheet, 6, 3) },
-                //{ "stairs-08", ExtractSprite(blockSheet, 7, 3) },
-                //{ "stairs-09", ExtractSprite(blockSheet, 6, 4) },
-                //{ "stairs-10", ExtractSprite(blockSheet, 7, 4) },
 
                 { "roof", Global.MISSING_TEXTURE }
             };
-
-            //blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_piece");
-            //BuildingBlockSprites.Add("floor-nw-int", ExtractSprite(blockSheet, 3, 0));
-            //BuildingBlockSprites.Add("floor-n", ExtractSprite(blockSheet, 4, 0) );
-            //BuildingBlockSprites.Add("floor-ne-int", ExtractSprite(blockSheet, 5, 0) );
-            //BuildingBlockSprites.Add("floor-w", ExtractSprite(blockSheet, 3, 1) );
-            //BuildingBlockSprites.Add("floor-c", ExtractSprite(blockSheet, 4, 1) );
-            //BuildingBlockSprites.Add("floor-e", ExtractSprite(blockSheet, 5, 1) );
-            //BuildingBlockSprites.Add("floor-sw-int", ExtractSprite(blockSheet, 3, 2) );
-            //BuildingBlockSprites.Add("floor-s", ExtractSprite(blockSheet, 4, 2) );
-            //BuildingBlockSprites.Add("floor-se-int", ExtractSprite(blockSheet, 5, 2) );
-            //BuildingBlockSprites.Add("floor-se-ext", ExtractSprite(blockSheet, 6, 0) );
-            //BuildingBlockSprites.Add("floor-sw-ext", ExtractSprite(blockSheet, 7, 0) );
-            //BuildingBlockSprites.Add("floor-ne-ext", ExtractSprite(blockSheet, 6, 1) );
-            //BuildingBlockSprites.Add("floor-nw-ext", ExtractSprite(blockSheet, 7, 1) );
-
-            ////BuildingBlockSprites.Add("roof", ExtractSprite(blockSheet, 2, 3));
-            //BuildingBlockSprites.Add("roof", Global.MISSING_TEXTURE);
-
-
-
-
-            //var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Build'[ingTiles2");
-            //BuildingBlockSprites = new Dictionary<string, Texture2D>()
-            //{
-            //    { "wall-face", ExtractSprite(blockSheet, 1, 1) },
-
-            //    { "wall-cap-nw", ExtractSprite(blockSheet, 0, 0) },
-            //    { "wall-cap-n", ExtractSprite(blockSheet, 1, 0) },
-            //    { "wall-cap-ne", ExtractSprite(blockSheet, 2, 0) },
-            //    { "wall-cap-w", ExtractSprite(blockSheet, 0, 1) },
-            //    { "wall-cap-e", ExtractSprite(blockSheet, 2, 1) },
-            //    { "wall-cap-sw", ExtractSprite(blockSheet, 0, 2) },
-            //    { "wall-cap-s", ExtractSprite(blockSheet, 1, 2) },
-            //    { "wall-cap-se", ExtractSprite(blockSheet, 2, 2) },
-
-            //    { "floor-nw-int", ExtractSprite(blockSheet, 3, 0) },
-            //    { "floor-n", ExtractSprite(blockSheet, 4, 0) },
-            //    { "floor-ne-int", ExtractSprite(blockSheet, 5, 0) },
-
-            //    { "floor-w", ExtractSprite(blockSheet, 3, 1) },
-            //    { "floor-c", ExtractSprite(blockSheet, 4, 1) },
-            //    { "floor-e", ExtractSprite(blockSheet, 5, 1) },
-
-            //    { "floor-sw-int", ExtractSprite(blockSheet, 3, 2) },
-            //    { "floor-s", ExtractSprite(blockSheet, 4, 2) },
-            //    { "floor-se-int", ExtractSprite(blockSheet, 5, 2) },
-
-            //    { "floor-se-ext", ExtractSprite(blockSheet, 6, 0) },
-            //    { "floor-sw-ext", ExtractSprite(blockSheet, 7, 0) },
-            //    { "floor-ne-ext", ExtractSprite(blockSheet, 6, 1) },
-            //    { "floor-nw-ext", ExtractSprite(blockSheet, 7, 1) },
-
-            //    { "door-ext", ExtractSprite(blockSheet, 3, 3) },
-            //    { "door-int", ExtractSprite(blockSheet, 4, 3) },
-
-            //    { "roof", ExtractSprite(blockSheet, 2, 3) },
-
-            //    // Stairs
-            //    // ....
-            //};
-
-
-
-            //BuildingBlockSprites.Add("building-wall-nw", ExtractSprite(blockSheet, 0, 0));
-            //BuildingBlockSprites.Add("building-wall-n", ExtractSprite(blockSheet, 1, 0));
-            //BuildingBlockSprites.Add("building-wall-ne", ExtractSprite(blockSheet, 2, 0));
-            //BuildingBlockSprites.Add("building-wall-w", ExtractSprite(blockSheet, 0, 1));
-            //BuildingBlockSprites.Add("building-floor", ExtractSprite(blockSheet, 1, 1));
-            //BuildingBlockSprites.Add("building-wall-e", ExtractSprite(blockSheet, 2, 1));
-            //BuildingBlockSprites.Add("building-wall-sw", ExtractSprite(blockSheet, 0, 2));
-            //BuildingBlockSprites.Add("building-wall-s", ExtractSprite(blockSheet, 1, 2));
-            //BuildingBlockSprites.Add("building-wall-se", ExtractSprite(blockSheet, 2, 2));
-            //BuildingBlockSprites.Add("building-roof-thatching", ExtractSprite(blockSheet, 3, 0));
-            //BuildingBlockSprites.Add("building-door-ext", ExtractSprite(blockSheet, 3, 2));
-
         }
 
         private void LoadItems()

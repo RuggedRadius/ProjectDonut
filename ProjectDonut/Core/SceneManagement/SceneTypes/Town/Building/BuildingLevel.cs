@@ -28,7 +28,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public bool IsVisible => throw new NotImplementedException();
         public Texture2D Texture { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Vector2 WorldPosition => throw new NotImplementedException();
+        public Vector2 WorldPosition { get; set; }
         public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private BSP _bsp;
@@ -39,6 +39,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             Plot = plot;
             ParentBuilding = parentBuilding;
             LevelIndex = levelIndex;
+            WorldPosition = parentBuilding.BuildingWorldBounds.Location.ToVector2();
 
             _bsp = new BSP();
             _random = new Random();

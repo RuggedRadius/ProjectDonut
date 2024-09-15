@@ -24,6 +24,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public int PlayerOccupyLevel { get; set; }
 
         public Dictionary<int, BuildingLevel> Levels { get; set; }
+        public BuildingRoof Roof { get; set; }
 
         public int[,] RoofDataMap { get; set; }
         public Tilemap RoofTileMap { get; set; }
@@ -81,7 +82,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             RoofTileMap = BuildingTileMapper.GenerateRoofTileMap(RoofDataMap, Plot);
 
             //DebugMapData.WriteMapData(Levels[0].FloorDataMap, $"FloorDataMap_{tmpBuildingIndex}");
-            //DebugMapData.WriteMapData(RoofDataMap, $"RoofDataMap_{tmpBuildingIndex}");            
+            //DebugMapData.WriteMapData(RoofDataMap, $"RoofDataMap_{tmpBuildingIndex}");
+
+            Roof = new BuildingRoof();
+            Roof.BuildRoof(Levels[Levels.Count - 1]);
         }
 
         public void Initialize()
@@ -216,7 +220,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     level.Value.Draw(gameTime);
                 }
 
-                RoofTileMap.Draw(gameTime);
+                //RoofTileMap.Draw(gameTime);
+
+                Roof.Draw(gameTime);
             }
         }
 

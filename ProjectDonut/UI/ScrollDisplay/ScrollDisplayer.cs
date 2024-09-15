@@ -159,7 +159,7 @@ namespace ProjectDonut.UI.ScrollDisplay
             {
                 // Calculate positions
                 var startX = (int)(scroll.ScreenPosition.Value.X - curBottomWidth / 2);
-                var startY = (int)(scroll.ScreenPosition.Value.Y + 32 * scale / 2 - scroll.TextDimensions.Y / 2);
+                var startY = (int)(scroll.ScreenPosition.Value.Y + Global.TileSize * scale / 2 - scroll.TextDimensions.Y / 2);
 
                 // Draw scroll background parts
                 Global.SpriteBatch.Begin(transformMatrix: Matrix.Identity);
@@ -169,7 +169,7 @@ namespace ProjectDonut.UI.ScrollDisplay
                 middleWidth = middleWidth < 0 ? 0 : middleWidth;
                 for (int i = 0; i < middleWidth; i++)
                 {
-                    Global.SpriteBatch.Draw(scrollBottom, new Rectangle(startX + 7 * scale + i, (int)scroll.ScreenPosition.Value.Y, 1 * scale, 32 * scale), Color.White);
+                    Global.SpriteBatch.Draw(scrollBottom, new Rectangle(startX + 7 * scale + i, (int)scroll.ScreenPosition.Value.Y, 1 * scale, Global.TileSize * scale), Color.White);
                 }
 
                 Global.SpriteBatch.End();
@@ -178,7 +178,7 @@ namespace ProjectDonut.UI.ScrollDisplay
                 var originalScissorRect = Global.GraphicsDevice.ScissorRectangle;
 
                 // Apply scissor rectangle
-                Global.GraphicsDevice.ScissorRectangle = new Rectangle(startX + 7 * scale, (int)scroll.ScreenPosition.Value.Y, middleWidth, 32 * scale);
+                Global.GraphicsDevice.ScissorRectangle = new Rectangle(startX + 7 * scale, (int)scroll.ScreenPosition.Value.Y, middleWidth, Global.TileSize * scale);
 
                 // Draw text with scissor test
                 var totalWidth = (2 * scrollTopLeft.Width * scale) + scroll.DisplayWidth;
@@ -199,8 +199,8 @@ namespace ProjectDonut.UI.ScrollDisplay
 
                 // Draw scroll caps
                 Global.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-                Global.SpriteBatch.Draw(scrollTopLeft, new Rectangle(startX, (int)scroll.ScreenPosition.Value.Y, scrollTopLeft.Width * scale, Global.TileSize * scale / 2), Color.White);
-                Global.SpriteBatch.Draw(scrollTopRight, new Rectangle(startX + 7 * scale + middleWidth, (int)scroll.ScreenPosition.Value.Y, scrollTopLeft.Width * scale, Global.TileSize * scale / 2), Color.White);
+                Global.SpriteBatch.Draw(scrollTopLeft, new Rectangle(startX, (int)scroll.ScreenPosition.Value.Y, scrollTopLeft.Width * scale, Global.TileSize * scale), Color.White);
+                Global.SpriteBatch.Draw(scrollTopRight, new Rectangle(startX + 7 * scale + middleWidth, (int)scroll.ScreenPosition.Value.Y, scrollTopLeft.Width * scale, Global.TileSize * scale), Color.White);
                 Global.SpriteBatch.End();
             }
 
