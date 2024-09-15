@@ -17,8 +17,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         {
             var random = new Random();
 
-            var width = random.Next((int)minHouseSize.X, plot.PlotBounds.Width - 2);
-            var height = random.Next((int)minHouseSize.Y, plot.PlotBounds.Height - 2);
+            var minSizeX = (int)minHouseSize.X;
+            var minSizeY = (int)minHouseSize.Y;
+
+            var maxSizeX = (int)(plot.PlotBounds.Width - 4);
+            var maxSizeY = (int)(maxSizeX * 0.8f);
+            maxSizeY = (int)(Math.Min(maxSizeY, (int)plot.PlotBounds.Height - 2));
+
+            var width = random.Next(minSizeX, maxSizeX);
+            var height = random.Next(minSizeY, maxSizeY);
 
             var offsetX = random.Next(1, plot.PlotBounds.Width - width - 1);
             var offsetY = random.Next(1, plot.PlotBounds.Height - height - 1);

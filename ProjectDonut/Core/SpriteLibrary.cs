@@ -176,6 +176,15 @@ namespace ProjectDonut.Core
                 { "floor-doublecorner-right", ExtractSprite(blockSheet, 2, 7) },
                 { "floor-doublecorner-left", ExtractSprite(blockSheet, 3, 7) },
 
+                { "floor-odd-nsw-only", ExtractSprite(blockSheet, 4, 7) },
+
+                { "floor-nw-ext-stair", ExtractSprite(blockSheet, 0, 8) },
+                { "floor-ne-ext-stair", ExtractSprite(blockSheet, 1, 8) },
+                { "floor-sw-ext-stair", ExtractSprite(blockSheet, 2, 8) },
+                { "floor-se-ext-stair", ExtractSprite(blockSheet, 3, 8) },
+
+
+
 
                 { "stairs-top-01", ExtractSprite(blockSheet, 6, 5) },
                 { "stairs-top-02", ExtractSprite(blockSheet, 7, 5) },
@@ -183,6 +192,10 @@ namespace ProjectDonut.Core
                 { "stairs-bottom-01", ExtractSprite(blockSheet, 6, 6) },
                 { "stairs-bottom-02", ExtractSprite(blockSheet, 7, 6) },
                 { "stairs-bottom-03", ExtractSprite(blockSheet, 8, 6) },
+
+                { "door-int", ExtractSprite(blockSheet, 0, 3) },
+
+
 
 
                 //{ "stairs-01", ExtractSprite(blockSheet, 6, 0) },

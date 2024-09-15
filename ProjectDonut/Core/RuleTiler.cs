@@ -293,7 +293,7 @@ namespace ProjectDonut.Core
             public static Texture2D FloorTile(int[,] map, int x, int y)
             {
                 var nb = new NeighbourDataTiles(map, x, y);
-                var fnb = new NeighbourDataTiles(map, x, y);
+                //var fnb = new NeighbourDataTiles(map, x, y);
                 var lib = Global.SpriteLibrary.BuildingBlockSprites;
 
                 // CORNERS
@@ -312,7 +312,7 @@ namespace ProjectDonut.Core
                     return lib["floor-sw"];
                 }
 
-                // HALL CORNERS
+                // HALL CORNERS - INTERNAL
                 if (nb.North && nb.East && nb.South && nb.West && !nb.SouthWest && !nb.SouthEast)
                     return lib["floor-doublecorner-bottom"];
 
@@ -324,6 +324,20 @@ namespace ProjectDonut.Core
 
                 if (nb.North && nb.East && nb.South && nb.West && !nb.NorthWest && !nb.SouthWest)
                     return lib["floor-doublecorner-left"];
+
+
+                // CORNERS - EXTERNAL
+                if (nb.North && !nb.NorthEast && nb.East && nb.SouthEast && nb.South && nb.SouthWest && nb.West && nb.NorthWest)
+                    return lib["floor-ne-ext-stair"];
+
+                if (nb.North && nb.NorthEast && nb.East && nb.SouthEast && nb.South && nb.SouthWest && nb.West && !nb.NorthWest)
+                    return lib["floor-nw-ext-stair"];
+
+                if (nb.North && nb.NorthEast && nb.East && !nb.SouthEast && nb.South && nb.SouthWest && nb.West && nb.NorthWest)
+                    return lib["floor-se-ext-stair"];
+
+                if (nb.North && nb.NorthEast && nb.East && nb.SouthEast && nb.South && !nb.SouthWest && nb.West && nb.NorthWest)
+                    return lib["floor-sw-ext-stair"];
 
 
 
@@ -338,7 +352,14 @@ namespace ProjectDonut.Core
                     return lib["floor-w"];
 
                 if (nb.North && !nb.East && nb.South && nb.West) // NSW
+                {
+                    if (!nb.NorthEast && !nb.East && !nb.SouthEast && !nb.SouthWest && !nb.NorthWest)
+                    {
+                        return lib["floor-odd-nsw-only"];
+                    }
+
                     return lib["floor-e"];
+                }
 
                 if (nb.North && !nb.East && nb.South && !nb.West) // NS
                     return lib["floor-junc-ew"];

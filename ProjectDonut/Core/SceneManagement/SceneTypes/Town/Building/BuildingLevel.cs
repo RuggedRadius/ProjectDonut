@@ -121,14 +121,31 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public void Draw(GameTime gameTime)
         {
-            //foreach (var room in Rooms)
+            //if (ParentBuilding.Levels[ParentBuilding.PlayerOccupyLevel] == this)
             //{
-            //    room.Draw(gameTime);
+            //    foreach (var tile in FloorTileMap.Map)
+            //    {
+            //        if (tile == null)
+            //            continue;
+
+
+            //    }
+
+            //    FloorTileMap.Draw(gameTime);
+            //    WallTileMap.Draw(gameTime);
+            //}
+            //else
+            //{
+                FloorTileMap.Draw(gameTime);
+                WallTileMap.Draw(gameTime);
             //}
 
-            FloorTileMap.Draw(gameTime);
-            WallTileMap.Draw(gameTime);
-            //WallTileMap.DrawOutline(gameTime);
+
+
+
+            WallTileMap.DrawOutline(gameTime);
+
+
             if (StairTileMap != null)
                 StairTileMap.Draw(gameTime);
         }

@@ -57,6 +57,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             Levels = new Dictionary<int, BuildingLevel>();
             var levelsList = new List<BuildingLevel>();
 
+            // Build Levels
             for (int i = 0; i < LevelCount; i++)
             {
                 var level = new BuildingLevel(Plot, this, i);
@@ -65,17 +66,22 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 levelsList.Add(level);
             }
 
+            // Build Stairs
             for (int i = 0; i < LevelCount - 1; i++)
             {
                 Levels[i].BuildStairs(levelsList);
             }
 
+            // Build Doors
+            var bottomLevel = Levels[0];
+            PlaceExternalDoor(ref bottomLevel);
+
+            // Build Roof
             RoofDataMap = BuildingDataMapper.GenerateRoofDataMap(Plot, Levels[0].RoomRects);
             RoofTileMap = BuildingTileMapper.GenerateRoofTileMap(RoofDataMap, Plot);
 
             //DebugMapData.WriteMapData(Levels[0].FloorDataMap, $"FloorDataMap_{tmpBuildingIndex}");
-            //DebugMapData.WriteMapData(RoofDataMap, $"RoofDataMap_{tmpBuildingIndex}");
-            
+            //DebugMapData.WriteMapData(RoofDataMap, $"RoofDataMap_{tmpBuildingIndex}");            
         }
 
         public void Initialize()
@@ -130,6 +136,68 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             {
                 PlayerOccupyLevel = 0;
             }
+
+            foreach (var level in Levels)
+            {
+                if (level.Value.LevelIndex == PlayerOccupyLevel)
+                {
+                    foreach (var tile in level.Value.FloorTileMap.Map)
+                    {
+                        if (tile == null)
+                            continue;
+
+                        tile.IsVisible = true;
+                    }
+
+                    foreach (var tile in level.Value.WallTileMap.Map)
+                    {
+                        if (tile == null)
+                            continue;
+
+                        tile.IsVisible = true;
+                    }
+
+                    if (level.Value.StairTileMap == null)
+                        continue;
+
+                    foreach (var tile in level.Value.StairTileMap.Map)
+                    {
+                        if (tile == null)
+                            continue;
+
+                        tile.IsVisible = true;
+                    }
+                }
+                else
+                {
+                    foreach (var tile in level.Value.FloorTileMap.Map)
+                    {
+                        if (tile == null)
+                            continue;
+
+                        tile.IsVisible = false;
+                    }
+
+                    foreach (var tile in level.Value.WallTileMap.Map)
+                    {
+                        if (tile == null)
+                            continue;
+
+                        tile.IsVisible = false;
+                    }
+
+                    if (level.Value.StairTileMap == null)
+                        continue;
+
+                    foreach (var tile in level.Value.StairTileMap.Map)
+                    {
+                        if (tile == null)
+                            continue;
+
+                        tile.IsVisible = false;
+                    }
+                }                
+            }
         }
 
         public void Draw(GameTime gameTime)
@@ -140,8 +208,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 {
                     Levels[i].Draw(gameTime);
                 }
-
-                //Levels[PlayerOccupyLevel].Draw(gameTime);
             }
             else
             {
@@ -152,47 +218,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
                 RoofTileMap.Draw(gameTime);
             }
-
-
-
-            //for (var i = 0; i < FloorTileMaps.Count; i++)
-            //{
-            //    //if (PlayerOccupyLevel >= i)
-            //    //{
-            //    //    break;
-            //    //}
-
-            //    // Floor
-            //    FloorTileMaps[i].Draw(gameTime);
-            //    WallTileMaps[i].Draw(gameTime);
-            //    //WallCapTileMaps[i].Draw(gameTime);
-
-            //    // Stairs
-            //    if (i < StairDataMaps.Count)
-            //    {
-            //        StairTileMaps[i].Draw(gameTime);
-            //    }
-            //}
-
-            //// Roof
-            //if (BuildingBounds.Contains(Global.PlayerObj.WorldPosition) == false)
-            //{
-            //    ;
-            //    //RoofTileMap.Draw(gameTime);
-
-            //}
-
-            //if (Global.SHOW_GRID_OUTLINE)
-            //    RoofTileMap.DrawOutline(gameTime);
         }
 
-
-        // TODO: Fix and implement this
-        private void PlaceExternalDoor(Tilemap bottomFloorWallTileMap)
+        private void PlaceExternalDoor(ref BuildingLevel bottomLevel)
         {
-            var targetTexture = Global.SpriteLibrary.BuildingBlockSprites["building-wall-s"];
+            var targetTexture = Global.SpriteLibrary.BuildingBlockSprites["wall-n"];
             var southWalls = new List<Tile>();
-            foreach (var tile in bottomFloorWallTileMap.Map)
+
+            foreach (var tile in bottomLevel.WallTileMap.Map)
             {
                 if (tile == null)
                     continue;
@@ -204,7 +237,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             }
 
             var doorTile = southWalls[_random.Next(0, southWalls.Count)];
-            doorTile.Texture = Global.SpriteLibrary.BuildingBlockSprites["building-door-ext"];
+            doorTile.Texture = Global.SpriteLibrary.BuildingBlockSprites["door-int"];
+
+            bottomLevel.WallDataMap[doorTile.xIndex, doorTile.yIndex] = 0;
+            bottomLevel.FloorDataMap[doorTile.xIndex, doorTile.yIndex] = 1;
         }
     }
 }
