@@ -83,7 +83,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             return tm;
         }
 
-        public static Tilemap GenerateFloorTileMap(int[,] map, Plot plot)
+        public static Tilemap GenerateFloorTileMap(int[,] map, Plot plot, BuildingLevel level)
         {
             var tm = new Tilemap(map.GetLength(0), map.GetLength(1));
 
@@ -104,7 +104,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = RuleTiler.Town.FloorTile(map, i, j),// Global.SpriteLibrary.BuildingBlockSprites["floor-c"],
+                        Texture = RuleTiler.Town.FloorTile(map, level.WallDataMap, i, j),// Global.SpriteLibrary.BuildingBlockSprites["floor-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };

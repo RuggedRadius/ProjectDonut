@@ -73,7 +73,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public void BuildTileMaps()
         {
-            FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot);
+            FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot, this);
             WallTileMap = BuildingTileMapper.GenerateWallTileMap(WallDataMap, FloorDataMap, Plot);
         }
 
@@ -143,7 +143,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
 
 
-            WallTileMap.DrawOutline(gameTime);
+            //WallTileMap.DrawOutline(gameTime);
 
 
             if (StairTileMap != null)

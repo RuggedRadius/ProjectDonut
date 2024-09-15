@@ -42,11 +42,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public void Initialize()
         {
-            FloorDataMap = BuildingDataMapper.GenerateRoomDataMap(ParentBuilding.Plot, RoomBounds);
-            WallDataMap = BuildingDataMapper.GenerateRoomWallDataMap(ParentBuilding.Plot, RoomBounds);
+            //    FloorDataMap = BuildingDataMapper.GenerateRoomDataMap(ParentBuilding.Plot, RoomBounds);
+            //    WallDataMap = BuildingDataMapper.GenerateRoomWallDataMap(ParentBuilding.Plot, RoomBounds);
 
-            FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, ParentBuilding.Plot);
-            WallTileMap = BuildingTileMapper.GenerateWallTileMap(WallDataMap, FloorDataMap, ParentBuilding.Plot);
+            //    FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, ParentBuilding.Plot);
+            //    WallTileMap = BuildingTileMapper.GenerateWallTileMap(WallDataMap, FloorDataMap, ParentBuilding.Plot);
         }
 
         public void LoadContent()

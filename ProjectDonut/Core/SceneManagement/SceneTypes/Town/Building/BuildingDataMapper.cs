@@ -240,7 +240,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 var randomRoomRect = level.RoomRects[random.Next(level.RoomRects.Count)];
 
                 var x = random.Next(randomRoomRect.Left + 2, randomRoomRect.Left + randomRoomRect.Width - 2) - plot.PlotBounds.X;
-                var y = random.Next(randomRoomRect.Top + 2, randomRoomRect.Top + randomRoomRect.Height - 4) - plot.PlotBounds.Y;
+                var y = random.Next(randomRoomRect.Top + 4, randomRoomRect.Top + randomRoomRect.Height - 4) - plot.PlotBounds.Y;
 
                 bool posSuitable = true;
 
@@ -277,10 +277,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 }
 
                 // Check next level for suitability
-                for (int i = 0; i < 3; i++)
+                for (int i = -2; i < 3; i++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    for (int j = -2; j < 3; j++)
                     {
+                        if (x + i < 0 || x + i >= plot.PlotBounds.Width || y + j < 0 || y + j >= plot.PlotBounds.Height)
+                        {
+                            posSuitable = false;
+                        }
+
                         if (levelAbove.FloorDataMap[x + i, y + j] != 1)
                         {
                             posSuitable = false;

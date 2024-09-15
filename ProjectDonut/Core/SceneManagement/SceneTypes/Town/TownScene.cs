@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using ProjectDonut.Core.Input;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
@@ -32,6 +33,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
 
         public Vector2 MapSize;
         private Random _random = new Random();
+        public Rectangle TownBounds { get; set; }
 
         public TownScene(WorldStructure worldStructure)
         {
@@ -41,6 +43,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
 
             _bsp = new BSP();
             ExitLocations = new Dictionary<string, Rectangle>();
+            //TownBounds = new Rectangle(
+            //    (int)worldStructure.WorldPosition.X,
+            //    (int)worldStructure.WorldPosition.Y, 
+            //    (int)MapSize.X * Global.TileSize, 
+            //    (int)MapSize.Y * Global.TileSize);
         }
 
         public override void Initialize()
@@ -53,11 +60,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
             base.LoadContent();
 
             _baseTilemap = GenerateGroundTilemap(new int[(int)MapSize.X, (int)MapSize.Y]);
+            GenerateExitLocations();
+            BuildTown();
+        }
 
+        public void BuildTown()
+        {
             var areas = GenerateAreas();
             _plots = GeneratePlots(areas);
             _dataMap = _bsp.CreateDataMap(areas, (int)MapSize.X, (int)MapSize.Y, 1);
-            GenerateExitLocations();
 
             foreach (var plot in _plots)
             {
@@ -120,6 +131,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                     }
 
                     Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+                }
+            }
+
+            if (Global.SceneManager.CurrentScene == this)
+            {
+                if (InputManager.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.G))
+                {
+                    BuildTown();
                 }
             }
         }

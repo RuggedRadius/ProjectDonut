@@ -149,7 +149,7 @@ namespace ProjectDonut.Core
                 { "wall-int-cap-s", ExtractSprite(blockSheet, 3, 6) },
                 { "wall-int-cap-w", ExtractSprite(blockSheet, 0, 6) },
 
-
+                { "wall-pillar", ExtractSprite(blockSheet, 0, 10) },
 
 
 
@@ -177,11 +177,24 @@ namespace ProjectDonut.Core
                 { "floor-doublecorner-left", ExtractSprite(blockSheet, 3, 7) },
 
                 { "floor-odd-nsw-only", ExtractSprite(blockSheet, 4, 7) },
+                { "floor-odd-missing-ne,sw,w,nw", ExtractSprite(blockSheet, 5, 7) },
+
+                { "floor-odd-missing-ew", ExtractSprite(blockSheet, 0, 9) },
+                { "floor-odd-missing-w-[o]sw", ExtractSprite(blockSheet, 1, 9) },
+                { "floor-odd-missing-e-[o]se", ExtractSprite(blockSheet, 2, 9) },                
+                { "floor-odd-missing-nw,n,ne,se,s,sw,w", ExtractSprite(blockSheet, 4, 9) },                
+                { "floor-odd-missing-nw,n,ne,se,s,sw,w2", ExtractSprite(blockSheet, 6, 1) },                
+                { "floor-odd-missing-3", ExtractSprite(blockSheet, 6, 1) },                
+                { "floor-odd-missing-4", ExtractSprite(blockSheet, 7, 1) },                
+                { "floor-odd-missing-nw,n,ne,e,se,s,sw", ExtractSprite(blockSheet, 5, 9) },                
+                { "floor-doorway-vertical", ExtractSprite(blockSheet, 3, 9) },
 
                 { "floor-nw-ext-stair", ExtractSprite(blockSheet, 0, 8) },
                 { "floor-ne-ext-stair", ExtractSprite(blockSheet, 1, 8) },
                 { "floor-sw-ext-stair", ExtractSprite(blockSheet, 2, 8) },
                 { "floor-se-ext-stair", ExtractSprite(blockSheet, 3, 8) },
+
+                
 
 
 

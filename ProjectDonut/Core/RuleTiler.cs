@@ -236,146 +236,266 @@ namespace ProjectDonut.Core
 
             public static Texture2D WallTexture(int[,] wallMap, int[,] floorMap, int x, int y)
             {
-                var nb = new NeighbourDataTiles(wallMap, x, y);
-                var fnb = new NeighbourDataTiles(floorMap, x, y);
+                var wn = new NeighbourDataTiles(wallMap, x, y);
+                var fn = new NeighbourDataTiles(floorMap, x, y);
                 var lib = Global.SpriteLibrary.BuildingBlockSprites;
 
                 // CORNERS
-                if (!nb.North && nb.East && nb.South && !nb.West) // ES
+                if (!wn.North && wn.East && wn.South && !wn.West) // ES
                     return lib["wall-nw"];
 
-                if (!nb.North && !nb.East && nb.South && nb.West) // SW
+                if (!wn.North && !wn.East && wn.South && wn.West) // SW
                     return lib["wall-ne"];
 
-                if (nb.North && !nb.East && !nb.South && nb.West) // NW
+                if (wn.North && !wn.East && !wn.South && wn.West) // NW
                     return lib["wall-se"];
 
-                if (nb.North && nb.East && !nb.South && !nb.West) // NE
+                if (wn.North && wn.East && !wn.South && !wn.West) // NE
                     return lib["wall-sw"];
 
                 // STRAIGHTS
-                if (!nb.North && nb.East && !nb.South && nb.West) // EW
+                if (!wn.North && wn.East && !wn.South && wn.West) // EW
                     return lib["wall-n"];
 
-                if (nb.North && !nb.East && nb.South && !nb.West) // NS
+                if (wn.North && !wn.East && wn.South && !wn.West) // NS
                     return lib["wall-e"];
 
                 // JUNCTIONS
-                if (nb.North && nb.East && nb.South && nb.West) // NESW
+                if (wn.North && wn.East && wn.South && wn.West) // NESW
                     return lib["wall-junc-nesw"];
 
-                if (nb.North && nb.East && !nb.South && nb.West) // NEW
+                if (wn.North && wn.East && !wn.South && wn.West) // NEW
                     return lib["wall-junc-new"];
 
-                if (!nb.North && nb.East && nb.South && nb.West) // ESW
+                if (!wn.North && wn.East && wn.South && wn.West) // ESW
                     return lib["wall-junc-esw"];
 
-                if (nb.North && nb.East && nb.South && !nb.West) // NES
+                if (wn.North && wn.East && wn.South && !wn.West) // NES
                     return lib["wall-junc-nes"];
 
-                if (nb.North && !nb.East && nb.South && nb.West) // NSW
+                if (wn.North && !wn.East && wn.South && wn.West) // NSW
                     return lib["wall-junc-nsw"];
 
                 // CAPS
-                if (nb.North && !nb.East && !nb.South && !nb.West)                
+                if (wn.North && !wn.East && !wn.South && !wn.West)                
                     return lib["wall-int-cap-n"];
-                if (!nb.North && nb.East && !nb.South && !nb.West)
+                if (!wn.North && wn.East && !wn.South && !wn.West)
                     return lib["wall-int-cap-e"];
-                if (!nb.North && !nb.East && nb.South && !nb.West)
+                if (!wn.North && !wn.East && wn.South && !wn.West)
                     return lib["wall-int-cap-s"];
-                if (!nb.North && !nb.East && !nb.South && nb.West)
+                if (!wn.North && !wn.East && !wn.South && wn.West)
                     return lib["wall-int-cap-w"];
 
+                // PILLAR
+                if (fn.North && fn.NorthEast && fn.East && fn.SouthEast && fn.South && fn.SouthWest && fn.West && fn.NorthWest)
+                    return lib["wall-pillar"];
+                    
                 return Global.MISSING_TEXTURE;
             }
 
 
-            public static Texture2D FloorTile(int[,] map, int x, int y)
+            public static Texture2D FloorTile(int[,] floorMap, int[,] wallMap, int x, int y)
             {
-                var nb = new NeighbourDataTiles(map, x, y);
-                //var fnb = new NeighbourDataTiles(map, x, y);
+                var fn = new NeighbourDataTiles(floorMap, x, y);
+                var wn = new NeighbourDataTiles(wallMap, x, y);
                 var lib = Global.SpriteLibrary.BuildingBlockSprites;
 
+                // ODD - SPECIFIC
+                if (!fn.North && !fn.NorthEast && fn.East && !fn.SouthEast && !fn.South && !fn.SouthWest && !fn.West && !fn.NorthWest)
+                {
+                    if (wn.NorthWest && wn.North && wn.NorthEast && wn.SouthWest && wn.West)
+                    {
+                        return lib["floor-odd-missing-nw,n,ne,se,s,sw,w"];
+                    }
+                }
+
+                if (!fn.North && !fn.NorthEast && !fn.East && !fn.SouthEast && !fn.South && !fn.SouthWest && fn.West && !fn.NorthWest)
+                {
+                    if (wn.NorthWest && wn.North && wn.NorthEast && wn.SouthEast && wn.East)
+                    {
+                        return lib["floor-odd-missing-nw,n,ne,e,se,s,sw"];
+                    }
+                }
+
+                if (fn.North && !fn.NorthEast && !fn.East && !fn.SouthEast && !fn.South && !fn.SouthWest && !fn.West && !fn.NorthWest)
+                {
+                    if (wn.SouthEast && wn.South && wn.SouthWest && wn.West && wn.NorthWest)
+                    {
+                        return lib["floor-odd-missing-ew"];
+                    }
+                }
+
+                if (fn.North && fn.NorthEast && fn.East && !fn.SouthEast && !fn.South && !fn.SouthWest && !fn.West && !fn.NorthWest)
+                {
+                    if (wn.NorthWest && wn.West && wn.SouthWest && !wn.South && !wn.SouthEast)
+                    {
+                        return lib["floor-odd-missing-nw,n,ne,se,s,sw,w2"];
+                    }
+
+                    if (wn.NorthWest && wn.West && wn.SouthWest && !wn.SouthEast)
+                    {
+                        return lib["floor-odd-missing-nw,n,ne,se,s,sw,w"];
+                    }
+                }
+
+                if (fn.North && !fn.NorthEast && !fn.East && !fn.SouthEast && !fn.South && !fn.SouthWest && fn.West && fn.NorthWest)
+                {
+                    if (!wn.NorthWest && !wn.West && !wn.SouthWest && !wn.South && wn.SouthEast && wn.East && wn.NorthEast)
+                    {
+                        return lib["floor-odd-missing-3"];
+                    }
+                }
+
+                if (fn.NorthWest && fn.North && !fn.NorthEast && !fn.East && !fn.SouthEast && fn.South && !fn.SouthWest && fn.West)
+                    return lib["floor-odd-missing-4"];
+
+                if (fn.NorthWest && fn.North && !fn.NorthEast && fn.East && !fn.SouthEast && !fn.South && !fn.SouthWest && fn.West)
+                    return lib["floor-ne-ext-stair"];
+
+
+
                 // CORNERS
-                if (!nb.North && nb.East && nb.South && !nb.West) // ES
+                if (!fn.North && fn.East && fn.South && !fn.West) // ES
                     return lib["floor-nw"];
 
-                if (!nb.North && !nb.East && nb.South && nb.West) // SW
+                if (!fn.North && !fn.East && fn.South && fn.West) // SW
                     return lib["floor-ne"];
 
-                if (nb.North && !nb.East && !nb.South && nb.West) // NW
+                if (fn.North && !fn.East && !fn.South && fn.West) // NW
                     return lib["floor-se"];
 
-                if (nb.North && nb.East && !nb.South && !nb.West) // NE
+                if (fn.North && fn.East && !fn.South && !fn.West) // NE
                 {
                     
                     return lib["floor-sw"];
                 }
 
-                // HALL CORNERS - INTERNAL
-                if (nb.North && nb.East && nb.South && nb.West && !nb.SouthWest && !nb.SouthEast)
+                // CORNERS - INTERNAL
+                if (fn.North && fn.East && fn.South && fn.West && !fn.SouthWest && !fn.SouthEast)
                     return lib["floor-doublecorner-bottom"];
 
-                if (nb.North && nb.East && nb.South && nb.West && !nb.NorthWest && !nb.NorthEast)
+                if (fn.North && fn.East && fn.South && fn.West && !fn.NorthWest && !fn.NorthEast)
                     return lib["floor-doublecorner-top"];
 
-                if (nb.North && nb.East && nb.South && nb.West && !nb.NorthEast && !nb.SouthEast)
-                    return lib["floor-doublecorner-right"];
+                if (fn.North && fn.East && fn.South && fn.West && !fn.NorthEast && !fn.SouthEast)
+                    return lib["floor-ne-ext-stair"];
 
-                if (nb.North && nb.East && nb.South && nb.West && !nb.NorthWest && !nb.SouthWest)
-                    return lib["floor-doublecorner-left"];
+                if (fn.North && fn.East && fn.South && fn.West && !fn.NorthWest && !fn.SouthWest)
+                    return lib["floor-nw-ext-stair"];
 
 
                 // CORNERS - EXTERNAL
-                if (nb.North && !nb.NorthEast && nb.East && nb.SouthEast && nb.South && nb.SouthWest && nb.West && nb.NorthWest)
+                if (fn.North && !fn.NorthEast && fn.East && fn.SouthEast && fn.South && fn.SouthWest && fn.West && fn.NorthWest)
                     return lib["floor-ne-ext-stair"];
 
-                if (nb.North && nb.NorthEast && nb.East && nb.SouthEast && nb.South && nb.SouthWest && nb.West && !nb.NorthWest)
+                if (fn.North && fn.NorthEast && fn.East && fn.SouthEast && fn.South && fn.SouthWest && fn.West && !fn.NorthWest)
+                {
+                    //if (wn.NorthWest)
+                    //    return lib["floor-ne-ext-stair"];
+
                     return lib["floor-nw-ext-stair"];
+                }                    
 
-                if (nb.North && nb.NorthEast && nb.East && !nb.SouthEast && nb.South && nb.SouthWest && nb.West && nb.NorthWest)
+                if (fn.North && fn.NorthEast && fn.East && !fn.SouthEast && fn.South && fn.SouthWest && fn.West && fn.NorthWest)
+                {
+                    if (wn.SouthEast)
+                        return lib["floor-c"]; 
+                    
                     return lib["floor-se-ext-stair"];
+                }
 
-                if (nb.North && nb.NorthEast && nb.East && nb.SouthEast && nb.South && !nb.SouthWest && nb.West && nb.NorthWest)
+                if (fn.North && fn.NorthEast && fn.East && fn.SouthEast && fn.South && !fn.SouthWest && fn.West && fn.NorthWest)
+                {
+                    if (wn.SouthWest)
+                        return lib["floor-c"];
+
                     return lib["floor-sw-ext-stair"];
+                }
 
 
+                // ODD
+                if (fn.North && !fn.NorthEast && !fn.East && !fn.SouthEast && fn.South && fn.SouthWest && fn.West && !fn.NorthWest)
+                {
+                    return lib["floor-odd-nsw-only"];
+                }
+
+                if (fn.North && !fn.NorthEast && fn.East && fn.SouthEast && fn.South && !fn.SouthWest && !fn.West && !fn.NorthWest)
+                {
+                    return lib["floor-odd-missing-ne,sw,w,nw"];
+                }
+
+
+                if (fn.North && fn.NorthEast && fn.East && fn.SouthEast && fn.South && !fn.West && fn.NorthWest)
+                {
+                    if (wn.West)
+                    {
+                        return lib["floor-odd-missing-w-[o]sw"];
+                    }
+                    else
+                    {
+                        return lib["floor-w"];
+                    }
+                }
+                    //return lib["floor-odd-missing-w-[o]sw"];
+
+                if (fn.North && fn.NorthEast && !fn.East && fn.South && fn.SouthWest && fn.West && fn.NorthWest)
+                {
+                    if (wn.East)
+                    {
+                        return lib["floor-odd-missing-e-[o]se"];
+                    }
+                    else
+                    {
+                        return lib["floor-e"];
+                    }                    
+                }
+                    
+
+     
+
+                if (fn.North && fn.NorthEast && !fn.East && fn.SouthEast && fn.South && !fn.West && fn.NorthWest) // Vertical doorway
+                    return lib["floor-doorway-vertical"];
+
+                if (fn.North && !fn.East && fn.South && !fn.West)
+                    return lib["floor-odd-missing-ew"];
 
                 // JUNCTIONS
-                if (nb.North && nb.East && !nb.South && nb.West) // NEW
+                if (fn.North && fn.East && !fn.South && fn.West) // NEW
                     return lib["floor-s"];
 
-                if (!nb.North && nb.East && nb.South && nb.West) // ESW
+                if (!fn.North && fn.East && fn.South && fn.West) // ESW
                     return lib["floor-n"];
 
-                if (nb.North && nb.East && nb.South && !nb.West) // NES
+                if (fn.North && fn.East && fn.South && !fn.West) // NES
                     return lib["floor-w"];
 
-                if (nb.North && !nb.East && nb.South && nb.West) // NSW
+                if (fn.North && !fn.East && fn.South && fn.West) // NSW
                 {
-                    if (!nb.NorthEast && !nb.East && !nb.SouthEast && !nb.SouthWest && !nb.NorthWest)
+                    if (!fn.NorthEast && !fn.East && !fn.SouthEast && !fn.SouthWest && !fn.NorthWest)
                     {
                         return lib["floor-odd-nsw-only"];
                     }
 
+
+
                     return lib["floor-e"];
                 }
 
-                if (nb.North && !nb.East && nb.South && !nb.West) // NS
+                if (fn.North && !fn.East && fn.South && !fn.West) // NS
                     return lib["floor-junc-ew"];
 
-                if (!nb.North && nb.East && !nb.South && nb.West) // NS
+                if (!fn.North && fn.East && !fn.South && fn.West) // NS
                     return lib["floor-junc-ns"];
 
 
-                if (!nb.NorthWest || !nb.North || !nb.NorthEast 
-                    || !nb.West || !nb.East 
-                    || !nb.SouthWest || !nb.South || !nb.SouthEast)
-                    return lib["floor-c"];
+                //if (!nb.NorthWest || !nb.North || !nb.NorthEast 
+                //    || !nb.West || !nb.East 
+                //    || !nb.SouthWest || !nb.South || !nb.SouthEast)
+                //    return lib["floor-c"];
 
 
 
-                if (nb.North && nb.East && nb.South && nb.West) // NESW
+                if (fn.North && fn.East && fn.South && fn.West) // NESW
                     return lib["floor-c"];
 
 
