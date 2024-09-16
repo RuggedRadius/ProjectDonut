@@ -63,6 +63,7 @@ namespace ProjectDonut.Core
             lib.Add("beach", ExtractBiomeSprite(1, 0));
             lib.Add("winterlands", ExtractBiomeSprite(2, 0));
             lib.Add("desert", ExtractBiomeSprite(3, 0));
+            lib.Add("ice", ExtractSprite(spriteSheetBiomes, 6, 0));
 
 
             LoadDungeonSpritesORIGINALWORKING();

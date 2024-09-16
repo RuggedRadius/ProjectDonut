@@ -522,7 +522,14 @@ namespace ProjectDonut.Core
                 {
                     if (heightValue >= 30 && heightValue < 34)
                     {
-                        return Global.SpriteLibrary.GetSprite("beach");
+                        if (biome == Biome.Winterlands)
+                        {
+                            return Global.SpriteLibrary.GetSprite("ice");
+                        }
+                        else
+                        {
+                            return Global.SpriteLibrary.GetSprite("beach");
+                        }
                     }
 
                     //if (heightValue > 30 && heightValue % 10 == 0)

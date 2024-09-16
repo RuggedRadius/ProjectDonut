@@ -46,7 +46,7 @@ namespace ProjectDonut
             Global.GraphicsDeviceManager.SupportedOrientations = DisplayOrientation.Portrait;
 
             Global.Penumbra = new PenumbraComponent(this);
-            //Components.Add(Global.Penumbra);
+            Components.Add(Global.Penumbra);
 
             DevConsole.InitialiseConsole(this);
 
