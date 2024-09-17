@@ -29,33 +29,58 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         private void BuildMiddle(BuildingLevel topLevel)
         {
-            for (int i = 0; i < topLevel.ParentBuilding.BuildingWorldBounds.Width - (Global.TileSize * 4); i += (2 * Global.TileSize))
-            {
-                RoofSprites.Add(
-                    new Rectangle(
-                        (int)topLevel.ParentBuilding.BuildingWorldBounds.X + i + (2 * Global.TileSize),
-                        (int)topLevel.ParentBuilding.BuildingWorldBounds.Bottom - (2 * Global.TileSize),
-                        Global.TileSize,
-                        2 * Global.TileSize),
-                    Global.SpriteLibrary.BuildingBlockSprites["roof-top-front"]);
+            var bounds = topLevel.ParentBuilding.BuildingWorldBounds;
 
-                RoofSprites.Add(
-                    new Rectangle(
-                        (int)topLevel.ParentBuilding.BuildingWorldBounds.X + i + (3 * Global.TileSize),
-                        (int)topLevel.ParentBuilding.BuildingWorldBounds.Bottom - (2 * Global.TileSize),
-                        Global.TileSize,
-                        2 * Global.TileSize),
-                    Global.SpriteLibrary.BuildingBlockSprites["roof-top-front2"]);
+            // Alternating front panels
+            var alternatingSprites = new Texture2D[2] {
+                Global.SpriteLibrary.BuildingBlockSprites["roof-top-front"],
+                Global.SpriteLibrary.BuildingBlockSprites["roof-top-front2"]
+            };
+            var width = Global.TileSize;
+            var height = Global.TileSize * 2;
+            for (int i = 0, c = 0; i < bounds.Width - (Global.TileSize * 3); i += Global.TileSize, c++)
+            {
+                var x = (int)bounds.X + i + (2 * Global.TileSize);
+                var y = (int)bounds.Bottom - (2 * Global.TileSize);
+                var rect = new Rectangle(x, y, width, height);
+                if (c % 2 == 0)
+                {
+                    RoofSprites.Add(rect, alternatingSprites[0]);
+                }
+                else
+                {
+                    RoofSprites.Add(rect, alternatingSprites[1]);
+                }
             }
 
-            //// Place front right
-            //var startX = topLevel.ParentBuilding.BuildingWorldBounds.Right - (1 * Global.TileSize);
-            //var startY = (int)topLevel.ParentBuilding.BuildingWorldBounds.Bottom - (2 * Global.TileSize);
-            //var width = 2 * Global.TileSize;
-            //var height = 2 * Global.TileSize;
-            //RoofSprites.Add(
-            //    new Rectangle(startX, startY, width, height),
-            //    Global.SpriteLibrary.BuildingBlockSprites["roof-front-right"]);
+            // Back row
+            for (int i = 0; i < bounds.Width - (Global.TileSize * 3); i += Global.TileSize)
+            {
+                var x = (int)bounds.X + i + (2 * Global.TileSize);
+                var y = (int)bounds.Top - (2 * Global.TileSize);
+                RoofSprites.Add(
+                    new Rectangle(x, y, Global.TileSize, Global.TileSize),
+                    Global.SpriteLibrary.BuildingBlockSprites["roof-top-back"]);
+            }
+
+            // Fill
+            
+            width = bounds.Width - (Global.TileSize * 3);
+            height = bounds.Height - (Global.TileSize * 1);
+
+            for (int i = 0; i < width; i += Global.TileSize)
+            {
+                for (int j = 0; j < height; j += Global.TileSize)
+                {
+                    RoofSprites.Add(
+                        new Rectangle(
+                            (int)bounds.X + i + (2 * Global.TileSize),
+                            (int)bounds.Y + j - Global.TileSize,
+                            Global.TileSize,
+                            Global.TileSize),
+                        Global.SpriteLibrary.BuildingBlockSprites["roof-top-middle"]);
+                }
+            }
         }
 
         private void BuildRight(BuildingLevel topLevel)

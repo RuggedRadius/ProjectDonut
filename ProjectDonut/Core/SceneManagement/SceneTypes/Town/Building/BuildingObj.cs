@@ -220,27 +220,45 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     level.Value.Draw(gameTime);
                 }
 
-                //RoofTileMap.Draw(gameTime);
-
                 Roof.Draw(gameTime);
             }
         }
 
         private void PlaceExternalDoor(ref BuildingLevel bottomLevel)
         {
-            var targetTexture = Global.SpriteLibrary.BuildingBlockSprites["wall-n"];
+            // TODO: Add east ands west doors
+            // Get bounds walls (just north and south for now)
             var southWalls = new List<Tile>();
-
-            foreach (var tile in bottomLevel.WallTileMap.Map)
+            var lib = Global.SpriteLibrary.BuildingBlockSprites;
+            for (int i = 0; i < BuildingBounds.Width; i += 1)
             {
-                if (tile == null)
-                    continue;
-
-                if (tile.Texture == targetTexture)
+                for (int j = 0; j < BuildingBounds.Height; j += 1)
                 {
-                    southWalls.Add(tile);
-                }
+                    if (bottomLevel.WallTileMap.Map[i, j] == null)
+                        continue;
+
+                    var tile = bottomLevel.WallTileMap.Map[i, j];
+
+                    //if (i != BuildingBounds.Left && i != BuildingBounds.Right)
+                    //    continue;
+
+
+                    //if (j != BuildingBounds.Top && j != BuildingBounds.Bottom)
+                    //    continue;
+
+                    //var x = i;// / Global.TileSize;
+                    //var y = j;// / Global.TileSize;
+
+                    if (tile.Texture == lib["wall-s"])
+                    {
+                        southWalls.Add(bottomLevel.WallTileMap.Map[i, j]);
+                    }
+                } 
+
             }
+
+            if (southWalls.Count == 0)
+                throw new Exception("Could not place door on building");
 
             var doorTile = southWalls[_random.Next(0, southWalls.Count)];
             doorTile.Texture = Global.SpriteLibrary.BuildingBlockSprites["door-int"];
