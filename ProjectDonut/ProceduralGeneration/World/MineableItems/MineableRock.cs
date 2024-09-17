@@ -31,7 +31,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
         public int MaxHealth { get; set; }
         public Rectangle TextureBounds { get; set; }
 
-        private SpriteSheet _spriteSheetRock;
+        private SpriteSheet _spriteSheet;
         private AnimationController _animControllerHit;
         private AnimatedSprite _sprite;
 
@@ -55,9 +55,9 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
             var atlas = Texture2DAtlas.Create("rock", sheetTexture, Global.TileSize, Global.TileSize);
-            _spriteSheetRock = new SpriteSheet("SpriteSheet/rock", atlas);
+            _spriteSheet = new SpriteSheet("SpriteSheet/rock", atlas);
 
-            _spriteSheetRock.DefineAnimation("idle", builder =>
+            _spriteSheet.DefineAnimation("idle", builder =>
             {
                 builder.IsLooping(false)
                     .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1));
@@ -65,7 +65,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 
             var cellTime = 0.25f;
 
-            _spriteSheetRock.DefineAnimation("hit", builder =>
+            _spriteSheet.DefineAnimation("hit", builder =>
             {
                 builder.IsLooping(false)
                     .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime))
@@ -75,7 +75,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
                     .AddFrame(0, duration: TimeSpan.FromSeconds(cellTime));
             });
 
-            _sprite = new AnimatedSprite(_spriteSheetRock, "idle");
+            _sprite = new AnimatedSprite(_spriteSheet, "idle");
             _sprite.SetAnimation("hit").OnAnimationEvent += (sender, trigger) =>
             {
                 if (trigger == AnimationEventTrigger.AnimationCompleted)
@@ -157,7 +157,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             {
                 var mineableItem = CreateInventoryItem();
                 Global.Player.Inventory.AddItemToInventory(mineableItem);
-                Global.Player.TextDisplay.AddText("+1 " + mineableItem.Name, 0, Vector2.Zero, Color.White);
+                //Global.Player.TextDisplay.AddText("+1 " + mineableItem.Name, 0, Vector2.Zero, Color.White);
 
                 var replacementRockRubble = new SceneObjectStatic()
                 {

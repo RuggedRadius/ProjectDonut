@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Debugging;
+using ProjectDonut.GameObjects.Doodads;
+using ProjectDonut.GameObjects.Doodads.Chests;
+using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.BSP;
@@ -26,6 +31,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
         public Tilemap WallTileMap { get; set; }
         public Tilemap StairTileMap { get; set; }
 
+        public List<IInteractable> Interactables { get; set; }
+
         public bool IsVisible => throw new NotImplementedException();
         public Texture2D Texture { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Vector2 WorldPosition { get; set; }
@@ -40,6 +47,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             ParentBuilding = parentBuilding;
             LevelIndex = levelIndex;
             WorldPosition = parentBuilding.BuildingWorldBounds.Location.ToVector2();
+            Interactables = new List<IInteractable>();
 
             _bsp = new BSP();
             _random = new Random();
@@ -69,7 +77,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             //DebugMapData.WriteMapData(WallDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_WallDataMap");
             //DebugMapData.WriteMapData(StairDataMap, $"{Plot.WorldPosition.X}-{Plot.WorldPosition.Y}_StairDataMap");
 
-            BuildTileMaps();            
+            BuildTileMaps();
+            PlaceTESTChests();
         }
 
         public void BuildTileMaps()
@@ -108,13 +117,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public void Update(GameTime gameTime)
         {
-            //foreach (var room in Rooms)
-            //{
-            //    room.Update(gameTime);
-            //}
-
             FloorTileMap.Update(gameTime);
             WallTileMap.Update(gameTime);
+
+            Interactables.ForEach(x => x.Update(gameTime));
 
             if (StairTileMap != null)
                 StairTileMap.Update(gameTime);
@@ -122,37 +128,57 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public void Draw(GameTime gameTime)
         {
-            //if (ParentBuilding.Levels[ParentBuilding.PlayerOccupyLevel] == this)
-            //{
-            //    foreach (var tile in FloorTileMap.Map)
-            //    {
-            //        if (tile == null)
-            //            continue;
+            FloorTileMap.Draw(gameTime);
+            WallTileMap.Draw(gameTime);
 
-
-            //    }
-
-            //    FloorTileMap.Draw(gameTime);
-            //    WallTileMap.Draw(gameTime);
-            //}
-            //else
-            //{
-                FloorTileMap.Draw(gameTime);
-                WallTileMap.Draw(gameTime);
-            //}
-
-
-
-
-            //WallTileMap.DrawOutline(gameTime);
-
+            Interactables.ForEach(x => x.Draw(gameTime));
 
             if (StairTileMap != null)
                 StairTileMap.Draw(gameTime);
         }
 
-        #region NEW Room Linking
+        public void PlaceTESTChests()
+        {
+            var random = new Random();
+            var floorTiles = new List<Tile>();
 
-        #endregion
+            var itemPool = new List<InventoryItem>()
+            {
+                new InventoryItem(){ Name = "Stone", Icon = SpriteLib.UI.Items["rock"], ItemType = ItemType.Consumable, Quantity = 5 },
+                new InventoryItem(){ Name = "Wood Log", Icon = SpriteLib.UI.Items["wood-log"], ItemType = ItemType.Consumable, Quantity = 5 },
+            };
+
+            for (int i = 0; i < FloorTileMap.Map.GetLength(0); i++)
+            {
+                for (int j = 0; j < FloorTileMap.Map.GetLength(1); j++)
+                {
+                    if (FloorTileMap.Map[i, j] == null)
+                        continue;
+
+                    floorTiles.Add(FloorTileMap.Map[i, j]);
+                }
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                // Get random floor posit   ion
+                var floorTile = floorTiles[random.Next(floorTiles.Count)];
+
+                var rect = new Rectangle(
+                    (int)floorTile.WorldPosition.X,
+                    (int)floorTile.WorldPosition.Y,
+                    Global.TileSize,
+                    Global.TileSize);
+
+                var items = new List<InventoryItem>();
+                items.Add(itemPool[0]);
+                items.Add(itemPool[1
+                    ]);
+
+                Interactables.Add(new Chest(rect, items));
+
+                floorTiles.Remove(floorTile);
+            }
+        }
     }
 }

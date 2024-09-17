@@ -4,12 +4,14 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.Debugging;
+using ProjectDonut.GameObjects.Doodads;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.BSP;
 using ProjectDonut.Tools;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 {
@@ -29,6 +31,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public int[,] RoofDataMap { get; set; }
         public Tilemap RoofTileMap { get; set; }
+
+        
 
 
         // Required by IGameObject
@@ -266,5 +270,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             //bottomLevel.WallDataMap[doorTile.xIndex, doorTile.yIndex] = 0;
             //bottomLevel.FloorDataMap[doorTile.xIndex, doorTile.yIndex] = 1;
         }
+    
+        
     }
 }

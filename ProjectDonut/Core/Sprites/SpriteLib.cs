@@ -659,6 +659,25 @@ namespace ProjectDonut.Core.Sprites
             }
         }
         
+        public static class Doodads
+        {
+            public static Dictionary<string, Texture2D> Chests;
+
+            public static void Load()
+            {
+                LoadChests();
+            }
+
+            public static void LoadChests()
+            {
+                Chests = new Dictionary<string, Texture2D>();
+
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Doodads/Chests/Chest01");
+
+                Chests.Add("chest-01", ExtractSprite(sheet, 0, 0));
+            }
+        }
+
         public void LoadSpriteLibrary()
         {
             sheets = new Dictionary<string, Texture2D>();
@@ -677,7 +696,8 @@ namespace ProjectDonut.Core.Sprites
             UI.Load();
             Mineables.Load();
             Dungeon.Load();
-            Player.Load();            
+            Player.Load();
+            Doodads.Load();
         }
         
         public static Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)

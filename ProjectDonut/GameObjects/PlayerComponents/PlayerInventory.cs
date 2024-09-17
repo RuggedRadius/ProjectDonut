@@ -107,15 +107,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void AddItemToInventory(InventoryItem item)
         {
+
             foreach (var slot in Slots)
             {
                 if (slot.Item != null && slot.Item.Name == item.Name)
                 {
                     var maxStack = GetMaxStackAmount(slot.Item.ItemType);
 
-                    if (slot.Item.Quantity < maxStack)
+                    if (slot.Item.Quantity + item.Quantity <= maxStack)
                     {
-                        slot.Item.Quantity++;
+                        Global.Player.TextDisplay.AddText($"+{item.Quantity} " + item.Name, 0, Vector2.Zero, Color.White);
+                        slot.Item.Quantity += item.Quantity;
                         return;
                     }
                 }
@@ -125,6 +127,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             {
                 if (slot.Item == null)
                 {
+                    Global.Player.TextDisplay.AddText($"+{item.Quantity} " + item.Name, 0, Vector2.Zero, Color.White);
                     slot.Item = item;
                     slot.Item.Position = slot.Position + new Vector2(2, 2);
                     return;
