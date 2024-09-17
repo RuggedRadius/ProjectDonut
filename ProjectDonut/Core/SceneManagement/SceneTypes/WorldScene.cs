@@ -26,6 +26,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private Random random = new Random();
 
         public Rectangle LastExitLocation;
+        public Vector2 LastExitChunkCoords;
 
 
         public WorldScene(SceneType sceneType)

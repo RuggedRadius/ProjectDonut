@@ -89,7 +89,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             //DebugMapData.WriteMapData(Levels[0].FloorDataMap, $"FloorDataMap_{tmpBuildingIndex}");
             //DebugMapData.WriteMapData(RoofDataMap, $"RoofDataMap_{tmpBuildingIndex}");
 
-            Roof = new BuildingRoof();
+            Roof = new BuildingRoof(this);
             Roof.BuildRoof(Levels[Levels.Count - 1]);
 
             SetAllInteractablesState();

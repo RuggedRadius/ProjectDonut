@@ -101,7 +101,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         case "north":
                             worldScene.LastExitLocation = new Rectangle(
                                 _worldStructure.TextureBounds.Left + _worldStructure.TextureBounds.Width / 2,
-                                _worldStructure.TextureBounds.Top - Global.TileSize,
+                                _worldStructure.TextureBounds.Top - (2 * Global.TileSize),
                                 Global.TileSize,
                                 Global.TileSize);
                             break;
@@ -109,14 +109,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         case "south":
                             worldScene.LastExitLocation = new Rectangle(
                                 _worldStructure.TextureBounds.Left + _worldStructure.TextureBounds.Width / 2,
-                                _worldStructure.TextureBounds.Bottom + Global.TileSize,
+                                _worldStructure.TextureBounds.Bottom + (2 * Global.TileSize),
                                 Global.TileSize,
                                 Global.TileSize);
                             break;
 
                         case "east":
                             worldScene.LastExitLocation = new Rectangle(
-                                _worldStructure.TextureBounds.Right + Global.TileSize,
+                                _worldStructure.TextureBounds.Right + (2 * Global.TileSize),
                                 _worldStructure.TextureBounds.Top + _worldStructure.TextureBounds.Height / 2,
                                 Global.TileSize,
                                 Global.TileSize);
@@ -124,13 +124,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
 
                         case "west":
                             worldScene.LastExitLocation = new Rectangle(
-                                _worldStructure.TextureBounds.Left - Global.TileSize,
+                                _worldStructure.TextureBounds.Left - (2 * Global.TileSize),
                                 _worldStructure.TextureBounds.Top + _worldStructure.TextureBounds.Height / 2,
                                 Global.TileSize,
                                 Global.TileSize);
                             break;
                     }
 
+                    Global.PlayerObj.ChunkPosX = _worldStructure.WorldChunk.ChunkCoordX;
+                    Global.PlayerObj.ChunkPosY = _worldStructure.WorldChunk.ChunkCoordY;
                     Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
                 }
             }

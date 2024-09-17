@@ -13,11 +13,18 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
     public class BuildingRoof : IGameObject
     {
         public Dictionary<Rectangle, Texture2D> RoofSprites { get; set; }
+        public BuildingObj ParentBuilding { get; set; }
 
         public bool IsVisible => throw new NotImplementedException();
         public Texture2D Texture { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Vector2 WorldPosition { get; set; }
         public int ZIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public BuildingRoof(BuildingObj parentBuilding)
+        {
+            ParentBuilding = parentBuilding;
+            WorldPosition = parentBuilding.BuildingWorldBounds.Location.ToVector2();
+        }
 
         public void BuildRoof(BuildingLevel topLevel)
         {
@@ -26,6 +33,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             BuildLeft(topLevel);
             BuildRight(topLevel);
             BuildMiddle(topLevel);
+
+            // NOT WORKING
+            //var combinedTexture = CombineTextures(RoofSprites);
+            //RoofSprites.Clear();
+            //RoofSprites.Add(ParentBuilding.BuildingBounds, combinedTexture);
         }
 
         private void BuildMiddle(BuildingLevel topLevel)
@@ -150,7 +162,60 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 SpriteLib.Town.Roof["roof-front-left"]);
         }
 
+        public Texture2D CombineTextures(Dictionary<Rectangle, Texture2D> roofSprites)
+        {            
+            // Calculate width
+            var width = 0;
+            foreach (var sprite in roofSprites.Keys)
+            {
+                width += sprite.Width;
+            }
 
+            // Calculate height
+            var height = 0;
+            foreach (var sprite in roofSprites.Keys)
+            {
+                height += sprite.Height;
+            }
+
+            if (Global.GraphicsDevice == null)
+            {
+                throw new InvalidOperationException("GraphicsDevice is not initialized.");
+            }
+
+            RenderTarget2D renderTarget = new RenderTarget2D(Global.GraphicsDevice, width, height);
+
+            if (renderTarget.IsDisposed)
+            {
+                throw new InvalidOperationException("RenderTarget2D is disposed.");
+            }
+
+            Global.GraphicsDevice.SetRenderTarget(renderTarget);
+            Global.GraphicsDevice.Clear(Color.Transparent);
+
+            SpriteBatch spriteBatch = new SpriteBatch(Global.GraphicsDevice);
+            spriteBatch.Begin();
+
+            foreach (var obj in roofSprites)
+            {
+                if (obj.Value.IsDisposed)
+                {
+                    throw new InvalidOperationException("Texture2D in roofSprites is disposed.");
+                }
+
+                if (obj.Value == null)
+                    continue;
+
+                spriteBatch.Draw(obj.Value, new Vector2(obj.Key.X, obj.Key.Y), Color.White);
+            }
+
+            spriteBatch.End();
+            Global.GraphicsDevice.SetRenderTarget(null);
+
+            Texture2D finalTexture = renderTarget;
+            renderTarget.Dispose();
+            return finalTexture;
+        }
 
         public void Initialize()
         {
