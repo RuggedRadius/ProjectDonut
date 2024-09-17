@@ -142,12 +142,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             var random = new Random();
             var floorTiles = new List<Tile>();
 
-            var itemPool = new List<InventoryItem>()
-            {
-                new InventoryItem(){ Name = "Stone", Icon = SpriteLib.UI.Items["rock"], ItemType = ItemType.Consumable, Quantity = 50 },
-                new InventoryItem(){ Name = "Wood Log", Icon = SpriteLib.UI.Items["wood-log"], ItemType = ItemType.Consumable, Quantity = 50 },
-            };
-
             for (int i = 0; i < FloorTileMap.Map.GetLength(0); i++)
             {
                 for (int j = 0; j < FloorTileMap.Map.GetLength(1); j++)
@@ -171,8 +165,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     Global.TileSize);
 
                 var items = new List<InventoryItem>();
-                items.Add(itemPool[0]);
-                items.Add(itemPool[1]);
+                items.Add(new InventoryItem() { Name = "Stone", Icon = SpriteLib.UI.Items["rock"], ItemType = ItemType.Consumable, Quantity = 50 });
+                items.Add(new InventoryItem() { Name = "Wood Log", Icon = SpriteLib.UI.Items["wood-log"], ItemType = ItemType.Consumable, Quantity = 50 });
 
                 Interactables.Add(new Chest(rect, items));
 

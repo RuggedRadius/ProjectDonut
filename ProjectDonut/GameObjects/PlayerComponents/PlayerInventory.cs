@@ -129,8 +129,14 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         /// <returns>An integer count of the item NOT added to the inventory if it is full</returns>
         public int AddItemToInventory(InventoryItem item)
         {
-            // Check for full inventory
+            if (item.Quantity <= 0)
+            {
+                throw new Exception("Item quantity must be greater than 0");
+            }
+            
             int quantity = item.Quantity;
+
+            // Check for full inventory
             var emptySlots = Slots.Where(x => x.Item == null).ToList();
             var existingUnmaxxedStacks = Slots
                 .Where(x => x.Item != null && x.Item.Name == item.Name && x.Item.Quantity < GetMaxStackAmount(x.Item.ItemType))
