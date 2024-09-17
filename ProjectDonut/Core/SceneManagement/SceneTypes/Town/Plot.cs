@@ -6,6 +6,7 @@ using ProjectDonut.ProceduralGeneration.BSP;
 using System;
 using System.Collections.Generic;
 using ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
 {
@@ -94,7 +95,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = Global.SpriteLibrary.TownSprites["grass-c"],
+                        Texture = SpriteLib.TownSprites.Terrain["grass-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
@@ -160,7 +161,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         //                yIndex = j,
         //                LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + WorldPosition,
         //                Size = new Vector2(Global.TileSize, Global.TileSize),
-        //                Texture = Global.SpriteLibrary.BuildingBlockSprites["building-floor"],
+        //                Texture = SpriteLib.BuildingBlockSprites["building-floor"],
         //                TileType = TileType.Instance,
         //                IsExplored = true
         //            };
@@ -227,7 +228,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         //                yIndex = j,
         //                LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + WorldPosition,
         //                Size = new Vector2(Global.TileSize, Global.TileSize),
-        //                Texture = Global.SpriteLibrary.BuildingBlockSprites["building-roof-thatching"],
+        //                Texture = SpriteLib.BuildingBlockSprites["building-roof-thatching"],
         //                TileType = TileType.Instance,
         //                IsExplored = true
         //            };

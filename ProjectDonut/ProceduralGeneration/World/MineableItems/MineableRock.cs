@@ -10,6 +10,7 @@ using MonoGame.Extended.Animations;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 
@@ -50,7 +51,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 
         public void LoadContent()
         {
-            InventoryIcon = Global.SpriteLibrary.ItemsSprites["rock"];
+            InventoryIcon = SpriteLib.ItemsSprites["rock"];
 
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
             var atlas = Texture2DAtlas.Create("rock", sheetTexture, Global.TileSize, Global.TileSize);
@@ -161,7 +162,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
                 var replacementRockRubble = new SceneObjectStatic()
                 {
                     WorldPosition = WorldPosition,
-                    Texture = Global.SpriteLibrary.WorldMapSprites["rock-smashed"][0],
+                    Texture = SpriteLib.WorldMapSprites["rock-smashed"][0],
                     IsVisible = IsVisible,
                     IsExplored = IsExplored
                 };

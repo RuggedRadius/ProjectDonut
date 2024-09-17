@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
 using Penumbra;
 using ProjectDonut.Environment;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut
 {
@@ -82,7 +83,7 @@ namespace ProjectDonut
             }
             Global.MISSING_TEXTURE.SetData(missingColours);
 
-            Global.SpriteLibrary = new SpriteLibrary();
+            Global.SpriteLibrary = new SpriteLib();
             Global.SpriteLibrary.LoadSpriteLibrary();
 
             Global.PlayerObj = new PlayerObj();

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 
@@ -112,60 +113,60 @@ namespace ProjectDonut.UI.DialogueSystem
                     // Top Left
                     var x = dialogue.X;
                     var y = dialogue.Y;
-                    Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-NW"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-NW"), new Vector2(x, y), Color.White);
 
                     // Top-Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-N"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-N"), new Vector2(x, y), Color.White);
                     }
 
                     // Top-Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i);
-                    Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-NE"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-NE"), new Vector2(x, y), Color.White);
                 }
                 else if (i == dialogue.Height - 1)
                 {
                     // Bottom Left
                     var x = dialogue.X;
                     var y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-SW"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-SW"), new Vector2(x, y), Color.White);
 
                     // Bottom-Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-S"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-S"), new Vector2(x, y), Color.White);
                     }
 
                     // Bottom-Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-SE"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-SE"), new Vector2(x, y), Color.White);
                 }
                 else
                 {
                     // Middle Left
                     var x = dialogue.X;
                     var y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-W"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-W"), new Vector2(x, y), Color.White);
 
                     // Middle Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-C"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-C"), new Vector2(x, y), Color.White);
                     }
 
                     // Middle Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(Global.SpriteLibrary.GetSprite("dialogue-E"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-E"), new Vector2(x, y), Color.White);
                 }
             }
         }

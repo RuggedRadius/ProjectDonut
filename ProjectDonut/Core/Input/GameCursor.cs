@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Core.Input
@@ -39,7 +40,7 @@ namespace ProjectDonut.Core.Input
 
         public void LoadContent()
         {
-            cursorDefault = Global.SpriteLibrary.GetSprite("cursor");
+            cursorDefault = SpriteLib.GetSprite("cursor");
 
             hotspotOffset = new Vector2(cursorDefault.Width / 2, cursorDefault.Height / 2);
 

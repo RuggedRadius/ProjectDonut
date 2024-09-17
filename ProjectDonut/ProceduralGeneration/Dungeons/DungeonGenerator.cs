@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.ProceduralGeneration.World;
 using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;
 
@@ -242,7 +243,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
         private Texture2D GetRandomTextureFor(string key)
         {
             var random = new Random();
-            var textures = Global.SpriteLibrary.DungeonSprites[key];
+            var textures = SpriteLib.DungeonSprites[key];
             return textures[random.Next(textures.Count)];
         }
     }

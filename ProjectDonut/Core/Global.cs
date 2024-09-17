@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Debugging;
 using ProjectDonut.Environment;
 using ProjectDonut.GameObjects.PlayerComponents;
@@ -86,7 +87,7 @@ namespace ProjectDonut.Core
 
         public static Camera Camera;
         public static GameCursor GameCursor;
-        public static SpriteLibrary SpriteLibrary;
+        public static SpriteLib SpriteLibrary;
         public static ScrollDisplayer ScrollDisplay;
 
         public static WorldChunkManager WorldChunkManager;

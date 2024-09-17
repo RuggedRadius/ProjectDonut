@@ -1,12 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core.Sprites.World;
 using ProjectDonut.Tools;
 using System.Collections.Generic;
 
-namespace ProjectDonut.Core
+namespace ProjectDonut.Core.Sprites
 {
-    public class SpriteLibrary
+    public class SpriteLib
     {
+        public static Dictionary<string, List<Texture2D>> DungeonSprites;
+        public static Dictionary<string, List<Texture2D>> WorldMapSprites;
+        public static Dictionary<string, Texture2D> ItemsSprites;
+        public static Dictionary<string, Texture2D> lib;
+
+        private Dictionary<string, Texture2D> sheets;
         private Texture2D spriteSheetTiles;
         private Texture2D spriteSheetBiomes;
         private Texture2D spriteSheetForest;
@@ -14,22 +21,202 @@ namespace ProjectDonut.Core
         private Texture2D spriteSheetMountain;
         private Texture2D spriteSheetCastle;
         private Texture2D spriteSheetTown;
+        
 
-
-        private Dictionary<string, Texture2D> sheets;
-        public Dictionary<string, List<Texture2D>> DungeonSprites;
-        public Dictionary<string, List<Texture2D>> WorldMapSprites;
-        public Dictionary<string, Texture2D> ItemsSprites;
-        public Dictionary<string, Texture2D> TownSprites;
-        public Dictionary<string, Texture2D> BuildingBlockSprites;
-
-
-        private Dictionary<string, Texture2D> lib;
-
-
-        public SpriteLibrary()
+        public SpriteLib()
         {
             LoadSpriteLibrary();
+        }
+
+        public static class TownSprites
+        {
+            public static Dictionary<string, Texture2D> Terrain;
+            public static Dictionary<string, Texture2D> Doodads;
+            public static Dictionary<string, Texture2D> Fences;
+            public static Dictionary<string, Texture2D> Floor;
+            public static Dictionary<string, Texture2D> Walls;
+            public static Dictionary<string, Texture2D> Stairs;
+            public static Dictionary<string, Texture2D> Doors;
+            public static Dictionary<string, Texture2D> Roof;
+
+            public static void Load()
+            {
+                Terrain = new Dictionary<string, Texture2D>();
+                Doodads = new Dictionary<string, Texture2D>();
+                Fences = new Dictionary<string, Texture2D>();
+                Floor = new Dictionary<string, Texture2D>();
+                Walls = new Dictionary<string, Texture2D>();
+                Stairs = new Dictionary<string, Texture2D>();
+                Doors = new Dictionary<string, Texture2D>();
+                Roof = new Dictionary<string, Texture2D>();
+
+                var townTerrainSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Town01");
+                var buildingBlocksSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites3");
+                var roofSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/RoofTiles");
+
+                LoadGrass(townTerrainSheet);
+                LoadDirt(townTerrainSheet);
+                LoadFence(townTerrainSheet);
+
+                LoadWalls(buildingBlocksSheet);
+                LoadFloor(buildingBlocksSheet);
+                LoadStairs(buildingBlocksSheet);
+                LoadDoors(buildingBlocksSheet);
+
+                LoadRoof(roofSheet);
+
+                LoadDoodads();
+            }
+
+            private static void LoadGrass(Texture2D sheet)
+            {
+                Terrain.Add("grass-nw", ExtractSprite(sheet, 0, 0));
+                Terrain.Add("grass-n", ExtractSprite(sheet, 1, 0));
+                Terrain.Add("grass-ne", ExtractSprite(sheet, 2, 0));
+                Terrain.Add("grass-w", ExtractSprite(sheet, 0, 1));
+                Terrain.Add("grass-c", ExtractSprite(sheet, 1, 1));
+                Terrain.Add("grass-e", ExtractSprite(sheet, 2, 1));
+                Terrain.Add("grass-sw", ExtractSprite(sheet, 0, 2));
+                Terrain.Add("grass-s", ExtractSprite(sheet, 1, 2));
+                Terrain.Add("grass-se", ExtractSprite(sheet, 2, 2));
+            }
+
+            private static void LoadDirt(Texture2D sheet)
+            {
+                Terrain.Add("dirt-nw", ExtractSprite(sheet, 3, 0));
+                Terrain.Add("dirt-n", ExtractSprite(sheet, 4, 0));
+                Terrain.Add("dirt-ne", ExtractSprite(sheet, 5, 0));
+                Terrain.Add("dirt-w", ExtractSprite(sheet, 3, 1));
+                Terrain.Add("dirt-c", ExtractSprite(sheet, 4, 1));
+                Terrain.Add("dirt-e", ExtractSprite(sheet, 5, 1));
+                Terrain.Add("dirt-sw", ExtractSprite(sheet, 3, 2));
+                Terrain.Add("dirt-s", ExtractSprite(sheet, 4, 2));
+                Terrain.Add("dirt-se", ExtractSprite(sheet, 5, 2));
+            }
+
+            private static void LoadFence(Texture2D sheet)
+            {
+                Fences.Add("fence-nw", ExtractSprite(sheet, 6, 0));
+                Fences.Add("fence-n", ExtractSprite(sheet, 7, 0));
+                Fences.Add("fence-ne", ExtractSprite(sheet, 8, 0));
+                Fences.Add("fence-w", ExtractSprite(sheet, 6, 1));
+                Fences.Add("fence-c", ExtractSprite(sheet, 7, 1));
+                Fences.Add("fence-e", ExtractSprite(sheet, 8, 1));
+                Fences.Add("fence-sw", ExtractSprite(sheet, 6, 2));
+                Fences.Add("fence-s", ExtractSprite(sheet, 7, 2));
+                Fences.Add("fence-se", ExtractSprite(sheet, 8, 2));
+            }
+
+            private static void LoadWalls(Texture2D sheet)
+            {
+                Walls.Add("wall-nw", ExtractSprite(sheet, 4, 1));
+                Walls.Add("wall-n", ExtractSprite(sheet, 5, 1));
+                Walls.Add("wall-ne", ExtractSprite(sheet, 6, 3));
+                Walls.Add("wall-w", ExtractSprite(sheet, 4, 2));
+                Walls.Add("wall-e", ExtractSprite(sheet, 6, 2));
+                Walls.Add("wall-sw", ExtractSprite(sheet, 4, 3));
+                Walls.Add("wall-s", ExtractSprite(sheet, 5, 3));
+                Walls.Add("wall-se", ExtractSprite(sheet, 6, 3));
+                Walls.Add("wall-junc-esw", ExtractSprite(sheet, 9, 2));
+                Walls.Add("wall-junc-new", ExtractSprite(sheet, 4, 4));
+                Walls.Add("wall-junc-nes", ExtractSprite(sheet, 8, 1));
+                Walls.Add("wall-junc-nsw", ExtractSprite(sheet, 10, 2));
+                Walls.Add("wall-junc-nesw", ExtractSprite(sheet, 8, 2));
+                Walls.Add("wall-int-cap-n", ExtractSprite(sheet, 8, 3));
+                Walls.Add("wall-int-cap-e", ExtractSprite(sheet, 5, 4));
+                Walls.Add("wall-int-cap-s", ExtractSprite(sheet, 7, 1));
+                Walls.Add("wall-int-cap-w", ExtractSprite(sheet, 6, 4));
+                Walls.Add("wall-pillar", ExtractSprite(sheet, 5, 2));
+            }
+
+            private static void LoadFloor(Texture2D blockSheet)
+            {
+                Floor.Add("floor-nw", SpriteLib.ExtractSprite(blockSheet, 1, 1));
+                Floor.Add("floor-n", SpriteLib.ExtractSprite(blockSheet, 2, 1));
+                Floor.Add("floor-ne", SpriteLib.ExtractSprite(blockSheet, 3, 1));
+                Floor.Add("floor-w", SpriteLib.ExtractSprite(blockSheet, 1, 2));
+                Floor.Add("floor-c", SpriteLib.ExtractSprite(blockSheet, 2, 2));
+                Floor.Add("floor-e", SpriteLib.ExtractSprite(blockSheet, 3, 2));
+                Floor.Add("floor-sw", SpriteLib.ExtractSprite(blockSheet, 1, 3));
+                Floor.Add("floor-s", SpriteLib.ExtractSprite(blockSheet, 2, 3));
+                Floor.Add("floor-se", SpriteLib.ExtractSprite(blockSheet, 3, 3));
+                Floor.Add("floor-se-ext", SpriteLib.ExtractSprite(blockSheet, 1, 5));
+                Floor.Add("floor-sw-ext", SpriteLib.ExtractSprite(blockSheet, 4, 5));
+                Floor.Add("floor-ne-ext", SpriteLib.ExtractSprite(blockSheet, 3, 5));
+                Floor.Add("floor-nw-ext", SpriteLib.ExtractSprite(blockSheet, 2, 5));
+                Floor.Add("floor-junc-ns", SpriteLib.ExtractSprite(blockSheet, 2, 1));
+                Floor.Add("floor-junc-ew", SpriteLib.ExtractSprite(blockSheet, 1, 8));
+                Floor.Add("floor-doublecorner-bottom", SpriteLib.ExtractSprite(blockSheet, 2, 2));
+                Floor.Add("floor-doublecorner-top", SpriteLib.ExtractSprite(blockSheet, 2, 6));
+                Floor.Add("floor-doublecorner-right", SpriteLib.ExtractSprite(blockSheet, 3, 6));
+                Floor.Add("floor-doublecorner-left", SpriteLib.ExtractSprite(blockSheet, 4, 6));
+                Floor.Add("floor-odd-nsw-only", SpriteLib.ExtractSprite(blockSheet, 5, 6));
+                Floor.Add("floor-odd-missing-ne,sw,w,nw", SpriteLib.ExtractSprite(blockSheet, 2, 2));
+                Floor.Add("floor-odd-missing-ew", SpriteLib.ExtractSprite(blockSheet, 1, 8));
+                Floor.Add("floor-odd-missing-w-[o]sw", SpriteLib.ExtractSprite(blockSheet, 2, 8));
+                Floor.Add("floor-odd-missing-e-[o]se", SpriteLib.ExtractSprite(blockSheet, 3, 8));
+                Floor.Add("floor-odd-missing-nw,n,ne,se,s,sw,w", SpriteLib.ExtractSprite(blockSheet, 5, 8));
+                Floor.Add("floor-odd-missing-nw,n,ne,se,s,sw,w2", SpriteLib.ExtractSprite(blockSheet, 8, 8));
+                Floor.Add("floor-odd-missing-4", SpriteLib.ExtractSprite(blockSheet, 7, 8));
+                Floor.Add("floor-odd-missing-nw,n,ne,e,se,s,sw", SpriteLib.ExtractSprite(blockSheet, 6, 8));
+                Floor.Add("floor-doorway-vertical", SpriteLib.ExtractSprite(blockSheet, 4, 8));
+                Floor.Add("floor-nw-ext-stair", SpriteLib.ExtractSprite(blockSheet, 1, 7));
+                Floor.Add("floor-ne-ext-stair", SpriteLib.ExtractSprite(blockSheet, 2, 7));
+                Floor.Add("floor-sw-ext-stair", SpriteLib.ExtractSprite(blockSheet, 3, 7));
+                Floor.Add("floor-se-ext-stair", SpriteLib.ExtractSprite(blockSheet, 4, 7));
+            }
+
+            private static void LoadStairs(Texture2D blockSheet)
+            {
+                Stairs.Add("stairs-top-01", ExtractSprite(blockSheet, 8, 5));
+                Stairs.Add("stairs-top-02", ExtractSprite(blockSheet, 9, 5));
+                Stairs.Add("stairs-top-03", ExtractSprite(blockSheet, 10, 5));
+                Stairs.Add("stairs-bottom-01", ExtractSprite(blockSheet, 8, 6));
+                Stairs.Add("stairs-bottom-02", ExtractSprite(blockSheet, 9, 6));
+                Stairs.Add("stairs-bottom-03", ExtractSprite(blockSheet, 10, 6));
+            }
+
+            private static void LoadDoors(Texture2D blockSheet)
+            {
+                Doors.Add("door-int", SpriteLib.ExtractSprite(blockSheet, 1, 4));
+            }
+
+            private static void LoadRoof(Texture2D roofSheet)
+            {
+                Roof.Add("roof-back-left", SpriteLib.ExtractSprite(roofSheet, 0, 0, 2 * Global.TileSize, 2 * Global.TileSize));
+                Roof.Add("roof-back-right", SpriteLib.ExtractSprite(roofSheet, 4 * Global.TileSize, 0, 2 * Global.TileSize, 2 * Global.TileSize));
+                Roof.Add("roof-front-left", SpriteLib.ExtractSprite(roofSheet, 0, 3 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize));
+                Roof.Add("roof-front-right", SpriteLib.ExtractSprite(roofSheet, 4 * Global.TileSize, 3 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize));
+                Roof.Add("roof-side-left", SpriteLib.ExtractSprite(roofSheet, 0, 2 * Global.TileSize, 2 * Global.TileSize, Global.TileSize));
+                Roof.Add("roof-side-right", SpriteLib.ExtractSprite(roofSheet, 4 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize, 1 * Global.TileSize));
+                Roof.Add("roof-top-back", SpriteLib.ExtractSprite(roofSheet, 2 * Global.TileSize, 0 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize));
+                Roof.Add("roof-top-middle", SpriteLib.ExtractSprite(roofSheet, 2 * Global.TileSize, 2 * Global.TileSize, 1 * Global.TileSize, 1 * Global.TileSize));
+                Roof.Add("roof-top-front", SpriteLib.ExtractSprite(roofSheet, 2 * Global.TileSize, 3 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize));
+                Roof.Add("roof-top-front2", SpriteLib.ExtractSprite(roofSheet, 3 * Global.TileSize, 3 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize));
+            }
+
+            private static void LoadDoodads()
+            {
+                // TODO: Consolidate this with a sprite sheet?
+                Doodads.Add("sign-forsale", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Sign_ForSale"));
+            }
+        }
+
+        public static class World
+        {
+            public static Dictionary<string, Texture2D> Terrain;
+
+            public static void Load()
+            {
+                Terrain = new Dictionary<string, Texture2D>();
+
+
+            }
+        }
+
+        public static class Dungeon
+        {
+
         }
 
         public void LoadSpriteLibrary()
@@ -39,7 +226,8 @@ namespace ProjectDonut.Core
 
             WorldMapSprites = new Dictionary<string, List<Texture2D>>();
 
-            LoadWorldMapSprites();
+            WorldSpriteLibrary.Load();
+
             LoadSpriteSheets();
 
             LoadStructureCastle();
@@ -72,146 +260,7 @@ namespace ProjectDonut.Core
 
             LoadItems();
 
-            LoadTownSprites();
-        }
-
-        private void LoadTownSprites()
-        {
-            TownSprites = new Dictionary<string, Texture2D>();
-
-            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Town01");
-
-            // Grass
-            TownSprites.Add("grass-nw", ExtractSprite(sheet, 0, 0));
-            TownSprites.Add("grass-n", ExtractSprite(sheet, 1, 0));
-            TownSprites.Add("grass-ne", ExtractSprite(sheet, 2, 0));
-            TownSprites.Add("grass-w", ExtractSprite(sheet, 0, 1));
-            TownSprites.Add("grass-c", ExtractSprite(sheet, 1, 1));
-            TownSprites.Add("grass-e", ExtractSprite(sheet, 2, 1));
-            TownSprites.Add("grass-sw", ExtractSprite(sheet, 0, 2));
-            TownSprites.Add("grass-s", ExtractSprite(sheet, 1, 2));
-            TownSprites.Add("grass-se", ExtractSprite(sheet, 2, 2));
-
-            // Dirt
-            TownSprites.Add("dirt-nw", ExtractSprite(sheet, 3, 0));
-            TownSprites.Add("dirt-n", ExtractSprite(sheet, 4, 0));
-            TownSprites.Add("dirt-ne", ExtractSprite(sheet, 5, 0));
-            TownSprites.Add("dirt-w", ExtractSprite(sheet, 3, 1));
-            TownSprites.Add("dirt-c", ExtractSprite(sheet, 4, 1));
-            TownSprites.Add("dirt-e", ExtractSprite(sheet, 5, 1));
-            TownSprites.Add("dirt-sw", ExtractSprite(sheet, 3, 2));
-            TownSprites.Add("dirt-s", ExtractSprite(sheet, 4, 2));
-            TownSprites.Add("dirt-se", ExtractSprite(sheet, 5, 2));
-
-            // Fences
-            TownSprites.Add("fence-nw", ExtractSprite(sheet, 6, 0));
-            TownSprites.Add("fence-n", ExtractSprite(sheet, 7, 0));
-            TownSprites.Add("fence-ne", ExtractSprite(sheet, 8, 0));
-            TownSprites.Add("fence-w", ExtractSprite(sheet, 6, 1));
-            TownSprites.Add("fence-c", ExtractSprite(sheet, 7, 1));
-            TownSprites.Add("fence-e", ExtractSprite(sheet, 8, 1));
-            TownSprites.Add("fence-sw", ExtractSprite(sheet, 6, 2));
-            TownSprites.Add("fence-s", ExtractSprite(sheet, 7, 2));
-            TownSprites.Add("fence-se", ExtractSprite(sheet, 8, 2));
-
-            // Houses
-            //TownSprites.Add("house-01", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House01"));
-            //TownSprites.Add("house-02", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/House02"));
-            TownSprites.Add("sign-forsale", Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Sign_ForSale"));
-
-            // Building Blocks
-            var blockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites3");
-            var roofSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/RoofTiles");
-            BuildingBlockSprites = new Dictionary<string, Texture2D>
-            {
-                // Walls
-                { "wall-nw", ExtractSprite(blockSheet, 4, 1) },
-                { "wall-n", ExtractSprite(blockSheet, 5, 1) },
-                { "wall-ne", ExtractSprite(blockSheet, 6, 3) },
-                { "wall-w", ExtractSprite(blockSheet, 4, 2) },
-                { "wall-e", ExtractSprite(blockSheet, 6, 2) },
-                { "wall-sw", ExtractSprite(blockSheet, 4, 3) },
-                { "wall-s", ExtractSprite(blockSheet, 5, 3) },
-                { "wall-se", ExtractSprite(blockSheet, 6, 3) },
-
-                { "wall-junc-esw", ExtractSprite(blockSheet, 9, 2) },
-                { "wall-junc-new", ExtractSprite(blockSheet, 4, 4) },
-                { "wall-junc-nes", ExtractSprite(blockSheet, 8, 1) },
-                { "wall-junc-nsw", ExtractSprite(blockSheet, 10, 2) },
-                { "wall-junc-nesw", ExtractSprite(blockSheet, 8, 2) },
-                { "wall-int-cap-n", ExtractSprite(blockSheet, 8, 3) },
-                { "wall-int-cap-e", ExtractSprite(blockSheet, 5, 4) },
-                { "wall-int-cap-s", ExtractSprite(blockSheet, 7, 1) },
-                { "wall-int-cap-w", ExtractSprite(blockSheet, 6, 4) },
-
-                { "wall-pillar", ExtractSprite(blockSheet, 5, 2) },
-
-                // FLOOR
-                { "floor-nw", ExtractSprite(blockSheet, 1, 1) },
-                { "floor-n", ExtractSprite(blockSheet, 2, 1)  },
-                { "floor-ne", ExtractSprite(blockSheet, 3, 1)  },
-                { "floor-w", ExtractSprite(blockSheet, 1, 2)  },
-                { "floor-c", ExtractSprite(blockSheet, 2, 2)  },
-                { "floor-e", ExtractSprite(blockSheet, 3, 2)  },
-                { "floor-sw", ExtractSprite(blockSheet, 1, 3)  },
-                { "floor-s", ExtractSprite(blockSheet, 2, 3)  },
-                { "floor-se", ExtractSprite(blockSheet, 3, 3)  },
-                { "floor-se-ext", ExtractSprite(blockSheet, 1, 5)  },
-                { "floor-sw-ext", ExtractSprite(blockSheet, 4, 5)  },
-                { "floor-ne-ext", ExtractSprite(blockSheet, 3, 5)  },
-                { "floor-nw-ext", ExtractSprite(blockSheet, 2, 5)  },
-                { "floor-junc-ns", ExtractSprite(blockSheet, 2, 1) },
-                { "floor-junc-ew", ExtractSprite(blockSheet, 1, 8) },
-                { "floor-doublecorner-bottom", ExtractSprite(blockSheet, 2, 2) },
-                { "floor-doublecorner-top", ExtractSprite(blockSheet, 2, 6) },
-                { "floor-doublecorner-right", ExtractSprite(blockSheet, 3, 6) },
-                { "floor-doublecorner-left", ExtractSprite(blockSheet, 4, 6) },
-                { "floor-odd-nsw-only", ExtractSprite(blockSheet, 5, 6) },
-                { "floor-odd-missing-ne,sw,w,nw", ExtractSprite(blockSheet, 2, 2) }, //?
-                { "floor-odd-missing-ew", ExtractSprite(blockSheet, 1, 8) },
-                { "floor-odd-missing-w-[o]sw", ExtractSprite(blockSheet, 2, 8) },
-                { "floor-odd-missing-e-[o]se", ExtractSprite(blockSheet, 3, 8) },  
-                { "floor-odd-missing-nw,n,ne,se,s,sw,w", ExtractSprite(blockSheet, 5, 8) },                  
-                { "floor-odd-missing-nw,n,ne,se,s,sw,w2", ExtractSprite(blockSheet, 8, 8) },   
-                { "floor-odd-missing-4", ExtractSprite(blockSheet, 7, 8) },    
-                { "floor-odd-missing-nw,n,ne,e,se,s,sw", ExtractSprite(blockSheet, 6, 8) },  
-                { "floor-doorway-vertical", ExtractSprite(blockSheet, 4, 8) },
-                { "floor-nw-ext-stair", ExtractSprite(blockSheet, 1, 7) },
-                { "floor-ne-ext-stair", ExtractSprite(blockSheet, 2, 7) },
-                { "floor-sw-ext-stair", ExtractSprite(blockSheet, 3, 7) },
-                { "floor-se-ext-stair", ExtractSprite(blockSheet, 4, 7) },
-                
-                // STAIRS
-                { "stairs-top-01", ExtractSprite(blockSheet, 8, 5) },
-                { "stairs-top-02", ExtractSprite(blockSheet, 9, 5) },
-                { "stairs-top-03", ExtractSprite(blockSheet, 10, 5) },
-                { "stairs-bottom-01", ExtractSprite(blockSheet, 8, 6) },
-                { "stairs-bottom-02", ExtractSprite(blockSheet, 9, 6) },
-                { "stairs-bottom-03", ExtractSprite(blockSheet, 10, 6) },
-
-                // DOORS
-                { "door-int", ExtractSprite(blockSheet, 1, 4) },
-                //{ "door-ext", ExtractSprite(blockSheet, 2, 4) },
-
-                // ROOF
-                { "roof-back-left", ExtractSprite(roofSheet, 0, 0, 2 * Global.TileSize, 2 * Global.TileSize) },
-                { "roof-back-right", ExtractSprite(roofSheet, 4 * Global.TileSize, 0, 2 * Global.TileSize, 2 * Global.TileSize) },
-
-                { "roof-front-left", ExtractSprite(roofSheet, 0, 3 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize) },
-                { "roof-front-right", ExtractSprite(roofSheet, 4 * Global.TileSize, 3 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize) },
-
-                { "roof-side-left", ExtractSprite(roofSheet, 0, 2 * Global.TileSize, 2 * Global.TileSize, Global.TileSize) },
-                { "roof-side-right", ExtractSprite(roofSheet, 4 * Global.TileSize, 2 * Global.TileSize, 2 * Global.TileSize, 1 * Global.TileSize) },
-
-                { "roof-top-back", ExtractSprite(roofSheet, 2 * Global.TileSize, 0 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize) },
-                { "roof-top-middle", ExtractSprite(roofSheet, 2 * Global.TileSize, 2 * Global.TileSize, 1 * Global.TileSize, 1 * Global.TileSize) },
-                { "roof-top-front", ExtractSprite(roofSheet, 2 * Global.TileSize, 3 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize) },
-                { "roof-top-front2", ExtractSprite(roofSheet, 3 * Global.TileSize, 3 * Global.TileSize, 1 * Global.TileSize, 2 * Global.TileSize) },
-
-
-
-                { "roof", Global.MISSING_TEXTURE }
-            };
+            TownSprites.Load();
         }
 
         private void LoadItems()
@@ -247,34 +296,6 @@ namespace ProjectDonut.Core
             lib.Add("grass-inv-SE", ExtractTileSprite(11, 2));
         }
 
-        private void LoadWorldMapSprites()
-        {
-            var trees = new List<Texture2D>();
-            trees.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2"));
-            WorldMapSprites.Add("tree-02", trees);
-
-            var treeStumps = new List<Texture2D>();
-            treeStumps.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree-stump-export"));
-            WorldMapSprites.Add("tree-stump", treeStumps);
-
-            var treesWinter = new List<Texture2D>();
-            treesWinter.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Tree2-winter"));
-            WorldMapSprites.Add("tree-02-winter", treesWinter);
-
-            var rocks = new List<Texture2D>();
-            rocks.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01"));
-            WorldMapSprites.Add("rock-01", rocks);
-
-            var cactus = new List<Texture2D>();
-            cactus.Add(Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Cactus01"));
-            WorldMapSprites.Add("cactus-01", cactus);
-
-            var rockSmashed = new List<Texture2D>();
-            var rockSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
-            rockSmashed.Add(ExtractSprite(rockSheet, 4 * Global.TileSize, 0, Global.TileSize, Global.TileSize));
-            WorldMapSprites.Add("rock-smashed", rockSmashed);
-        }
-
         private void LoadSpriteSheets()
         {
             spriteSheetTiles = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/WorldTerrain01");
@@ -289,7 +310,7 @@ namespace ProjectDonut.Core
 
         private void LoadDungeonSprites()
         {
-            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/dungeon_tiles");            
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/dungeon_tiles");
 
             DungeonSprites = new Dictionary<string, List<Texture2D>>
             {
@@ -354,15 +375,15 @@ namespace ProjectDonut.Core
         {
             var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/stairs");
 
-            DungeonSprites.Add("stairs-nw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 0) } );
-            DungeonSprites.Add("stairs-n", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 0) } );
-            DungeonSprites.Add("stairs-ne", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 0) } );
-            DungeonSprites.Add("stairs-w", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 1) } );
-            DungeonSprites.Add("stairs-c", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 1) } );
-            DungeonSprites.Add("stairs-e", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 1) } );
-            DungeonSprites.Add("stairs-sw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 2) } );
-            DungeonSprites.Add("stairs-s", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 2) } );
-            DungeonSprites.Add("stairs-se", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 2) } );
+            DungeonSprites.Add("stairs-nw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 0) });
+            DungeonSprites.Add("stairs-n", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 0) });
+            DungeonSprites.Add("stairs-ne", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 0) });
+            DungeonSprites.Add("stairs-w", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 1) });
+            DungeonSprites.Add("stairs-c", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 1) });
+            DungeonSprites.Add("stairs-e", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 1) });
+            DungeonSprites.Add("stairs-sw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 2) });
+            DungeonSprites.Add("stairs-s", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 2) });
+            DungeonSprites.Add("stairs-se", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 2) });
         }
 
         private void LoadBiomeGrasslands()
@@ -628,7 +649,7 @@ namespace ProjectDonut.Core
                 return "C";
         }
 
-        private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
+        public static Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
         {
             var width = Global.TileSize;
             var height = Global.TileSize;
@@ -664,7 +685,7 @@ namespace ProjectDonut.Core
             return sprite;
         }
 
-        public Texture2D GetSprite(string key)
+        public static Texture2D GetSprite(string key)
         {
             return lib[key];
         }

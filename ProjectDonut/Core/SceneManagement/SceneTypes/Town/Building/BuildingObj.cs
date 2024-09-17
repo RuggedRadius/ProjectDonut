@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
@@ -79,7 +80,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             // Build Roof
             RoofDataMap = BuildingDataMapper.GenerateRoofDataMap(Plot, Levels[0].RoomRects);
-            RoofTileMap = BuildingTileMapper.GenerateRoofTileMap(RoofDataMap, Plot);
+            //RoofTileMap = BuildingTileMapper.GenerateRoofTileMap(RoofDataMap, Plot);
 
             //DebugMapData.WriteMapData(Levels[0].FloorDataMap, $"FloorDataMap_{tmpBuildingIndex}");
             //DebugMapData.WriteMapData(RoofDataMap, $"RoofDataMap_{tmpBuildingIndex}");
@@ -229,7 +230,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             // TODO: Add east ands west doors
             // Get bounds walls (just north and south for now)
             var southWalls = new List<Tile>();
-            var lib = Global.SpriteLibrary.BuildingBlockSprites;
             for (int i = 0; i < BuildingBounds.Width; i += 1)
             {
                 for (int j = 0; j < BuildingBounds.Height; j += 1)
@@ -249,7 +249,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     //var x = i;// / Global.TileSize;
                     //var y = j;// / Global.TileSize;
 
-                    if (tile.Texture == lib["wall-s"])
+                    if (tile.Texture == SpriteLib.TownSprites.Walls["wall-s"])
                     {
                         southWalls.Add(bottomLevel.WallTileMap.Map[i, j]);
                     }
@@ -257,14 +257,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             }
 
-            if (southWalls.Count == 0)
-                throw new Exception("Could not place door on building");
+            //if (southWalls.Count == 0)
+            //    throw new Exception("Could not place door on building");
 
-            var doorTile = southWalls[_random.Next(0, southWalls.Count)];
-            doorTile.Texture = Global.SpriteLibrary.BuildingBlockSprites["door-int"];
+            //var doorTile = southWalls[_random.Next(0, southWalls.Count)];
+            //doorTile.Texture = SpriteLib.BuildingBlockSprites["door-int"];
 
-            bottomLevel.WallDataMap[doorTile.xIndex, doorTile.yIndex] = 0;
-            bottomLevel.FloorDataMap[doorTile.xIndex, doorTile.yIndex] = 1;
+            //bottomLevel.WallDataMap[doorTile.xIndex, doorTile.yIndex] = 0;
+            //bottomLevel.FloorDataMap[doorTile.xIndex, doorTile.yIndex] = 1;
         }
     }
 }

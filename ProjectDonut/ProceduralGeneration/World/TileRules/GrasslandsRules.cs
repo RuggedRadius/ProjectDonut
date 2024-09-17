@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {
@@ -48,7 +49,7 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                     var directionString = GetDirectionString(tilemap, x, y);
                     var tileString = $"grasslands-{directionString}";
 
-                    tile.Texture = Global.SpriteLibrary.GetSprite(tileString);
+                    tile.Texture = SpriteLib.GetSprite(tileString);
                 }
                 catch (Exception ex)
                 {

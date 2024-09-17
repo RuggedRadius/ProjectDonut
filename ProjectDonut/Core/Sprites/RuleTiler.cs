@@ -3,7 +3,7 @@ using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;
 
-namespace ProjectDonut.Core
+namespace ProjectDonut.Core.Sprites
 {
     public class NeighbourDataTiles
     {
@@ -65,104 +65,76 @@ namespace ProjectDonut.Core
             // Explicit corners
             if (nb.North && nb.East && !nb.West)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-sw"];
+                return SpriteLib.TownSprites.Walls["wall-cap-sw"];
             }
 
             if (nb.North && nb.West && !nb.East)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-se"];
+                return SpriteLib.TownSprites.Walls["wall-cap-se"];
             }
 
             if (nb.South && nb.East && !nb.West)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-nw"];
+                return SpriteLib.TownSprites.Walls["wall-cap-nw"];
             }
 
             if (nb.South && nb.West && !nb.East)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-ne"];
+                return SpriteLib.TownSprites.Walls["wall-cap-ne"];
             }
 
             if (nb.North && nb.East && nb.South && nb.West)
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-se"];
+                return SpriteLib.TownSprites.Walls["wall-cap-se"];
 
 
 
             if (nb.East && nb.South)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-nw"];
+                return SpriteLib.TownSprites.Walls["wall-cap-nw"];
             }
 
             if (nb.South && nb.West)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-ne"];
+                return SpriteLib.TownSprites.Walls["wall-cap-ne"];
             }
 
 
 
             if (nb.North && nb.West)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-se"];
+                return SpriteLib.TownSprites.Walls["wall-cap-se"];
             }
 
 
 
             if (!nb.North)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-n"];
+                return SpriteLib.TownSprites.Walls["wall-cap-n"];
             }
 
             if (!nb.East)
             {
                 if (floorMap[x - 1, y] == 1)
-                    return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-e"];
+                    return SpriteLib.TownSprites.Walls["wall-cap-e"];
 
                 if (floorMap[x + 1, y] == 1)
-                    return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-w"];
+                    return SpriteLib.TownSprites.Walls["wall-cap-w"];
 
                 return Global.MISSING_TEXTURE;
             }
 
             if (!nb.South)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-s"];
+                return SpriteLib.TownSprites.Walls["wall-cap-s"];
             }
 
             if (!nb.West)
             {
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-w"];
+                return SpriteLib.TownSprites.Walls["wall-cap-w"];
             }
 
             return Global.MISSING_TEXTURE;
         }
-
-        public static Texture2D DetermineBuildingWallCapTexturePass2(int[,] wallMap, int[,] floorMap, Tilemap wallTiles, int x, int y)
-        {
-            //Global.SpriteLibrary.BuildingBlockSprites["wall-cap-n"]
-
-            var nw = wallTiles.Map[x-1, y-1]?.Texture;
-            var n = wallTiles.Map[x, y-1]?.Texture;
-            var ne = wallTiles.Map[x+1, y-1]?.Texture;
-            var w = wallTiles.Map[x-1, y]?.Texture;
-            var e = wallTiles.Map[x+1, y]?.Texture;
-            var sw = wallTiles.Map[x-1, y+1]?.Texture;
-            var s = wallTiles.Map[x, y+1]?.Texture;
-            var se = wallTiles.Map[x+1, y+1]?.Texture;
-
-            if (s == Global.SpriteLibrary.BuildingBlockSprites["wall-face"])
-            {
-                if (e == Global.SpriteLibrary.BuildingBlockSprites["wall-face"])
-                    return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-ne"];
-
-                if (w == Global.SpriteLibrary.BuildingBlockSprites["wall-face"])
-                    return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-nw"];
-
-                return Global.SpriteLibrary.BuildingBlockSprites["wall-cap-n"];
-            }
-
-            return null;
-        }
-
 
         public static class Town
         {
@@ -171,19 +143,19 @@ namespace ProjectDonut.Core
                 switch (map[x, y])
                 {
                     case 0:
-                        return Global.SpriteLibrary.TownSprites["dirt-c"];
+                        return SpriteLib.TownSprites.Terrain["dirt-c"];
 
                     case 1:
-                        return Global.SpriteLibrary.TownSprites["dirt-c"];
+                        return SpriteLib.TownSprites.Terrain["dirt-c"];
 
                     case 2:
-                        return Global.SpriteLibrary.TownSprites["grass-c"];
+                        return SpriteLib.TownSprites.Terrain["grass-c"];
 
                     case 3:
-                        return Global.SpriteLibrary.TownSprites["grass-c"];
+                        return SpriteLib.TownSprites.Terrain["grass-c"];
 
                     default:
-                        return Global.SpriteLibrary.TownSprites["dirt-c"];
+                        return SpriteLib.TownSprites.Terrain["dirt-c"];
                 }
             }
 
@@ -204,41 +176,41 @@ namespace ProjectDonut.Core
                     s = map[x, y + 1] == 1;
 
                 if (!n && e && s && !w)
-                    return Global.SpriteLibrary.TownSprites["fence-nw"];
+                    return SpriteLib.TownSprites.Fences["fence-nw"];
                 if (!n && e && !s && w)
                 {
                     if (y == 0)
-                        return Global.SpriteLibrary.TownSprites["fence-n"];
+                        return SpriteLib.TownSprites.Fences["fence-n"];
                     //else if (map[x, y - 1] == 1)
-                    //    return Global.SpriteLibrary.TownSprites["fence-s"];
+                    //    return SpriteLib.TownSprites["fence-s"];
                     else
-                        return Global.SpriteLibrary.TownSprites["fence-s"];
+                        return SpriteLib.TownSprites.Fences["fence-s"];
                 }
 
                 if (!n && !e && s && w)
-                    return Global.SpriteLibrary.TownSprites["fence-ne"];
+                    return SpriteLib.TownSprites.Fences["fence-ne"];
                 if (n && !e && s && !w)
                 {
                     if (x == 0)
-                        return Global.SpriteLibrary.TownSprites["fence-w"];
+                        return SpriteLib.TownSprites.Fences["fence-w"];
                     //else if (map[x - 1, y] == 1)
-                    //    return Global.SpriteLibrary.TownSprites["fence-e"];
+                    //    return SpriteLib.TownSprites["fence-e"];
                     else
-                        return Global.SpriteLibrary.TownSprites["fence-e"];
+                        return SpriteLib.TownSprites.Fences["fence-e"];
                 }
                 if (n && e && !s && !w)
-                    return Global.SpriteLibrary.TownSprites["fence-sw"];
+                    return SpriteLib.TownSprites.Fences["fence-sw"];
                 if (n && !e && !s && w)
-                    return Global.SpriteLibrary.TownSprites["fence-se"];
+                    return SpriteLib.TownSprites.Fences["fence-se"];
                 else
-                    return Global.SpriteLibrary.TownSprites["fence-s"];
+                    return SpriteLib.TownSprites.Fences["fence-s"];
             }
 
             public static Texture2D WallTexture(int[,] wallMap, int[,] floorMap, int x, int y)
             {
                 var wn = new NeighbourDataTiles(wallMap, x, y);
                 var fn = new NeighbourDataTiles(floorMap, x, y);
-                var lib = Global.SpriteLibrary.BuildingBlockSprites;
+                var lib = SpriteLib.TownSprites.Walls;
 
                 // CORNERS
                 if (!wn.North && wn.East && wn.South && !wn.West) // ES
@@ -277,7 +249,7 @@ namespace ProjectDonut.Core
                     return lib["wall-junc-nsw"];
 
                 // CAPS
-                if (wn.North && !wn.East && !wn.South && !wn.West)                
+                if (wn.North && !wn.East && !wn.South && !wn.West)
                     return lib["wall-int-cap-n"];
                 if (!wn.North && wn.East && !wn.South && !wn.West)
                     return lib["wall-int-cap-e"];
@@ -289,7 +261,7 @@ namespace ProjectDonut.Core
                 // PILLAR
                 if (fn.North && fn.NorthEast && fn.East && fn.SouthEast && fn.South && fn.SouthWest && fn.West && fn.NorthWest)
                     return lib["wall-pillar"];
-                    
+
                 return Global.MISSING_TEXTURE;
             }
 
@@ -298,7 +270,7 @@ namespace ProjectDonut.Core
             {
                 var fn = new NeighbourDataTiles(floorMap, x, y);
                 var wn = new NeighbourDataTiles(wallMap, x, y);
-                var lib = Global.SpriteLibrary.BuildingBlockSprites;
+                var lib = SpriteLib.TownSprites.Floor;
 
                 // ODD - SPECIFIC
                 if (!fn.North && !fn.NorthEast && fn.East && !fn.SouthEast && !fn.South && !fn.SouthWest && !fn.West && !fn.NorthWest)
@@ -367,7 +339,7 @@ namespace ProjectDonut.Core
 
                 if (fn.North && fn.East && !fn.South && !fn.West) // NE
                 {
-                    
+
                     return lib["floor-sw"];
                 }
 
@@ -395,13 +367,13 @@ namespace ProjectDonut.Core
                     //    return lib["floor-ne-ext-stair"];
 
                     return lib["floor-nw-ext-stair"];
-                }                    
+                }
 
                 if (fn.North && fn.NorthEast && fn.East && !fn.SouthEast && fn.South && fn.SouthWest && fn.West && fn.NorthWest)
                 {
                     if (wn.SouthEast)
-                        return lib["floor-c"]; 
-                    
+                        return lib["floor-c"];
+
                     return lib["floor-se-ext-stair"];
                 }
 
@@ -437,7 +409,7 @@ namespace ProjectDonut.Core
                         return lib["floor-w"];
                     }
                 }
-                    //return lib["floor-odd-missing-w-[o]sw"];
+                //return lib["floor-odd-missing-w-[o]sw"];
 
                 if (fn.North && fn.NorthEast && !fn.East && fn.South && fn.SouthWest && fn.West && fn.NorthWest)
                 {
@@ -448,11 +420,11 @@ namespace ProjectDonut.Core
                     else
                     {
                         return lib["floor-e"];
-                    }                    
+                    }
                 }
-                    
 
-     
+
+
 
                 if (fn.North && fn.NorthEast && !fn.East && fn.SouthEast && fn.South && !fn.West && fn.NorthWest) // Vertical doorway
                     return lib["floor-doorway-vertical"];
@@ -524,11 +496,11 @@ namespace ProjectDonut.Core
                     {
                         if (biome == Biome.Winterlands)
                         {
-                            return Global.SpriteLibrary.GetSprite("ice");
+                            return SpriteLib.GetSprite("ice");
                         }
                         else
                         {
-                            return Global.SpriteLibrary.GetSprite("beach");
+                            return SpriteLib.GetSprite("beach");
                         }
                     }
 
@@ -541,16 +513,16 @@ namespace ProjectDonut.Core
                         switch (biome)
                         {
                             case Biome.Desert:
-                                return Global.SpriteLibrary.GetSprite("desert");
+                                return SpriteLib.GetSprite("desert");
 
                             case Biome.Grasslands:
-                                return Global.SpriteLibrary.GetSprite("grasslands");
+                                return SpriteLib.GetSprite("grasslands");
 
                             case Biome.Winterlands:
-                                return Global.SpriteLibrary.GetSprite("winterlands");
+                                return SpriteLib.GetSprite("winterlands");
 
                             default:
-                                return Global.SpriteLibrary.GetSprite("grasslands");
+                                return SpriteLib.GetSprite("grasslands");
                         }
                     }
                 }
@@ -558,11 +530,11 @@ namespace ProjectDonut.Core
                 {
                     if (heightValue >= settings.WaterHeightMin)
                     {
-                        return Global.SpriteLibrary.GetSprite("coast-inv");
+                        return SpriteLib.GetSprite("coast-inv");
                     }
                     else
                     {
-                        return Global.SpriteLibrary.GetSprite("deepwater-C");
+                        return SpriteLib.GetSprite("deepwater-C");
                     }
                 }
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
@@ -191,7 +192,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = Global.SpriteLibrary.TownSprites["dirt-c"],
+                        Texture = SpriteLib.TownSprites.Terrain["dirt-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };

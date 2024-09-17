@@ -6,6 +6,7 @@ using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Interfaces;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
@@ -70,7 +71,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 case WorldStructureType.Town:
                     StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new TownScene(this);
-                    Texture = Global.SpriteLibrary.GetSprite("town");
+                    Texture = SpriteLib.GetSprite("town");
                     break;
 
                 case WorldStructureType.City: // ??? really needed?
@@ -79,7 +80,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 case WorldStructureType.Castle:
                     StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new DungeonScene();
-                    Texture = Global.SpriteLibrary.GetSprite("castle");
+                    Texture = SpriteLib.GetSprite("castle");
                     break;
             }
             
