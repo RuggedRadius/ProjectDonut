@@ -35,6 +35,12 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
         private AnimationController _animControllerHit;
         private AnimatedSprite _sprite;
 
+        private Random _random;
+
+        public MineableRock()
+        {
+            _random = new Random();
+        }
 
         public void Intialize()
         {
@@ -157,7 +163,6 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             {
                 var mineableItem = CreateInventoryItem();
                 Global.Player.Inventory.AddItemToInventory(mineableItem);
-                //Global.Player.TextDisplay.AddText("+1 " + mineableItem.Name, 0, Vector2.Zero, Color.White);
 
                 var replacementRockRubble = new SceneObjectStatic()
                 {
@@ -168,7 +173,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
                 };
                 replacementRockRubble.Initialize();
 
-                //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH
+                //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH it was this easy
                 if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("rock-rubble"))
                 {
                     Global.SceneManager.CurrentScene._sceneObjects["rock-rubble"].Add(replacementRockRubble);
@@ -182,11 +187,13 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 
         private InventoryItem CreateInventoryItem()
         {
-            var mineableItem = new InventoryItem();
-
-            mineableItem.Name = "Stone";
-            mineableItem.Icon = InventoryIcon;
-            mineableItem.ItemType = ItemType.Consumable;
+            var mineableItem = new InventoryItem()
+            {
+                Name = "Stone",
+                Icon = InventoryIcon,
+                ItemType = ItemType.Consumable,
+                Quantity = _random.Next(1, 4)
+            };
 
             return mineableItem;
         }

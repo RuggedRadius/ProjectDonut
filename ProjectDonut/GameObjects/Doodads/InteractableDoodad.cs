@@ -19,9 +19,14 @@ namespace ProjectDonut.GameObjects.Doodads
         public InteractableState State { get; set; }
         public Rectangle InteractBounds { get; set; }
 
+        public bool PlayerInRange { get; set; }
+
         internal SpriteSheet _spriteSheet;
         internal AnimationController _animControllerHit;
         internal AnimatedSprite _sprite;
+
+        internal float _interactTimer = 0f;
+        internal float _interactCooldown = 0.5f;
 
         public InteractableDoodad(Rectangle bounds)
         {
@@ -30,11 +35,13 @@ namespace ProjectDonut.GameObjects.Doodads
 
         public virtual void Interact()
         {
+            _interactTimer = 0f;
         }
 
         public virtual void Update(GameTime gameTime)
         {
-        
+            _interactTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            PlayerInRange = InteractBounds.Contains(Global.PlayerObj.WorldPosition);
         }
 
         public virtual void Draw(GameTime gameTime)

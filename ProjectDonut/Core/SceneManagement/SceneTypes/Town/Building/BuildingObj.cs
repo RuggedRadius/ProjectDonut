@@ -91,6 +91,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             Roof = new BuildingRoof();
             Roof.BuildRoof(Levels[Levels.Count - 1]);
+
+            SetAllInteractablesState();
         }
 
         public void Initialize()
@@ -128,7 +130,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 {
                     if (PlayerOccupyLevel < LevelCount - 1)
                     {
-                        PlayerOccupyLevel++;
+                        MovePlayerUpLevel();                        
                         tmpTimer = 0;
                     }
                 }
@@ -136,7 +138,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 {
                     if (PlayerOccupyLevel >= 1)
                     {
-                        PlayerOccupyLevel--;
+                        MovePlayerDownLevel();
                         tmpTimer = 0;
                     }
                 }
@@ -270,7 +272,46 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             //bottomLevel.WallDataMap[doorTile.xIndex, doorTile.yIndex] = 0;
             //bottomLevel.FloorDataMap[doorTile.xIndex, doorTile.yIndex] = 1;
         }
-    
+
+        public void MovePlayerUpLevel()
+        {
+            PlayerOccupyLevel++;
+            SetAllInteractablesState();
+
+        }    
+
+        public void MovePlayerDownLevel()
+        {
+            PlayerOccupyLevel--;
+            SetAllInteractablesState();
+        }
+
+        private void SetAllInteractablesState()
+        {
+            foreach (var level in Levels.Values)
+            {
+                if (level == Levels[PlayerOccupyLevel])
+                {
+                    foreach (var interactable in level.Interactables)
+                    {
+                        if (interactable.State == InteractableState.Interacted)
+                            continue;
+
+                        interactable.State = InteractableState.Acessible;
+                    }
+                }
+                else
+                {
+                    foreach (var interactable in level.Interactables)
+                    {
+                        if (interactable.State == InteractableState.Interacted)
+                            continue;
+
+                        interactable.State = InteractableState.Disabled;
+                    }
+                }
+            }
+        }
         
     }
 }

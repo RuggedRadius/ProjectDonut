@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
@@ -54,17 +55,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             Slots = new List<PlayerInventorySlot>();
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 5; i++)
             {
                 var newSlot = CreateNewSlot();
                 Slots.Add(newSlot);
             }
 
-            for (int i = 0; i < 5; i++)
-            {
-                var item = CreateTestItem();
-                AddItemToInventory(item);
-            }
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    var item = CreateTestItem();
+            //    AddItemToInventory(item);
+            //}
         }
 
         private PlayerInventorySlot CreateNewSlot(InventoryItem item = null)
@@ -105,37 +106,82 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             }
         }
 
-        public void AddItemToInventory(InventoryItem item)
+        public bool HasRoomForItem(InventoryItem item)
         {
+            var emptySlots = Slots.Where(x => x.Item == null).ToList();
+            var existingUnmaxxedStacks = Slots
+                .Where(x => x.Item != null && x.Item.Name == item.Name && x.Item.Quantity < GetMaxStackAmount(x.Item.ItemType))
+                .ToList();
 
-            foreach (var slot in Slots)
+            if (emptySlots.Count > 0 || existingUnmaxxedStacks.Count > 0)
             {
-                if (slot.Item != null && slot.Item.Name == item.Name)
-                {
-                    var maxStack = GetMaxStackAmount(slot.Item.ItemType);
+                return true;
+            }
 
-                    if (slot.Item.Quantity + item.Quantity <= maxStack)
+            return false;
+        }
+
+
+        /// <summary>
+        /// Adds the quantity of the item to the inventory.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns>An integer count of the item NOT added to the inventory if it is full</returns>
+        public int AddItemToInventory(InventoryItem item)
+        {
+            // Check for full inventory
+            int quantity = item.Quantity;
+            var emptySlots = Slots.Where(x => x.Item == null).ToList();
+            var existingUnmaxxedStacks = Slots
+                .Where(x => x.Item != null && x.Item.Name == item.Name && x.Item.Quantity < GetMaxStackAmount(x.Item.ItemType))
+                .ToList();
+
+            if (emptySlots.Count == 0 && existingUnmaxxedStacks.Count == 0)
+            {
+                return quantity;
+            }
+
+            var maxStackQuantity = GetMaxStackAmount(item.ItemType);
+            var itemsPlaced = 0;
+            //var attemptCounter = 10;
+            while (itemsPlaced < quantity)
+            {
+                existingUnmaxxedStacks = Slots
+                .Where(x => x.Item != null && x.Item.Name == item.Name && x.Item.Quantity < GetMaxStackAmount(x.Item.ItemType))
+                .ToList();
+
+                if (existingUnmaxxedStacks.Count == 0)
+                {
+                    emptySlots = Slots.Where(x => x.Item == null).ToList();
+
+                    if (emptySlots.Count == 0)
                     {
-                        Global.Player.TextDisplay.AddText($"+{item.Quantity} " + item.Name, 0, Vector2.Zero, Color.White);
-                        slot.Item.Quantity += item.Quantity;
-                        return;
+                        break;
+                    }
+                    else
+                    {
+                        emptySlots[0].Item = new InventoryItem()
+                        {
+                            Name = item.Name,
+                            Description = item.Description,
+                            Icon = item.Icon,
+                            ItemType = item.ItemType,
+                            Quantity = 1,
+                            Position = emptySlots[0].Position + new Vector2(2, 2)
+                        };
+                        itemsPlaced++;
                     }
                 }
-            }
-
-            foreach (var slot in Slots)
-            {
-                if (slot.Item == null)
+                else
                 {
-                    Global.Player.TextDisplay.AddText($"+{item.Quantity} " + item.Name, 0, Vector2.Zero, Color.White);
-                    slot.Item = item;
-                    slot.Item.Position = slot.Position + new Vector2(2, 2);
-                    return;
+                    existingUnmaxxedStacks[0].Item.Quantity++;
+                    itemsPlaced++;
                 }
             }
 
-            // Inventory is full!
-            return;
+            Global.Player.TextDisplay.AddText($"+{itemsPlaced} " + item.Name, 0, Vector2.Zero, Color.White);
+
+            return quantity - itemsPlaced;
         }
 
         private int GetMaxStackAmount(ItemType itemType)

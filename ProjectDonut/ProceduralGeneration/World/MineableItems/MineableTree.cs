@@ -29,10 +29,16 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
         private AnimationController _animControllerHit;
         private AnimatedSprite _sprite;
 
+        private Random _random;
 
         public int ZIndex { get; set; }
 
         public Vector2 WorldPosition { get; set; }
+
+        public MineableTree()
+        {
+           _random = new Random();
+        }
 
         public void Intialize()
         {
@@ -178,11 +184,13 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 
         private InventoryItem CreateInventoryItem()
         {
-            var mineableItem = new InventoryItem();
-
-            mineableItem.Name = "Wood Log";
-            mineableItem.Icon = InventoryIcon;
-            mineableItem.ItemType = ItemType.Consumable;
+            var mineableItem = new InventoryItem()
+            {
+                Name = "Wood Log",
+                Icon = InventoryIcon,
+                ItemType = ItemType.Consumable,
+                Quantity = _random.Next(1, 4)
+            };
 
             return mineableItem;
         }

@@ -9,11 +9,20 @@ using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects.PlayerComponents;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectDonut.GameObjects.Doodads.Chests
 {
+    //public enum ChestState
+    //{
+    //    Closed,
+    //    Open,
+    //}
+
     public class Chest : InteractableDoodad
     {
+        public bool IsLocked { get; set; }
+        public bool IsOpen { get; set; }
         private List<InventoryItem> ContainedItems { get; set; }
 
         public Chest(Rectangle bounds, List<InventoryItem> containedItems) : base(bounds)
@@ -54,13 +63,24 @@ namespace ProjectDonut.GameObjects.Doodads.Chests
                     .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime));
             });
 
+            _spriteSheet.DefineAnimation("close", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 5, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(1, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(0, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
             _sprite = new AnimatedSprite(_spriteSheet, "idle");
             _sprite.SetAnimation("open").OnAnimationEvent += (sender, trigger) =>
             {
-                if (trigger == AnimationEventTrigger.AnimationCompleted)
-                {
-                    State = InteractableState.Interacted;
-                }
+                //if (trigger == AnimationEventTrigger.AnimationCompleted)
+                //{
+                //    State = InteractableState.Interacted;
+                //}
             };
 
             _sprite.SetAnimation("idle");
@@ -70,11 +90,24 @@ namespace ProjectDonut.GameObjects.Doodads.Chests
         {
             base.Update(gameTime);
 
-            if (InputManager.IsKeyPressed(Keys.E))
+            if (State == InteractableState.Disabled)
+                return;
+
+            if (PlayerInRange)
             {
-                if (InteractBounds.Contains(Global.PlayerObj.WorldPosition) && State == InteractableState.Idle)
+                if (State == InteractableState.Acessible && 
+                    InputManager.IsKeyPressed(Keys.E) &&
+                    _interactTimer >= _interactCooldown)
                 {
                     Interact();
+                }
+            }
+            else
+            {
+                if (IsOpen)
+                {
+                    _sprite.SetAnimation("close");
+                    IsOpen = false;
                 }
             }
 
@@ -83,25 +116,35 @@ namespace ProjectDonut.GameObjects.Doodads.Chests
 
         public override void Interact()
         {
-            if (State == InteractableState.Interacted)
+            if (State == InteractableState.Interacted || 
+                State == InteractableState.Inacessible || 
+                State == InteractableState.Disabled)
                 return;
 
             base.Interact();
 
+            IsOpen = true;
+
             //PlayerObj.CurrentInteractedObject = this; // TODO: Change Player to store IInteractbales instead of IMineables
-            State = InteractableState.Interacting;
+            
             _sprite.SetAnimation("open");
 
             // TEMP
             // TODO: SHOW CHEST INVENTORY SCREEN
             for (int i = 0; i < ContainedItems.Count; i++)
             {
-                Global.Player.Inventory.AddItemToInventory(ContainedItems[i]);
-            }            
+                var unplacedItems = Global.Player.Inventory.AddItemToInventory(ContainedItems[i]);
+                ContainedItems[i].Quantity = unplacedItems;
+            }       
+            
+            ContainedItems.Where(x => x.Quantity == 0).ToList().ForEach(x => ContainedItems.Remove(x));
         }
 
         public override void Draw(GameTime gameTime)
         {
+            if (State == InteractableState.Disabled)
+                return;
+
             base.Draw(gameTime);
         }
     }

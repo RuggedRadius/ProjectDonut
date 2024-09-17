@@ -9,7 +9,9 @@ namespace ProjectDonut.GameObjects.Doodads
 {
     public enum InteractableState
     {
-        Idle,
+        Disabled,
+        Inacessible,
+        Acessible,
         Interacting,
         Interacted
     }
@@ -18,6 +20,8 @@ namespace ProjectDonut.GameObjects.Doodads
     {
         InteractableState State { get; set; }
         Rectangle InteractBounds { get; set; }
+
+        bool PlayerInRange { get; set; }
 
         void Interact();
         void Update(GameTime gameTime);
