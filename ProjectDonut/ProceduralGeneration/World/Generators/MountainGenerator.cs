@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SpriteLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,7 +77,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         {
             var biome = (Biome)biomeValue;
 
-            return Global.SpriteLibrary.GetSprite("mountain");
+            return SpriteLib.GetSprite("mountain");
 
             //if (heightValue >= settings.MountainHeightMin)
             //{

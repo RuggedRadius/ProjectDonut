@@ -26,6 +26,12 @@
     <PackageReference Include="MonoGame.QuakeConsole.DesktopGL" Version="3.0.0" />
     <PackageReference Include="MonoGame.QuakeConsole.ManualInterpreter.DesktopGL" Version="3.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\SpriteLibrary\Dungeon\" />
+    <Folder Include="Core\SpriteLibrary\UI\" />
+    <Folder Include="Core\SpriteLibrary\Town\" />
+    <Folder Include="Core\SpriteLibrary\World\" />
+  </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />

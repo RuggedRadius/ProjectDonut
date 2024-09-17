@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Core.SpriteLibrary;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
@@ -31,7 +32,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public List<WorldChunk> CurrentChunks;
         public WorldChunk PlayerChunk;
 
-        private SpriteLibrary spriteLib;
+        private SpriteLib spriteLib;
         private FastNoiseLite _noise;
 
         private TerrainGenerator genHeight;

@@ -6,6 +6,7 @@ using ProjectDonut.ProceduralGeneration.BSP;
 using System;
 using System.Collections.Generic;
 using ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building;
+using ProjectDonut.Core.SpriteLibrary;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
 {
@@ -53,7 +54,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
         {
             Town = town;
 
-            PlotBounds = new Rectangle(area.Bounds.X, area.Bounds.Y, area.Bounds.Width, area.Bounds.Height);
+            PlotBounds = new Rectangle(
+                (int)area.Bounds.X,
+                (int)area.Bounds.Y,
+                area.Bounds.Width,
+                area.Bounds.Height
+                );
 
             _bsp = new BSP();
             _random = new Random();
@@ -68,7 +74,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
             _groundTileMap = GenerateGroundTilemap(PlotMap);
             _fenceTileMap = GenerateFenceTilemap(FenceMap);
 
-            Building = new BuildingObj(this, 5);
+            Building = new BuildingObj(this, 1);
             Building.Build();
         }
 
@@ -94,7 +100,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = Global.SpriteLibrary.TownSprites["grass-c"],
+                        Texture = SpriteLib.TownSprites["grass-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };

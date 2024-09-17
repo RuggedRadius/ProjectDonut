@@ -3,9 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Tools;
 using System.Collections.Generic;
 
-namespace ProjectDonut.Core
+namespace ProjectDonut.Core.SpriteLibrary
 {
-    public class SpriteLibrary
+    public class SpriteLib
+
+
     {
         private Texture2D spriteSheetTiles;
         private Texture2D spriteSheetBiomes;
@@ -14,20 +16,18 @@ namespace ProjectDonut.Core
         private Texture2D spriteSheetMountain;
         private Texture2D spriteSheetCastle;
         private Texture2D spriteSheetTown;
-
-
         private Dictionary<string, Texture2D> sheets;
-        public Dictionary<string, List<Texture2D>> DungeonSprites;
-        public Dictionary<string, List<Texture2D>> WorldMapSprites;
-        public Dictionary<string, Texture2D> ItemsSprites;
-        public Dictionary<string, Texture2D> TownSprites;
-        public Dictionary<string, Texture2D> BuildingBlockSprites;
 
 
-        private Dictionary<string, Texture2D> lib;
+        public static Dictionary<string, List<Texture2D>> DungeonSprites;
+        public static Dictionary<string, List<Texture2D>> WorldMapSprites;
+        public static Dictionary<string, Texture2D> ItemsSprites;
+        public static Dictionary<string, Texture2D> TownSprites;
+        public static Dictionary<string, Texture2D> BuildingBlockSprites;
+        public static Dictionary<string, Texture2D> lib;
 
 
-        public SpriteLibrary()
+        public SpriteLib()
         {
             LoadSpriteLibrary();
         }
@@ -170,11 +170,11 @@ namespace ProjectDonut.Core
                 { "floor-odd-missing-ne,sw,w,nw", ExtractSprite(blockSheet, 2, 2) }, //?
                 { "floor-odd-missing-ew", ExtractSprite(blockSheet, 1, 8) },
                 { "floor-odd-missing-w-[o]sw", ExtractSprite(blockSheet, 2, 8) },
-                { "floor-odd-missing-e-[o]se", ExtractSprite(blockSheet, 3, 8) },  
-                { "floor-odd-missing-nw,n,ne,se,s,sw,w", ExtractSprite(blockSheet, 5, 8) },                  
-                { "floor-odd-missing-nw,n,ne,se,s,sw,w2", ExtractSprite(blockSheet, 8, 8) },   
-                { "floor-odd-missing-4", ExtractSprite(blockSheet, 7, 8) },    
-                { "floor-odd-missing-nw,n,ne,e,se,s,sw", ExtractSprite(blockSheet, 6, 8) },  
+                { "floor-odd-missing-e-[o]se", ExtractSprite(blockSheet, 3, 8) },
+                { "floor-odd-missing-nw,n,ne,se,s,sw,w", ExtractSprite(blockSheet, 5, 8) },
+                { "floor-odd-missing-nw,n,ne,se,s,sw,w2", ExtractSprite(blockSheet, 8, 8) },
+                { "floor-odd-missing-4", ExtractSprite(blockSheet, 7, 8) },
+                { "floor-odd-missing-nw,n,ne,e,se,s,sw", ExtractSprite(blockSheet, 6, 8) },
                 { "floor-doorway-vertical", ExtractSprite(blockSheet, 4, 8) },
                 { "floor-nw-ext-stair", ExtractSprite(blockSheet, 1, 7) },
                 { "floor-ne-ext-stair", ExtractSprite(blockSheet, 2, 7) },
@@ -289,7 +289,7 @@ namespace ProjectDonut.Core
 
         private void LoadDungeonSprites()
         {
-            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/dungeon_tiles");            
+            var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/dungeon_tiles");
 
             DungeonSprites = new Dictionary<string, List<Texture2D>>
             {
@@ -354,15 +354,15 @@ namespace ProjectDonut.Core
         {
             var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/stairs");
 
-            DungeonSprites.Add("stairs-nw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 0) } );
-            DungeonSprites.Add("stairs-n", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 0) } );
-            DungeonSprites.Add("stairs-ne", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 0) } );
-            DungeonSprites.Add("stairs-w", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 1) } );
-            DungeonSprites.Add("stairs-c", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 1) } );
-            DungeonSprites.Add("stairs-e", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 1) } );
-            DungeonSprites.Add("stairs-sw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 2) } );
-            DungeonSprites.Add("stairs-s", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 2) } );
-            DungeonSprites.Add("stairs-se", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 2) } );
+            DungeonSprites.Add("stairs-nw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 0) });
+            DungeonSprites.Add("stairs-n", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 0) });
+            DungeonSprites.Add("stairs-ne", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 0) });
+            DungeonSprites.Add("stairs-w", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 1) });
+            DungeonSprites.Add("stairs-c", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 1) });
+            DungeonSprites.Add("stairs-e", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 1) });
+            DungeonSprites.Add("stairs-sw", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 0, 2) });
+            DungeonSprites.Add("stairs-s", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 2) });
+            DungeonSprites.Add("stairs-se", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 2) });
         }
 
         private void LoadBiomeGrasslands()
@@ -664,7 +664,7 @@ namespace ProjectDonut.Core
             return sprite;
         }
 
-        public Texture2D GetSprite(string key)
+        public static Texture2D GetSprite(string key)
         {
             return lib[key];
         }

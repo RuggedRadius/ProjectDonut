@@ -68,13 +68,13 @@ namespace ProjectDonut
 
             Global.DEBUG_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
             Global.DEBUG_TEXTURE.SetData(new[] { Color.Magenta });
-            Global.MISSING_TEXTURE = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
-            var missingColours = new Color[Global.TileSize * Global.TileSize];
+            Global.MISSING_TEXTURE = new Texture2D(Global.GraphicsDevice, 64, 64);
+            var missingColours = new Color[64 * 64];
             for (int i = 0; i < missingColours.Length; i++)
             {
-                int row = i / Global.TileSize;
-                int col = i % Global.TileSize;
-                int squareSize = 8; // Change the square size here
+                int row = i / 64;
+                int col = i % 64;
+                int squareSize = 16; // Change the square size here
                 if ((row / squareSize + col / squareSize) % 2 == 0)
                     missingColours[i] = new Color(0, 0, 0, 0); // Color.Blue;
                 else
@@ -82,8 +82,8 @@ namespace ProjectDonut
             }
             Global.MISSING_TEXTURE.SetData(missingColours);
 
-            Global.SpriteLibrary = new SpriteLibrary();
-            Global.SpriteLibrary.LoadSpriteLibrary();
+            Global.SpriteLib = new Core.SpriteLibrary.SpriteLib();
+            Global.SpriteLib.LoadSpriteLibrary();
 
             Global.PlayerObj = new PlayerObj();
             Global.PlayerObj.Initialize();

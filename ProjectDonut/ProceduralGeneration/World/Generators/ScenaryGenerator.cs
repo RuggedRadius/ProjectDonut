@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SpriteLibrary;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using System;
@@ -56,14 +57,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;
                         var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
-                        var texture = Global.SpriteLibrary.WorldMapSprites["tree-02-winter"][0];
+                        var texture = SpriteLib.WorldMapSprites["tree-02-winter"][0];
 
                         var tree = new MineableTreeWinter()
                         {
                             WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
                             ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
-                            InventoryIcon = Global.SpriteLibrary.ItemsSprites["wood-log"],
+                            InventoryIcon = SpriteLib.ItemsSprites["wood-log"],
                         };
 
                         tree.Intialize();
@@ -115,14 +116,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;                        
                         var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
-                        var texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0];
+                        var texture = SpriteLib.WorldMapSprites["tree-02"][0];
 
                         var tree = new MineableTree()
                         {
                             WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
                             ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
-                            InventoryIcon = Global.SpriteLibrary.ItemsSprites["wood-log"],
+                            InventoryIcon = SpriteLib.ItemsSprites["wood-log"],
                         };
 
                         tree.Intialize();
@@ -192,14 +193,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;
                     var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
-                    var texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0];
+                    var texture = SpriteLib.WorldMapSprites["tree-02"][0];
 
                     var tree = new MineableTree()
                     {
                         WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
                         ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
-                        InventoryIcon = Global.SpriteLibrary.ItemsSprites["wood-log"],
+                        InventoryIcon = SpriteLib.ItemsSprites["wood-log"],
                     };
 
                     tree.Intialize();
@@ -250,7 +251,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var worldXPos = chunkPosX + randomiseX + globaliseX;
                     var worldYPos = chunkPosY + randomiseY + globaliseY;
 
-                    var texture = Global.SpriteLibrary.WorldMapSprites["cactus-01"][0];
+                    var texture = SpriteLib.WorldMapSprites["cactus-01"][0];
 
                     var cactus = new SceneObjectStatic
                     {
@@ -300,14 +301,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var worldYPos = chunkPosY + randomiseY + globaliseY;
 
                     //var texture = Global.SpriteLibrary.WorldMapSprites["rock-01"][0];
-                    var texture = Global.SpriteLibrary.ItemsSprites["rock"];
+                    var texture = SpriteLib.ItemsSprites["rock"];
 
                     var rock = new MineableRock()
                     {
                         WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
                         ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
-                        InventoryIcon = Global.SpriteLibrary.ItemsSprites["rock"],
+                        InventoryIcon = SpriteLib.ItemsSprites["rock"],
                     };
 
                     rock.Intialize();

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.SpriteLibrary;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration;
@@ -229,7 +230,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             // TODO: Add east ands west doors
             // Get bounds walls (just north and south for now)
             var southWalls = new List<Tile>();
-            var lib = Global.SpriteLibrary.BuildingBlockSprites;
+            var lib = SpriteLib.BuildingBlockSprites;
             for (int i = 0; i < BuildingBounds.Width; i += 1)
             {
                 for (int j = 0; j < BuildingBounds.Height; j += 1)
@@ -258,10 +259,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             }
 
             if (southWalls.Count == 0)
+            {
+                return;
                 throw new Exception("Could not place door on building");
+            }
 
             var doorTile = southWalls[_random.Next(0, southWalls.Count)];
-            doorTile.Texture = Global.SpriteLibrary.BuildingBlockSprites["door-int"];
+            doorTile.Texture = SpriteLib.BuildingBlockSprites["door-int"];
 
             bottomLevel.WallDataMap[doorTile.xIndex, doorTile.yIndex] = 0;
             bottomLevel.FloorDataMap[doorTile.xIndex, doorTile.yIndex] = 1;

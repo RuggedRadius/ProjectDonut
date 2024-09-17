@@ -74,7 +74,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
         public void BuildTileMaps()
         {
-            FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot, this);
+            FloorTileMap = BuildingTileMapper.GenerateFloorTileMap(FloorDataMap, Plot);
             WallTileMap = BuildingTileMapper.GenerateWallTileMap(WallDataMap, FloorDataMap, Plot);
         }
 
@@ -85,7 +85,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             var levelAbove = levels[LevelIndex + 1];
 
             StairDataMap = BuildingDataMapper.GenerateStairsDataMap(Plot, ref levelAbove, ref level, ref levelAbove);
-            StairTileMap = BuildingTileMapper.GenerateStairsTileMap(StairDataMap, Plot);
+            StairTileMap = BuildingTileMapper.GenerateStairsTileMap(StairDataMap);
 
             levelAbove.BuildTileMaps();
         }

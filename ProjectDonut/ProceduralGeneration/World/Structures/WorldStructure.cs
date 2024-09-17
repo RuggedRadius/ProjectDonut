@@ -6,6 +6,7 @@ using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
+using ProjectDonut.Core.SpriteLibrary;
 using ProjectDonut.Interfaces;
 using ProjectDonut.Tools;
 using ProjectDonut.UI.ScrollDisplay;
@@ -70,7 +71,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 case WorldStructureType.Town:
                     StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new TownScene(this);
-                    Texture = Global.SpriteLibrary.GetSprite("town");
+                    Texture = SpriteLib.GetSprite("town");
                     break;
 
                 case WorldStructureType.City: // ??? really needed?
@@ -79,7 +80,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 case WorldStructureType.Castle:
                     StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new DungeonScene();
-                    Texture = Global.SpriteLibrary.GetSprite("castle");
+                    Texture = SpriteLib.GetSprite("castle");
                     break;
             }
             
@@ -144,24 +145,40 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
             var entries = new Rectangle[4];
 
             // North
-            var entryRectX = (int)WorldPosition.X - Global.TileSize;
-            var entryRectY = (int)WorldPosition.Y - Global.TileSize;            
-            entries[0] = new Rectangle(entryRectX, entryRectY, Texture.Width + (2 * Global.TileSize), Global.TileSize);
+            var entryRectX = WorldPosition.X;// + (Texture.Width / 2) - (Global.TileSize / 2);
+            var entryRectY = WorldPosition.Y;
+            entries[0] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize * 3,
+                Global.TileSize);
 
             // East
-            entryRectX = (int)WorldPosition.X + Texture.Width;
-            entryRectY = (int)WorldPosition.Y;
-            entries[1] = new Rectangle(entryRectX, entryRectY, Global.TileSize, Texture.Height);
+            entryRectX = WorldPosition.X + Texture.Width - Global.TileSize;
+            entryRectY = WorldPosition.Y;// + (Texture.Height / 2) - (Global.TileSize / 2);
+            entries[1] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize,
+                Global.TileSize * 3);
 
             // South
-            entryRectX = (int)WorldPosition.X - Global.TileSize;
-            entryRectY = (int)WorldPosition.Y + Texture.Height;
-            entries[2] = new Rectangle(entryRectX, entryRectY, Texture.Width + (2 * Global.TileSize), Global.TileSize);
+            entryRectX = WorldPosition.X;// + (Texture.Width / 2) - (Global.TileSize / 2);
+            entryRectY = WorldPosition.Y + Texture.Height - Global.TileSize;
+            entries[2] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize * 3,
+                Global.TileSize);
 
             // West
-            entryRectX = (int)WorldPosition.X - Global.TileSize;
-            entryRectY = (int)WorldPosition.Y;
-            entries[3] = new Rectangle(entryRectX, entryRectY, Global.TileSize, Texture.Height);
+            entryRectX = WorldPosition.X;
+            entryRectY = WorldPosition.Y;// + (Texture.Height / 2) - (Global.TileSize / 2);
+            entries[3] = new Rectangle(
+                (int)entryRectX,
+                (int)entryRectY,
+                Global.TileSize,
+                Global.TileSize * 3);
 
             return entries;
         }
