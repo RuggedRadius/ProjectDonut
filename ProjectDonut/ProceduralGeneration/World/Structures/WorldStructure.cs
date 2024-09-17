@@ -71,7 +71,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 case WorldStructureType.Town:
                     StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new TownScene(this);
-                    Texture = SpriteLib.GetSprite("town");
+                    Texture = SpriteLib.World.Structures["town"];
                     break;
 
                 case WorldStructureType.City: // ??? really needed?
@@ -80,7 +80,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 case WorldStructureType.Castle:
                     StructureName = NameGenerator.GenerateRandomName(_random.Next(2, 5));
                     Instance = new DungeonScene();
-                    Texture = SpriteLib.GetSprite("castle");
+                    Texture = SpriteLib.World.Structures["castle"];
                     break;
             }
             

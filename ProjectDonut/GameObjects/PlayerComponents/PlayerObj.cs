@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Penumbra;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Debugging;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
@@ -111,10 +112,10 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             spriteSheet = Global.ContentManager.Load<Texture2D>("Sprites/TestPlayer");
 
-            _textures.Add("walk-north-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-N-01"));
-            _textures.Add("walk-east-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-E-01"));
-            _textures.Add("walk-south-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-S-01"));
-            _textures.Add("walk-west-01", Global.ContentManager.Load<Texture2D>("Sprites/Player/Player-Walk-W-01"));
+            _textures.Add("walk-north-01", SpriteLib.Player.Idle["walk-north-01"]);
+            _textures.Add("walk-east-01", SpriteLib.Player.Idle["walk-east-01"]);
+            _textures.Add("walk-south-01", SpriteLib.Player.Idle["walk-south-01"]);
+            _textures.Add("walk-west-01", SpriteLib.Player.Idle["walk-west-01"]);
 
             currentFrame = new Rectangle(0, 0, (int)spriteSize.X, (int)spriteSize.Y);
 

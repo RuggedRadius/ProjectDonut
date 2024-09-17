@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
+using ProjectDonut.UI.DialogueSystem;
 using ProjectDonut.UI.ScrollDisplay;
 using QuakeConsole;
 using System;
@@ -30,6 +31,29 @@ namespace ProjectDonut.Debugging.Console
 
         private static void RegisterCommands(ManualInterpreter interpreter, Game1 game)
         {
+            interpreter.RegisterCommand("msg", (args) =>
+            {
+                if (args.Length < 1)
+                {
+                    Global.Debug.Console.Output.Append("Usage: \r\n" +
+                        "\t - msg <your_message> i.e. scroll hello");
+                    return;
+                }
+
+                var width = 22;
+                var height = 3;
+                var rect = new Rectangle(
+                    (-(width * Global.TileSize) / 2) + (Global.GraphicsDevice.Viewport.Width / 2), 
+                    (-(height * Global.TileSize) / 2) + (Global.GraphicsDevice.Viewport.Height / 2), 
+                    width, 
+                    height);
+
+                var message = string.Join(" ", args);
+                var lines = new List<Dialogue>() { Global.DialogueManager.CreateDialogue(rect, message, 3000f) };
+
+                Global.DialogueManager.ExecuteMultipleLines(lines);
+            });
+
             interpreter.RegisterCommand("grid", (args) =>
             {
                 if (args.Length != 1)

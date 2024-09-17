@@ -29,7 +29,7 @@ namespace ProjectDonut
         private Dictionary<string, IGameObject> _gameObjects;
         private Dictionary<string, IScreenObject> _screenObjects;
 
-        private DialogueManager dialogue;        
+        //private DialogueManager dialogue;        
         private Random random = new Random();
 
         private List<IGameObject> _objectsToDraw;
@@ -131,8 +131,8 @@ namespace ProjectDonut
             _screenObjects = new Dictionary<string, IScreenObject>();
 
             // Dialogue manager
-            dialogue = new DialogueManager();
-            _screenObjects.Add("dialogue", dialogue);
+            Global.DialogueManager = new DialogueManager();
+            _screenObjects.Add("dialogue", Global.DialogueManager);
 
             // Game cursor
             Global.GameCursor = new GameCursor(this);

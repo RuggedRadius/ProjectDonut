@@ -34,8 +34,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 
             // Alternating front panels
             var alternatingSprites = new Texture2D[2] {
-                SpriteLib.TownSprites.Roof["roof-top-front"],
-                SpriteLib.TownSprites.Roof["roof-top-front2"]
+                SpriteLib.Town.Roof["roof-top-front"],
+                SpriteLib.Town.Roof["roof-top-front2"]
             };
             var width = Global.TileSize;
             var height = Global.TileSize * 2;
@@ -61,7 +61,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 var y = (int)bounds.Top - (2 * Global.TileSize);
                 RoofSprites.Add(
                     new Rectangle(x, y, Global.TileSize, Global.TileSize),
-                    SpriteLib.TownSprites.Roof["roof-top-back"]);
+                    SpriteLib.Town.Roof["roof-top-back"]);
             }
 
             // Fill
@@ -79,7 +79,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                             (int)bounds.Y + j - Global.TileSize,
                             Global.TileSize,
                             Global.TileSize),
-                        SpriteLib.TownSprites.Roof["roof-top-middle"]);
+                        SpriteLib.Town.Roof["roof-top-middle"]);
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     (int)topLevel.WorldPosition.Y - (2 * Global.TileSize),
                     2 * Global.TileSize,
                     2 * Global.TileSize),
-                SpriteLib.TownSprites.Roof["roof-back-right"]);
+                SpriteLib.Town.Roof["roof-back-right"]);
 
             // Place middle right
             for (int i = 0; i < topLevel.ParentBuilding.BuildingWorldBounds.Height - (Global.TileSize * 2); i += Global.TileSize)
@@ -104,7 +104,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         (int)topLevel.WorldPosition.Y + i,
                         2 * Global.TileSize,
                         Global.TileSize),
-                    SpriteLib.TownSprites.Roof["roof-side-right"]);
+                    SpriteLib.Town.Roof["roof-side-right"]);
             }
 
             // Place front right
@@ -114,7 +114,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             var height = 2 * Global.TileSize;
             RoofSprites.Add(
                 new Rectangle(startX, startY, width, height),
-                SpriteLib.TownSprites.Roof["roof-front-right"]);
+                SpriteLib.Town.Roof["roof-front-right"]);
         }
 
         private void BuildLeft(BuildingLevel topLevel)
@@ -126,7 +126,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     (int)topLevel.WorldPosition.Y - (2 * Global.TileSize),
                     2 * Global.TileSize,
                     2 * Global.TileSize),
-                SpriteLib.TownSprites.Roof["roof-back-left"]);
+                SpriteLib.Town.Roof["roof-back-left"]);
 
             // Place middle left
             for (int i = 0; i < topLevel.ParentBuilding.BuildingWorldBounds.Height - (Global.TileSize * 2); i += Global.TileSize)
@@ -137,7 +137,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         (int)topLevel.WorldPosition.Y + i,
                         2 * Global.TileSize,
                         Global.TileSize),
-                    SpriteLib.TownSprites.Roof["roof-side-left"]);
+                    SpriteLib.Town.Roof["roof-side-left"]);
             }
 
             // Place front left
@@ -147,7 +147,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
             var height = 2 * Global.TileSize;
             RoofSprites.Add(
                 new Rectangle(startX, startY, width, height),
-                SpriteLib.TownSprites.Roof["roof-front-left"]);
+                SpriteLib.Town.Roof["roof-front-left"]);
         }
 
 

@@ -249,7 +249,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     //var x = i;// / Global.TileSize;
                     //var y = j;// / Global.TileSize;
 
-                    if (tile.Texture == SpriteLib.TownSprites.Walls["wall-s"])
+                    if (tile.Texture == SpriteLib.Town.Walls["wall-s"])
                     {
                         southWalls.Add(bottomLevel.WallTileMap.Map[i, j]);
                     }

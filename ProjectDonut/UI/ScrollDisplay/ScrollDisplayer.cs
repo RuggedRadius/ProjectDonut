@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
@@ -109,9 +110,9 @@ namespace ProjectDonut.UI.ScrollDisplay
 
         public void LoadContent()
         {
-            scrollTopLeft = Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Left");
-            scrollTopRight = Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Right");
-            scrollBottom = Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Bottom");
+            scrollTopLeft = SpriteLib.UI.Scroll["scroll-left"];
+            scrollTopRight = SpriteLib.UI.Scroll["scroll-right"];
+            scrollBottom = SpriteLib.UI.Scroll["scroll-middle"];
 
             _fontText = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
             _fontSubText = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDescSubText");

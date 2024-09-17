@@ -113,60 +113,60 @@ namespace ProjectDonut.UI.DialogueSystem
                     // Top Left
                     var x = dialogue.X;
                     var y = dialogue.Y;
-                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-NW"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-NW"], new Vector2(x, y), Color.White);
 
                     // Top-Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-N"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-N"], new Vector2(x, y), Color.White);
                     }
 
                     // Top-Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i);
-                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-NE"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-NE"], new Vector2(x, y), Color.White);
                 }
                 else if (i == dialogue.Height - 1)
                 {
                     // Bottom Left
                     var x = dialogue.X;
                     var y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-SW"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-SW"], new Vector2(x, y), Color.White);
 
                     // Bottom-Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-S"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-S"], new Vector2(x, y), Color.White);
                     }
 
                     // Bottom-Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-SE"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-SE"], new Vector2(x, y), Color.White);
                 }
                 else
                 {
                     // Middle Left
                     var x = dialogue.X;
                     var y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-W"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-W"], new Vector2(x, y), Color.White);
 
                     // Middle Middle
                     for (int j = 1; j < dialogue.Width - 1; j++)
                     {
                         x = (dialogue.X + j * TileSize);
                         y = (dialogue.Y + i * TileSize);
-                        Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-C"), new Vector2(x, y), Color.White);
+                        Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-C"], new Vector2(x, y), Color.White);
                     }
 
                     // Middle Right
                     x = (dialogue.X + (dialogue.Width - 1) * TileSize);
                     y = (dialogue.Y + i * TileSize);
-                    Global.SpriteBatch.Draw(SpriteLib.GetSprite("dialogue-E"), new Vector2(x, y), Color.White);
+                    Global.SpriteBatch.Draw(SpriteLib.UI.Dialogue["dialogue-E"], new Vector2(x, y), Color.White);
                 }
             }
         }
@@ -214,12 +214,15 @@ namespace ProjectDonut.UI.DialogueSystem
 
         public void ExecuteMultipleLines(List<Dialogue> lines)
         {
-            foreach (var line in lines)
+            Task.Run(() =>
             {
-                _dialogues.Add(line);
-                Thread.Sleep((int)line.ShowTime);
-                CloseAllDialogues();
-            }
+                foreach (var line in lines)
+                {
+                    _dialogues.Add(line);
+                    Thread.Sleep((int)line.ShowTime);
+                    CloseAllDialogues();
+                }
+            });
         }
     }
 }

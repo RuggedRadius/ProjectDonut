@@ -51,7 +51,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 
         public void LoadContent()
         {
-            InventoryIcon = SpriteLib.ItemsSprites["rock"];
+            InventoryIcon = SpriteLib.UI.Items["rock"];
 
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Rock01");
             var atlas = Texture2DAtlas.Create("rock", sheetTexture, Global.TileSize, Global.TileSize);
@@ -162,7 +162,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
                 var replacementRockRubble = new SceneObjectStatic()
                 {
                     WorldPosition = WorldPosition,
-                    Texture = SpriteLib.WorldMapSprites["rock-smashed"][0],
+                    Texture = SpriteLib.Mineables.Sprites["rock-smashed"][0],
                     IsVisible = IsVisible,
                     IsExplored = IsExplored
                 };

@@ -192,7 +192,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize),
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = SpriteLib.TownSprites.Terrain["dirt-c"],
+                        Texture = SpriteLib.Town.Terrain["dirt-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };

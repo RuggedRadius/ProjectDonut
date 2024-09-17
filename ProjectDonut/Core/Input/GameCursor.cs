@@ -40,7 +40,7 @@ namespace ProjectDonut.Core.Input
 
         public void LoadContent()
         {
-            cursorDefault = SpriteLib.GetSprite("cursor");
+            cursorDefault = SpriteLib.UI.Cursor["cursor"];
 
             hotspotOffset = new Vector2(cursorDefault.Width / 2, cursorDefault.Height / 2);
 

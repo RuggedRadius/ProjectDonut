@@ -243,7 +243,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
         private Texture2D GetRandomTextureFor(string key)
         {
             var random = new Random();
-            var textures = SpriteLib.DungeonSprites[key];
+            var textures = SpriteLib.Dungeon.DungeonSprites[key];
             return textures[random.Next(textures.Count)];
         }
     }

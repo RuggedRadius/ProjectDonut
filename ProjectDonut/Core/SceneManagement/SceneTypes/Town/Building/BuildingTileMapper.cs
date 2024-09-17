@@ -32,7 +32,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         yIndex = j,
                         LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + plot.WorldPosition,
                         Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = SpriteLib.TownSprites.Terrain["grass-c"],
+                        Texture = SpriteLib.Town.Terrain["grass-c"],
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
@@ -187,7 +187,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                                 yIndex = j + l,
                                 LocalPosition = new Vector2((i + k) * Global.TileSize, (j + l) * Global.TileSize) + plot.WorldPosition,
                                 Size = new Vector2(Global.TileSize, Global.TileSize),
-                                Texture = SpriteLib.TownSprites.Stairs[stairTiles[tileNameCounter]],
+                                Texture = SpriteLib.Town.Stairs[stairTiles[tileNameCounter]],
                                 TileType = TileType.Instance,
                                 IsExplored = true
                             };

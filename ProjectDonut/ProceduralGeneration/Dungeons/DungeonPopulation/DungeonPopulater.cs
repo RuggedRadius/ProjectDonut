@@ -188,31 +188,31 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             switch (popValue)
             {
                 case "stairs-nw":
-                    return SpriteLib.DungeonSprites["stairs-nw"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-nw"][0];
 
                 case "stairs-n":
-                    return SpriteLib.DungeonSprites["stairs-n"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-n"][0];
 
                 case "stairs-ne":
-                    return SpriteLib.DungeonSprites["stairs-ne"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-ne"][0];
 
                 case "stairs-w":
-                    return SpriteLib.DungeonSprites["stairs-w"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-w"][0];
 
                 case "stairs-c":
-                    return SpriteLib.DungeonSprites["stairs-c"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-c"][0];
 
                 case "stairs-e":
-                    return SpriteLib.DungeonSprites["stairs-e"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-e"][0];
 
                 case "stairs-sw":
-                    return SpriteLib.DungeonSprites["stairs-sw"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-sw"][0];
 
                 case "stairs-s":
-                    return SpriteLib.DungeonSprites["stairs-s"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-s"][0];
 
                 case "stairs-se":
-                    return SpriteLib.DungeonSprites["stairs-se"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-se"][0];
 
                 default:
                     return null;

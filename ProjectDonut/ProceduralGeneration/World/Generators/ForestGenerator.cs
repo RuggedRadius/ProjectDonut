@@ -118,7 +118,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize) + new Vector2(positionVariantX, positionVariantY),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = SpriteLib.WorldMapSprites["tree-02"][0],
+                        Texture = SpriteLib.Mineables.Sprites["tree-02"][0],
                         TileType = TileType.World,
                         WorldTileType = WorldTileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i, j]
