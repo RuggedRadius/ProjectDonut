@@ -46,8 +46,12 @@ namespace ProjectDonut
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
             Global.GraphicsDeviceManager.SupportedOrientations = DisplayOrientation.Portrait;
 
-            Global.Penumbra = new PenumbraComponent(this);
-            Components.Add(Global.Penumbra);
+            if (Global.LIGHTING_ENABLED)
+            {
+                Global.Penumbra = new PenumbraComponent(this);
+                Components.Add(Global.Penumbra);
+            }
+
 
             DevConsole.InitialiseConsole(this);
 
@@ -148,8 +152,6 @@ namespace ProjectDonut
             Global.Player.Inventory = new PlayerInventory();
             Global.Player.Inventory.Initialize();
             _screenObjects.Add("inventory", Global.Player.Inventory);
-
-
         }
 
         private void CreateGameObjects()
@@ -180,13 +182,25 @@ namespace ProjectDonut
         {
             Global.InputManager.Update(gameTime);
 
-            var kbState = Keyboard.GetState();
-
-            if (InputManager.LastKeyboardState.IsKeyUp(Keys.OemTilde) &&
-                InputManager.KeyboardState.IsKeyDown(Keys.OemTilde))
+            if (InputManager.IsKeyPressed(Keys.OemTilde))
             {
                 Global.Debug.Console.ToggleOpenClose();
                 DebugWindow.IsShown = !DebugWindow.IsShown;
+            }
+
+            if (InputManager.IsKeyPressed(Keys.NumPad1))
+            {
+                DevConsole.LogInfo("This is an info message");
+            }
+
+            if (InputManager.IsKeyPressed(Keys.NumPad2))
+            {
+                DevConsole.LogWarning("This is a warning message");
+            }
+
+            if (InputManager.IsKeyPressed(Keys.NumPad3))
+            {
+                DevConsole.LogError("This is an error message");
             }
 
             //if (kbState.IsKeyDown(Keys.F8))

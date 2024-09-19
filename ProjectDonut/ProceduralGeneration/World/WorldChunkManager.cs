@@ -242,6 +242,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             CarvePathsToTownsThroughMineables(ref chunk);
 
+            // TODO: FIX THIS!
             var structures = new List<ISceneObject>();
             structures.AddRange(chunk.SceneObjects["towns"]);
             structures.AddRange(chunk.SceneObjects["castles"]);
@@ -253,6 +254,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             return chunk;
         }
 
+        // TODO: FIX THIS!
         private void CarveRiverToPosition(ref WorldChunk chunk, Vector2 worldPosition)
         {
             var random = new Random();

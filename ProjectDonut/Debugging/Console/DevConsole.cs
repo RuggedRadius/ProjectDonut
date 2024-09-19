@@ -21,6 +21,8 @@ namespace ProjectDonut.Debugging.Console
         public static void InitialiseConsole(Game1 game)
         {
             Global.Debug.Console = new ConsoleComponent(game);
+            Global.Debug.Console.BackgroundColor = new Color(0, 0, 0, 220);
+            Global.Debug.Console.FontColor = Color.Gray;
 
             var interpreter = new ManualInterpreter();
             Global.Debug.Console.Interpreter = interpreter;
@@ -29,14 +31,51 @@ namespace ProjectDonut.Debugging.Console
             RegisterCommands(interpreter, game);
         }
 
+        public static void LogInfo(string message)
+        {
+            Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [INFO]: {message}");
+        }
+
+        public static void LogWarning(string message)
+        {
+            Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [WARNING]: {message}");
+        }
+
+        public static void LogError(string message)
+        {
+            Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [ERROR]: {message}");
+        }
+
         private static void RegisterCommands(ManualInterpreter interpreter, Game1 game)
         {
+            interpreter.RegisterCommand("inv", (args) =>
+            {
+                if (args.Length < 1)
+                {
+                    Global.Debug.Console.Output.Append("\r\nUsage: \r\n======\r\n" +
+                        " * inv clear [Clears inventory]\r\n");
+                    return;
+                }
+
+                LogInfo("Inventory cleared.");
+
+                switch (args[0].ToLower())
+                {
+                    case "clear":
+                        foreach (var slot in Global.Player.Inventory.Slots)
+                        {
+                            slot.Item = null;
+                        }
+                        break;
+                }
+            });
+
             interpreter.RegisterCommand("msg", (args) =>
             {
                 if (args.Length < 1)
                 {
                     Global.Debug.Console.Output.Append("Usage: \r\n" +
-                        "\t - msg <your_message> i.e. scroll hello");
+                        "\t - msg <your_message> i.e. msg hello");
                     return;
                 }
 

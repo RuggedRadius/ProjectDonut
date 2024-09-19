@@ -103,7 +103,11 @@ namespace ProjectDonut.Environment
             {
                 Color timeOfDayTint = GetTimeOfDayColor();
                 Global.SpriteBatch.Draw(Texture, TintRect, timeOfDayTint * 0.15f);
-                Global.Penumbra.AmbientColor = timeOfDayTint;
+
+                if (Global.LIGHTING_ENABLED)
+                {
+                    Global.Penumbra.AmbientColor = timeOfDayTint;
+                }
             }
 
             Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, DebugRect, Color.Black);

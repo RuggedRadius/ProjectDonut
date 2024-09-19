@@ -96,7 +96,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
                 ShadowType = ShadowType.Illuminated
             };
-            Global.Penumbra.Lights.Add(Light);
+
+            if (Global.LIGHTING_ENABLED)
+            {
+                Global.Penumbra.Lights.Add(Light);
+            }            
         }
 
         Texture2D CreateTexture(GraphicsDevice graphicsDevice, int width, int height, Color color)
@@ -156,8 +160,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 Global.TileSize,
                 Global.TileSize);
 
-            Light.Position = WorldPosition;
-            Global.Penumbra.Transform = Global.Camera.GetTransformationMatrix();
+            if (Global.LIGHTING_ENABLED)
+            {
+                Light.Position = WorldPosition;
+                Global.Penumbra.Transform = Global.Camera.GetTransformationMatrix();
+            }
         }
 
         private void HandleInput(GameTime gameTime)
