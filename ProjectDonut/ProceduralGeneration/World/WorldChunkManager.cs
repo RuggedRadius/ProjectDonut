@@ -202,6 +202,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             var chunk = new WorldChunk(chunkX, chunkY, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
+            //chunk.BiomeData = genBiomes.GenBiomes(Settings.Width, Settings.Height, chunkX, chunkY); // TODO: NEW TEMP + HUMIDITY METHOD, NEEDS WORK
 
             genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
@@ -239,7 +240,141 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.Initialize();
             chunk.LoadContent();
 
+            CarvePathsToTownsThroughMineables(ref chunk);
+
+            var structures = new List<ISceneObject>();
+            structures.AddRange(chunk.SceneObjects["towns"]);
+            structures.AddRange(chunk.SceneObjects["castles"]);
+            foreach (var structure in structures)
+            {
+                CarveRiverToPosition(ref chunk, structure.WorldPosition);
+            }
+
             return chunk;
+        }
+
+        private void CarveRiverToPosition(ref WorldChunk chunk, Vector2 worldPosition)
+        {
+            var random = new Random();
+
+            //var chunkXCoord = (int)(worldPosition.X / Global.ChunkSize) / Global.TileSize;
+            //var chunkYCoord = (int)(worldPosition.Y / Global.ChunkSize) / Global.TileSize;
+
+            var restrictedDirection = random.Next(0, 4);
+            var pathLength = random.Next(60, 100);
+
+            // Find nearest water tile
+            var targetTexture = SpriteLib.GetSprite("coast-inv-c");
+            var map = chunk.Tilemaps["base"].Map;
+            Tile nearestWaterTile = null;
+            var nearestWaterTileDistance = float.MaxValue;
+            var targetPosX = 0;
+            var targetPosY = 0;
+            
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (map[i, j].Texture != targetTexture)
+                        continue;
+
+                    var tilePos = new Vector2(map[i, j].WorldPosition.X, map[i, j].WorldPosition.Y);
+                    var distance = Vector2.Distance(tilePos, worldPosition);
+
+                    if (distance < nearestWaterTileDistance)
+                    {
+                        nearestWaterTile = map[i, j];
+                        nearestWaterTileDistance = distance;
+                        targetPosX = i;
+                        targetPosY = j;
+                    }
+                }
+            }
+
+            if (nearestWaterTile == null)
+                return;
+
+            // TODO: Write global function to convert world positions to chunk positions
+            var curPosX = (int)(worldPosition.X / Global.ChunkSize) / Global.TileSize;
+            var curPosY = (int)(worldPosition.Y / Global.ChunkSize) / Global.TileSize;
+            do
+            {
+                if (curPosX < targetPosX)
+                    curPosX += 1;
+                else if (curPosX > targetPosX)
+                    curPosX -= 1;
+
+                if (curPosY < targetPosY)
+                    curPosY += 1;
+                else if (curPosY > targetPosY)
+                    curPosY -= 1;
+
+                chunk.Tilemaps["base"].Map[curPosX, curPosY].Texture = SpriteLib.lib["coast-c"];
+            }
+            while (curPosX != targetPosX && curPosY != targetPosY);
+        }
+
+        private void CarvePathsToTownsThroughMineables(ref WorldChunk chunk)
+        {
+            var random = new Random();
+            var scanRadius = 2;
+            var scanSize = new Vector2(Global.TileSize * scanRadius, Global.TileSize * scanRadius);
+            var structures = new List<ISceneObject>();
+            structures.AddRange(chunk.SceneObjects["towns"]);
+            structures.AddRange(chunk.SceneObjects["castles"]);
+            foreach (var castle in structures)
+            {
+                var restrictedDirection = random.Next(0, 4);
+                var pathLength = random.Next(60, 100);
+
+                var startXPos = castle.TextureBounds.Left + (castle.TextureBounds.Width / 2);
+                var startYPos = castle.TextureBounds.Bottom + (castle.TextureBounds.Height / 2);
+                var scanRect = new Rectangle(startXPos, startYPos, (int)scanSize.X, (int)scanSize.Y);
+                for (int i = 0; i < pathLength; i++) 
+                {
+                    var nextDirection = -1;
+                    do
+                    {
+                        nextDirection = random.Next(0, 4);
+                    }
+                    while (nextDirection == restrictedDirection);
+
+                    switch (nextDirection)
+                    {
+                        case 0: startYPos -= Global.TileSize; break;
+                        case 1: startXPos += Global.TileSize; break;
+                        case 2: startYPos += Global.TileSize; break;
+                        case 3: startXPos -= Global.TileSize; break;
+                    }
+
+                    scanRect.X = startXPos;
+                    scanRect.Y = startYPos;
+
+                    var mineablesToRemove = new List<IMineable>();
+                    foreach (var mineableType in chunk.MineableObjects.Values)
+                    {
+                        foreach (var mineableObj in mineableType)
+                        {
+                            if (mineableObj.InteractBounds.Intersects(scanRect))
+                            {
+                                mineablesToRemove.Add(mineableObj);
+                            }
+                        }
+                    }
+
+                    if (mineablesToRemove.Count > 0)
+                    {
+                        ;
+                    }
+
+                    foreach (var mineable in mineablesToRemove)
+                    {
+                        chunk.MineableObjects.Values.ToList().ForEach(x => x.Remove(mineable));
+                    }
+
+
+                }
+            }
         }
 
         public void LoadContent()

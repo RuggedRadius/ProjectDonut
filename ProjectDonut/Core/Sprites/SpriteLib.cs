@@ -632,8 +632,8 @@ namespace ProjectDonut.Core.Sprites
 
                 // TODO: Change this to use one input sprite instead of 3 files
                 Scroll.Add("scroll-left", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Left"));
-                Scroll.Add("scroll-middle", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Right"));
-                Scroll.Add("scroll-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Bottom"));
+                Scroll.Add("scroll-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Right"));
+                Scroll.Add("scroll-middle", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Bottom"));
             }
         }
 

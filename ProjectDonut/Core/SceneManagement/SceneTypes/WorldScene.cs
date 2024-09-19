@@ -21,7 +21,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         private WorldChunkManager worldChunks;
 
-        private WorldMapSettings worldMapSettings;
+        public WorldMapSettings worldMapSettings;
         private FogOfWar _fog;
         private Random random = new Random();
 
