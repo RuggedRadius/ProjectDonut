@@ -82,9 +82,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 for (int j = 0; j < height; j++)
                 {
-                    heightData[i, j] = (int)(_noise[0].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * Global.ChunkSize);
-                    tempData[i, j] = (int)(_noise[1].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * Global.ChunkSize);
-                    moistureData[i, j] = (int)(_noise[2].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount * Global.ChunkSize);
+                    heightData[i, j] = (int)(_noise[0].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount);// * Global.ChunkSize);
+                    tempData[i, j] = (int)(_noise[1].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount);// * Global.ChunkSize);
+                    moistureData[i, j] = (int)(_noise[2].GetNoise(xOffset * settings.Width + i, yOffset * settings.Height + j) * biomeCount);// * Global.ChunkSize);
                 }
             }
 

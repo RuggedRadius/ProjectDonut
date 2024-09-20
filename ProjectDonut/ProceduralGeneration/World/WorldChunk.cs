@@ -28,6 +28,11 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int[,] RiverData;
         public int[,] StructureData;
 
+        // State
+        public bool IsPostProcessed { get; set; }
+
+        public Rectangle ChunkBounds { get; private set; }
+
         public Dictionary<string, Tilemap> Tilemaps;
 
         public List<WorldStructure> Structures;
@@ -38,48 +43,28 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Dictionary<string, List<ISceneObject>> SceneObjects;
         public Dictionary<string, List<IMineable>> MineableObjects;
 
-        public int Width
-        {
-            get
-            {
-                if (HeightData == null)
-                    return 0;
+        public WorldChunk NeighbourNorthEast { get; set; }
+        public WorldChunk NeighbourNorthWest { get; set; }
+        public WorldChunk NeighbourNorth { get; set; }
+        public WorldChunk NeighbourEast { get; set; }
+        public WorldChunk NeighbourSouth { get; set; }
+        public WorldChunk NeighbourSouthEast { get; set; }
+        public WorldChunk NeighbourSouthWest { get; set; }
+        public WorldChunk NeighbourWest { get; set; }
 
-                return HeightData.GetLength(0);
-            }
-            set
-            {
-                Width = value;
-            }
-        }
-        public int Height
-        {
-            get
-            {
-                if (HeightData == null)
-                    return 0;
-
-                return HeightData.GetLength(1);
-            }
-            set
-            {
-                Height = value;
-            }
-        }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
         public Vector2 Position // TODO: Use this instead of individuals int above
         { 
             get; 
             set; 
         }
-        public int ZIndex // TODO: Currently not used, well.. defaults to 0
+        public int ZIndex // TODO: Currently not used, defaulted to 0
         { 
             get; 
             set; 
         }
-
-        
-
 
         public WorldChunk(int chunkXPos, int chunkYPos, WorldChunkManager manager)
         {
@@ -101,9 +86,50 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             // Set the texture data to the array of colors
             tempTexture.SetData(colorData);
+
+            ChunkBounds = new Rectangle(WorldCoordX, WorldCoordY, Global.ChunkSize * Global.TileSize, Global.ChunkSize * Global.TileSize);
+
+            AllocateNeighbours();
         }
 
-        public void Initialize()
+        public void AllocateNeighbours()
+        {
+            if (_manager._chunks.ContainsKey((ChunkCoordX - 1, ChunkCoordY - 1)))
+            {
+                NeighbourNorthWest = _manager._chunks[(ChunkCoordX - 1, ChunkCoordY - 1)];
+            }
+            if (_manager._chunks.ContainsKey((ChunkCoordX, ChunkCoordY - 1)))
+            {
+                NeighbourNorth= _manager._chunks[(ChunkCoordX, ChunkCoordY - 1)];
+            }
+            if (_manager._chunks.ContainsKey((ChunkCoordX + 1, ChunkCoordY - 1)))
+            {
+                NeighbourNorthEast = _manager._chunks[(ChunkCoordX + 1, ChunkCoordY - 1)];
+            }
+            if (_manager._chunks.ContainsKey((ChunkCoordX - 1, ChunkCoordY)))
+            {
+                NeighbourWest = _manager._chunks[(ChunkCoordX - 1, ChunkCoordY)];
+            }
+            if (_manager._chunks.ContainsKey((ChunkCoordX + 1, ChunkCoordY)))
+            {
+                NeighbourEast = _manager._chunks[(ChunkCoordX + 1, ChunkCoordY)];
+            }
+            if (_manager._chunks.ContainsKey((ChunkCoordX - 1, ChunkCoordY + 1)))
+            {
+                NeighbourSouthWest = _manager._chunks[(ChunkCoordX - 1, ChunkCoordY + 1)];
+            }
+            if (_manager._chunks.ContainsKey((ChunkCoordX, ChunkCoordY + 1)))
+            {
+                NeighbourSouth = _manager._chunks[(ChunkCoordX, ChunkCoordY + 1)];
+            }
+            if (_manager._chunks.ContainsKey((ChunkCoordX + 1, ChunkCoordY + 1)))
+            {
+                NeighbourSouthEast = _manager._chunks[(ChunkCoordX + 1, ChunkCoordY + 1)];
+            }
+
+        }
+
+            public void Initialize()
         {
             //_fog = new FogOfWar(Width, Height);
         }
@@ -143,7 +169,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            if (Global.SceneManager.CurrentScene is WorldScene && 
+            if (Global.SceneManager.CurrentScene is WorldScene &&
                 Global.WorldChunkManager.CurrentChunks.Contains(this))
             {
                 //if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
@@ -153,11 +179,30 @@ namespace ProjectDonut.ProceduralGeneration.World
                 //}
             }
 
+            // Create a copy of the MineableObjects collection
+            var mineableObjectsCopy = MineableObjects.Values.ToList();
 
-            MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Update(gameTime)));
-            MineableObjects.Values.ToList().ForEach(x => x.Where(y => y.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x)));
-            MineableObjects.Values.ToList().ForEach(x => x.Where(y => y.Health <= 0).ToList().ForEach(x => MineableObjects["rocks"].Remove(x)));
-            //MineableObjects["trees"].Where(x => x.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x));
+            // Iterate over the copied collection
+            foreach (var mineableList in mineableObjectsCopy)
+            {
+                // Create a copy of the inner list
+                var mineableListCopy = mineableList.ToList();
+
+                // Iterate over the copied inner list
+                foreach (var mineable in mineableListCopy)
+                {
+                    if (mineable == null)
+                    {
+                        continue;
+                    }
+
+                    mineable.Update(gameTime);
+                }
+            }
+
+            // Remove mineable objects with health <= 0
+            MineableObjects["trees"].RemoveAll(x => x.Health <= 0);
+            MineableObjects["rocks"].RemoveAll(x => x.Health <= 0);
         }
 
         public void Draw(GameTime gameTime)
@@ -284,11 +329,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                     if (x == 0 || y == 0)
                     {
-                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta * 0.1f);
                     }
                     else if (x == Width - 1 || y == Height - 1)
                     {
-                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta * 0.1f);
                     }
                 }
             }

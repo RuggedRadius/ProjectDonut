@@ -3,11 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.Sprites;
+using ProjectDonut.Debugging.Console;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
+using ProjectDonut.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,6 +118,7 @@ namespace ProjectDonut.ProceduralGeneration.World
                                 if (_chunks.ContainsKey((x, y)) == false)
                                 {
                                     _chunks.Add((x, y), chunk);
+                                    PostProcessChunk(ref chunk);
                                 }
                             });
                         }
@@ -146,8 +149,26 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             foreach (var chunk in CurrentChunks)
             {
+                //if (chunk.IsPostProcessed == false)
+                //{
+                //    var curChunk = chunk;
+                //    PostProcessChunk(ref curChunk);
+                //}
+
                 chunk.Update(gameTime);
             }
+
+            Task.Run(() =>
+            {
+                foreach (var chunk in CurrentChunks)
+                {
+                    if (chunk.IsPostProcessed == false)
+                    {
+                        var curChunk = chunk;
+                        PostProcessChunk(ref curChunk);
+                    }
+                }
+            });
         }
 
         public void Draw(GameTime gameTime)
@@ -183,7 +204,16 @@ namespace ProjectDonut.ProceduralGeneration.World
                 {
                     var key = (x, y);
                     var chunk = CreateChunk(x, y);
-                    _chunks.Add(key, chunk);
+
+                    if (_chunks.ContainsKey(key) == false)
+                    {
+                        _chunks.Add(key, chunk);
+                    }
+
+                    if (_chunks[key].IsPostProcessed == false)
+                    {
+                        PostProcessChunk(ref chunk);
+                    }
                 }
             }
 
@@ -201,29 +231,30 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var chunk = new WorldChunk(chunkX, chunkY, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
-            chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
-            //chunk.BiomeData = genBiomes.GenBiomes(Settings.Width, Settings.Height, chunkX, chunkY); // TODO: NEW TEMP + HUMIDITY METHOD, NEEDS WORK
+            chunk.Width = chunk.HeightData.GetLength(0);
+            chunk.Height = chunk.HeightData.GetLength(1);
+
+            chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
+            chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
+
+            //chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.BiomeData = genBiomes.GenBiomes(Settings.Width, Settings.Height, chunkX, chunkY); // TODO: NEW TEMP + HUMIDITY METHOD, NEEDS WORK
 
             genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
-            //genStructure.GenerateStructureData(chunk);
 
             var tilemapBase = genHeight.CreateTerrainTilemap(chunk);
-            //var tilemapForest = genForest.CreateTileMap(chunk);
-            //var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);
 
             tilemapBase = rulesGrasslands.ApplyRules(tilemapBase);
 
             chunk.Tilemaps.Add("base", tilemapBase);
-            //chunk.Tilemaps.Add("forest", tilemapForest);
             chunk.Tilemaps.Add("mountains", tilemapMountains);
-            //chunk.Tilemaps.Add("structures", tilemapStructures);
 
-            chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
-            chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
+            chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
+            chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
 
-            
+
             chunk.MineableObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
             //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
             chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
@@ -231,8 +262,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
             chunk.MineableObjects["trees"].AddRange(_genScenary.GenerateWinterTrees(chunk));
 
-            chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
-            chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
+
 
             
             
@@ -240,7 +270,23 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.Initialize();
             chunk.LoadContent();
 
-            CarvePathsToTownsThroughMineables(ref chunk);
+            //CarvePathsToTownsThroughMineables(ref chunk);
+
+            //// TODO: FIX THIS!
+            //var structures = new List<ISceneObject>();
+            //structures.AddRange(chunk.SceneObjects["towns"]);
+            //structures.AddRange(chunk.SceneObjects["castles"]);
+            //foreach (var structure in structures)
+            //{
+            //    //CarveRiverToPosition(ref chunk, structure.WorldPosition);
+            //}
+
+            return chunk;
+        }
+
+        public void PostProcessChunk(ref WorldChunk chunk)
+        {
+            //CarvePathsToTownsThroughMineables(ref chunk);
 
             // TODO: FIX THIS!
             var structures = new List<ISceneObject>();
@@ -248,10 +294,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             structures.AddRange(chunk.SceneObjects["castles"]);
             foreach (var structure in structures)
             {
-                CarveRiverToPosition(ref chunk, structure.WorldPosition);
+                //CarveRiverToPosition(ref chunk, structure.WorldPosition);
             }
 
-            return chunk;
+            chunk.IsPostProcessed = true;
         }
 
         // TODO: FIX THIS!
@@ -297,8 +343,8 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return;
 
             // TODO: Write global function to convert world positions to chunk positions
-            var curPosX = (int)(worldPosition.X / Global.ChunkSize) / Global.TileSize;
-            var curPosY = (int)(worldPosition.Y / Global.ChunkSize) / Global.TileSize;
+            var curPosX = (int)(worldPosition.X / Global.TileSize) / Global.ChunkSize;
+            var curPosY = (int)(worldPosition.Y / Global.TileSize) / Global.ChunkSize;
             do
             {
                 if (curPosX < targetPosX)
@@ -311,15 +357,19 @@ namespace ProjectDonut.ProceduralGeneration.World
                 else if (curPosY > targetPosY)
                     curPosY -= 1;
 
+
+
                 chunk.Tilemaps["base"].Map[curPosX, curPosY].Texture = SpriteLib.lib["coast-c"];
             }
             while (curPosX != targetPosX && curPosY != targetPosY);
         }
 
+        private readonly object _chunksLock = new object();
+        private readonly object _mineablesLock = new object();
         private void CarvePathsToTownsThroughMineables(ref WorldChunk chunk)
         {
             var random = new Random();
-            var scanRadius = 2;
+            var scanRadius = 3;
             var scanSize = new Vector2(Global.TileSize * scanRadius, Global.TileSize * scanRadius);
             var structures = new List<ISceneObject>();
             structures.AddRange(chunk.SceneObjects["towns"]);
@@ -327,55 +377,175 @@ namespace ProjectDonut.ProceduralGeneration.World
             foreach (var castle in structures)
             {
                 var restrictedDirection = random.Next(0, 4);
-                var pathLength = random.Next(60, 100);
-
-                var startXPos = castle.TextureBounds.Left + (castle.TextureBounds.Width / 2);
-                var startYPos = castle.TextureBounds.Bottom + (castle.TextureBounds.Height / 2);
+                var startXPos = castle.TextureBounds.Center.X;
+                var startYPos = castle.TextureBounds.Center.Y;
                 var scanRect = new Rectangle(startXPos, startYPos, (int)scanSize.X, (int)scanSize.Y);
-                for (int i = 0; i < pathLength; i++) 
-                {
-                    var nextDirection = -1;
-                    do
-                    {
-                        nextDirection = random.Next(0, 4);
-                    }
-                    while (nextDirection == restrictedDirection);
 
-                    switch (nextDirection)
+                var mineablesToRemove = new List<IMineable>();
+                var counter = 0;
+
+                do
+                {
+                    mineablesToRemove.Clear();
+
+                    switch (restrictedDirection)
                     {
-                        case 0: startYPos -= Global.TileSize; break;
-                        case 1: startXPos += Global.TileSize; break;
-                        case 2: startYPos += Global.TileSize; break;
-                        case 3: startXPos -= Global.TileSize; break;
+                        case 0: 
+                            startYPos -= (Global.TileSize * scanRadius); 
+
+                            // random chance to step sideways
+                            if (random.Next(0, 100) < 40)
+                            {
+                                if (random.Next(0, 2) == 0)
+                                    startXPos -= (Global.TileSize * 1);
+                                else
+                                    startXPos += (Global.TileSize * 1);
+                            }
+                            break;
+
+                        case 1: 
+                            startXPos += (Global.TileSize * scanRadius);
+
+                            // random chance to step sideways
+                            if (random.Next(0, 100) < 40)
+                            {
+                                if (random.Next(0, 2) == 0)
+                                    startYPos -= (Global.TileSize * 1);
+                                else
+                                    startYPos += (Global.TileSize * 1);
+                            }
+                            break;
+
+                        case 2: 
+                            startYPos += (Global.TileSize * scanRadius);
+
+                            // random chance to step sideways
+                            if (random.Next(0, 100) < 40)
+                            {
+                                if (random.Next(0, 2) == 0)
+                                    startXPos -= (Global.TileSize * 1);
+                                else
+                                    startXPos += (Global.TileSize * 1);
+                            }
+                            break;
+
+                        case 3: 
+                            startXPos -= (Global.TileSize * scanRadius);
+
+                            // random chance to step sideways
+                            if (random.Next(0, 100) < 40)
+                            {
+                                if (random.Next(0, 2) == 0)
+                                    startYPos -= (Global.TileSize * 1);
+                                else
+                                    startYPos += (Global.TileSize * 1);
+                            }
+                            break;
                     }
 
                     scanRect.X = startXPos;
                     scanRect.Y = startYPos;
 
-                    var mineablesToRemove = new List<IMineable>();
-                    foreach (var mineableType in chunk.MineableObjects.Values)
+                    // Check if scanRect is inside ChunkBounds
+                    if (chunk.ChunkBounds.Contains(scanRect.Location))
                     {
-                        foreach (var mineableObj in mineableType)
+                        foreach (var mineableType in chunk.MineableObjects.Values)
                         {
+                            foreach (var mineableObj in mineableType)
+                            {
+                                if (mineableObj.InteractBounds.Intersects(scanRect))
+                                {
+                                    mineablesToRemove.Add(mineableObj);
+                                }
+                            }
+                        }
+
+                        foreach (var mineable in mineablesToRemove)
+                        {
+                            chunk.MineableObjects.Values.ToList().ForEach(x => x.Remove(mineable));
+                        }
+                    }
+                    // if not fetch/create create corresponding chunk
+                    else
+                    {
+                        WorldChunk relevantChunk = null;
+
+                        List<WorldChunk> chunkValues;
+                        lock (_chunksLock)
+                        {
+                            chunkValues = new List<WorldChunk>(_chunks.Values);
+                        }
+
+                        foreach (var worldChunk in chunkValues)
+                        {
+                            if (worldChunk.ChunkBounds.Contains(scanRect.Location))
+                            {
+                                relevantChunk = worldChunk;
+                            }
+                        }
+
+                        if (relevantChunk == null)
+                        {
+                            // Didn't find relevant chunk in existing chunks
+
+                            var newCoords = PositionTools.ConvertWorldPositionToChunkCoords(new Vector2(scanRect.Location.X, scanRect.Location.Y));
+                            if (_chunks.ContainsKey(newCoords))
+                            {
+                                if (_chunks[newCoords].ChunkBounds.Contains(scanRect.Location) == false)
+                                {
+                                    throw new Exception("WHAT! Scan rect is not inside relevant chunk bounds.");
+                                }
+                                else
+                                {
+                                    relevantChunk = _chunks[newCoords];
+                                }
+                            }
+                            else
+                            {
+                                var newChunk = CreateChunk(newCoords.Item1, newCoords.Item2);
+                                if (_chunks.ContainsKey((newChunk.ChunkCoordX, newChunk.ChunkCoordY)) == false)
+                                {
+                                    _chunks.Add(newCoords, newChunk);
+                                }
+
+                                //PostProcessChunk(ref newChunk);
+
+                                relevantChunk = _chunks[newCoords];
+                            }
+                        }
+                        else if (relevantChunk.ChunkBounds.Contains(scanRect.Location) == false)
+                        {
+                            throw new Exception("Scan rect is not inside relevant chunk bounds.");
+                        }
+
+                        List<IMineable> chunkMineables;
+                        lock (_mineablesLock)
+                        {
+                            // Make a copy of the list while under the lock to prevent modifications during iteration
+                            chunkMineables = relevantChunk.MineableObjects.Values.SelectMany(x => x).ToList();
+                        }
+
+                        foreach (var mineableObj in chunkMineables)
+                        {
+                            if (mineableObj == null)
+                                continue;
+
                             if (mineableObj.InteractBounds.Intersects(scanRect))
                             {
+                                // Make sure that you modify mineablesToRemove and not chunkMineables
                                 mineablesToRemove.Add(mineableObj);
                             }
                         }
+
+                        foreach (var mineable in mineablesToRemove)
+                        {
+                            relevantChunk.MineableObjects.Values.ToList().ForEach(x => x.Remove(mineable));
+                        }
                     }
 
-                    if (mineablesToRemove.Count > 0)
-                    {
-                        ;
-                    }
-
-                    foreach (var mineable in mineablesToRemove)
-                    {
-                        chunk.MineableObjects.Values.ToList().ForEach(x => x.Remove(mineable));
-                    }
-
-
+                    counter++;
                 }
+                while (mineablesToRemove.Count > 0 || counter < 100);
             }
         }
 

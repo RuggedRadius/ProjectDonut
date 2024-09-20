@@ -21,7 +21,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         private WorldChunkManager worldChunks;
 
-        public WorldMapSettings worldMapSettings;
+        public static WorldMapSettings WorldMapSettings;
         private FogOfWar _fog;
         private Random random = new Random();
 
@@ -43,10 +43,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         {
             base.Initialize();
 
-            worldMapSettings = CreateWorldMapSettings();
-            _fog = new FogOfWar(worldMapSettings.Width, worldMapSettings.Height);
+            WorldMapSettings = CreateWorldMapSettings();
+            _fog = new FogOfWar(WorldMapSettings.Width, WorldMapSettings.Height);
 
-            worldChunks = new WorldChunkManager(worldMapSettings);
+            worldChunks = new WorldChunkManager(WorldMapSettings);
             _gameObjects.Add("chunkmanager", worldChunks);
             Global.WorldChunkManager = worldChunks;
 

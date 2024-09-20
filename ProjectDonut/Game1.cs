@@ -188,20 +188,20 @@ namespace ProjectDonut
                 DebugWindow.IsShown = !DebugWindow.IsShown;
             }
 
-            if (InputManager.IsKeyPressed(Keys.NumPad1))
-            {
-                DevConsole.LogInfo("This is an info message");
-            }
+            //if (InputManager.IsKeyPressed(Keys.NumPad1))
+            //{
+            //    DevConsole.LogInfo("This is an info message");
+            //}
 
-            if (InputManager.IsKeyPressed(Keys.NumPad2))
-            {
-                DevConsole.LogWarning("This is a warning message");
-            }
+            //if (InputManager.IsKeyPressed(Keys.NumPad2))
+            //{
+            //    DevConsole.LogWarning("This is a warning message");
+            //}
 
-            if (InputManager.IsKeyPressed(Keys.NumPad3))
-            {
-                DevConsole.LogError("This is an error message");
-            }
+            //if (InputManager.IsKeyPressed(Keys.NumPad3))
+            //{
+            //    DevConsole.LogError("This is an error message");
+            //}
 
             //if (kbState.IsKeyDown(Keys.F8))
             //{

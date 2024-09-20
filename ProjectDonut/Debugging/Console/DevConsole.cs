@@ -33,17 +33,47 @@ namespace ProjectDonut.Debugging.Console
 
         public static void LogInfo(string message)
         {
-            Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [INFO]: {message}");
+            //Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [INFO]: {message}");
+
+            if (Global.Debug.Console != null)
+            {
+                Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [INFO]: {message}");
+            }
+            else
+            {
+                // Handle the case where Output is null
+                System.Diagnostics.Debug.WriteLine("Output is not initialized.");
+            }
         }
 
         public static void LogWarning(string message)
         {
-            Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [WARNING]: {message}");
+            //Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [WARNING]: {message}");
+
+            if (Global.Debug.Console != null)
+            {
+                Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [WARNING]: {message}");
+            }
+            else
+            {
+                // Handle the case where Output is null
+                System.Diagnostics.Debug.WriteLine("Output is not initialized.");
+            }
         }
 
         public static void LogError(string message)
         {
-            Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [ERROR]: {message}");
+            //Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [ERROR]: {message}");
+
+            if (Global.Debug.Console != null)
+            {
+                Global.Debug.Console.Output.Append($"{DateTime.Now.ToString("hh:mm:sstt")} [SYSTEM] [ERROR]: {message}");
+            }
+            else
+            {
+                // Handle the case where Output is null
+                System.Diagnostics.Debug.WriteLine("Output is not initialized.");
+            }
         }
 
         private static void RegisterCommands(ManualInterpreter interpreter, Game1 game)

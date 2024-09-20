@@ -57,7 +57,7 @@ namespace ProjectDonut.Core
         public static bool LIGHTING_ENABLED = false;
         public static Texture2D DEBUG_TEXTURE;
         public static Texture2D MISSING_TEXTURE;
-        public static bool DRAW_WORLD_CHUNK_OUTLINE = false;
+        public static bool DRAW_WORLD_CHUNK_OUTLINE = true;
         public static bool DRAW_STRUCTURE_DEBUG = true;
         public static bool DRAW_INSTANCE_EXIT_LOCATIONS_OUTLINE = true;
 
