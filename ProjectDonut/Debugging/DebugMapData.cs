@@ -67,25 +67,25 @@ namespace ProjectDonut.Debugging
             return result;
         }
 
-        private char GetCellCharacter(int value)
-        {
-            if (value == -1)
-            {
-                return '#';
-            }
-            if (value >= settings.MountainHeightMin)
-            {
-                return 'M';
-            }
-            if (value >= settings.GroundHeightMin)
-            {
-                return 'G';
-            }
-            else
-            {
-                return 'W';
-            }
-        }
+        //private char GetCellCharacter(int value)
+        //{
+        //    if (value == -1)
+        //    {
+        //        return '#';
+        //    }
+        //    if (value >= settings.MountainHeightMin)
+        //    {
+        //        return 'M';
+        //    }
+        //    if (value >= settings.GroundHeightMin)
+        //    {
+        //        return 'G';
+        //    }
+        //    else
+        //    {
+        //        return 'W';
+        //    }
+        //}
 
         //private void DrawMapToFile(int[,] data, Tilemap tilemap)
         //{

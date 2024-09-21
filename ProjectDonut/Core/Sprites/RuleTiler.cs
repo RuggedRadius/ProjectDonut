@@ -485,14 +485,13 @@ namespace ProjectDonut.Core.Sprites
 
         public static class World
         {
-            public static Texture2D DetermineTerrainTexture(int x, int y, int biomeValue, int[,] heightData, WorldMapSettings settings)
+            public static Texture2D DetermineTerrainTexture(int x, int y, Biome biome, float[,] heightData, WorldMapSettings settings)
             {
-                int heightValue = heightData[x, y];
-                var biome = (Biome)biomeValue;
+                var heightValue = heightData[x, y];
 
-                if (heightValue >= settings.GroundHeightMin)
+                if (heightValue > settings.WaterHeightMax)
                 {
-                    if (heightValue >= 30 && heightValue < 34)
+                    if (heightValue <= settings.CoastHeightMax)
                     {
                         if (biome == Biome.Winterlands)
                         {
@@ -503,11 +502,6 @@ namespace ProjectDonut.Core.Sprites
                             return SpriteLib.World.Grasslands["coast-c"];
                         }
                     }
-
-                    //if (heightValue > 30 && heightValue % 10 == 0)
-                    //{
-                    //    return DetermineCliffTexture(x, y, heightData);
-                    //}
                     else
                     {
                         switch (biome)
@@ -528,7 +522,7 @@ namespace ProjectDonut.Core.Sprites
                 }
                 else
                 {
-                    if (heightValue >= settings.WaterHeightMin)
+                    if (heightValue > settings.WaterHeightMax)
                     {
                         return SpriteLib.GetSprite("coast-inv-c");
                     }

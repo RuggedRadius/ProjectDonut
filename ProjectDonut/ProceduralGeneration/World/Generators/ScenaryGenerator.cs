@@ -161,7 +161,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     {
                         continue;
                     }
-                    if (chunk.HeightData[i, j] < settings.GroundHeightMin ||
+                    if (chunk.HeightData[i, j] <= settings.WaterHeightMax ||
                         chunk.HeightData[i, j] > settings.GroundHeightMax)
                     {
                         continue;
@@ -220,7 +220,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 for (int j = 0; j < chunk.Height; j++)
                 {
-                    if (chunk.HeightData[i, j] < settings.GroundHeightMin ||
+                    if (chunk.HeightData[i, j] <= settings.WaterHeightMax ||
                         chunk.HeightData[i, j] > settings.GroundHeightMax)
                     {
                         continue;
@@ -275,7 +275,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 for (int j = 0; j < chunk.Height; j++)
                 {
-                    if (chunk.HeightData[i, j] < settings.GroundHeightMin ||
+                    if (chunk.HeightData[i, j] <= settings.WaterHeightMax ||
                         chunk.HeightData[i, j] > settings.GroundHeightMax)
                     {
                         continue;

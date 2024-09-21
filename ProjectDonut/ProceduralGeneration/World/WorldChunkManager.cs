@@ -238,7 +238,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
 
             //chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
-            chunk.BiomeData = genBiomes.GenBiomes(Settings.Width, Settings.Height, chunkX, chunkY); // TODO: NEW TEMP + HUMIDITY METHOD, NEEDS WORK
+            chunk.BiomeData = genBiomes.GenBiomes(Settings.Width, Settings.Height, chunkX, chunkY, chunk); // TODO: NEW TEMP + HUMIDITY METHOD, NEEDS WORK
 
             genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);

@@ -41,7 +41,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         
         public void GenerateForestData(WorldChunk chunk)
         {
-            chunk.ForestData = new int[chunk.Width, chunk.Height];
+            chunk.ForestData = new float[chunk.Width, chunk.Height];
 
             for (int i = 0; i < chunk.Width; i++)
             {
@@ -71,7 +71,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
         private bool IsCellAppropriateForForest(WorldChunk chunk, int x, int y)
         {
-            if (chunk.HeightData[x, y] < settings.GroundHeightMin + 10)
+            if (chunk.HeightData[x, y] < settings.WaterHeightMax)
             {
                 return false;
             }
@@ -84,13 +84,12 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             var biome = (Biome)chunk.BiomeData[x, y];
             switch (biome)
             {
-                case Biome.Plains:
-                case Biome.Winterlands:
-                case Biome.Grasslands:
-                    return true;
+                //case Biome.Winterlands:
+                //case Biome.Grasslands:
+                //    return true;
 
                 default:
-                    return false;
+                    return true;
             }
         }
 

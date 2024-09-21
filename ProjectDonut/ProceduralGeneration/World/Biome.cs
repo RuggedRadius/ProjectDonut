@@ -5,8 +5,9 @@
         Grasslands,
         Desert,
         Winterlands,
-        Plains,
+        //Plains,
         Wetlands,
-        Ashlands
+        Ashlands,
+        Jungle,
     }
 }

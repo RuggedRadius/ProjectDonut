@@ -14,14 +14,15 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int TileSize { get; set; }
 
         // Heights
-        public int DeepWaterHeightMin { get; set; }
-        public int DeepWaterHeightMax { get; set; }
-        public int WaterHeightMin { get; set; }
-        public int WaterHeightMax { get; set; }
-        public int GroundHeightMin { get; set; }
-        public int GroundHeightMax { get; set; }
-        public int MountainHeightMin { get; set; }
-        public int MountainHeightMax { get; set; }
+        //public float DeepWaterHeightMin { get; set; }
+        public float DeepWaterHeightMax { get; set; }
+        //public float WaterHeightMin { get; set; }
+        public float WaterHeightMax { get; set; }
+        public float CoastHeightMax { get; set; }
+        //public float GroundHeightMin { get; set; }
+        public float GroundHeightMax { get; set; }
+        //public float MountainHeightMin { get; set; }
+        public float MountainHeightMax { get; set; }
 
         // Forest
         public int ForestCount { get; set; }

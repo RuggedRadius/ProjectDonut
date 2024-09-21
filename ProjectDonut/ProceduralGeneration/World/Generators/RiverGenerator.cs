@@ -33,34 +33,35 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise.SetFractalLacunarity(2.0f);
         }
 
+        // TODO: Use noise for this (OpenSimplex2 + Fractal Type = Ridged/Ping-Pong)
         public void GenerateRivers(WorldChunk chunk)
         {
-            for (int i = 0; i < chunk.Width; i++)
-            {
-                for (int j = 0; j < chunk.Height; j++)
-                {
-                    var biome = (Biome)chunk.BiomeData[i, j];
-                    if (biome != Biome.Wetlands)
-                    {
-                        continue;
-                    }
+            //for (int i = 0; i < chunk.Width; i++)
+            //{
+            //    for (int j = 0; j < chunk.Height; j++)
+            //    {
+            //        var biome = (Biome)chunk.BiomeData[i, j];
+            //        if (biome != Biome.Wetlands)
+            //        {
+            //            continue;
+            //        }
 
-                    var height = chunk.HeightData[i, j];
-                    if (height < settings.GroundHeightMin || height > settings.GroundHeightMax)
-                    {
-                        continue;
-                    }
+            //        var height = chunk.HeightData[i, j];
+            //        if (height < settings.GroundHeightMin || height > settings.GroundHeightMax)
+            //        {
+            //            continue;
+            //        }
 
-                    var x = chunk.ChunkCoordX * settings.Width + i;
-                    var y = chunk.ChunkCoordY * settings.Height + j;
-                    float sampleValue = _noise.GetNoise(x, y);
+            //        var x = chunk.ChunkCoordX * settings.Width + i;
+            //        var y = chunk.ChunkCoordY * settings.Height + j;
+            //        float sampleValue = _noise.GetNoise(x, y);
 
-                    if (sampleValue < heightCutOff)
-                    {
-                        chunk.HeightData[i, j] = settings.WaterHeightMin;
-                    }
-                }
-            }
+            //        if (sampleValue < heightCutOff)
+            //        {
+            //            chunk.HeightData[i, j] = settings.WaterHeightMin;
+            //        }
+            //    }
+            //}
         }
     }
 }

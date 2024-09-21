@@ -273,6 +273,7 @@ namespace ProjectDonut.Core.Sprites
 
                 LoadCoast();
                 LoadWater();
+                LoadMountain();
 
                 LoadStructures();
             }
@@ -301,6 +302,10 @@ namespace ProjectDonut.Core.Sprites
                 Wetlands.Add("coast-c", ExtractBiomeSprite(1, 0));
             }
 
+            public static void LoadMountain()
+            {
+                lib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
+            }
 
 
             //// NOT USED
@@ -374,33 +379,7 @@ namespace ProjectDonut.Core.Sprites
             //}
 
             //// NOT USED
-            //public static void LoadMountain()
-            //{
-            //    // Mountain
-            //    lib.Add("mountain-NW", ExtractTileSprite(12, 0));
-            //    lib.Add("mountain-N", ExtractTileSprite(13, 0));
-            //    lib.Add("mountain-NE", ExtractTileSprite(14, 0));
-            //    lib.Add("mountain-W", ExtractTileSprite(12, 1));
 
-            //    //spriteLib.Add("mountain", ExtractTileSprite(13, 1));
-            //    lib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
-
-            //    lib.Add("mountain-E", ExtractTileSprite(14, 1));
-            //    lib.Add("mountain-SW", ExtractTileSprite(12, 2));
-            //    lib.Add("mountain-S", ExtractTileSprite(13, 2));
-            //    lib.Add("mountain-SE", ExtractTileSprite(14, 2));
-
-            //    // Inverted mountain
-            //    lib.Add("mountain-inv-NW", ExtractTileSprite(15, 0));
-            //    lib.Add("mountain-inv-N", ExtractTileSprite(16, 0));
-            //    lib.Add("mountain-inv-NE", ExtractTileSprite(17, 0));
-            //    lib.Add("mountain-inv-W", ExtractTileSprite(15, 1));
-            //    lib.Add("mountain-inv", ExtractTileSprite(16, 1));
-            //    lib.Add("mountain-inv-E", ExtractTileSprite(17, 1));
-            //    lib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
-            //    lib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
-            //    lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
-            //}
 
             //// NOT USED
             //public static void LoadForest()

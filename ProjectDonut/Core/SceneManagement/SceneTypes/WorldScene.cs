@@ -79,14 +79,11 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             s.TileSize = Global.TileSize;
 
             // Heights
-            s.DeepWaterHeightMin = 0;
-            s.DeepWaterHeightMax = 19;
-            s.WaterHeightMin = 20;
-            s.WaterHeightMax = 29;
-            s.GroundHeightMin = 30;
-            s.GroundHeightMax = 94;
-            s.MountainHeightMin = 95;
-            s.MountainHeightMax = 100;
+            s.DeepWaterHeightMax = -0.8f;            
+            s.WaterHeightMax = -0.2f;
+            s.CoastHeightMax = -0.1f;
+            s.GroundHeightMax = 0.75f;
+            s.MountainHeightMax = 1.0f;
 
             // Forest
             s.ForestCount = 250;

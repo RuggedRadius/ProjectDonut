@@ -22,11 +22,11 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int WorldCoordX;
         public int WorldCoordY;
 
-        public int[,] HeightData;
+        public float[,] HeightData;
         public int[,] BiomeData;
-        public int[,] ForestData;
-        public int[,] RiverData;
-        public int[,] StructureData;
+        public float[,] ForestData;
+        public float[,] RiverData;
+        public float[,] StructureData;
 
         // State
         public bool IsPostProcessed { get; set; }

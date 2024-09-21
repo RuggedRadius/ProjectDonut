@@ -37,16 +37,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Manhattan);
         }
 
-        public int[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
+        public float[,] GenerateHeightMap(int width, int height, int xOffset, int yOffset)
         {
-            var datas = new List<int[,]>();
+            var datas = new List<float[,]>();
 
             for (int z = 0; z < 2; z++)
             {
-                int[,] heightData = new int[height, width];
-
-                int min = 0;
-                int max = 0;
+                float[,] heightData = new float[height, width];
 
                 for (int i = 0; i < width; i++)
                 {
@@ -55,25 +52,16 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var x = xOffset * settings.Width + i;
                         var y = yOffset * settings.Height + j;
 
-                        var heightValue = (int)(_noise[z].GetNoise(x, y) * Global.ChunkSize) + 35;
+                        var heightValue = _noise[z].GetNoise(x, y);
 
                         heightData[i, j] = heightValue;
-
-                        if (heightValue < min)
-                        {
-                            min = heightValue;
-                        }
-                        if (heightValue > max)
-                        {
-                            max = heightValue;
-                        }
                     }
                 }
 
                 datas.Add(heightData);
             }
 
-            int[,] result = new int[height, width];
+            float[,] result = new float[height, width];
 
             for (int i = 0; i < width; i++)
             {
@@ -86,9 +74,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return result;
         }
 
-        int Blend(int a, int b, float t)
+        float Blend(float a, float b, float t)
         {
-            return (int)(a + t * (b - a));
+            return (a + t * (b - a));
         }
 
 
@@ -179,7 +167,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         //Position = new Vector2(i * settings.TileSize, j * settings.TileSize) + chunk.Position,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = RuleTiler.World.DetermineTerrainTexture(i, j, biomeValue, chunk.HeightData, settings),
+                        Texture = RuleTiler.World.DetermineTerrainTexture(i, j, (Biome)biomeValue, chunk.HeightData, settings),
                         TileType = TileType.World,
                         WorldTileType = DetermineTileType(i, j, heightValue),
                         Biome = (Biome)chunk.BiomeData[i, j]
@@ -199,16 +187,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return tmBase;
         }
 
-        
-    
-
-        private WorldTileType DetermineTileType(int x, int y, int heightValue)
+        private WorldTileType DetermineTileType(int x, int y, float heightValue)
         {
-            if (heightValue >= settings.MountainHeightMin)
+            if (heightValue >= settings.GroundHeightMax)
             {
                 return WorldTileType.Mountain;
             }
-            else if (heightValue >= settings.GroundHeightMin)
+            else if (heightValue >= settings.WaterHeightMax)
             {
                 return WorldTileType.Ground;
             }

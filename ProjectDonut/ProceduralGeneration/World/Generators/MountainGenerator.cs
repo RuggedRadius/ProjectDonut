@@ -47,7 +47,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var biomeValue = chunk.BiomeData[i, j];
                     var heightValue = chunk.HeightData[i, j];
 
-                    if (heightValue < settings.MountainHeightMin)
+                    if (heightValue < settings.GroundHeightMax)
                     {
                         continue;
                     }
@@ -60,7 +60,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = DetermineTexture(i, j, biomeValue, heightValue),
+                        Texture = SpriteLib.GetSprite("mountain"),
                         TileType = TileType.World,
                         WorldTileType = WorldTileType.Mountain,
                         Biome = (Biome)chunk.BiomeData[i, j]
@@ -73,45 +73,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return tmBase;
         }
 
-        private Texture2D DetermineTexture(int x, int y, int biomeValue, int heightValue)
-        {
-            var biome = (Biome)biomeValue;
-
-            return SpriteLib.GetSprite("mountain");
-
-            //if (heightValue >= settings.MountainHeightMin)
-            //{
-            //    return spriteLib.GetSprite("mountain");
-            //}
-            //else if (heightValue >= settings.GroundHeightMin)
-            //{
-            //    switch (biome)
-            //    {
-            //        case Biome.Desert:
-            //            return spriteLib.GetSprite("desert");
-
-            //        case Biome.Grasslands:
-            //            return spriteLib.GetSprite("grasslands");
-
-            //        case Biome.Winterlands:
-            //            return spriteLib.GetSprite("winterlands");
-
-            //        default:
-            //            return spriteLib.GetSprite("grasslands");
-            //    }
-            //}
-            //else
-            //{
-            //    if (heightValue >= settings.WaterHeightMin)
-            //    {
-            //        return spriteLib.GetSprite("coast-inv");
-            //    }
-            //    else
-            //    {
-            //        return spriteLib.GetSprite("deepwater-C");
-            //    }
-            //}
-        }
+        // TODO: Make mountains for each biome
+        //private Texture2D DetermineTexture(int x, int y, int biomeValue, int heightValue)
+        //{
+        //    return SpriteLib.GetSprite("mountain");
+        //}
 
     }
 }
