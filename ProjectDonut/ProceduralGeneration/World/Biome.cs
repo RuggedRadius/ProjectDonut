@@ -2,11 +2,12 @@
 {
     public enum Biome
     {
-        Grasslands,
+        Ashlands,
         Desert,
-        Winterlands,
         Plains,
+        Grasslands,
+        Winterlands,
         Wetlands,
-        Ashlands
+        Jungle        
     }
 }

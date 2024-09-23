@@ -201,8 +201,8 @@ namespace ProjectDonut.ProceduralGeneration.World
         {
             var chunk = new WorldChunk(chunkX, chunkY, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
-            chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
-            //chunk.BiomeData = genBiomes.GenBiomes(Settings.Width, Settings.Height, chunkX, chunkY); // TODO: NEW TEMP + HUMIDITY METHOD, NEEDS WORK
+            //chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.BiomeData = genBiomes.GenBiomes(Settings.Width, Settings.Height, chunkX, chunkY); // TODO: NEW TEMP + HUMIDITY METHOD, NEEDS WORK
 
             genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
@@ -248,7 +248,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             structures.AddRange(chunk.SceneObjects["castles"]);
             foreach (var structure in structures)
             {
-                CarveRiverToPosition(ref chunk, structure.WorldPosition);
+                //CarveRiverToPosition(ref chunk, structure.WorldPosition);
             }
 
             return chunk;
