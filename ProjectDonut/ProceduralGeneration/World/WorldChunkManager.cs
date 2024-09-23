@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
 using System;
 using System.Collections.Generic;
@@ -15,7 +18,7 @@ namespace ProjectDonut.ProceduralGeneration.World
     public class WorldChunkManager :  IGameObject
     {
         public (int, int) PlayerChunkPosition { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public int ZIndex { get; set; }
         public Texture2D Texture { get; set; }
         public bool IsVisible { get; set; }
@@ -29,10 +32,10 @@ namespace ProjectDonut.ProceduralGeneration.World
         public List<WorldChunk> CurrentChunks;
         public WorldChunk PlayerChunk;
 
-        private SpriteLibrary spriteLib;
+        private SpriteLib spriteLib;
         private FastNoiseLite _noise;
 
-        private HeightGenerator genHeight;
+        private TerrainGenerator genHeight;
         private BiomeGenerator genBiomes;
         private ForestGenerator genForest;
         private RiverGenerator genRiver;
@@ -63,7 +66,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             tempTexture.SetData(new[] { Color.Green });
 
             //WorldGen = new WorldGenerator(settings);
-            genHeight = new HeightGenerator(settings);
+            genHeight = new TerrainGenerator(settings);
             genBiomes = new BiomeGenerator(settings);
             genForest = new ForestGenerator(settings);
             genRiver = new RiverGenerator(settings);
@@ -76,29 +79,32 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
+            if (Global.SceneManager.CurrentScene.SceneType != Core.SceneManagement.SceneType.World)
+                return;
+
             var chunkPosChanged = false;
 
-            if (Global.Player.ChunkPosX != PlayerChunkPosition.Item1)
+            if (Global.PlayerObj.ChunkPosX != PlayerChunkPosition.Item1)
             {
                 chunkPosChanged = true;
             }
 
-            if (Global.Player.ChunkPosY != PlayerChunkPosition.Item2)
+            if (Global.PlayerObj.ChunkPosY != PlayerChunkPosition.Item2)
             {
                 chunkPosChanged = true;
             }
 
             if (chunkPosChanged)
             {
-                PlayerChunkPosition = (Global.Player.ChunkPosX, Global.Player.ChunkPosY);
+                PlayerChunkPosition = (Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY);
 
 
                 for (int i = -1; i < 2; i++)
                 {
                     for (int j = -1; j < 2; j++)
                     {
-                        var x = Global.Player.ChunkPosX + i;
-                        var y = Global.Player.ChunkPosY + j;
+                        var x = Global.PlayerObj.ChunkPosX + i;
+                        var y = Global.PlayerObj.ChunkPosY + j;
 
                         var chunk = GetChunk((x, y));
                         if (chunk == null)
@@ -167,7 +173,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             //ChunksBeingGenerated = new List<(int, int)>();
 
             //// Player chunk position
-            PlayerChunkPosition = (Global.Player.ChunkPosX, Global.Player.ChunkPosY);
+            PlayerChunkPosition = (Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY);
 
             // All chunks dictionary - initialised with starting 9 chunks
             _chunks = new Dictionary<(int, int), WorldChunk>();
@@ -190,18 +196,18 @@ namespace ProjectDonut.ProceduralGeneration.World
         }
 
 
-        //private bool tempONETREEONLY = false;
+        // TODO: convert sceneobjects into mineables
         private WorldChunk CreateChunk(int chunkX, int chunkY)
         {
             var chunk = new WorldChunk(chunkX, chunkY, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
-            genRiver.GenerateRivers(chunk);
+            //genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
             //genStructure.GenerateStructureData(chunk);
 
-            var tilemapBase = genHeight.CreateBaseTilemap(chunk);
+            var tilemapBase = genHeight.CreateTerrainTilemap(chunk);
             //var tilemapForest = genForest.CreateTileMap(chunk);
             //var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);
@@ -216,13 +222,16 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
             chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
 
-            chunk.SceneObjects.Add("trees", _genScenary.GenerateWinterTrees(chunk));
-            chunk.SceneObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
+            
+            chunk.MineableObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
             //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
             chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
 
             chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
+            chunk.MineableObjects["trees"].AddRange(_genScenary.GenerateWinterTrees(chunk));
+
             chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
+            chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
 
             
             
@@ -243,7 +252,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public WorldChunk GetCurrentChunk()
         {
-            return _chunks[(Global.Player.ChunkPosX, Global.Player.ChunkPosY)];
+            return _chunks[(Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY)];
         }
 
         private List<WorldChunk> GetPlayerSurroundingChunks()
@@ -254,8 +263,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 for (int j = -surroundChunkCount; j <= surroundChunkCount; j++)
                 {
-                    var chunkX = Global.Player.ChunkPosX + i;
-                    var chunkY = Global.Player.ChunkPosY + j;
+                    var chunkX = Global.PlayerObj.ChunkPosX + i;
+                    var chunkY = Global.PlayerObj.ChunkPosY + j;
 
                     if (_chunks.ContainsKey((chunkX, chunkY)))
                     {

@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
@@ -21,7 +22,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         Hidden
     }
 
-    public class PlayerInventory : IGameObject
+    public class PlayerInventory : IScreenObject
     {
         public UIComponentState State { get; set; }
         public int ZIndex { get; set; }
@@ -30,7 +31,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Texture2D _slotTexture;
         private Texture2D _emptySlotTexture;
 
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
 
         public List<PlayerInventorySlot> Slots { get; set; }
         
@@ -43,7 +44,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public static SpriteFont QuantityFont { get; set; }
 
-        public PlayerInventory(ContentManager content, GameCursor cursor)
+        public PlayerInventory()
         {
             State = UIComponentState.Hidden;
             ZIndex = 100;
@@ -54,17 +55,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             Slots = new List<PlayerInventorySlot>();
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 5; i++)
             {
                 var newSlot = CreateNewSlot();
                 Slots.Add(newSlot);
             }
 
-            for (int i = 0; i < 5; i++)
-            {
-                var item = CreateTestItem();
-                AddItemToInventory(item);
-            }
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    var item = CreateTestItem();
+            //    AddItemToInventory(item);
+            //}
         }
 
         private PlayerInventorySlot CreateNewSlot(InventoryItem item = null)
@@ -105,34 +106,88 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             }
         }
 
-        public void AddItemToInventory(InventoryItem item)
+        public bool HasRoomForItem(InventoryItem item)
         {
-            foreach (var slot in Slots)
-            {
-                if (slot.Item != null && slot.Item.Name == item.Name)
-                {
-                    var maxStack = GetMaxStackAmount(slot.Item.ItemType);
+            var emptySlots = Slots.Where(x => x.Item == null).ToList();
+            var existingUnmaxxedStacks = Slots
+                .Where(x => x.Item != null && x.Item.Name == item.Name && x.Item.Quantity < GetMaxStackAmount(x.Item.ItemType))
+                .ToList();
 
-                    if (slot.Item.Quantity < maxStack)
+            if (emptySlots.Count > 0 || existingUnmaxxedStacks.Count > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Adds the quantity of the item to the inventory.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns>An integer count of the item NOT added to the inventory if it is full</returns>
+        public int AddItemToInventory(InventoryItem item)
+        {
+            if (item.Quantity <= 0)
+            {
+                throw new Exception("Item quantity must be greater than 0");
+            }
+            
+            int quantity = item.Quantity;
+
+            // Check for full inventory
+            var emptySlots = Slots.Where(x => x.Item == null).ToList();
+            var existingUnmaxxedStacks = Slots
+                .Where(x => x.Item != null && x.Item.Name == item.Name && x.Item.Quantity < GetMaxStackAmount(x.Item.ItemType))
+                .ToList();
+
+            if (emptySlots.Count == 0 && existingUnmaxxedStacks.Count == 0)
+            {
+                return quantity;
+            }
+
+            var maxStackQuantity = GetMaxStackAmount(item.ItemType);
+            var itemsPlaced = 0;
+            //var attemptCounter = 10;
+            while (itemsPlaced < quantity)
+            {
+                existingUnmaxxedStacks = Slots
+                .Where(x => x.Item != null && x.Item.Name == item.Name && x.Item.Quantity < GetMaxStackAmount(x.Item.ItemType))
+                .ToList();
+
+                if (existingUnmaxxedStacks.Count == 0)
+                {
+                    emptySlots = Slots.Where(x => x.Item == null).ToList();
+
+                    if (emptySlots.Count == 0)
                     {
-                        slot.Item.Quantity++;
-                        return;
+                        break;
+                    }
+                    else
+                    {
+                        emptySlots[0].Item = new InventoryItem()
+                        {
+                            Name = item.Name,
+                            Description = item.Description,
+                            Icon = item.Icon,
+                            ItemType = item.ItemType,
+                            Quantity = 1,
+                            Position = emptySlots[0].Position + new Vector2(2, 2)
+                        };
+                        itemsPlaced++;
                     }
                 }
-            }
-
-            foreach (var slot in Slots)
-            {
-                if (slot.Item == null)
+                else
                 {
-                    slot.Item = item;
-                    slot.Item.Position = slot.Position + new Vector2(2, 2);
-                    return;
+                    existingUnmaxxedStacks[0].Item.Quantity++;
+                    itemsPlaced++;
                 }
             }
 
-            // Inventory is full!
-            return;
+            Global.Player.TextDisplay.AddText($"+{itemsPlaced} " + item.Name, 0, Vector2.Zero, Color.White);
+
+            return quantity - itemsPlaced;
         }
 
         private int GetMaxStackAmount(ItemType itemType)
@@ -168,11 +223,16 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             var x = Global.ScreenWidth - Texture.Width - 50;
             var y = Global.ScreenHeight - Texture.Height - 50;
-            Position = new Vector2(x, y);
+            WorldPosition = new Vector2(x, y);
         }
 
         public void ToggleInventory()
         {
+            if (Global.Debug.Console.IsVisible)
+            {
+                return;
+            }
+
             if (_toggleTimer < _toggleTimeout)
             {
                 return;
@@ -258,7 +318,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             }
 
             Global.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
-            Global.SpriteBatch.Draw(Texture, Position, Color.White);
+            Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
 
             DrawSlots(gameTime);
 
@@ -289,12 +349,12 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var cellSpacing = 0;
             var outerSpacing = startWidth;
 
-            var maxPosition = Position.X + Texture.Width - outerSpacing - _emptySlotTexture.Width;
+            var maxPosition = WorldPosition.X + Texture.Width - outerSpacing - _emptySlotTexture.Width;
 
             foreach (var slot in Slots)
             {
-                var x = Position.X + startWidth + offsetX;
-                var y = Position.Y + startHeight + offsetY;
+                var x = WorldPosition.X + startWidth + offsetX;
+                var y = WorldPosition.Y + startHeight + offsetY;
 
                 var drawPos = new Vector2(x, y);
                 var rect = new Rectangle((int)drawPos.X, (int)drawPos.Y, _emptySlotTexture.Width, _emptySlotTexture.Height);

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -105,16 +107,18 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
+                    var positionVariantX = _random.Next(-settings.TileSize / 4, settings.TileSize / 4);
+                    var positionVariantY = _random.Next(-settings.TileSize / 4, settings.TileSize / 4);
+
                     var tile = new Tile(false)
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,
                         xIndex = i,
                         yIndex = j,
-                        LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
+                        LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize) + new Vector2(positionVariantX, positionVariantY),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        //Texture = DetermineTexture(i, j, chunk.BiomeData),
-                        Texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0],
+                        Texture = SpriteLib.Mineables.Sprites["tree-02"][0],
                         TileType = TileType.World,
                         WorldTileType = WorldTileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i, j]
@@ -136,16 +140,16 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             switch (tileType)
             {
                 case Biome.Grasslands:
-                    return Global.SpriteLibrary.GetSprite("forest-C");
+                    return SpriteLib.GetSprite("forest-C");
 
                 case Biome.Desert:
-                    return Global.SpriteLibrary.GetSprite("forest-C"); // Change this later?
+                    return SpriteLib.GetSprite("forest-C"); // Change this later?
 
                 case Biome.Winterlands:
-                    return Global.SpriteLibrary.GetSprite("forest-frost-C");
+                    return SpriteLib.GetSprite("forest-frost-C");
 
                 default:
-                    return Global.SpriteLibrary.GetSprite("forest-C");
+                    return SpriteLib.GetSprite("forest-C");
             }
         }
     }

@@ -7,8 +7,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Pathfinding;
-using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.NPCs.Enemy
 {
@@ -43,7 +43,7 @@ namespace ProjectDonut.NPCs.Enemy
 
         public override void Update(GameTime gameTime)
         {
-            DistanceToPlayer = Distance(Position, Global.Player.Position) / Global.TileSize;
+            DistanceToPlayer = Distance(WorldPosition, Global.PlayerObj.WorldPosition) / Global.TileSize;
 
             switch (State)
             {
@@ -52,9 +52,9 @@ namespace ProjectDonut.NPCs.Enemy
                     //if (CurrentPath == null && DistanceToPlayer <= DetectionDistance)
                     if (DistanceToPlayer <= DetectionDistance)
                     {                        
-                        var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
-                        var curPlayerNode = new Node((int)Global.Player.Position.X / Global.TileSize, (int)Global.Player.Position.Y / Global.TileSize);
-                        var curNode = new Node((int)Position.X / Global.TileSize, (int)Position.Y / Global.TileSize);
+                        var curInstanceScene = (DungeonScene)Global.SceneManager.CurrentScene;
+                        var curPlayerNode = new Node((int)Global.PlayerObj.WorldPosition.X / Global.TileSize, (int)Global.PlayerObj.WorldPosition.Y / Global.TileSize);
+                        var curNode = new Node((int)WorldPosition.X / Global.TileSize, (int)WorldPosition.Y / Global.TileSize);
                         CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
                         
 
@@ -70,7 +70,7 @@ namespace ProjectDonut.NPCs.Enemy
                 case EnemyState.Moving:
                     if (CurrentPath != null && CurrentPath.Count > 0)
                     {
-                        if (Position.X == NextPosition?.X && Position.Y == NextPosition?.Y)
+                        if (WorldPosition.X == NextPosition?.X && WorldPosition.Y == NextPosition?.Y)
                         {
                             //    if (CurrentPosition != null)
                             //    {
@@ -86,11 +86,11 @@ namespace ProjectDonut.NPCs.Enemy
                         if (MoveTimer >= MoveTime && NextPosition != null)
                         {
                             MoveTimer = 0;
-                            Position = new Vector2(NextPosition.X, NextPosition.Y);
+                            WorldPosition = new Vector2(NextPosition.X, NextPosition.Y);
 
-                            var curInstanceScene = (InstanceScene)Global.SceneManager.CurrentScene;
-                            var curPlayerNode = new Node((int)Global.Player.Position.X / Global.TileSize, (int)Global.Player.Position.Y / Global.TileSize);
-                            var curNode = new Node((int)Position.X / Global.TileSize, (int)Position.Y / Global.TileSize);
+                            var curInstanceScene = (DungeonScene)Global.SceneManager.CurrentScene;
+                            var curPlayerNode = new Node((int)Global.PlayerObj.WorldPosition.X / Global.TileSize, (int)Global.PlayerObj.WorldPosition.Y / Global.TileSize);
+                            var curNode = new Node((int)WorldPosition.X / Global.TileSize, (int)WorldPosition.Y / Global.TileSize);
                             CurrentPath = Astar.FindPath(curInstanceScene.DataMap, curNode, curPlayerNode);
                         }
                         else

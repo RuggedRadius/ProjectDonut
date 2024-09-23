@@ -2,9 +2,11 @@
 {
     public enum SceneType
     {
-        Loading,
-        MainMenu,
+        //Loading,
+        //MainMenu,
         World,
-        Instance
+        Dungeon,
+        Cave,
+        Town
     }
 }

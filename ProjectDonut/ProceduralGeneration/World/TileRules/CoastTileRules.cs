@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {
@@ -31,22 +32,22 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
 
                     if (isNorthWestCoast(x, y))
                     {
-                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-NW");
+                        tile.Texture = SpriteLib.GetSprite("coast-NW");
                     }
 
                     if (isNorthEastCoast(x, y))
                     {
-                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-NE");
+                        tile.Texture = SpriteLib.GetSprite("coast-NE");
                     }
 
                     if (isSouthEastCoast(x, y))
                     {
-                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-SE");
+                        tile.Texture = SpriteLib.GetSprite("coast-SE");
                     }
 
                     if (isSouthWestCoast(x, y))
                     {
-                        tile.Texture = Global.SpriteLibrary.GetSprite("coast-SW");
+                        tile.Texture = SpriteLib.GetSprite("coast-SW");
                     }
                 }
                 catch (Exception ex)

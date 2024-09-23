@@ -22,7 +22,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private WorldMapSettings settings;
 
         // Generators
-        private HeightGenerator baseGen;
+        private TerrainGenerator baseGen;
         private BiomeGenerator biomes;
         private WaterGenerator water;
         private ForestGenerator forest;
@@ -32,7 +32,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         {
             this.settings = settings;
 
-            baseGen = new HeightGenerator(settings);
+            baseGen = new TerrainGenerator(settings);
             biomes = new BiomeGenerator(settings);
             water = new WaterGenerator(settings);
             forest = new ForestGenerator(settings);

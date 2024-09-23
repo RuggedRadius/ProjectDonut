@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Interfaces;
 using ProjectDonut.NPCs.Enemy;
 using ProjectDonut.Tools;
@@ -50,7 +51,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 
                 var enemy = new OrcGrunt()
                 {
-                    Position = new Vector2(randomCoord.x * Global.TileSize, randomCoord.y * Global.TileSize),
+                    WorldPosition = new Vector2(randomCoord.x * Global.TileSize, randomCoord.y * Global.TileSize),
                     ZIndex = 0
                 };
 
@@ -187,31 +188,31 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             switch (popValue)
             {
                 case "stairs-nw":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-nw"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-nw"][0];
 
                 case "stairs-n":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-n"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-n"][0];
 
                 case "stairs-ne":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-ne"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-ne"][0];
 
                 case "stairs-w":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-w"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-w"][0];
 
                 case "stairs-c":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-c"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-c"][0];
 
                 case "stairs-e":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-e"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-e"][0];
 
                 case "stairs-sw":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-sw"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-sw"][0];
 
                 case "stairs-s":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-s"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-s"][0];
 
                 case "stairs-se":
-                    return Global.SpriteLibrary.DungeonSprites["stairs-se"][0];
+                    return SpriteLib.Dungeon.DungeonSprites["stairs-se"][0];
 
                 default:
                     return null;

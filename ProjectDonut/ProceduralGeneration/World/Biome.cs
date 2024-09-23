@@ -6,6 +6,7 @@
         Desert,
         Winterlands,
         Plains,
-        Wetlands
+        Wetlands,
+        Ashlands
     }
 }

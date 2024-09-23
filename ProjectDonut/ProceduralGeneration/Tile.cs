@@ -1,15 +1,10 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Transactions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Aseprite;
 using ProjectDonut.Core;
-using ProjectDonut.Core.SceneManagement;
-using ProjectDonut.GameObjects;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;
@@ -39,7 +34,7 @@ namespace ProjectDonut.ProceduralGeneration
         public int yIndex { get; set; }
         public Vector2 LocalPosition { get; set; }
         public Vector2 Size { get; set; }
-        public Vector2 Position
+        public Vector2 WorldPosition
         {
             get
             {
@@ -83,7 +78,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Initialize()
         {
-            Bounds = new Rectangle((int)Position.X, (int)Position.Y, Global.TileSize, Global.TileSize);
+            Bounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Global.TileSize, Global.TileSize);
         }
 
         public void LoadContent()
@@ -131,7 +126,7 @@ namespace ProjectDonut.ProceduralGeneration
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.Player.Position, Position));
+            float distance = Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition));
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)
@@ -144,30 +139,43 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            if (Global.SceneManager.CurrentScene is InstanceScene)
+            if (Global.SceneManager.CurrentScene is DungeonScene)
             {
-                if (!IsVisible)                    
+                if (!IsVisible)
                 {
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White * 0.05f);
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
                 }
-                else 
-                { 
-                    var dist = Vector2.Distance(Position, Global.Player.Position);
+                else
+                {
+                    var dist = Vector2.Distance(WorldPosition, Global.PlayerObj.WorldPosition);
                     var absValue = Math.Abs(dist);
                     var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White * alphaValue);
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * alphaValue);
                 }
             }
             else if (Global.SceneManager.CurrentScene is WorldScene)
             {
                 if (!IsVisible)
                 {
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.Gray);                    
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);
                 }
                 else
                 {
-                    Global.SpriteBatch.Draw(Texture, Position, null, Color.White);
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
                     //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
+                }
+            }
+            else if (Global.SceneManager.CurrentScene is TownScene)
+            {
+                if (!IsVisible)
+                {
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);
+                }
+                else
+                {
+                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
+                    //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
+
                 }
             }
         }

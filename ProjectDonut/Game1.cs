@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core.Input;
 using Penumbra;
 using ProjectDonut.Environment;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut
 {
@@ -28,7 +29,7 @@ namespace ProjectDonut
         private Dictionary<string, IGameObject> _gameObjects;
         private Dictionary<string, IScreenObject> _screenObjects;
 
-        private DialogueManager dialogue;        
+        //private DialogueManager dialogue;        
         private Random random = new Random();
 
         private List<IGameObject> _objectsToDraw;
@@ -43,9 +44,22 @@ namespace ProjectDonut
 
             Global.GraphicsDeviceManager.PreferredBackBufferWidth = Global.ScreenWidth;
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
+            Global.GraphicsDeviceManager.SupportedOrientations = DisplayOrientation.Portrait;
 
             Global.Penumbra = new PenumbraComponent(this);
-            Components.Add(Global.Penumbra);
+            if (Global.LIGHTING_ENABLED)
+                Components.Add(Global.Penumbra);
+
+            DevConsole.InitialiseConsole(this);
+
+
+            // ****************** TEMP DEBUG ***********************
+            if (System.IO.Directory.Exists($@"C:\Users\benro\Documents\DEBUG"))
+            {
+                System.IO.Directory.Delete($@"C:\Users\benro\Documents\DEBUG", true);
+            }
+            System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG");
+            // ****************** TEMP DEBUG ***********************
         }
 
         protected override void Initialize()
@@ -56,18 +70,25 @@ namespace ProjectDonut
 
             Global.DEBUG_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
             Global.DEBUG_TEXTURE.SetData(new[] { Color.Magenta });
-            Global.SpriteLibrary = new SpriteLibrary();
+            Global.MISSING_TEXTURE = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
+            var missingColours = new Color[Global.TileSize * Global.TileSize];
+            for (int i = 0; i < missingColours.Length; i++)
+            {
+                int row = i / Global.TileSize;
+                int col = i % Global.TileSize;
+                int squareSize = 8; // Change the square size here
+                if ((row / squareSize + col / squareSize) % 2 == 0)
+                    missingColours[i] = new Color(0, 0, 0, 0); // Color.Blue;
+                else
+                    missingColours[i] = Color.Red;
+            }
+            Global.MISSING_TEXTURE.SetData(missingColours);
+
+            Global.SpriteLibrary = new SpriteLib();
             Global.SpriteLibrary.LoadSpriteLibrary();
 
-            Global.Player = new Player();
-            Global.Player.Initialize();
-
-            
-
-
-
-
-            
+            Global.PlayerObj = new PlayerObj();
+            Global.PlayerObj.Initialize();
 
             CreateGameComponents();
             CreateGameObjects();
@@ -85,6 +106,7 @@ namespace ProjectDonut
 
             base.Initialize();
         }
+
         private void CreateGameComponents()
         {
             _gameComponents = new Dictionary<string, IGameComponent>();
@@ -110,16 +132,12 @@ namespace ProjectDonut
             _screenObjects = new Dictionary<string, IScreenObject>();
 
             // Dialogue manager
-            dialogue = new DialogueManager();
-            _screenObjects.Add("dialogue", dialogue);
+            Global.DialogueManager = new DialogueManager();
+            _screenObjects.Add("dialogue", Global.DialogueManager);
 
             // Game cursor
             Global.GameCursor = new GameCursor(this);
             _screenObjects.Add("cursor", Global.GameCursor);
-
-            Global.Console = new DevConsole();
-            Global.Console.Initialize();
-            _screenObjects.Add("console", Global.Console);
 
             Global.DebugWindow = new DebugWindow();
             Global.DebugWindow.Initialize();
@@ -127,6 +145,12 @@ namespace ProjectDonut
 
             Global.ScrollDisplay = new ScrollDisplayer();
             _screenObjects.Add("scrollDisplay", Global.ScrollDisplay);
+
+            Global.Player.Inventory = new PlayerInventory();
+            Global.Player.Inventory.Initialize();
+            _screenObjects.Add("inventory", Global.Player.Inventory);
+
+
         }
 
         private void CreateGameObjects()
@@ -135,13 +159,17 @@ namespace ProjectDonut
 
             Global.DayNightCycle = new DayNightCycle();
             _gameObjects.Add("day-night", Global.DayNightCycle);
+
+            Global.Player.TextDisplay = new PlayerTextDisplay();
+            Global.Player.TextDisplay.Initialize();
+            _gameObjects.Add("playerTextDisplay", Global.Player.TextDisplay);
         }
 
         protected override void LoadContent()
         {
             Global.SceneManager.LoadContent();
 
-            Global.Player.LoadContent();
+            Global.PlayerObj.LoadContent();
             _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
@@ -155,33 +183,40 @@ namespace ProjectDonut
 
             var kbState = Keyboard.GetState();
 
-            if (kbState.IsKeyDown(Keys.F8))
+            if (InputManager.LastKeyboardState.IsKeyUp(Keys.OemTilde) &&
+                InputManager.KeyboardState.IsKeyDown(Keys.OemTilde))
             {
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
-                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+                Global.Debug.Console.ToggleOpenClose();
+                DebugWindow.IsShown = !DebugWindow.IsShown;
             }
 
-            if (kbState.IsKeyDown(Keys.F9))
-            {
-                var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-                worldScene.LastExitLocation = new Rectangle((int)Global.Player.Position.X, (int)Global.Player.Position.Y, Global.TileSize, Global.TileSize);
-                Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
-                Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            }
+            //if (kbState.IsKeyDown(Keys.F8))
+            //{
+            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
+            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+            //}
 
-            if (kbState.IsKeyDown(Keys.O))
-            {
-                //testScroll.DisplayScroll(500, 300, "Flandaria");                
-                Global.ScrollDisplay.DisplayScroll();
-            }
+            //if (kbState.IsKeyDown(Keys.F9))
+            //{
+            //    var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
+            //    worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
+            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
+            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
+            //}
 
-            if (kbState.IsKeyDown(Keys.P))
-            {
-                Global.ScrollDisplay.HideScroll();
-            }
+            //if (kbState.IsKeyDown(Keys.O))
+            //{
+            //    //testScroll.DisplayScroll(500, 300, "Flandaria");                
+            //    Global.ScrollDisplay.DisplayScroll();
+            //}
+
+            //if (kbState.IsKeyDown(Keys.P))
+            //{
+            //    Global.ScrollDisplay.HideScroll();
+            //}zz
 
             Global.SceneManager.Update(gameTime);
-            Global.Player.Update(gameTime);
+            Global.PlayerObj.Update(gameTime);
 
             _gameComponents.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
             _gameObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
@@ -206,7 +241,10 @@ namespace ProjectDonut
 
         protected override void Draw(GameTime gameTime)
         {
-            Global.Penumbra.BeginDraw();
+            if (Global.LIGHTING_ENABLED)
+            {
+                Global.Penumbra.BeginDraw();
+            }
 
             GraphicsDevice.Clear(Color.Black);
 
@@ -214,30 +252,43 @@ namespace ProjectDonut
 
             _gameObjects
                 .Select(x => x.Value)
-                .OrderBy(x => x.Position.Y)
-                .ThenByDescending(x => x.ZIndex)
+                .OrderBy(x => x.WorldPosition.Y)
+                .ThenBy(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            {
-                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-                {
-                    chunk.DrawMineableObjectsBelowPlayer(gameTime);    
-                    chunk.DrawSceneObjectsBelowPlayer(gameTime);
-                }
-            }
+            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            //{
+            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+            //    {
+            //        chunk.DrawMineableObjectsBelowPlayer(gameTime);    
+            //        chunk.DrawSceneObjectsBelowPlayer(gameTime);
+            //    }
+            //}
 
-            Global.Player.Draw(gameTime);
+            //Global.PlayerObj.Draw(gameTime);
 
-            if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            {
-                foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-                {
-                    chunk.DrawMineableObjectsAbovePlayer(gameTime);
-                    chunk.DrawSceneObjectsAbovePlayer(gameTime);
-                }
-            }
+            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
+            //{
+            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
+            //    {
+            //        chunk.DrawMineableObjectsAbovePlayer(gameTime);
+            //        chunk.DrawSceneObjectsAbovePlayer(gameTime);
+            //    }
+            //}
+
+            //if (Global.LIGHTING_ENABLED == false)
+            //{
+            //    //Global.SpriteBatch.Begin();
+            //    Global.Penumbra.BeginDraw();
+            //}
+            base.Draw(gameTime);
+            //if (Global.LIGHTING_ENABLED == false)
+            //{
+            //    //Global.Penumbra.Draw(gameTime);
+            //    //Global.SpriteBatch.End();
+            //}
+            //Global.Penumbra.Draw(gameTime);
 
             _screenObjects
                 .Select(x => x.Value)
@@ -245,9 +296,10 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            base.Draw(gameTime);
+            //Global.SpriteBatch.Begin();
+            //base.Draw(gameTime);
+            //Global.SpriteBatch.End();
 
-            //Global.Penumbra.Draw(gameTime);
         }
     }
 }

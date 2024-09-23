@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using ProjectDonut.ProceduralGeneration.World;
 using System;
 using System.Collections.Generic;
@@ -18,31 +19,43 @@ namespace ProjectDonut.Debugging
             this.settings = settings;
         }
 
-        public void WriteMapData(int[,] data, string identifier)
+        public static void WriteMapData(int[,] data, string identifier)
         {
-            var filePath = $@"C:\DebugMapData_{identifier}_{DateTime.Now.ToString("hh-mm-sstt")}.txt";
+            //var filePath = $@"C:\Users\benro\Documents\{identifier}_{DateTime.Now.ToString("hh-mm-ss.ffftt")}.txt";
+            var filePath = $@"C:\Users\benro\Documents\DEBUG\{identifier}.txt";
             var lines = new List<string>();
 
             var width = data.GetLength(0);
             var height = data.GetLength(1);
 
-            for (int i = 0; i < width; i++)
+            for (int j = 0; j < height; j++)
             {
                 var line = string.Empty;
-                for (int j = 0; j < height; j++)
+                for (int i = width - 1; i >= 0; i--)
                 {
-                    //line += data[i, j] + " ";
-                    line += GetCellCharacter(data[i, j]) + " ";
+                    if (data[i, j] == 0)
+                    {
+                        line += "░░░";
+                    }
+                    else if (data[i, j] == 2)
+                    {
+                        line += "###";
+                    }
+                    else
+                    {
+                        line += "▓▓▓";
+                    }
                 }
-                //lines.Add(ReverseLine(line));
-                lines.Add(line);
+
+                lines.Add(ReverseLine(line));
             }
 
-            //lines.Reverse();
+            //lines.Reverse(); // Add this line to horizontally flip the output
+
             System.IO.File.WriteAllLines(filePath, lines);
         }
 
-        private string ReverseLine(string line)
+        private static string ReverseLine(string line)
         {
             var result = string.Empty;
 

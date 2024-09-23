@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Environment
@@ -17,7 +18,7 @@ namespace ProjectDonut.Environment
 
         public bool IsVisible { get; set; }
         public Texture2D Texture { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public int ZIndex { get; set; }
 
         private Rectangle DebugRect;
@@ -53,26 +54,24 @@ namespace ProjectDonut.Environment
             if (timeOfDay >= 24f)
                 timeOfDay -= 24f;
 
-            if (timeOfDay < 6f || timeOfDay >= 20f)
+
+            if (Global.SceneManager.CurrentScene is WorldScene)
             {
-                TargetFOW = 500;
-                TargetLightScale = 1000f;
-
-                //Global.Player.Light.Scale = new Vector2(1000);
-                //Global.FOG_OF_WAR_RADIUS = 500;
-
-                // Night time: Increase time speed
-                //timeSpeed = 0.1f;
+                if (timeOfDay < 6f || timeOfDay >= 20f)
+                {
+                    TargetFOW = 500;
+                    TargetLightScale = 1000f;
+                }
+                else
+                {
+                    TargetFOW = 1500;
+                    TargetLightScale = 3000f;
+                }
             }
             else
             {
                 TargetFOW = 1500;
                 TargetLightScale = 3000f;
-
-                //Global.Player.Light.Scale = new Vector2(3000);
-                //Global.FOG_OF_WAR_RADIUS = 1500;
-                // Day time: Normal time speed
-                //timeSpeed = 1f;
             }
 
             if (TargetFOW < Global.FOG_OF_WAR_RADIUS)
@@ -84,14 +83,15 @@ namespace ProjectDonut.Environment
                 Global.FOG_OF_WAR_RADIUS += 10;
             }
 
-            if (TargetLightScale < Global.Player.Light.Scale.X)
+            if (TargetLightScale < Global.PlayerObj.Light.Scale.X)
             {
-                Global.Player.Light.Scale = new Vector2(Global.Player.Light.Scale.X - 10);
+                Global.PlayerObj.Light.Scale = new Vector2(Global.PlayerObj.Light.Scale.X - 10);
             }
-            else if (TargetLightScale > Global.Player.Light.Scale.X)
+            else if (TargetLightScale > Global.PlayerObj.Light.Scale.X)
             {
-                Global.Player.Light.Scale = new Vector2(Global.Player.Light.Scale.X + 10);
+                Global.PlayerObj.Light.Scale = new Vector2(Global.PlayerObj.Light.Scale.X + 10);
             }
+
         }
 
         public void Draw(GameTime gameTime)
@@ -99,16 +99,39 @@ namespace ProjectDonut.Environment
             Global.SpriteBatch.Begin();
 
             // Apply time-of-day tint to your environment rendering
-            Color timeOfDayTint = GetTimeOfDayColor();
-            Global.SpriteBatch.Draw(Texture, TintRect, timeOfDayTint * 0.15f);
+            if (Global.SceneManager.CurrentScene is WorldScene)
+            {
+                Color timeOfDayTint = GetTimeOfDayColor();
+                Global.SpriteBatch.Draw(Texture, TintRect, timeOfDayTint * 0.15f);
+                Global.Penumbra.AmbientColor = timeOfDayTint;
+            }
 
             Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, DebugRect, Color.Black);
-            Global.SpriteBatch.DrawString(Global.FontDebug, $"{timeOfDay}", new Vector2(DebugRect.X + 10, DebugRect.Y + 10), Color.White);
+            Global.SpriteBatch.DrawString(Global.FontDebug, $"{ConvertFloatToTime(timeOfDay)}", new Vector2(DebugRect.X + 10, DebugRect.Y + 10), Color.White);
 
             // Draw the rest of your game as normal (characters, objects, etc.)
             // They could also use `timeOfDayTint` if you want everything tinted.
 
             Global.SpriteBatch.End();
+        }
+
+        private string ConvertFloatToTime(float hours)
+        {
+            // Clamp the value to the 0-24 range
+            if (hours < 0.0f) hours = 0.0f;
+            if (hours > 24.0f) hours = 24.0f;
+
+            // Calculate the hours and minutes
+            int hour = (int)hours; // Get the integer part as hours
+            int minutes = (int)((hours - hour) * 60); // Get the fractional part as minutes
+
+            // Adjust for 12-hour format and determine AM/PM
+            string suffix = (hour >= 12 && hour < 24) ? "PM" : "AM";
+            if (hour == 0) hour = 12; // Midnight is 12 AM
+            else if (hour > 12) hour -= 12; // Convert to 12-hour format
+
+            // Format the time string
+            return $"{hour:D2}:{minutes:D2} {suffix}";
         }
 
 

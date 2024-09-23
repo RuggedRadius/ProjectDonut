@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AsepriteDotNet;
-using MonoGame.Aseprite;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut.ProceduralGeneration.World.TileRules
 {
@@ -37,7 +32,7 @@ namespace ProjectDonut.ProceduralGeneration.World.TileRules
                     var biomeString = GetBiomeString(tile);
                     var tileString = $"{biomeString}-{directionString}";
 
-                    tile.Texture = Global.SpriteLibrary.GetSprite(tileString);
+                    tile.Texture = SpriteLib.GetSprite(tileString);
                 }
                 catch (Exception ex)
                 {

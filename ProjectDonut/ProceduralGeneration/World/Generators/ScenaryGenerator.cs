@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using ProjectDonut.Core;
+using ProjectDonut.Core.Sprites;
 using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using System;
 using System.Collections.Generic;
 
@@ -16,9 +18,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             this.settings = settings;
         }
 
-        public List<ISceneObject> GenerateWinterTrees(WorldChunk chunk)
+        public List<IMineable> GenerateWinterTrees(WorldChunk chunk)
         {
-            var trees = new List<ISceneObject>();
+            var trees = new List<IMineable>();
 
             for (int i = 0; i < chunk.Width; i++)
             {
@@ -34,7 +36,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
-                    var treeCount = _random.Next(2, 4);
+                    //var treeCount = _random.Next(2, 4);
+                    var treeCount = 1;
                     var halfTileSize = Global.TileSize / 2;
 
                     for (int k = 0; k < treeCount; k++)
@@ -42,24 +45,30 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var chunkPosX = i * Global.TileSize;
                         var chunkPosY = j * Global.TileSize;
 
-                        var randomiseX = _random.Next(-halfTileSize, halfTileSize);
-                        var randomiseY = _random.Next(-halfTileSize, halfTileSize);
+                        var positionVariantX = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
+                        var positionVariantY = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
 
                         var globaliseX = chunk.ChunkCoordX * Global.TileSize * Global.ChunkSize;
                         var globaliseY = chunk.ChunkCoordY * Global.TileSize * Global.ChunkSize;
 
-                        var worldXPos = chunkPosX + randomiseX + globaliseX;
-                        var worldYPos = chunkPosY + randomiseY + globaliseY;
+                        var offsetX = -Global.TileSize;
+                        var offsetY = -Global.TileSize * 2;
 
-                        var texture = Global.SpriteLibrary.WorldMapSprites["tree-02-winter"][0];
+                        var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;
+                        var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
-                        var tree = new SceneObjectStatic
+                        var texture = SpriteLib.Mineables.Sprites["tree-02-winter"][0];
+
+                        var tree = new MineableTreeWinter()
                         {
-                            Position = new Vector2(worldXPos, worldYPos),
+                            WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
-                            ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                            ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                            InventoryIcon = SpriteLib.UI.Items["wood-log"],
                         };
 
+                        tree.Intialize();
+                        tree.LoadContent();
                         trees.Add(tree);
                     }
                 }
@@ -95,25 +104,26 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         var chunkPosX = i * Global.TileSize;
                         var chunkPosY = j * Global.TileSize;
 
-                        //var randomiseX = _random.Next(-halfTileSize, halfTileSize);
-                        //var randomiseY = _random.Next(-halfTileSize, halfTileSize);
+                        var positionVariantX = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
+                        var positionVariantY = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
 
                         var globaliseX = chunk.ChunkCoordX * Global.TileSize * Global.ChunkSize;
                         var globaliseY = chunk.ChunkCoordY * Global.TileSize * Global.ChunkSize;
 
-                        //var worldXPos = chunkPosX + randomiseX + globaliseX;
-                        //var worldYPos = chunkPosY + randomiseY + globaliseY;
-                        var worldXPos = chunkPosX + globaliseX + halfTileSize;                        
-                        var worldYPos = chunkPosY + globaliseY + halfTileSize;
+                        var offsetX = -Global.TileSize;
+                        var offsetY = -Global.TileSize * 2;
 
-                        var texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0];
+                        var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;                        
+                        var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
-                        var tree = new MineableObject(MineableObjectType.Tree)
+                        var texture = SpriteLib.Mineables.Sprites["tree-02"][0];
+
+                        var tree = new MineableTree()
                         {
-                            Position = new Vector2(worldXPos, worldYPos),
+                            WorldPosition = new Vector2(worldXPos, worldYPos),
                             Texture = texture,
                             ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
-                            InventoryIcon = Global.SpriteLibrary.ItemsSprites["wood-log"],
+                            InventoryIcon = SpriteLib.UI.Items["wood-log"],
                         };
 
                         tree.Intialize();
@@ -138,9 +148,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         /// </summary>
         /// <param name="chunk"></param>
         /// <returns></returns>
-        public List<ISceneObject> GenerateLooseTrees(WorldChunk chunk)
+        public List<IMineable> GenerateLooseTrees(WorldChunk chunk)
         {
-            var trees = new List<ISceneObject>();
+            var trees = new List<IMineable>();
+            var halfTileSize = Global.TileSize / 2;
 
             for (int i = 0; i < chunk.Width; i++)
             {
@@ -167,29 +178,33 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     }
 
 
-                    var halfTileSize = Global.TileSize / 2;
-
                     var chunkPosX = i * Global.TileSize;
                     var chunkPosY = j * Global.TileSize;
 
-                    var randomiseX = _random.Next(-halfTileSize, halfTileSize);
-                    var randomiseY = _random.Next(-halfTileSize, halfTileSize);
+                    var positionVariantX = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
+                    var positionVariantY = _random.Next(-settings.TileSize / 2, settings.TileSize / 2);
 
                     var globaliseX = chunk.ChunkCoordX * Global.TileSize * Global.ChunkSize;
                     var globaliseY = chunk.ChunkCoordY * Global.TileSize * Global.ChunkSize;
 
-                    var worldXPos = chunkPosX + randomiseX + globaliseX;
-                    var worldYPos = chunkPosY + randomiseY + globaliseY;
+                    var offsetX = -Global.TileSize;
+                    var offsetY = -Global.TileSize * 2;
 
-                    var texture = Global.SpriteLibrary.WorldMapSprites["tree-02"][0];
+                    var worldXPos = chunkPosX + globaliseX + halfTileSize + positionVariantX + offsetX;
+                    var worldYPos = chunkPosY + globaliseY + halfTileSize + positionVariantY + offsetY;
 
-                    var tree = new SceneObjectStatic
+                    var texture = SpriteLib.Mineables.Sprites["tree-02"][0];
+
+                    var tree = new MineableTree()
                     {
-                        Position = new Vector2(worldXPos, worldYPos),
+                        WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
-                        ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                        ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                        InventoryIcon = SpriteLib.UI.Items["wood-log"],
                     };
 
+                    tree.Intialize();
+                    tree.LoadContent();
                     trees.Add(tree);
                 }
             }
@@ -236,11 +251,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var worldXPos = chunkPosX + randomiseX + globaliseX;
                     var worldYPos = chunkPosY + randomiseY + globaliseY;
 
-                    var texture = Global.SpriteLibrary.WorldMapSprites["cactus-01"][0];
+                    var texture = SpriteLib.Mineables.Sprites["cactus-01"][0];
 
                     var cactus = new SceneObjectStatic
                     {
-                        Position = new Vector2(worldXPos, worldYPos),
+                        WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
                         ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
                     };
@@ -252,9 +267,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return cactai;
         }
 
-        public List<ISceneObject> GenerateRocks(WorldChunk chunk)
+        public List<IMineable> GenerateRocks(WorldChunk chunk)
         {
-            var rocks = new List<ISceneObject>();
+            var rocks = new List<IMineable>();
 
             for (int i = 0; i < chunk.Width; i++)
             {
@@ -285,15 +300,19 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var worldXPos = chunkPosX + randomiseX + globaliseX;
                     var worldYPos = chunkPosY + randomiseY + globaliseY;
 
-                    var texture = Global.SpriteLibrary.WorldMapSprites["rock-01"][0];
+                    //var texture = SpriteLib.WorldMapSprites["rock-01"][0];
+                    var texture = SpriteLib.Mineables.Sprites["rock"][0];
 
-                    var rock = new SceneObjectStatic
+                    var rock = new MineableRock()
                     {
-                        Position = new Vector2(worldXPos, worldYPos),
+                        WorldPosition = new Vector2(worldXPos, worldYPos),
                         Texture = texture,
-                        ZIndex = (int)worldYPos + texture.Height - 16 // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                        ZIndex = (int)worldYPos + texture.Height - 16, // TODO: MAGIC NUMBER HERE, 1/4 THE SIZE OF PLAYER SPRITE
+                        InventoryIcon = SpriteLib.UI.Items["rock"],
                     };
 
+                    rock.Intialize();
+                    rock.LoadContent();
                     rocks.Add(rock);
                 }
             }

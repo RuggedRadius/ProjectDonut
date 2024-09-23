@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Interfaces;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.Tools;
 
@@ -77,11 +78,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             return checkedPos;
         }
 
-        public List<ISceneObject> GenerateCastles(WorldChunk chunk)
+        public List<ISceneObject> GenerateTowns(WorldChunk chunk)
         {
             var structures = new List<ISceneObject>();
 
-            if (random.Next(0, 100) < 50) // 50% chance of creating a castle in a chunk
+            if (random.Next(0, 100) < 50) // 50% chance of creating a town in a chunk
             {
                 return structures;
             }
@@ -95,31 +96,58 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
 
             var viableLocation = viableLocations[random.Next(0, viableLocations.Count)];
-            var position = viableLocation.Position;
+            var position = viableLocation.WorldPosition;
             viableLocations.Remove(viableLocation);
 
-            var castle = new WorldStructure(position, chunk)
+            var town = new WorldStructure(position, chunk, WorldStructureType.Town);
+
+            town.Initialize();
+            town.LoadContent();
+            chunk = CullScenaryInRectangle(town.InteractBounds, chunk);
+            structures.Add(town);
+
+            return structures;
+        }
+
+        public List<ISceneObject> GenerateCastles(WorldChunk chunk)
+        {
+            var structures = new List<ISceneObject>();
+
+            if (random.Next(0, 100) < 90) // 50% chance of creating a castle in a chunk
             {
-                Name = NameGenerator.GenerateRandomName(random.Next(2, 5)),
-                Instance = new InstanceScene(SceneType.Instance),
-                Texture = Global.SpriteLibrary.GetSprite("castle"),
-            };
+                return structures;
+            }
+
+            //var viableLocations = GetViableStructureLocations(chunk);
+            var viableLocations = GetPossibleLocations(chunk);
+
+            if (viableLocations.Count == 0)
+            {
+                return structures;
+            }
+
+            var viableLocation = viableLocations[random.Next(0, viableLocations.Count)];
+            var position = viableLocation.WorldPosition;
+            viableLocations.Remove(viableLocation);
+
+            var castle = new WorldStructure(position, chunk, WorldStructureType.Castle);
 
             castle.Initialize();
-            chunk = CullScenaryAtCastleLocation(castle, chunk);
+            castle.LoadContent();
+            chunk = CullScenaryInRectangle(castle.InteractBounds, chunk);
             structures.Add(castle);
 
             return structures;
         }
 
-        private WorldChunk CullScenaryAtCastleLocation(WorldStructure castle, WorldChunk chunk)
+        private WorldChunk CullScenaryInRectangle(Rectangle bounds, WorldChunk chunk)
         {
             var sceneObjectsToCull = new List<ISceneObject>();
             foreach (var objList in chunk.SceneObjects?.Values)
             {
                 foreach (var obj in objList)
                 {
-                    if (castle.InteractBounds.Intersects(obj.Bounds))
+                    if (bounds.Intersects(obj.TextureBounds))
                     {
                         sceneObjectsToCull.Add(obj);
                     }
@@ -147,7 +175,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 foreach (var obj in objList)
                 {
-                    if (castle.InteractBounds.Intersects(obj.InteractBounds))
+                    if (bounds.Intersects(obj.InteractBounds))
                     {
                         mineablesToCull.Add(obj);
                     }

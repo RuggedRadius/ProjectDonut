@@ -19,13 +19,12 @@
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Aseprite" Version="6.0.6" />
     <PackageReference Include="MonoGame.Extended" Version="4.0.2" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
     <PackageReference Include="MonoGame.Penumbra.DesktopGL" Version="3.0.0" />
-    <PackageReference Include="SadConsole" Version="10.4.1" />
-    <PackageReference Include="SadConsole.Extended" Version="10.4.0" />
+    <PackageReference Include="MonoGame.QuakeConsole.DesktopGL" Version="3.0.0" />
+    <PackageReference Include="MonoGame.QuakeConsole.ManualInterpreter.DesktopGL" Version="3.0.0" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

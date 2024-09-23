@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.GameObjects;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
@@ -12,20 +13,20 @@ namespace ProjectDonut.Core.SceneManagement
 {
     public class SceneManager : IGameComponent
     {
-        public Scene CurrentScene { get; set; }
+        public IScene CurrentScene { get; set; }
         public SceneType CurrentSceneType { get; set; }
 
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
 
-        public Dictionary<string, Scene> Scenes;
+        public Dictionary<string, IScene> Scenes;
 
         public SceneManager()
         {
-            Scenes = new Dictionary<string, Scene>()
+            Scenes = new Dictionary<string, IScene>()
             {
                 { "world", CreateWorldScene() },
-                { "instance", CreateInstanceScene() }
+                //{ "instance", CreateInstanceScene() }
             };
 
             CurrentScene = Scenes["world"];
@@ -51,10 +52,10 @@ namespace ProjectDonut.Core.SceneManagement
             CurrentScene.Draw(gameTime);
         }
 
-        public void SetCurrentScene(Scene scene, SceneType sceneType)
+        public void SetCurrentScene(IScene scene)
         {
             CurrentScene = scene;
-            CurrentSceneType = sceneType;
+            CurrentSceneType = scene.SceneType;
         }
 
         public WorldScene CreateWorldScene()
@@ -66,13 +67,28 @@ namespace ProjectDonut.Core.SceneManagement
             return scene;
         }
 
-        public InstanceScene CreateInstanceScene()
-        {
-            var scene = new InstanceScene(SceneType.Instance);
-            scene.Initialize();
-            scene.LoadContent();
+        //public IScene CreateInstanceScene(SceneType sceneType)
+        //{
+        //    IScene scene;
 
-            return scene;
-        }
+        //    switch (sceneType)
+        //    {
+        //        case SceneType.Dungeon:
+        //            scene = new DungeonScene();
+        //            break;
+
+        //        case SceneType.Town:
+        //            scene = new TownScene();
+        //            break;
+
+        //        default:
+        //            return null;
+        //    }
+
+        //    scene.Initialize();
+        //    scene.LoadContent();
+
+        //    return scene;
+        //}
     }
 }

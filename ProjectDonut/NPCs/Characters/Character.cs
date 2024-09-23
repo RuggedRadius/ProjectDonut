@@ -18,7 +18,7 @@ namespace ProjectDonut.NPCs.Characters
         public CharacterRace Race;
         public CharacterProfession Profession;
         public CharacterAttributes Attributes { get; set; }
-        public Vector2 Position { get; set; }
+        public Vector2 WorldPosition { get; set; }
         public int ZIndex { get; set; }
         public bool IsVisible { get; set; }
         public Texture2D Texture 
@@ -64,7 +64,7 @@ namespace ProjectDonut.NPCs.Characters
 
         public void UpdateObjectVisibility()
         {
-            float distance = Vector2.Distance(Global.Player.Position, Position);
+            float distance = Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition);
             IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
         }
 

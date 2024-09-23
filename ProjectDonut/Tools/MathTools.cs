@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,15 @@ namespace ProjectDonut.Tools
 {
     public static class MathTools
     {
+        public static Rectangle Mutliply(this Rectangle rect, int value)
+        {
+            return new Rectangle(
+                rect.X * value, 
+                rect.Y * value,
+                rect.Width * value, 
+                rect.Height * value);
+        }
+
         public static int Clamp(int value, int min, int max)
         {
             return (value < min) ? min : (value > max) ? max : value;
