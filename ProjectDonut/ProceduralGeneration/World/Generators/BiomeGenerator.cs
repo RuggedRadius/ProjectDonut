@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectDonut.Core;
@@ -28,7 +29,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             _noise[0].SetCellularReturnType(FastNoiseLite.CellularReturnType.CellValue);
             _noise[0].SetDomainWarpType(FastNoiseLite.DomainWarpType.OpenSimplex2);
             _noise[0].SetDomainWarpAmp(100.0f);
-            _noise[0].SetFrequency(0.003f);
+            _noise[0].SetFrequency(0.01f);
             _noise[0].SetFractalGain(0.75f);
             _noise[0].SetFractalType(FastNoiseLite.FractalType.None);
             _noise[0].SetFractalOctaves(8);
@@ -80,12 +81,99 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 }
             }
 
+            var random = new Random();
+            for (int z = 0; z < 3; z++)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < height; j++)
+                    {
+                        if (i > 0 && i < width - 1 && j > 0 && j < height - 1)
+                        {
+                            if (result[i, j] != result[i - 1, j])
+                            {
+                                if (random.Next(100) >= 50)
+                                    result[i, j] = result[i - 1, j];
+
+                                continue;
+                            }
+
+                            if (result[i, j] != result[i + 1, j])
+                            {
+                                if (random.Next(100) >= 50)
+                                    result[i, j] = result[i + 1, j];
+
+                                continue;
+                            }
+
+                            if (result[i, j] != result[i, j - 1])
+                            {
+                                if (random.Next(100) >= 50)
+                                    result[i, j] = result[i, j - 1];
+
+                                continue;
+                            }
+
+                            if (result[i, j] != result[i, j + 1])
+                            {
+                                if (random.Next(100) >= 50)
+                                    result[i, j] = result[i, j + 1];
+
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+            
+
+            //var modifiedCount = 0;
+            //for (int i = 0; i < width; i++)
+            //{
+            //    for (int j = 0; j < height; j++)
+            //    {
+            //        var dist = GetDistanceToNextBiome(width, height, i, j, result);
+
+            //        var dx = Math.Abs(dist.Item1 - i);
+            //        var dy = Math.Abs(dist.Item2 - j);
+
+            //        if (dx < 5 || dy < 5)
+            //        {
+            //            result[i, j] += new Random().Next(-1, 2);
+            //            //result[i, j] = (result[i, j] + 1) % biomeCount;
+            //            modifiedCount++;
+            //        }
+            //    }
+            //}
+
             return result;
         }
 
         int Blend(int a, int b, float t)
         {
             return (int)(a + t * (b - a));
+        }
+
+        private (int, int) GetDistanceToNextBiome(int width, int height, int x, int y, int[,] biomeData)
+        {
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (i == x && j == y)
+                    {
+                        continue;
+                    }
+
+                    if (biomeData[i, j] != biomeData[x, y])
+                    {
+                        return (i, j);
+                        //return Math.Abs(i - x) + Math.Abs(j - y);
+                    }
+                }
+            }
+
+            return (100,100);
         }
     }
 }

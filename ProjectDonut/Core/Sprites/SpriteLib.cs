@@ -249,6 +249,8 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Winterlands;
             public static Dictionary<string, Texture2D> Desert;
             public static Dictionary<string, Texture2D> Wetlands;
+            public static Dictionary<string, Texture2D> Ashlands;
+
             public static Dictionary<string, Texture2D> Structures;
 
 
@@ -261,6 +263,7 @@ namespace ProjectDonut.Core.Sprites
                 Winterlands = new Dictionary<string, Texture2D>();
                 Desert = new Dictionary<string, Texture2D>();
                 Wetlands = new Dictionary<string, Texture2D>();
+                Ashlands = new Dictionary<string, Texture2D>();
                 Structures = new Dictionary<string, Texture2D>();
 
                 spriteSheetBiomes = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/Biomes");
@@ -270,6 +273,7 @@ namespace ProjectDonut.Core.Sprites
                 LoadWinterlands();
                 LoadDesert();
                 LoadWetlands();
+                LoadAshlands();
 
                 LoadCoast();
                 LoadWater();
@@ -297,8 +301,14 @@ namespace ProjectDonut.Core.Sprites
 
             private static void LoadWetlands()
             {
-                Wetlands.Add("wetlands-c", ExtractBiomeSprite(0, 0));
-                Wetlands.Add("coast-c", ExtractBiomeSprite(1, 0));
+                Wetlands.Add("wetlands-c", ExtractBiomeSprite(0, 1));
+                Wetlands.Add("coast-c", ExtractBiomeSprite(1, 1));
+            }
+
+            private static void LoadAshlands()
+            {
+                Ashlands.Add("ashlands-c", ExtractBiomeSprite(2, 1));
+                Ashlands.Add("coast-c", ExtractBiomeSprite(3, 1));
             }
 
 
@@ -632,8 +642,8 @@ namespace ProjectDonut.Core.Sprites
 
                 // TODO: Change this to use one input sprite instead of 3 files
                 Scroll.Add("scroll-left", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Left"));
-                Scroll.Add("scroll-middle", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Right"));
-                Scroll.Add("scroll-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Bottom"));
+                Scroll.Add("scroll-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Right"));
+                Scroll.Add("scroll-middle", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Bottom"));
             }
         }
 

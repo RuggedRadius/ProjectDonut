@@ -203,7 +203,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
 
-            genRiver.GenerateRivers(chunk);
+            //genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
             //genStructure.GenerateStructureData(chunk);
 

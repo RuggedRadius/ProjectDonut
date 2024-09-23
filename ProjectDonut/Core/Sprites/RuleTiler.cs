@@ -492,22 +492,30 @@ namespace ProjectDonut.Core.Sprites
 
                 if (heightValue >= settings.GroundHeightMin)
                 {
+                    // COAST
                     if (heightValue >= 30 && heightValue < 34)
                     {
-                        if (biome == Biome.Winterlands)
+                        switch (biome)
                         {
-                            return SpriteLib.World.Winterlands["coast-c"];
-                        }
-                        else
-                        {
-                            return SpriteLib.World.Grasslands["coast-c"];
+                            case Biome.Desert:
+                                return SpriteLib.World.Desert["coast-c"];
+
+                            case Biome.Grasslands:
+                                return SpriteLib.World.Grasslands["coast-c"];
+
+                            case Biome.Winterlands:
+                                return SpriteLib.World.Winterlands["coast-c"];
+
+                            case Biome.Ashlands:
+                                return SpriteLib.World.Ashlands["coast-c"];
+
+                            case Biome.Wetlands:
+                                return SpriteLib.World.Wetlands["coast-c"];
+
+                            default:
+                                return SpriteLib.World.Grasslands["coast-c"];
                         }
                     }
-
-                    //if (heightValue > 30 && heightValue % 10 == 0)
-                    //{
-                    //    return DetermineCliffTexture(x, y, heightData);
-                    //}
                     else
                     {
                         switch (biome)
@@ -520,6 +528,12 @@ namespace ProjectDonut.Core.Sprites
 
                             case Biome.Winterlands:
                                 return SpriteLib.World.Winterlands["winterlands-c"];
+
+                            case Biome.Ashlands:
+                                return SpriteLib.World.Ashlands["ashlands-c"];
+
+                            case Biome.Wetlands:
+                                return SpriteLib.World.Wetlands["wetlands-c"];
 
                             default:
                                 return SpriteLib.World.Grasslands["grass-c"];

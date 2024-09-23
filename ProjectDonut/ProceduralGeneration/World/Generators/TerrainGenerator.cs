@@ -90,67 +90,67 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         }
 
 
-        public void CarveRiver(int[,] heightData, int startX, int startY)
-        {
-            int width = heightData.GetLength(1);
-            int height = heightData.GetLength(0);
+        //public void CarveRiver(int[,] heightData, int startX, int startY)
+        //{
+        //    int width = heightData.GetLength(1);
+        //    int height = heightData.GetLength(0);
 
-            int x = startX;
-            int y = startY;
+        //    int x = startX;
+        //    int y = startY;
 
-            while (true)
-            {
-                // Lower the height to carve the river
-                heightData[y, x] = Math.Max(0, heightData[y, x] - 10); // Adjust the depth as needed
+        //    while (true)
+        //    {
+        //        // Lower the height to carve the river
+        //        heightData[y, x] = Math.Max(0, heightData[y, x] - 10); // Adjust the depth as needed
 
-                // Determine the lowest neighboring cell
-                int lowestHeight = heightData[y, x];
-                int nextX = x, nextY = y;
+        //        // Determine the lowest neighboring cell
+        //        int lowestHeight = heightData[y, x];
+        //        int nextX = x, nextY = y;
 
-                // Check all 4 neighboring cells (you can include diagonals if desired)
-                if (x > 0 && heightData[y, x - 1] < lowestHeight)
-                {
-                    lowestHeight = heightData[y, x - 1];
-                    nextX = x - 1;
-                    nextY = y;
-                }
-                if (x < width - 1 && heightData[y, x + 1] < lowestHeight)
-                {
-                    lowestHeight = heightData[y, x + 1];
-                    nextX = x + 1;
-                    nextY = y;
-                }
-                if (y > 0 && heightData[y - 1, x] < lowestHeight)
-                {
-                    lowestHeight = heightData[y - 1, x];
-                    nextX = x;
-                    nextY = y - 1;
-                }
-                if (y < height - 1 && heightData[y + 1, x] < lowestHeight)
-                {
-                    lowestHeight = heightData[y + 1, x];
-                    nextX = x;
-                    nextY = y + 1;
-                }
+        //        // Check all 4 neighboring cells (you can include diagonals if desired)
+        //        if (x > 0 && heightData[y, x - 1] < lowestHeight)
+        //        {
+        //            lowestHeight = heightData[y, x - 1];
+        //            nextX = x - 1;
+        //            nextY = y;
+        //        }
+        //        if (x < width - 1 && heightData[y, x + 1] < lowestHeight)
+        //        {
+        //            lowestHeight = heightData[y, x + 1];
+        //            nextX = x + 1;
+        //            nextY = y;
+        //        }
+        //        if (y > 0 && heightData[y - 1, x] < lowestHeight)
+        //        {
+        //            lowestHeight = heightData[y - 1, x];
+        //            nextX = x;
+        //            nextY = y - 1;
+        //        }
+        //        if (y < height - 1 && heightData[y + 1, x] < lowestHeight)
+        //        {
+        //            lowestHeight = heightData[y + 1, x];
+        //            nextX = x;
+        //            nextY = y + 1;
+        //        }
 
-                // If the river can't flow lower, end the loop
-                if (nextX == x && nextY == y)
-                {
-                    break;
-                }
+        //        // If the river can't flow lower, end the loop
+        //        if (nextX == x && nextY == y)
+        //        {
+        //            break;
+        //        }
 
-                x = nextX;
-                y = nextY;
+        //        x = nextX;
+        //        y = nextY;
 
-                // Handle chunk boundaries
-                if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
-                {
-                    // Record exit point to continue river in the neighboring chunk
-                    // ...
-                    break;
-                }
-            }
-        }
+        //        // Handle chunk boundaries
+        //        if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
+        //        {
+        //            // Record exit point to continue river in the neighboring chunk
+        //            // ...
+        //            break;
+        //        }
+        //    }
+        //}
 
 
         public Tilemap CreateTerrainTilemap(WorldChunk chunk)
