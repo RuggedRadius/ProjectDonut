@@ -652,10 +652,10 @@ namespace ProjectDonut.Core.Sprites
 
             private static void LoadMinimapFrame()
             {
-                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/UI/MinimapFrame");
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/UI/MinimapFrameBACKUP");
                 Minimap = new Dictionary<string, Texture2D>()
                 {
-                    { "minimap-frame", ExtractSprite(sheet, 0, 0, 96, 96) }
+                    { "minimap-frame", sheet }
                     //{ "nw", ExtractSprite(sheet, 0, 0) },
                     //{ "n", ExtractSprite(sheet, 1, 0) },
                     //{ "ne", ExtractSprite(sheet, 2, 0) },

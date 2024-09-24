@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.BitmapFonts;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Interfaces;
@@ -23,9 +24,13 @@ namespace ProjectDonut.Environment
 
         private Rectangle DebugRect;
         private Rectangle TintRect;
+        private Vector2 TimeDisplayPosition;
 
         private float TargetFOW;
         private float TargetLightScale;
+
+        private SpriteFont _fontText;
+        private SpriteFont _fontSubText;
 
         public void Initialize()
         {
@@ -37,12 +42,18 @@ namespace ProjectDonut.Environment
                 );
 
             TintRect = new Rectangle(0, 0, Global.ScreenWidth, Global.ScreenHeight);
+
+            TimeDisplayPosition = new Vector2(Global.GraphicsDeviceManager.PreferredBackBufferWidth - 245, 485);
         }
 
         public void LoadContent()
         {
             Texture = new Texture2D(Global.GraphicsDevice, 1, 1);
             Texture.SetData(new[] { Color.White });
+
+            _fontText = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
+            _fontSubText = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDescSubText");
+
         }
 
         public void Update(GameTime gameTime)
@@ -106,8 +117,11 @@ namespace ProjectDonut.Environment
                 Global.Penumbra.AmbientColor = timeOfDayTint;
             }
 
-            Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, DebugRect, Color.Black);
-            Global.SpriteBatch.DrawString(Global.FontDebug, $"{ConvertFloatToTime(timeOfDay)}", new Vector2(DebugRect.X + 10, DebugRect.Y + 10), Color.White);
+            //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, DebugRect, Color.Black);
+            Global.SpriteBatch.DrawString(_fontSubText, 
+                $"{ConvertFloatToTime(timeOfDay)}",
+                TimeDisplayPosition, 
+                Color.Black);
 
             // Draw the rest of your game as normal (characters, objects, etc.)
             // They could also use `timeOfDayTint` if you want everything tinted.

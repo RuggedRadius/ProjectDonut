@@ -20,6 +20,7 @@ namespace ProjectDonut.Core
         public int ZIndex { get; set; }
 
         private Rectangle DisplayRect { get; set; }
+        private Rectangle FrameRect { get; set; }
 
         private Random _random = new Random();
 
@@ -52,6 +53,7 @@ namespace ProjectDonut.Core
                 sizeY);
 
             FrameTexture = SpriteLib.UI.Minimap["minimap-frame"];
+            FrameRect = new Rectangle(DisplayRect.X, DisplayRect.Y, FrameTexture.Width, FrameTexture.Height);
         }
 
         public void LoadContent()
@@ -67,7 +69,7 @@ namespace ProjectDonut.Core
         {
             Global.SpriteBatch.Begin();
             Global.SpriteBatch.Draw(RenderTarget, DisplayRect, Color.White);
-            Global.SpriteBatch.Draw(FrameTexture, DisplayRect, Color.White);
+            Global.SpriteBatch.Draw(FrameTexture, FrameRect, Color.White);
             Global.SpriteBatch.End();
         }
     }

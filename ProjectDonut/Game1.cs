@@ -44,7 +44,7 @@ namespace ProjectDonut
 
             Global.GraphicsDeviceManager.PreferredBackBufferWidth = Global.ScreenWidth;
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
-            Global.GraphicsDeviceManager.SupportedOrientations = DisplayOrientation.Portrait;
+            Global.GraphicsDeviceManager.IsFullScreen = true;
 
             Global.Penumbra = new PenumbraComponent(this);
             if (Global.LIGHTING_ENABLED)
@@ -164,7 +164,8 @@ namespace ProjectDonut
             _gameObjects = new Dictionary<string, IGameObject>();
 
             Global.DayNightCycle = new DayNightCycle();
-            _gameObjects.Add("day-night", Global.DayNightCycle);
+            Global.DayNightCycle.Initialize();
+            //_gameObjects.Add("day-night", Global.DayNightCycle);
 
             Global.Player.TextDisplay = new PlayerTextDisplay();
             Global.Player.TextDisplay.Initialize();
@@ -181,6 +182,8 @@ namespace ProjectDonut
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
+
+            Global.DayNightCycle.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
@@ -231,6 +234,7 @@ namespace ProjectDonut
             DebugWindow.Lines[4] = $"Cursor: {Global.GameCursor.Position}";
 
             Global.CameraMinimap.Update(gameTime);
+            Global.DayNightCycle.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -273,6 +277,7 @@ namespace ProjectDonut
                 .ForEach(x => x.Draw(gameTime));
 
             Global.CameraMinimap.Draw(gameTime);
+            Global.DayNightCycle.Draw(gameTime);
         }
     }
 }

@@ -285,21 +285,21 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            foreach (var chunk in _chunks)
-            {
-                if (chunk.Value == null)
-                {
-                    continue;
-                }
+            //foreach (var chunk in _chunks)
+            //{
+            //    if (chunk.Value == null)
+            //    {
+            //        continue;
+            //    }
 
-                if (playerChunks.Contains(chunk.Value) == false)
-                {
-                    SaveChunkToFile(chunk.Value);
+            //    if (playerChunks.Contains(chunk.Value) == false)
+            //    {
+            //        SaveChunkToFile(chunk.Value);
 
-                    // TODO: Need to clear the chunk data from memory
-                    //chunk.Value = null;
-                }
-            }
+            //        // TODO: Need to clear the chunk data from memory
+            //        //chunk.Value = null;
+            //    }
+            //}
 
             return playerChunks;
         }
@@ -344,23 +344,23 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
         }
 
-        private WorldChunk LoadChunkFromFile((int, int) chunkCoords)
-        {
-            if (ExistingChunks.Contains(chunkCoords) == false)
-            {
-                return;
-            }
+        //private WorldChunk LoadChunkFromFile((int, int) chunkCoords)
+        //{
+        //    if (ExistingChunks.Contains(chunkCoords) == false)
+        //    {
+        //        return;
+        //    }
 
-            string filePath = $"[{chunkCoords.Item1}][{chunkCoords.Item2}].json";
+        //    string filePath = $"[{chunkCoords.Item1}][{chunkCoords.Item2}].json";
 
-            // Read the JSON string from the file
-            string jsonString = File.ReadAllText(filePath);
+        //    // Read the JSON string from the file
+        //    string jsonString = File.ReadAllText(filePath);
 
-            // Deserialize the JSON string back into the custom object
-            var chunk = JsonSerializer.Deserialize<WorldChunk>(jsonString);
+        //    // Deserialize the JSON string back into the custom object
+        //    var chunk = JsonSerializer.Deserialize<WorldChunk>(jsonString);
 
-            return chunk;
-        }
+        //    return chunk;
+        //}
 
         private void SaveChunkToFile(WorldChunk chunk)
         {
