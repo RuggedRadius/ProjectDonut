@@ -103,7 +103,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-
             //// ScreenObjects
             //_screenObjects
             //    .Select(x => x.Value)

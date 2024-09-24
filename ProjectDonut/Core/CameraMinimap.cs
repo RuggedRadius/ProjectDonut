@@ -4,6 +4,7 @@ using MonoGame.Extended;
 using ProjectDonut.Interfaces;
 using MonoGame.Extended.ViewportAdapters;
 using System;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut.Core
 {
@@ -13,6 +14,7 @@ namespace ProjectDonut.Core
         public OrthographicCamera OrthoCamera;
         public RenderTarget2D RenderTarget;
         public Texture2D MinimapTexture;
+        public Texture2D FrameTexture;
 
         public bool IsMinimap = false;
         public int ZIndex { get; set; }
@@ -34,13 +36,13 @@ namespace ProjectDonut.Core
 
         public void Initialize()
         {
-            var viewportAdapter = new BoxingViewportAdapter(_game.Window, Global.GraphicsDevice, 800, 480);
+            var viewportAdapter = new BoxingViewportAdapter(_game.Window, Global.GraphicsDevice, 800, 800);
             OrthoCamera = new OrthographicCamera(viewportAdapter);
 
             OrthoCamera.Zoom = 0.1f;
 
             var sizeX = 400;
-            var sizeY = 300;
+            var sizeY = 400;
             var paddingFromEdgeOfScreen = 10;
             RenderTarget = new RenderTarget2D(Global.GraphicsDevice, sizeX, sizeY);            
             DisplayRect = new Rectangle(
@@ -48,6 +50,8 @@ namespace ProjectDonut.Core
                 paddingFromEdgeOfScreen,
                 sizeX,
                 sizeY);
+
+            FrameTexture = SpriteLib.UI.Minimap["minimap-frame"];
         }
 
         public void LoadContent()
@@ -63,6 +67,7 @@ namespace ProjectDonut.Core
         {
             Global.SpriteBatch.Begin();
             Global.SpriteBatch.Draw(RenderTarget, DisplayRect, Color.White);
+            Global.SpriteBatch.Draw(FrameTexture, DisplayRect, Color.White);
             Global.SpriteBatch.End();
         }
     }

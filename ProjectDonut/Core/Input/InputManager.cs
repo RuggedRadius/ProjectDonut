@@ -58,16 +58,6 @@ namespace ProjectDonut.Core.Input
 
             // Calculate scroll delta
             ScrollWheelDelta = MouseState.ScrollWheelValue - LastMouseState.ScrollWheelValue;
-
-            // Detect scroll direction based on ScrollWheelDelta
-            if (ScrollWheelDelta > 0)
-            {
-                Debug.WriteLine("Mouse wheel scrolled up");
-            }
-            else if (ScrollWheelDelta < 0)
-            {
-                Debug.WriteLine("Mouse wheel scrolled down");
-            }
         }
 
         public void Draw(GameTime gameTime)

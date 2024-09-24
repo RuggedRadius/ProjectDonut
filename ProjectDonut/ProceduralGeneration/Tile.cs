@@ -180,6 +180,15 @@ namespace ProjectDonut.ProceduralGeneration
             }
         }
 
+        public void DrawThumbnail(GameTime gameTime)
+        {
+            Global.SpriteBatch.Draw(
+                Texture, 
+                new Vector2(xIndex * Global.TileSize, yIndex * Global.TileSize), 
+                null, 
+                Color.White);
+        }
+
         double Normalize(double value, double min, double max)
         {
             return (value - min) / (max - min);

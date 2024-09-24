@@ -275,6 +275,8 @@ namespace ProjectDonut.Core.Sprites
                 LoadWetlands();
                 LoadAshlands();
 
+                LoadMountain();
+
                 LoadCoast();
                 LoadWater();
 
@@ -384,33 +386,33 @@ namespace ProjectDonut.Core.Sprites
             //}
 
             //// NOT USED
-            //public static void LoadMountain()
-            //{
-            //    // Mountain
-            //    lib.Add("mountain-NW", ExtractTileSprite(12, 0));
-            //    lib.Add("mountain-N", ExtractTileSprite(13, 0));
-            //    lib.Add("mountain-NE", ExtractTileSprite(14, 0));
-            //    lib.Add("mountain-W", ExtractTileSprite(12, 1));
+            public static void LoadMountain()
+            {
+                // Mountain
+                lib.Add("mountain-NW", ExtractTileSprite(12, 0));
+                lib.Add("mountain-N", ExtractTileSprite(13, 0));
+                lib.Add("mountain-NE", ExtractTileSprite(14, 0));
+                lib.Add("mountain-W", ExtractTileSprite(12, 1));
 
-            //    //spriteLib.Add("mountain", ExtractTileSprite(13, 1));
-            //    lib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
+                //spriteLib.Add("mountain", ExtractTileSprite(13, 1));
+                lib.Add("mountain", ExtractSprite(spriteSheetMountain, 0, 0));
 
-            //    lib.Add("mountain-E", ExtractTileSprite(14, 1));
-            //    lib.Add("mountain-SW", ExtractTileSprite(12, 2));
-            //    lib.Add("mountain-S", ExtractTileSprite(13, 2));
-            //    lib.Add("mountain-SE", ExtractTileSprite(14, 2));
+                lib.Add("mountain-E", ExtractTileSprite(14, 1));
+                lib.Add("mountain-SW", ExtractTileSprite(12, 2));
+                lib.Add("mountain-S", ExtractTileSprite(13, 2));
+                lib.Add("mountain-SE", ExtractTileSprite(14, 2));
 
-            //    // Inverted mountain
-            //    lib.Add("mountain-inv-NW", ExtractTileSprite(15, 0));
-            //    lib.Add("mountain-inv-N", ExtractTileSprite(16, 0));
-            //    lib.Add("mountain-inv-NE", ExtractTileSprite(17, 0));
-            //    lib.Add("mountain-inv-W", ExtractTileSprite(15, 1));
-            //    lib.Add("mountain-inv", ExtractTileSprite(16, 1));
-            //    lib.Add("mountain-inv-E", ExtractTileSprite(17, 1));
-            //    lib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
-            //    lib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
-            //    lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
-            //}
+                // Inverted mountain
+                lib.Add("mountain-inv-NW", ExtractTileSprite(15, 0));
+                lib.Add("mountain-inv-N", ExtractTileSprite(16, 0));
+                lib.Add("mountain-inv-NE", ExtractTileSprite(17, 0));
+                lib.Add("mountain-inv-W", ExtractTileSprite(15, 1));
+                lib.Add("mountain-inv", ExtractTileSprite(16, 1));
+                lib.Add("mountain-inv-E", ExtractTileSprite(17, 1));
+                lib.Add("mountain-inv-SW", ExtractTileSprite(15, 2));
+                lib.Add("mountain-inv-S", ExtractTileSprite(16, 2));
+                lib.Add("mountain-inv-SE", ExtractTileSprite(17, 2));
+            }
 
             //// NOT USED
             //public static void LoadForest()
@@ -589,6 +591,7 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Cursor;
             public static Dictionary<string, Texture2D> Dialogue;
             public static Dictionary<string, Texture2D> Scroll;
+            public static Dictionary<string, Texture2D> Minimap;
 
             public static void Load()
             {
@@ -596,6 +599,7 @@ namespace ProjectDonut.Core.Sprites
                 LoadMouseCursor();
                 LoadDialogueSystem();
                 LoadScroll();
+                LoadMinimapFrame();
             }
 
             public static void LoadItems()
@@ -644,6 +648,24 @@ namespace ProjectDonut.Core.Sprites
                 Scroll.Add("scroll-left", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Left"));
                 Scroll.Add("scroll-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Top-Right"));
                 Scroll.Add("scroll-middle", Global.ContentManager.Load<Texture2D>("Sprites/UI/Scroll-Bottom"));
+            }
+
+            private static void LoadMinimapFrame()
+            {
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/UI/MinimapFrame");
+                Minimap = new Dictionary<string, Texture2D>()
+                {
+                    { "minimap-frame", ExtractSprite(sheet, 0, 0, 96, 96) }
+                    //{ "nw", ExtractSprite(sheet, 0, 0) },
+                    //{ "n", ExtractSprite(sheet, 1, 0) },
+                    //{ "ne", ExtractSprite(sheet, 2, 0) },
+                    //{ "w", ExtractSprite(sheet, 0, 1) },
+                    //{ "c", ExtractSprite(sheet, 1, 1) },
+                    //{ "e", ExtractSprite(sheet, 2, 1) },
+                    //{ "sw", ExtractSprite(sheet, 0, 2) },
+                    //{ "s", ExtractSprite(sheet, 1, 2) },
+                    //{ "se", ExtractSprite(sheet, 2, 2) }
+                };
             }
         }
 

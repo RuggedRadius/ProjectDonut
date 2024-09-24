@@ -59,6 +59,7 @@ namespace ProjectDonut
                 System.IO.Directory.Delete($@"C:\Users\benro\Documents\DEBUG", true);
             }
             System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG");
+            System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG\MapThumbnails");
             // ****************** TEMP DEBUG ***********************
         }
 

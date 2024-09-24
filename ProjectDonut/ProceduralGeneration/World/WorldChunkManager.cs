@@ -30,6 +30,7 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Dictionary<(int, int), WorldChunk> _chunks;
         public List<WorldChunk> CurrentChunks;
+        public List<WorldChunk> MinimapCurrentChunks;
         public WorldChunk PlayerChunk;
 
         private SpriteLib spriteLib;
@@ -99,9 +100,9 @@ namespace ProjectDonut.ProceduralGeneration.World
                 PlayerChunkPosition = (Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY);
 
 
-                for (int i = -1; i < 2; i++)
+                for (int i = -2; i < 3; i++)
                 {
-                    for (int j = -1; j < 2; j++)
+                    for (int j = -2; j < 3; j++)
                     {
                         var x = Global.PlayerObj.ChunkPosX + i;
                         var y = Global.PlayerObj.ChunkPosY + j;
@@ -123,12 +124,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
 
                 CurrentChunks = GetPlayerSurroundingChunks();
+                MinimapCurrentChunks = GetPlayerSurroundingMinimapChunks();
             }
             else
             {
                 if (CurrentChunks.Count < 9)
                 {
                     CurrentChunks = GetPlayerSurroundingChunks();
+                    MinimapCurrentChunks = GetPlayerSurroundingMinimapChunks();
                 }
             }
 
@@ -177,9 +180,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             // All chunks dictionary - initialised with starting 9 chunks
             _chunks = new Dictionary<(int, int), WorldChunk>();
-            for (int x = -surroundChunkCount; x <= surroundChunkCount; x++)
+            for (int x = -surroundChunkCount - 2; x <= surroundChunkCount + 2; x++)
             {
-                for (int y = -surroundChunkCount; y <= surroundChunkCount; y++)
+                for (int y = -surroundChunkCount - 2; y <= surroundChunkCount + 2; y++)
                 {
                     var key = (x, y);
                     var chunk = CreateChunk(x, y);
@@ -188,6 +191,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             CurrentChunks = GetPlayerSurroundingChunks();
+            MinimapCurrentChunks = GetPlayerSurroundingMinimapChunks();
 
             foreach (var chunk in _chunks)
             {
@@ -278,6 +282,31 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             return playerChunks;
+        }
+
+        private List<WorldChunk> GetPlayerSurroundingMinimapChunks()
+        {
+            var minimapChunks = new List<WorldChunk>();
+
+            for (int i = -4; i <= 4; i++)
+            {
+                for (int j = -4; j <= 4; j++)
+                {
+                    var chunkX = Global.PlayerObj.ChunkPosX + i;
+                    var chunkY = Global.PlayerObj.ChunkPosY + j;
+
+                    if (_chunks.ContainsKey((chunkX, chunkY)))
+                    {
+                        minimapChunks.Add(_chunks[(chunkX, chunkY)]);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            return minimapChunks;
         }
 
         private WorldChunk GetChunk((int, int) chunkCoords)
