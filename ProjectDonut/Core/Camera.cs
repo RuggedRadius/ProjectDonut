@@ -13,10 +13,15 @@ namespace ProjectDonut.Core
     {
         private Game1 _game;
         public OrthographicCamera OrthoCamera;
+        public RenderTarget2D RenderTarget;
+        public Texture2D MinimapTexture;
 
-        public Camera(Game1 game)
+        public bool IsMinimap = false;
+
+        public Camera(Game1 game, bool isMinimap)
         {
             _game = game;
+            IsMinimap = isMinimap;
         }
 
         public Matrix GetTransformationMatrix()
@@ -30,6 +35,12 @@ namespace ProjectDonut.Core
             OrthoCamera = new OrthographicCamera(viewportAdapter);
             OrthoCamera.MaximumZoom = 4;
             OrthoCamera.MinimumZoom = 0.1f;
+
+            if (IsMinimap)
+            {
+                OrthoCamera.Zoom = 0.5f;
+                RenderTarget = new RenderTarget2D(Global.GraphicsDevice, 200, 200);
+            }
         }
 
         public void LoadContent()
@@ -38,29 +49,36 @@ namespace ProjectDonut.Core
 
         public void Update(GameTime gameTime)
         {
-            float zoomPerTick = 0.01f;
-            if (InputManager.KeyboardState.IsKeyDown(Keys.X))
+            if (IsMinimap)
             {
-                OrthoCamera.ZoomIn(zoomPerTick);
+                OrthoCamera.LookAt(Global.PlayerObj.WorldPosition);
             }
-            if (InputManager.KeyboardState.IsKeyDown(Keys.Z))
+            else
             {
-                OrthoCamera.ZoomOut(zoomPerTick);
+                float zoomPerTick = 0.01f;
+                if (InputManager.KeyboardState.IsKeyDown(Keys.X))
+                {
+                    OrthoCamera.ZoomIn(zoomPerTick);
+                }
+                if (InputManager.KeyboardState.IsKeyDown(Keys.Z))
+                {
+                    OrthoCamera.ZoomOut(zoomPerTick);
+                }
+
+                if (InputManager.ScrollWheelDelta > 0)
+                {
+                    OrthoCamera.ZoomIn(zoomPerTick * 10);
+                }
+                if (InputManager.ScrollWheelDelta < 0)
+                {
+                    OrthoCamera.ZoomOut(zoomPerTick * 10);
+                }
+
+                var viewport = OrthoCamera.BoundingRectangle;
+                OrthoCamera.LookAt(Global.PlayerObj.WorldPosition);
+
+                DebugWindow.Lines[6] = $"Camera Position: {OrthoCamera.Position:N0}";
             }
-
-            if (InputManager.ScrollWheelDelta > 0)
-            {
-                OrthoCamera.ZoomIn(zoomPerTick * 10);
-            }
-            if (InputManager.ScrollWheelDelta < 0)
-            {
-                OrthoCamera.ZoomOut(zoomPerTick * 10);
-            }            
-
-            var viewport = OrthoCamera.BoundingRectangle;
-            OrthoCamera.LookAt(Global.PlayerObj.WorldPosition);
-
-            DebugWindow.Lines[6] = $"Camera Position: {OrthoCamera.Position:N0}";
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

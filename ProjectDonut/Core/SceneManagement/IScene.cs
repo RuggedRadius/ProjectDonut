@@ -26,6 +26,7 @@ namespace ProjectDonut.Core.SceneManagement
         void LoadContent();
         void Update(GameTime gameTime);
         void Draw(GameTime gameTime);
+        void DrawMinimap(GameTime gameTime);
 
     }
 }

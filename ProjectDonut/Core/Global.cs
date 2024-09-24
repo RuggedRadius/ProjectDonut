@@ -86,6 +86,7 @@ namespace ProjectDonut.Core
 
 
         public static Camera Camera;
+        public static CameraMinimap CameraMinimap;
         public static GameCursor GameCursor;
         public static SpriteLib SpriteLibrary;
         public static ScrollDisplayer ScrollDisplay;

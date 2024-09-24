@@ -87,6 +87,31 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 .ForEach(x => x.Draw(gameTime));
         }
 
+        public void DrawMinimap(GameTime gameTime)
+        {
+            toDraw.Clear();
+
+            toDraw.Add(Global.PlayerObj);
+            toDraw.AddRange(_gameObjects.Values);
+            _sceneObjects
+                .Select(x => x.Value)
+                .ToList()
+                .ForEach(x => toDraw.AddRange(x));
+
+            toDraw
+                .OrderBy(x => x.ZIndex)
+                .ToList()
+                .ForEach(x => x.Draw(gameTime));
+
+
+            //// ScreenObjects
+            //_screenObjects
+            //    .Select(x => x.Value)
+            //    .OrderByDescending(x => x.ZIndex)
+            //    .ToList()
+            //    .ForEach(x => x.Draw(gameTime));
+        }
+
         public virtual void PrepareForPlayerEntry()
         {
 

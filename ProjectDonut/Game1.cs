@@ -116,14 +116,17 @@ namespace ProjectDonut
             Global.SceneManager.CurrentSceneType = SceneType.World;
 
             // Camera
-            Global.Camera = new Camera(this);
+            Global.Camera = new Camera(this, false);
+            
 
             Global.InputManager = new InputManager();
 
 
 
+
             _gameComponents.Add("sceneManager", Global.SceneManager);
             _gameComponents.Add("camera", Global.Camera);
+            
             _gameComponents.Add("input", Global.InputManager);
         }
 
@@ -150,7 +153,9 @@ namespace ProjectDonut
             Global.Player.Inventory.Initialize();
             _screenObjects.Add("inventory", Global.Player.Inventory);
 
-
+            Global.CameraMinimap = new CameraMinimap(this, true);
+            Global.CameraMinimap.Initialize();
+            //_screenObjects.Add("camera-minimap", Global.CameraMinimap);
         }
 
         private void CreateGameObjects()
@@ -223,21 +228,11 @@ namespace ProjectDonut
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
             DebugWindow.Lines[4] = $"Cursor: {Global.GameCursor.Position}";
-            
+
+            Global.CameraMinimap.Update(gameTime);
+
             base.Update(gameTime);
         }
-
-        //private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
-        //private void GetAllDrawableObjects()
-        //{
-        //    _gameObjectsToDraw.Clear();
-
-        //    foreach (var go in _gameObjects)
-        //    {
-        //        _gameObjectsToDraw.Add(go.Value);
-
-        //    }
-        //}
 
         protected override void Draw(GameTime gameTime)
         {
@@ -246,9 +241,20 @@ namespace ProjectDonut
                 Global.Penumbra.BeginDraw();
             }
 
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Black);            
+
+            // Minimap
+            Global.GraphicsDevice.SetRenderTarget(Global.CameraMinimap.RenderTarget);
+            Global.GraphicsDevice.Clear(Color.Black);
+            Global.SpriteBatch.Begin(transformMatrix: Global.CameraMinimap.GetTransformationMatrix());
+            Global.SceneManager.DrawMinimap(gameTime);
+            Global.SpriteBatch.End();
+            Global.GraphicsDevice.SetRenderTarget(null);
+
+
 
             Global.SceneManager.Draw(gameTime);
+
 
             _gameObjects
                 .Select(x => x.Value)
@@ -257,38 +263,7 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            //{
-            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-            //    {
-            //        chunk.DrawMineableObjectsBelowPlayer(gameTime);    
-            //        chunk.DrawSceneObjectsBelowPlayer(gameTime);
-            //    }
-            //}
-
-            //Global.PlayerObj.Draw(gameTime);
-
-            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            //{
-            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-            //    {
-            //        chunk.DrawMineableObjectsAbovePlayer(gameTime);
-            //        chunk.DrawSceneObjectsAbovePlayer(gameTime);
-            //    }
-            //}
-
-            //if (Global.LIGHTING_ENABLED == false)
-            //{
-            //    //Global.SpriteBatch.Begin();
-            //    Global.Penumbra.BeginDraw();
-            //}
             base.Draw(gameTime);
-            //if (Global.LIGHTING_ENABLED == false)
-            //{
-            //    //Global.Penumbra.Draw(gameTime);
-            //    //Global.SpriteBatch.End();
-            //}
-            //Global.Penumbra.Draw(gameTime);
 
             _screenObjects
                 .Select(x => x.Value)
@@ -296,10 +271,7 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            //Global.SpriteBatch.Begin();
-            //base.Draw(gameTime);
-            //Global.SpriteBatch.End();
-
+            Global.CameraMinimap.Draw(gameTime);
         }
     }
 }
