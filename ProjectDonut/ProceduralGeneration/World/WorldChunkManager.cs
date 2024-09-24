@@ -10,7 +10,9 @@ using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
@@ -32,6 +34,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public List<WorldChunk> CurrentChunks;
         public List<WorldChunk> MinimapCurrentChunks;
         public WorldChunk PlayerChunk;
+        public List<(int, int)> ExistingChunks;
 
         private SpriteLib spriteLib;
         private FastNoiseLite _noise;
@@ -76,6 +79,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             _genScenary = new ScenaryGenerator(settings);
 
             rulesGrasslands = new GrasslandsRules();
+
+            ExistingChunks = new List<(int, int)>();
         }
 
         public void Update(GameTime gameTime)
@@ -237,11 +242,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
             chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
 
-            
-            
-
             chunk.Initialize();
             chunk.LoadContent();
+
+            ExistingChunks.Add((chunkX, chunkY));
 
             return chunk;
         }
@@ -278,6 +282,22 @@ namespace ProjectDonut.ProceduralGeneration.World
                     {
                         continue;
                     }
+                }
+            }
+
+            foreach (var chunk in _chunks)
+            {
+                if (chunk.Value == null)
+                {
+                    continue;
+                }
+
+                if (playerChunks.Contains(chunk.Value) == false)
+                {
+                    SaveChunkToFile(chunk.Value);
+
+                    // TODO: Need to clear the chunk data from memory
+                    //chunk.Value = null;
                 }
             }
 
@@ -322,6 +342,35 @@ namespace ProjectDonut.ProceduralGeneration.World
                 //AllChunks.Add(chunkCoords, newChunk);
                 //return newChunk;
             }
+        }
+
+        private WorldChunk LoadChunkFromFile((int, int) chunkCoords)
+        {
+            if (ExistingChunks.Contains(chunkCoords) == false)
+            {
+                return;
+            }
+
+            string filePath = $"[{chunkCoords.Item1}][{chunkCoords.Item2}].json";
+
+            // Read the JSON string from the file
+            string jsonString = File.ReadAllText(filePath);
+
+            // Deserialize the JSON string back into the custom object
+            var chunk = JsonSerializer.Deserialize<WorldChunk>(jsonString);
+
+            return chunk;
+        }
+
+        private void SaveChunkToFile(WorldChunk chunk)
+        {
+            string filePath = $"[{chunk.WorldCoordX}][{chunk.WorldCoordY}].json"; // Define the file path
+
+            // Serialize the object to JSON
+            string jsonString = JsonSerializer.Serialize(chunk);
+
+            // Write the JSON string to a file
+            File.WriteAllText(filePath, jsonString);
         }
     }
 }
