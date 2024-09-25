@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
+using ProjectDonut.GameObjects.Doodads.Chests;
+using ProjectDonut.GameObjects.Doodads;
+using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using ProjectDonut.NPCs.Enemy;
 using ProjectDonut.Tools;
@@ -10,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.GameObjects.Doodads.Barrels;
 
 namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 {
@@ -31,12 +36,13 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             MapHeight = _datamap.GetLength(1);
         }
 
-        public void PopulateDungeon(DungeonLevelSettings settings)
+        public void PopulateDungeon(DungeonLevelSettings settings, ref DungeonScene scene)
         {
             _popData = new string[MapWidth, MapHeight];
 
             // Populate the dungeon with enemies, items, etc
             PlaceStairs();
+            PlaceBarrels(50, ref scene);
         }
 
         public List<IGameObject> CreateEnemies(DungeonLevelSettings settings)
@@ -84,6 +90,31 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             return floorCoords;
         }
 
+        private void PlaceBarrels(int count, ref DungeonScene scene)
+        {
+            var allFloorCoords = GetAllFloorCoords();
+
+            for (int i = 0; i < count; i++)
+            {
+                var randomIndex = _random.Next(0, allFloorCoords.Count);
+                var coord = allFloorCoords[randomIndex];
+
+                var rect = new Rectangle(
+                    (int)coord.x * Global.TileSize,
+                    (int)coord.y * Global.TileSize,
+                    Global.TileSize,
+                    Global.TileSize);
+
+                var items = new List<InventoryItem>();
+                items.Add(new InventoryItem() { Name = "Stone", Icon = SpriteLib.UI.Items["rock"], ItemType = ItemType.Consumable, Quantity = 5 });
+                items.Add(new InventoryItem() { Name = "Wood Log", Icon = SpriteLib.UI.Items["wood-log"], ItemType = ItemType.Consumable, Quantity = 5 });
+
+                scene.Interactables.Add(new Barrel(rect, items));
+
+                allFloorCoords.RemoveAt(randomIndex);
+            }
+        }
+
         private void PlaceStairs()
         {
             var startLocation = FindSuitableStairLocation();
@@ -99,14 +130,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             _popData[startLocation.Item1 - 1, startLocation.Item2 + 1] = "stairs-sw";
             _popData[startLocation.Item1 - 0, startLocation.Item2 + 1] = "stairs-s";
             _popData[startLocation.Item1 + 1, startLocation.Item2 + 1] = "stairs-se";
-
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-
-                }
-            }
         }
 
         private (int, int) FindSuitableStairLocation()

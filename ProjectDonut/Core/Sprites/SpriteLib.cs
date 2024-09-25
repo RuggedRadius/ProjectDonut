@@ -506,37 +506,6 @@ namespace ProjectDonut.Core.Sprites
                 LoadDungeonPopulationSprites();
             }
 
-            //private static void LoadWallsAndFloor()
-            //{
-            //    var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/dungeon_tiles");
-
-            //    DungeonSprites = new Dictionary<string, List<Texture2D>>
-            //{
-            //    { "wall-nw", new List<Texture2D> { ExtractSprite(sheet, 0, 0) } },
-            //    { "wall-n", new List<Texture2D> { ExtractSprite(sheet, 1, 0) } },
-            //    { "wall-ne", new List<Texture2D> { ExtractSprite(sheet, 4, 0) } },
-            //    { "wall-w", new List<Texture2D> { ExtractSprite(sheet, 0, 1) } },
-            //    { "wall-e", new List<Texture2D> { ExtractSprite(sheet, 4, 1) } },
-            //    { "wall-sw", new List<Texture2D> { ExtractSprite(sheet, 0, 4) } },
-            //    { "wall-s", new List<Texture2D> { ExtractSprite(sheet, 1, 4) } },
-            //    { "wall-se", new List<Texture2D> { ExtractSprite(sheet, 4, 4) } },
-
-            //    { "wall-ext-nw", new List<Texture2D> { ExtractSprite(sheet, 5, 0) } },
-            //    { "wall-ext-ne", new List<Texture2D> { ExtractSprite(sheet, 7, 0) } },
-            //    { "wall-ext-sw", new List<Texture2D> { ExtractSprite(sheet, 5, 2) } },
-            //    { "wall-ext-se", new List<Texture2D> { ExtractSprite(sheet, 5, 2) } },
-            //    { "floor-01", new List<Texture2D>() }
-            //};
-
-            //    for (int i = 1; i < 4; i++)
-            //    {
-            //        for (int j = 1; j < 4; j++)
-            //        {
-            //            DungeonSprites["floor-01"].Add(ExtractSprite(sheet, i, j));
-            //        }
-            //    }
-            //}
-
             private static void LoadDungeonSprites()
             {
                 var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Dungeon/sheet");
@@ -583,6 +552,8 @@ namespace ProjectDonut.Core.Sprites
                 DungeonSprites.Add("stairs-s", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 1, 2) });
                 DungeonSprites.Add("stairs-se", new List<Texture2D> { SpriteTools.ExtractSprite(sheet, 2, 2) });
             }
+        
+            
         }
 
         public static class UI
@@ -691,15 +662,19 @@ namespace ProjectDonut.Core.Sprites
             }
         }
         
+        // TODO: MAYBE UNUSED CODE HERE
         public static class Doodads
         {
             public static Dictionary<string, Texture2D> Chests;
+            public static Dictionary<string, Texture2D> Barrels;
 
             public static void Load()
             {
                 LoadChests();
+                LoadBarrels();
             }
 
+            // DONT NEED TO DO THIS? LOADED IN ITS OWN CLASS?
             public static void LoadChests()
             {
                 Chests = new Dictionary<string, Texture2D>();
@@ -707,6 +682,14 @@ namespace ProjectDonut.Core.Sprites
                 var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Doodads/Chests/Chest01");
 
                 Chests.Add("chest-01", ExtractSprite(sheet, 0, 0));
+            }
+
+            // DONT NEED TO DO THIS? LOADED IN ITS OWN CLASS?
+            public static void LoadBarrels()
+            {
+                Barrels = new Dictionary<string, Texture2D>();
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Doodads/Barrels/Barrel01");
+                Barrels.Add("barrel-01", ExtractSprite(sheet, 0, 0));
             }
         }
 
