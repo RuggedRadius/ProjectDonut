@@ -74,6 +74,8 @@ namespace ProjectDonut.ProceduralGeneration
                 _frameIndex = 0;
                 _frameTimer = 0f;
             }
+
+
         }
 
         public void Initialize()
@@ -139,8 +141,11 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            if (Global.SceneManager.CurrentScene is DungeonScene)
-            {
+            if (!IsInCameraView())
+                return;
+
+                if (Global.SceneManager.CurrentScene is DungeonScene)
+                {
                 if (!IsVisible)
                 {
                     Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
@@ -178,6 +183,11 @@ namespace ProjectDonut.ProceduralGeneration
 
                 }
             }
+        }
+
+        private bool IsInCameraView()
+        {
+            return Global.Camera.OrthoCamera.BoundingRectangle.Intersects(Bounds);
         }
 
         public void DrawThumbnail(GameTime gameTime)

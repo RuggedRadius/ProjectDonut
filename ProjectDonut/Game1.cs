@@ -44,7 +44,7 @@ namespace ProjectDonut
 
             Global.GraphicsDeviceManager.PreferredBackBufferWidth = Global.ScreenWidth;
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
-            Global.GraphicsDeviceManager.IsFullScreen = true;
+            //Global.GraphicsDeviceManager.IsFullScreen = true;
 
             Global.Penumbra = new PenumbraComponent(this);
             if (Global.LIGHTING_ENABLED)

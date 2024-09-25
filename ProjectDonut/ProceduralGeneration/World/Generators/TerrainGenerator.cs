@@ -182,6 +182,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         WorldTileType = DetermineTileType(i, j, heightValue),
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };
+                    tile.Initialize();
 
                     if (tile.WorldTileType == WorldTileType.Water)
                         waterTileCount++;

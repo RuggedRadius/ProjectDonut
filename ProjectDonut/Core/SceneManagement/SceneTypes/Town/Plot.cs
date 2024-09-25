@@ -99,7 +99,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
-
+                    tile.Initialize();
                     tm.Map[i, j] = tile;
                 }
             }
@@ -132,7 +132,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
-
+                    tile.Initialize();
                     tm.Map[i, j] = tile;
                 }
             }

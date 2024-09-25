@@ -53,7 +53,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
                         TileType = TileType.World,
                         DungeonTileType = DetermineTileType(data, i, j)
                     };
-
+                    tile.Initialize();
                     tilemap.Map[i, j] = tile;
                 }
             }

@@ -34,8 +34,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         Size = new Vector2(Global.TileSize, Global.TileSize),
                         Texture = SpriteLib.Town.Terrain["grass-c"],
                         TileType = TileType.Instance,
-                        IsExplored = true
+                        IsExplored = true                        
                     };
+
+                    tile.Initialize();
 
                     tm.Map[i, j] = tile;
                 }
@@ -70,7 +72,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
-
+                    tile.Initialize();
                     tm.Map[i, j] = tile;
                     tilePlaced = true;
                 }
@@ -109,7 +111,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
-
+                    tile.Initialize();
                     tm.Map[i, j] = tile;
                 }
             }
@@ -142,7 +144,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         TileType = TileType.Instance,
                         IsExplored = true
                     };
-
+                    tile.Initialize();
                     tm.Map[i, j] = tile;
                 }
             }
@@ -191,7 +193,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                                 TileType = TileType.Instance,
                                 IsExplored = true
                             };
-
+                            tm.Map[i + k, j + l].Initialize();
                             tileNameCounter++;
                         }
                     }

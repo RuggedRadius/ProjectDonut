@@ -175,7 +175,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                         Texture = DetermineTexture(_popData[i, j]),
                         TileType = TileType.Instance,
                     };
-
+                    tile.Initialize();
                     tilemap.Map[i, j] = tile;
                 }
             }

@@ -123,7 +123,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         WorldTileType = WorldTileType.Forest,
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };
-
+                    tile.Initialize();
                     tmForest.Map[i, j] = tile;
                 }
             }
