@@ -121,14 +121,14 @@ namespace ProjectDonut
             
 
             Global.InputManager = new InputManager();
-
+            Global.InputManager.Initialize();
 
 
 
             _gameComponents.Add("sceneManager", Global.SceneManager);
             _gameComponents.Add("camera", Global.Camera);
             
-            _gameComponents.Add("input", Global.InputManager);
+            //_gameComponents.Add("input", Global.InputManager);
         }
 
         private void CreateScreenObjects()
@@ -153,6 +153,10 @@ namespace ProjectDonut
             Global.Player.Inventory = new PlayerInventory();
             Global.Player.Inventory.Initialize();
             _screenObjects.Add("inventory", Global.Player.Inventory);
+
+            Global.Player.Equipment = new PlayerEquipment();
+            Global.Player.Equipment.Initialize();
+            _screenObjects.Add("equipment", Global.Player.Equipment);
 
             Global.CameraMinimap = new CameraMinimap(this, true);
             Global.CameraMinimap.Initialize();
@@ -190,39 +194,12 @@ namespace ProjectDonut
         {
             Global.InputManager.Update(gameTime);
 
-            var kbState = Keyboard.GetState();
-
-            if (InputManager.LastKeyboardState.IsKeyUp(Keys.OemTilde) &&
-                InputManager.KeyboardState.IsKeyDown(Keys.OemTilde))
+            if (InputManager.IsKeyPressed(Keys.OemTilde))
             {
                 Global.Debug.Console.ToggleOpenClose();
                 DebugWindow.IsShown = !DebugWindow.IsShown;
             }
 
-            //if (kbState.IsKeyDown(Keys.F8))
-            //{
-            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
-            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            //}
-
-            //if (kbState.IsKeyDown(Keys.F9))
-            //{
-            //    var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-            //    worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
-            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
-            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            //}
-
-            //if (kbState.IsKeyDown(Keys.O))
-            //{
-            //    //testScroll.DisplayScroll(500, 300, "Flandaria");                
-            //    Global.ScrollDisplay.DisplayScroll();
-            //}
-
-            //if (kbState.IsKeyDown(Keys.P))
-            //{
-            //    Global.ScrollDisplay.HideScroll();
-            //}zz
 
             Global.SceneManager.Update(gameTime);
             Global.PlayerObj.Update(gameTime);

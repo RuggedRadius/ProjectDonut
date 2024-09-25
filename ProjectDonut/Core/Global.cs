@@ -82,6 +82,7 @@ namespace ProjectDonut.Core
         {            
             public static PlayerInventory Inventory;
             public static PlayerTextDisplay TextDisplay;
+            public static PlayerEquipment Equipment;
         }
 
 
