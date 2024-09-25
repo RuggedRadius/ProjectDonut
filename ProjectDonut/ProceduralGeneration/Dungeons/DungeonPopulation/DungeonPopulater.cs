@@ -42,7 +42,15 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 
             // Populate the dungeon with enemies, items, etc
             PlaceStairs();
-            PlaceBarrels(50, ref scene);
+            PlaceInteractableDoodads(ref scene);
+        }
+
+        private void PlaceInteractableDoodads(ref DungeonScene scene)
+        {
+            var allFloorCoords = GetAllFloorCoords();
+
+            PlaceBarrels(50, ref scene, ref allFloorCoords);
+            PlaceChests(50, ref scene, ref allFloorCoords);
         }
 
         public List<IGameObject> CreateEnemies(DungeonLevelSettings settings)
@@ -90,10 +98,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             return floorCoords;
         }
 
-        private void PlaceBarrels(int count, ref DungeonScene scene)
+        private void PlaceBarrels(int count, ref DungeonScene scene, ref List<(int x, int y)> allFloorCoords)
         {
-            var allFloorCoords = GetAllFloorCoords();
-
             for (int i = 0; i < count; i++)
             {
                 var randomIndex = _random.Next(0, allFloorCoords.Count);
@@ -204,6 +210,29 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             }
 
             return tilemap;
+        }
+
+        public void PlaceChests(int count, ref DungeonScene scene, ref List<(int x, int y)> allFloorCoords)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var randomIndex = _random.Next(0, allFloorCoords.Count);
+                var coord = allFloorCoords[randomIndex];
+
+                var rect = new Rectangle(
+                    (int)coord.x * Global.TileSize,
+                    (int)coord.y * Global.TileSize,
+                    Global.TileSize,
+                    Global.TileSize);
+
+                var items = new List<InventoryItem>();
+                items.Add(new InventoryItem() { Name = "Stone", Icon = SpriteLib.UI.Items["rock"], ItemType = ItemType.Consumable, Quantity = 50 });
+                items.Add(new InventoryItem() { Name = "Wood Log", Icon = SpriteLib.UI.Items["wood-log"], ItemType = ItemType.Consumable, Quantity = 50 });
+
+                scene.Interactables.Add(new Chest(rect, items));
+
+                allFloorCoords.RemoveAt(randomIndex);
+            }
         }
 
         private Texture2D DetermineTexture(string popValue)

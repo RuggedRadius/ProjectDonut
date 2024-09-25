@@ -37,6 +37,8 @@ namespace ProjectDonut.GameObjects.Doodads.Chests
             Texture = SpriteLib.Doodads.Chests["chest-01"];
 
             InitialiseAnimation();
+
+            State = InteractableState.Acessible;
         }
 
         private void InitialiseAnimation()
