@@ -137,6 +137,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                 StairTileMap.Draw(gameTime);
         }
 
+        // TODO: Only for testing
         public void PlaceTESTChests()
         {
             var random = new Random();

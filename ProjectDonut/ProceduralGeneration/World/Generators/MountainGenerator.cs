@@ -65,7 +65,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         WorldTileType = WorldTileType.Mountain,
                         Biome = (Biome)chunk.BiomeData[i, j]
                     };
-
+                    tile.Initialize();
                     tmBase.Map[i, j] = tile;
                 }
             }

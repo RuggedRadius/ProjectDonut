@@ -44,7 +44,7 @@ namespace ProjectDonut
 
             Global.GraphicsDeviceManager.PreferredBackBufferWidth = Global.ScreenWidth;
             Global.GraphicsDeviceManager.PreferredBackBufferHeight = Global.ScreenHeight;
-            Global.GraphicsDeviceManager.SupportedOrientations = DisplayOrientation.Portrait;
+            //Global.GraphicsDeviceManager.IsFullScreen = true;
 
             Global.Penumbra = new PenumbraComponent(this);
             if (Global.LIGHTING_ENABLED)
@@ -59,6 +59,7 @@ namespace ProjectDonut
                 System.IO.Directory.Delete($@"C:\Users\benro\Documents\DEBUG", true);
             }
             System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG");
+            System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG\MapThumbnails");
             // ****************** TEMP DEBUG ***********************
         }
 
@@ -116,15 +117,18 @@ namespace ProjectDonut
             Global.SceneManager.CurrentSceneType = SceneType.World;
 
             // Camera
-            Global.Camera = new Camera(this);
+            Global.Camera = new Camera(this, false);
+            
 
             Global.InputManager = new InputManager();
+            Global.InputManager.Initialize();
 
 
 
             _gameComponents.Add("sceneManager", Global.SceneManager);
             _gameComponents.Add("camera", Global.Camera);
-            _gameComponents.Add("input", Global.InputManager);
+            
+            //_gameComponents.Add("input", Global.InputManager);
         }
 
         private void CreateScreenObjects()
@@ -150,7 +154,13 @@ namespace ProjectDonut
             Global.Player.Inventory.Initialize();
             _screenObjects.Add("inventory", Global.Player.Inventory);
 
+            Global.Player.Equipment = new PlayerEquipment();
+            Global.Player.Equipment.Initialize();
+            _screenObjects.Add("equipment", Global.Player.Equipment);
 
+            Global.CameraMinimap = new CameraMinimap(this, true);
+            Global.CameraMinimap.Initialize();
+            //_screenObjects.Add("camera-minimap", Global.CameraMinimap);
         }
 
         private void CreateGameObjects()
@@ -158,7 +168,8 @@ namespace ProjectDonut
             _gameObjects = new Dictionary<string, IGameObject>();
 
             Global.DayNightCycle = new DayNightCycle();
-            _gameObjects.Add("day-night", Global.DayNightCycle);
+            Global.DayNightCycle.Initialize();
+            //_gameObjects.Add("day-night", Global.DayNightCycle);
 
             Global.Player.TextDisplay = new PlayerTextDisplay();
             Global.Player.TextDisplay.Initialize();
@@ -175,45 +186,20 @@ namespace ProjectDonut
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.LoadContent());
 
             _font = Content.Load<SpriteFont>("Fonts/Default");
+
+            Global.DayNightCycle.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
             Global.InputManager.Update(gameTime);
 
-            var kbState = Keyboard.GetState();
-
-            if (InputManager.LastKeyboardState.IsKeyUp(Keys.OemTilde) &&
-                InputManager.KeyboardState.IsKeyDown(Keys.OemTilde))
+            if (InputManager.IsKeyPressed(Keys.OemTilde))
             {
                 Global.Debug.Console.ToggleOpenClose();
                 DebugWindow.IsShown = !DebugWindow.IsShown;
             }
 
-            //if (kbState.IsKeyDown(Keys.F8))
-            //{
-            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"], SceneType.World);
-            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            //}
-
-            //if (kbState.IsKeyDown(Keys.F9))
-            //{
-            //    var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-            //    worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
-            //    Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"], SceneType.Instance);
-            //    Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-            //}
-
-            //if (kbState.IsKeyDown(Keys.O))
-            //{
-            //    //testScroll.DisplayScroll(500, 300, "Flandaria");                
-            //    Global.ScrollDisplay.DisplayScroll();
-            //}
-
-            //if (kbState.IsKeyDown(Keys.P))
-            //{
-            //    Global.ScrollDisplay.HideScroll();
-            //}zz
 
             Global.SceneManager.Update(gameTime);
             Global.PlayerObj.Update(gameTime);
@@ -223,21 +209,12 @@ namespace ProjectDonut
             _screenObjects.Select(x => x.Value).ToList().ForEach(x => x.Update(gameTime));
 
             DebugWindow.Lines[4] = $"Cursor: {Global.GameCursor.Position}";
-            
+
+            Global.CameraMinimap.Update(gameTime);
+            Global.DayNightCycle.Update(gameTime);
+
             base.Update(gameTime);
         }
-
-        //private List<IDrawable> _gameObjectsToDraw = new List<IDrawable>();
-        //private void GetAllDrawableObjects()
-        //{
-        //    _gameObjectsToDraw.Clear();
-
-        //    foreach (var go in _gameObjects)
-        //    {
-        //        _gameObjectsToDraw.Add(go.Value);
-
-        //    }
-        //}
 
         protected override void Draw(GameTime gameTime)
         {
@@ -246,9 +223,20 @@ namespace ProjectDonut
                 Global.Penumbra.BeginDraw();
             }
 
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Black);            
+
+            // Minimap
+            Global.GraphicsDevice.SetRenderTarget(Global.CameraMinimap.RenderTarget);
+            Global.GraphicsDevice.Clear(Color.Black);
+            Global.SpriteBatch.Begin(transformMatrix: Global.CameraMinimap.GetTransformationMatrix());
+            Global.SceneManager.DrawMinimap(gameTime);
+            Global.SpriteBatch.End();
+            Global.GraphicsDevice.SetRenderTarget(null);
+
+
 
             Global.SceneManager.Draw(gameTime);
+
 
             _gameObjects
                 .Select(x => x.Value)
@@ -257,38 +245,7 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            //{
-            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-            //    {
-            //        chunk.DrawMineableObjectsBelowPlayer(gameTime);    
-            //        chunk.DrawSceneObjectsBelowPlayer(gameTime);
-            //    }
-            //}
-
-            //Global.PlayerObj.Draw(gameTime);
-
-            //if (Global.SceneManager.CurrentSceneType == SceneType.World)
-            //{
-            //    foreach (var chunk in Global.WorldChunkManager.CurrentChunks)
-            //    {
-            //        chunk.DrawMineableObjectsAbovePlayer(gameTime);
-            //        chunk.DrawSceneObjectsAbovePlayer(gameTime);
-            //    }
-            //}
-
-            //if (Global.LIGHTING_ENABLED == false)
-            //{
-            //    //Global.SpriteBatch.Begin();
-            //    Global.Penumbra.BeginDraw();
-            //}
             base.Draw(gameTime);
-            //if (Global.LIGHTING_ENABLED == false)
-            //{
-            //    //Global.Penumbra.Draw(gameTime);
-            //    //Global.SpriteBatch.End();
-            //}
-            //Global.Penumbra.Draw(gameTime);
 
             _screenObjects
                 .Select(x => x.Value)
@@ -296,10 +253,8 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            //Global.SpriteBatch.Begin();
-            //base.Draw(gameTime);
-            //Global.SpriteBatch.End();
-
+            Global.CameraMinimap.Draw(gameTime);
+            Global.DayNightCycle.Draw(gameTime);
         }
     }
 }

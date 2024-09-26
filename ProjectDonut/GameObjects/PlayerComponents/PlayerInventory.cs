@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
-using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.GameObjects.PlayerComponents
@@ -22,7 +16,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         Hidden
     }
 
-    public class PlayerInventory : IScreenObject
+    public class PlayerInventory : IUIComponent
     {
         public UIComponentState State { get; set; }
         public int ZIndex { get; set; }
@@ -31,16 +25,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         private Texture2D _slotTexture;
         private Texture2D _emptySlotTexture;
 
-        public Vector2 WorldPosition { get; set; }
+        public Vector2 ScreenPosition { get; set; }
 
         public List<PlayerInventorySlot> Slots { get; set; }
         
         private int _slotsInRow = 8;
-
-        private float _toggleTimeout = 0.2f;
-        private float _toggleTimer = 0;
-
-        public bool IsVisible { get; set; }
 
         public static SpriteFont QuantityFont { get; set; }
 
@@ -48,24 +37,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
         {
             State = UIComponentState.Hidden;
             ZIndex = 100;
-            IsVisible = true;
         }
 
         public void Initialize()
         {
             Slots = new List<PlayerInventorySlot>();
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 30; i++)
             {
                 var newSlot = CreateNewSlot();
                 Slots.Add(newSlot);
             }
-
-            //for (int i = 0; i < 5; i++)
-            //{
-            //    var item = CreateTestItem();
-            //    AddItemToInventory(item);
-            //}
         }
 
         private PlayerInventorySlot CreateNewSlot(InventoryItem item = null)
@@ -77,34 +59,34 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             return newSlot;
         }
 
-        private InventoryItem CreateTestItem()
-        {
-            var choice = new Random().Next(0, 2);
+        //private InventoryItem CreateTestItem()
+        //{
+        //    var choice = new Random().Next(0, 2);
 
-            switch (choice)
-            {
-                case 0:
-                    var item = new InventoryItem();
-                    item.ItemID = "health-potion-01";
-                    item.Name = "Health Potion";
-                    item.Description = "Heals 50 HP";
-                    item.Icon = Global.ContentManager.Load<Texture2D>($"Sprites/UI/Items/{item.ItemID}");
-                    item.ItemType = ItemType.Consumable;
-                    return item;
+        //    switch (choice)
+        //    {
+        //        case 0:
+        //            var item = new InventoryItem();
+        //            item.ItemID = "health-potion-01";
+        //            item.Name = "Health Potion";
+        //            item.Description = "Heals 50 HP";
+        //            item.Icon = Global.ContentManager.Load<Texture2D>($"Sprites/UI/Items/{item.ItemID}");
+        //            item.ItemType = ItemType.Consumable;
+        //            return item;
 
-                case 1:
-                    var gold = new InventoryItem();
-                    gold.ItemID = "gold";
-                    gold.Name = "Gold";
-                    gold.Description = "Currency can be exchanged for goods and services";
-                    gold.Icon = Global.ContentManager.Load<Texture2D>($"Sprites/UI/Items/gold-pile-small");
-                    gold.ItemType = ItemType.Currency;
-                    return gold;
+        //        case 1:
+        //            var gold = new InventoryItem();
+        //            gold.ItemID = "gold";
+        //            gold.Name = "Gold";
+        //            gold.Description = "Currency can be exchanged for goods and services";
+        //            gold.Icon = Global.ContentManager.Load<Texture2D>($"Sprites/UI/Items/gold-pile-small");
+        //            gold.ItemType = ItemType.Currency;
+        //            return gold;
 
-                default:
-                    return null;
-            }
-        }
+        //        default:
+        //            return null;
+        //    }
+        //}
 
         public bool HasRoomForItem(InventoryItem item)
         {
@@ -221,19 +203,14 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             _emptySlotTexture = Global.ContentManager.Load<Texture2D>("Sprites/UI/Items/empty-slot");
             QuantityFont = Global.ContentManager.Load<SpriteFont>("Fonts/Default");
 
-            var x = Global.ScreenWidth - Texture.Width - 50;
-            var y = Global.ScreenHeight - Texture.Height - 50;
-            WorldPosition = new Vector2(x, y);
+            var x = 100 + Texture.Width;
+            var y = 50;
+            ScreenPosition = new Vector2(x, y);
         }
 
-        public void ToggleInventory()
+        public void ToggleVisibility()
         {
             if (Global.Debug.Console.IsVisible)
-            {
-                return;
-            }
-
-            if (_toggleTimer < _toggleTimeout)
             {
                 return;
             }
@@ -246,20 +223,18 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             {
                 State = UIComponentState.Hidden;
             }
-
-            _toggleTimer = 0f;
         }
 
         public void Update(GameTime gameTime)
         {
-            _toggleTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            var kbState = Keyboard.GetState();
-            var mouseState = Mouse.GetState();
-
-            if (kbState.IsKeyDown(Keys.I))
+            if (InputManager.IsKeyPressed(Keys.I))
             {
-                ToggleInventory();
+                ToggleVisibility();
+            }
+
+            if (State == UIComponentState.Hidden)
+            {
+                return;
             }
 
             CalculateSlotsBounds();
@@ -267,9 +242,9 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var currentlyPickedUpOriginalSlot = Slots.Where(x => x.Item?.State == InventoryItemState.PickedUp).FirstOrDefault();
             foreach (var slot in Slots)
             {
-                if (slot.Bounds.Contains(mouseState.Position)) // Mouse over has occurred
+                if (slot.Bounds.Contains(InputManager.MouseState.Position)) // Mouse over has occurred
                 {
-                    if (mouseState.LeftButton == ButtonState.Pressed) // Mouse button clicked
+                    if (InputManager.MouseState.LeftButton == ButtonState.Pressed) // Mouse button clicked
                     {
                         if (slot.Item != null && currentlyPickedUpOriginalSlot == null)
                         {
@@ -288,7 +263,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
                 }
             }
 
-            if (mouseState.LeftButton == ButtonState.Released)
+            if (InputManager.MouseState.LeftButton == ButtonState.Released)
             {
                 foreach (var slot in Slots)
                 {
@@ -318,7 +293,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             }
 
             Global.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, transformMatrix: Matrix.Identity);
-            Global.SpriteBatch.Draw(Texture, WorldPosition, Color.White);
+            Global.SpriteBatch.Draw(Texture, ScreenPosition, Color.White);
 
             DrawSlots(gameTime);
 
@@ -340,7 +315,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private void CalculateSlotsBounds()
         {
-            var startHeight = 400;
+            var startHeight = 50;
             var startWidth = 6;
 
             var offsetX = 0;
@@ -349,12 +324,12 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             var cellSpacing = 0;
             var outerSpacing = startWidth;
 
-            var maxPosition = WorldPosition.X + Texture.Width - outerSpacing - _emptySlotTexture.Width;
+            var maxPosition = ScreenPosition.X + Texture.Width - outerSpacing - _emptySlotTexture.Width;
 
             foreach (var slot in Slots)
             {
-                var x = WorldPosition.X + startWidth + offsetX;
-                var y = WorldPosition.Y + startHeight + offsetY;
+                var x = ScreenPosition.X + startWidth + offsetX;
+                var y = ScreenPosition.Y + startHeight + offsetY;
 
                 var drawPos = new Vector2(x, y);
                 var rect = new Rectangle((int)drawPos.X, (int)drawPos.Y, _emptySlotTexture.Width, _emptySlotTexture.Height);

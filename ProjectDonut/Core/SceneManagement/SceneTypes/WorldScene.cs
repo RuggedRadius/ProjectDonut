@@ -128,5 +128,24 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         {
             base.PrepareForPlayerExit();
         }
+
+        public void DrawMinimap(GameTime gameTime)
+        {
+            foreach (var chunk in worldChunks.MinimapCurrentChunks)
+            {
+                if (chunk == null)
+                    continue;
+
+                if (chunk._thumbnailRendered == false)
+                    continue;
+
+                var worldPos = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
+
+                Global.SpriteBatch.Draw(
+                    chunk.ChunkRenderTarget, 
+                    worldPos, 
+                    Color.White);                
+            }
+        }
     }
 }

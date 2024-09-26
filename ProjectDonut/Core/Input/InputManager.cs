@@ -26,6 +26,9 @@ namespace ProjectDonut.Core.Input
 
         public static int ScrollWheelDelta;
 
+        public Vector2 Position { get; set; }
+        public int ZIndex { get; set; }
+
         public InputManager()
         {
             if (Instance == null)
@@ -34,12 +37,12 @@ namespace ProjectDonut.Core.Input
             }            
         }
 
-        public Vector2 Position { get; set; }
-        public int ZIndex { get; set; }
-
         public void Initialize()
         {
-            
+            KeyboardState = Keyboard.GetState();
+            LastKeyboardState = KeyboardState;
+            MouseState = Mouse.GetState();
+            LastMouseState = MouseState;
         }
 
         public void LoadContent()
@@ -58,16 +61,6 @@ namespace ProjectDonut.Core.Input
 
             // Calculate scroll delta
             ScrollWheelDelta = MouseState.ScrollWheelValue - LastMouseState.ScrollWheelValue;
-
-            // Detect scroll direction based on ScrollWheelDelta
-            if (ScrollWheelDelta > 0)
-            {
-                Debug.WriteLine("Mouse wheel scrolled up");
-            }
-            else if (ScrollWheelDelta < 0)
-            {
-                Debug.WriteLine("Mouse wheel scrolled down");
-            }
         }
 
         public void Draw(GameTime gameTime)
@@ -76,24 +69,10 @@ namespace ProjectDonut.Core.Input
 
         public static bool IsKeyPressed(Keys key)
         {
-            return KeyboardState.IsKeyDown(key) && LastKeyboardState.IsKeyUp(key);
+            var lastFrame = LastKeyboardState.IsKeyDown(key);
+            var thisFrame = KeyboardState.IsKeyDown(key);
+
+            return !lastFrame && thisFrame;
         }
-
-        //private void HandleDebugInput()
-        //{
-        //    if (KeyboardState.IsKeyDown(Keys.F8))
-        //    {
-        //        Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["world"]);
-        //        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-        //    }
-
-        //    if (KeyboardState.IsKeyDown(Keys.F9))
-        //    {
-        //        var worldScene = (WorldScene)Global.SceneManager.CurrentScene;
-        //        worldScene.LastExitLocation = new Rectangle((int)Global.Player.WorldPosition.X, (int)Global.Player.WorldPosition.Y, Global.TileSize, Global.TileSize);
-        //        Global.SceneManager.SetCurrentScene(Global.SceneManager.Scenes["instance"]);
-        //        Global.SceneManager.CurrentScene.PrepareForPlayerEntry();
-        //    }
-        //}
     }
 }

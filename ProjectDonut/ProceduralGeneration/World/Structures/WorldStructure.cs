@@ -181,15 +181,19 @@ namespace ProjectDonut.ProceduralGeneration.World.Structures
                 Texture.Width,
                 Texture.Height);
 
-            // Entry Rect
-            EntryBounds = new Rectangle[1];
-            var entryRectX = WorldPosition.X + (4 * Global.TileSize);
-            var entryRectY = WorldPosition.Y + (8 * Global.TileSize);
-            EntryBounds[0] = new Rectangle(
-                (int)entryRectX,
-                (int)entryRectY,
-                Global.TileSize * 1,
-                Global.TileSize * 1);
+            // Entry Rect - ORIGINAL GATE ENTRY ONLY
+            //EntryBounds = new Rectangle[1];
+            //var entryRectX = WorldPosition.X + (4 * Global.TileSize);
+            //var entryRectY = WorldPosition.Y + (8 * Global.TileSize);
+            //EntryBounds[0] = new Rectangle(
+            //    (int)entryRectX,
+            //    (int)entryRectY,
+            //    Global.TileSize * 1,
+            //    Global.TileSize * 1);
+
+            // Entry Rect - BETTER FOR TESTING - PROBABLY TEMP?
+            EntryBounds = CreateEntryBounds();
+
 
             // Scroll Rect
             var bufferZoneSize = 2 * Global.TileSize;

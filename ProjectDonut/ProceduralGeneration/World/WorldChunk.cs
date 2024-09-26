@@ -11,6 +11,7 @@ using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
+using ProjectDonut.Debugging;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -34,6 +35,10 @@ namespace ProjectDonut.ProceduralGeneration.World
         private WorldChunkManager _manager;
 
         private Texture2D tempTexture;
+
+        public bool _thumbnailRendered = false;
+        public RenderTarget2D ChunkRenderTarget;
+        //private Texture2D ChunkTexture;
 
         public Dictionary<string, List<ISceneObject>> SceneObjects;
         public Dictionary<string, List<IMineable>> MineableObjects;
@@ -125,6 +130,36 @@ namespace ProjectDonut.ProceduralGeneration.World
                     }
                 }
             }
+
+            
+        }
+        
+        public void RenderThumbnail(GameTime gameTime)
+        {
+            foreach (var tile in Tilemaps["base"].Map)
+            {
+                if (tile == null)
+                    return;
+            }
+
+            ChunkRenderTarget = new RenderTarget2D(
+                Global.GraphicsDevice, 
+                Global.ChunkSize * Global.TileSize, 
+                Global.ChunkSize * Global.TileSize
+                );
+
+            Global.GraphicsDevice.SetRenderTarget(ChunkRenderTarget);
+            Global.GraphicsDevice.Clear(Color.Transparent);
+
+            Global.SpriteBatch.Begin();
+            Tilemaps["base"].DrawThumbnail(gameTime);
+            Global.SpriteBatch.End();
+
+            Global.GraphicsDevice.SetRenderTarget(null);
+
+            //DebugMapData.SaveMapThumbnail(ChunkCoordX, ChunkCoordY, ChunkRenderTarget);
+
+            _thumbnailRendered = true;
         }
 
         public void Update(GameTime gameTime)
@@ -158,6 +193,15 @@ namespace ProjectDonut.ProceduralGeneration.World
             MineableObjects.Values.ToList().ForEach(x => x.Where(y => y.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x)));
             MineableObjects.Values.ToList().ForEach(x => x.Where(y => y.Health <= 0).ToList().ForEach(x => MineableObjects["rocks"].Remove(x)));
             //MineableObjects["trees"].Where(x => x.Health <= 0).ToList().ForEach(x => MineableObjects["trees"].Remove(x));
+        
+            if (_thumbnailRendered == false)
+            {
+                //if (ChunkCoordX == 0 && ChunkCoordY == 1) // Test for another chunk
+                //{
+                    RenderThumbnail(gameTime);
+                //}
+                //RenderThumbnail(gameTime);                
+            }
         }
 
         public void Draw(GameTime gameTime)

@@ -139,14 +139,18 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            if (Global.SceneManager.CurrentScene is DungeonScene)
-            {
+            if (!IsInCameraView())
+                return;
+
+                if (Global.SceneManager.CurrentScene is DungeonScene)
+                {
                 if (!IsVisible)
                 {
                     Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
                 }
                 else
                 {
+                    // TODO: storing a lot of variables each frame here, can be reduced
                     var dist = Vector2.Distance(WorldPosition, Global.PlayerObj.WorldPosition);
                     var absValue = Math.Abs(dist);
                     var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
@@ -178,6 +182,32 @@ namespace ProjectDonut.ProceduralGeneration
 
                 }
             }
+        }
+
+        private bool IsInCameraView()
+        {
+            return Global.Camera.OrthoCamera.BoundingRectangle.Intersects(Bounds);
+        }
+
+        public void DrawThumbnail(GameTime gameTime)
+        {
+            Global.SpriteBatch.Draw(
+                Texture, 
+                new Vector2(xIndex * Global.TileSize, yIndex * Global.TileSize), 
+                null, 
+                Color.White);
+        }
+
+        public void DrawMinimap(GameTime gameTime)
+        {
+            if (!IsExplored)
+                return;
+
+            Global.SpriteBatch.Draw(
+                Texture,
+                new Vector2(xIndex * Global.TileSize, yIndex * Global.TileSize),
+                null,
+                Color.White);
         }
 
         double Normalize(double value, double min, double max)

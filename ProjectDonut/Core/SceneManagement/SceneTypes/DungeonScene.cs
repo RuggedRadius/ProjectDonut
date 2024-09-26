@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
-using ProjectDonut.GameObjects.PlayerComponents;
-using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
-using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.ProceduralGeneration;
-using ProjectDonut.Tools;
-using ProjectDonut.UI.ScrollDisplay;
-using System.Diagnostics;
 using ProjectDonut.ProceduralGeneration.Dungeons;
 using System.IO;
 using ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation;
-using ProjectDonut.NPCs.Enemy;
-using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.BSP;
+using ProjectDonut.GameObjects.Doodads;
+using ProjectDonut.ProceduralGeneration.World;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -42,7 +33,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         private Dictionary<string, Rectangle> ExitLocations;
         private List<Rectangle> WallPositions;
-        public List<IGameObject> Enemies { get; set; }
+        public List<IGameObject> Enemies { get; set; } = new List<IGameObject>();
+
+        public List<InteractableDoodad> Interactables { get; set; } = new List<InteractableDoodad>();
 
         private Texture2D _debugTexture;
 
@@ -62,7 +55,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _debugTexture = new Texture2D(Global.GraphicsDevice, 1, 1);
             _debugTexture.SetData(new[] { Color.Magenta });
 
-            GenerateDungeon(true, false);
+            GenerateDungeon(true, true);
             WallPositions = FindWallPositions();
 
             mapWidth = _tilemap.Map.GetLength(0);
@@ -85,16 +78,18 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             };
 
             var dungeonPopulater = new DungeonPopulater(DataMap);
-            dungeonPopulater.PopulateDungeon(popSettings);
+            var scene = this;
+            Interactables.Clear();
+            dungeonPopulater.PopulateDungeon(popSettings, ref scene);
             _populationMap = dungeonPopulater.CreateTileMap();
 
-            Enemies = new List<IGameObject>();
-            var enemies = dungeonPopulater.CreateEnemies(popSettings);
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                _gameObjects.Add($"enemy-{i + 1}", enemies[i]);
-                Enemies.Add(enemies[i]);
-            }
+            //Enemies = new List<IGameObject>();
+            //var enemies = dungeonPopulater.CreateEnemies(popSettings);
+            //for (int i = 0; i < enemies.Count; i++)
+            //{
+            //    _gameObjects.Add($"enemy-{i + 1}", enemies[i]);
+            //    Enemies.Add(enemies[i]);
+            //}
 
             var stairsLocation = dungeonPopulater.GetStairsLocation();
             EntryLocation = new Rectangle(stairsLocation.Item1, stairsLocation.Item2, Global.TileSize, Global.TileSize);
@@ -229,6 +224,22 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 }
             }
 
+            foreach (var enemy in Enemies)
+            {
+                enemy.Update(gameTime);
+            }
+
+            foreach (var interactable in Interactables)
+            {
+                interactable.Update(gameTime);
+            }
+
+            Interactables.Where(x => 
+                    x.State == InteractableState.Interacted &&
+                    x._sprite.Controller.IsAnimating == false)
+                .ToList()
+                .ForEach(x => Interactables.Remove(x));
+
             UpdateVisibility(Global.PlayerObj.WorldPosition, Global.INSTANCE_SIGHT_RADIUS);
         }
 
@@ -313,11 +324,20 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 tile.Draw(gameTime);
             }
 
-            _gameObjects
-                .Select(x => x.Value)
-                .OrderByDescending(x => x.ZIndex)
-                .ToList()
-                .ForEach(x => x.Draw(gameTime));
+            // TODO: SEEMINGLY UNNEEDED CODE?s
+            //_gameObjects
+            //    .Select(x => x.Value)
+            //    .OrderByDescending(x => x.ZIndex)
+            //    .ToList()
+            //    .ForEach(x => x.Draw(gameTime));
+
+            // Draw interactables
+            foreach (var interactable in Interactables)
+            {
+                interactable.Draw(gameTime);
+            }
+
+            Global.PlayerObj.Draw(gameTime);
 
             Global.SpriteBatch.End();
 
@@ -344,11 +364,30 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             base.PrepareForPlayerEntry();
 
             Global.PlayerObj.WorldPosition = new Vector2(EntryLocation.X, EntryLocation.Y);
+
+            // TEMP
+            Global.PlayerObj.MovementSpeed = 150;
+
+            Global.CameraMinimap.OrthoCamera.Zoom = 0.25f;
         }
 
         public override void PrepareForPlayerExit()
         {
             base.PrepareForPlayerExit();
+
+            Global.PlayerObj.MovementSpeed = 2000;
+            Global.CameraMinimap.OrthoCamera.Zoom = 0.1f;
+        }
+
+        public void DrawMinimap(GameTime gameTime)
+        {
+            foreach (var tile in _tilemap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.DrawMinimap(gameTime);
+            }
         }
     }
 }

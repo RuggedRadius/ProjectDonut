@@ -10,7 +10,9 @@ using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ProjectDonut.ProceduralGeneration.World
@@ -30,7 +32,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Dictionary<(int, int), WorldChunk> _chunks;
         public List<WorldChunk> CurrentChunks;
+        public List<WorldChunk> MinimapCurrentChunks;
         public WorldChunk PlayerChunk;
+        public List<(int, int)> ExistingChunks;
 
         private SpriteLib spriteLib;
         private FastNoiseLite _noise;
@@ -75,6 +79,8 @@ namespace ProjectDonut.ProceduralGeneration.World
             _genScenary = new ScenaryGenerator(settings);
 
             rulesGrasslands = new GrasslandsRules();
+
+            ExistingChunks = new List<(int, int)>();
         }
 
         public void Update(GameTime gameTime)
@@ -99,9 +105,9 @@ namespace ProjectDonut.ProceduralGeneration.World
                 PlayerChunkPosition = (Global.PlayerObj.ChunkPosX, Global.PlayerObj.ChunkPosY);
 
 
-                for (int i = -1; i < 2; i++)
+                for (int i = -2; i < 3; i++)
                 {
-                    for (int j = -1; j < 2; j++)
+                    for (int j = -2; j < 3; j++)
                     {
                         var x = Global.PlayerObj.ChunkPosX + i;
                         var y = Global.PlayerObj.ChunkPosY + j;
@@ -123,12 +129,14 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
 
                 CurrentChunks = GetPlayerSurroundingChunks();
+                MinimapCurrentChunks = GetPlayerSurroundingMinimapChunks();
             }
             else
             {
                 if (CurrentChunks.Count < 9)
                 {
                     CurrentChunks = GetPlayerSurroundingChunks();
+                    MinimapCurrentChunks = GetPlayerSurroundingMinimapChunks();
                 }
             }
 
@@ -177,9 +185,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             // All chunks dictionary - initialised with starting 9 chunks
             _chunks = new Dictionary<(int, int), WorldChunk>();
-            for (int x = -surroundChunkCount; x <= surroundChunkCount; x++)
+            for (int x = -surroundChunkCount - 2; x <= surroundChunkCount + 2; x++)
             {
-                for (int y = -surroundChunkCount; y <= surroundChunkCount; y++)
+                for (int y = -surroundChunkCount - 2; y <= surroundChunkCount + 2; y++)
                 {
                     var key = (x, y);
                     var chunk = CreateChunk(x, y);
@@ -188,6 +196,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             }
 
             CurrentChunks = GetPlayerSurroundingChunks();
+            MinimapCurrentChunks = GetPlayerSurroundingMinimapChunks();
 
             foreach (var chunk in _chunks)
             {
@@ -233,11 +242,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
             chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
 
-            
-            
-
             chunk.Initialize();
             chunk.LoadContent();
+
+            ExistingChunks.Add((chunkX, chunkY));
 
             return chunk;
         }
@@ -277,7 +285,48 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
+            //foreach (var chunk in _chunks)
+            //{
+            //    if (chunk.Value == null)
+            //    {
+            //        continue;
+            //    }
+
+            //    if (playerChunks.Contains(chunk.Value) == false)
+            //    {
+            //        SaveChunkToFile(chunk.Value);
+
+            //        // TODO: Need to clear the chunk data from memory
+            //        //chunk.Value = null;
+            //    }
+            //}
+
             return playerChunks;
+        }
+
+        private List<WorldChunk> GetPlayerSurroundingMinimapChunks()
+        {
+            var minimapChunks = new List<WorldChunk>();
+
+            for (int i = -4; i <= 4; i++)
+            {
+                for (int j = -4; j <= 4; j++)
+                {
+                    var chunkX = Global.PlayerObj.ChunkPosX + i;
+                    var chunkY = Global.PlayerObj.ChunkPosY + j;
+
+                    if (_chunks.ContainsKey((chunkX, chunkY)))
+                    {
+                        minimapChunks.Add(_chunks[(chunkX, chunkY)]);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            return minimapChunks;
         }
 
         private WorldChunk GetChunk((int, int) chunkCoords)
@@ -293,6 +342,35 @@ namespace ProjectDonut.ProceduralGeneration.World
                 //AllChunks.Add(chunkCoords, newChunk);
                 //return newChunk;
             }
+        }
+
+        //private WorldChunk LoadChunkFromFile((int, int) chunkCoords)
+        //{
+        //    if (ExistingChunks.Contains(chunkCoords) == false)
+        //    {
+        //        return;
+        //    }
+
+        //    string filePath = $"[{chunkCoords.Item1}][{chunkCoords.Item2}].json";
+
+        //    // Read the JSON string from the file
+        //    string jsonString = File.ReadAllText(filePath);
+
+        //    // Deserialize the JSON string back into the custom object
+        //    var chunk = JsonSerializer.Deserialize<WorldChunk>(jsonString);
+
+        //    return chunk;
+        //}
+
+        private void SaveChunkToFile(WorldChunk chunk)
+        {
+            string filePath = $"[{chunk.WorldCoordX}][{chunk.WorldCoordY}].json"; // Define the file path
+
+            // Serialize the object to JSON
+            string jsonString = JsonSerializer.Serialize(chunk);
+
+            // Write the JSON string to a file
+            File.WriteAllText(filePath, jsonString);
         }
     }
 }

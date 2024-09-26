@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using ProjectDonut.Core;
 using ProjectDonut.ProceduralGeneration.World;
 using System;
 using System.Collections.Generic;
@@ -84,6 +85,15 @@ namespace ProjectDonut.Debugging
             else
             {
                 return 'W';
+            }
+        }
+
+        public static void SaveMapThumbnail(int chunkX, int chunkY, Texture2D thumbnail)
+        {
+            var filePath = $@"C:\Users\benro\Documents\DEBUG\MapThumbnails\[{chunkX}][{chunkY}].png";
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                thumbnail.SaveAsPng(stream, thumbnail.Width, thumbnail.Height);
             }
         }
 

@@ -31,6 +31,23 @@ namespace ProjectDonut.Debugging.Console
 
         private static void RegisterCommands(ManualInterpreter interpreter, Game1 game)
         {
+            interpreter.RegisterCommand("inv", (args) =>
+            {
+                if (args.Length < 1)
+                {
+                    Global.Debug.Console.Output.Append("Usage: \r\n" +
+                        "\t - inv clear [Clears inventory]");
+                    return;
+                }
+
+                foreach(var slot in Global.Player.Inventory.Slots)
+                {
+                    slot.Item = null;
+                }
+
+                Global.Debug.Console.Output.Append("Console cleared.");
+            });
+
             interpreter.RegisterCommand("msg", (args) =>
             {
                 if (args.Length < 1)

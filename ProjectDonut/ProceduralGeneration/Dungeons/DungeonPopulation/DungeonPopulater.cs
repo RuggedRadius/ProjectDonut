@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
+using ProjectDonut.GameObjects.Doodads.Chests;
+using ProjectDonut.GameObjects.Doodads;
+using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using ProjectDonut.NPCs.Enemy;
 using ProjectDonut.Tools;
@@ -10,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.GameObjects.Doodads.Barrels;
 
 namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
 {
@@ -31,12 +36,21 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             MapHeight = _datamap.GetLength(1);
         }
 
-        public void PopulateDungeon(DungeonLevelSettings settings)
+        public void PopulateDungeon(DungeonLevelSettings settings, ref DungeonScene scene)
         {
             _popData = new string[MapWidth, MapHeight];
 
             // Populate the dungeon with enemies, items, etc
             PlaceStairs();
+            PlaceInteractableDoodads(ref scene);
+        }
+
+        private void PlaceInteractableDoodads(ref DungeonScene scene)
+        {
+            var allFloorCoords = GetAllFloorCoords();
+
+            PlaceBarrels(50, ref scene, ref allFloorCoords);
+            PlaceChests(50, ref scene, ref allFloorCoords);
         }
 
         public List<IGameObject> CreateEnemies(DungeonLevelSettings settings)
@@ -84,6 +98,29 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             return floorCoords;
         }
 
+        private void PlaceBarrels(int count, ref DungeonScene scene, ref List<(int x, int y)> allFloorCoords)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var randomIndex = _random.Next(0, allFloorCoords.Count);
+                var coord = allFloorCoords[randomIndex];
+
+                var rect = new Rectangle(
+                    (int)coord.x * Global.TileSize,
+                    (int)coord.y * Global.TileSize,
+                    Global.TileSize,
+                    Global.TileSize);
+
+                var items = new List<InventoryItem>();
+                items.Add(new InventoryItem() { Name = "Stone", Icon = SpriteLib.UI.Items["rock"], ItemType = ItemType.Consumable, Quantity = 5 });
+                items.Add(new InventoryItem() { Name = "Wood Log", Icon = SpriteLib.UI.Items["wood-log"], ItemType = ItemType.Consumable, Quantity = 5 });
+
+                scene.Interactables.Add(new Barrel(rect, items));
+
+                allFloorCoords.RemoveAt(randomIndex);
+            }
+        }
+
         private void PlaceStairs()
         {
             var startLocation = FindSuitableStairLocation();
@@ -99,14 +136,6 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             _popData[startLocation.Item1 - 1, startLocation.Item2 + 1] = "stairs-sw";
             _popData[startLocation.Item1 - 0, startLocation.Item2 + 1] = "stairs-s";
             _popData[startLocation.Item1 + 1, startLocation.Item2 + 1] = "stairs-se";
-
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-
-                }
-            }
         }
 
         private (int, int) FindSuitableStairLocation()
@@ -175,7 +204,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                         Texture = DetermineTexture(_popData[i, j]),
                         TileType = TileType.Instance,
                     };
-
+                    tile.Initialize();
                     tilemap.Map[i, j] = tile;
                 }
             }
@@ -183,36 +212,59 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
             return tilemap;
         }
 
+        public void PlaceChests(int count, ref DungeonScene scene, ref List<(int x, int y)> allFloorCoords)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var randomIndex = _random.Next(0, allFloorCoords.Count);
+                var coord = allFloorCoords[randomIndex];
+
+                var rect = new Rectangle(
+                    (int)coord.x * Global.TileSize,
+                    (int)coord.y * Global.TileSize,
+                    Global.TileSize,
+                    Global.TileSize);
+
+                var items = new List<InventoryItem>();
+                items.Add(new InventoryItem() { Name = "Stone", Icon = SpriteLib.UI.Items["rock"], ItemType = ItemType.Consumable, Quantity = 50 });
+                items.Add(new InventoryItem() { Name = "Wood Log", Icon = SpriteLib.UI.Items["wood-log"], ItemType = ItemType.Consumable, Quantity = 50 });
+
+                scene.Interactables.Add(new Chest(rect, items));
+
+                allFloorCoords.RemoveAt(randomIndex);
+            }
+        }
+
         private Texture2D DetermineTexture(string popValue)
         {
             switch (popValue)
             {
                 case "stairs-nw":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-nw"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-n":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-n"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-ne":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-ne"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-w":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-w"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-c":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-c"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-e":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-e"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-sw":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-sw"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-s":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-s"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 case "stairs-se":
-                    return SpriteLib.Dungeon.DungeonSprites["stairs-se"][0];
+                    return SpriteLib.Dungeon.Stairs["stairs-top-01"];
 
                 default:
                     return null;

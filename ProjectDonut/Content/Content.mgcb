@@ -34,6 +34,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/OldeEnglishDescSubText.spritefont
 
+#begin Sprites/Doodads/Barrels/Barrel01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Doodads/Barrels/Barrel01.png
+
 #begin Sprites/Doodads/Chests/Chest01.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -69,6 +81,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sprites/Map/Dungeon/Dragonheart.png
+
+#begin Sprites/Map/Dungeon/dungeon_sprites3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Map/Dungeon/dungeon_sprites3.png
 
 #begin Sprites/Map/Dungeon/dungeon_tiles.png
 /importer:TextureImporter
@@ -454,6 +478,30 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/UI/Items/wood-log-01.png
 
+#begin Sprites/UI/MinimapFrame.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/MinimapFrame.png
+
+#begin Sprites/UI/MinimapFrameBACKUP.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/MinimapFrameBACKUP.png
+
 #begin Sprites/UI/MouseCursor.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -465,6 +513,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sprites/UI/MouseCursor.png
+
+#begin Sprites/UI/PlayerEquipment.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/PlayerEquipment.png
 
 #begin Sprites/UI/PlayerInventory.png
 /importer:TextureImporter

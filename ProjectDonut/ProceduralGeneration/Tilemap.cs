@@ -46,6 +46,17 @@ namespace ProjectDonut.ProceduralGeneration
             }
         }
 
+        public void DrawThumbnail(GameTime gameTime)
+        {
+            foreach (var tile in Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.DrawThumbnail(gameTime);
+            }
+        }
+
         public void DrawOutline(GameTime gameTime)
         {
             for (var x = 0; x < Map.GetLength(0); x++)
