@@ -7,6 +7,7 @@ using MonoGame.Extended.Animations;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 
@@ -26,7 +27,6 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 
 
         private SpriteSheet _spriteSheet;
-        private AnimationController _animControllerHit;
         private AnimatedSprite _sprite;
 
         private Random _random;
@@ -172,13 +172,16 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             replacementTree.Initialize();
 
             //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH
-            if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("tree-stump"))
+            if (Global.SceneManager.CurrentScene is WorldScene worldscene)
             {
-                Global.SceneManager.CurrentScene._sceneObjects["tree-stump"].Add(replacementTree);
-            }
-            else
-            {
-                Global.SceneManager.CurrentScene._sceneObjects.Add("tree-stump", new List<ISceneObject> { replacementTree });
+                if (worldscene._sceneObjects.ContainsKey("tree-stump"))
+                {
+                    worldscene._sceneObjects["tree-stump"].Add(replacementTree);
+                }
+                else
+                {
+                    worldscene._sceneObjects.Add("tree-stump", new List<ISceneObject> { replacementTree });
+                }
             }
         }
 

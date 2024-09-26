@@ -18,6 +18,8 @@ using ProjectDonut.Core.Input;
 using Penumbra;
 using ProjectDonut.Environment;
 using ProjectDonut.Core.Sprites;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Combat;
 
 namespace ProjectDonut
 {
@@ -106,6 +108,23 @@ namespace ProjectDonut
             //});
 
             base.Initialize();
+
+
+            var playerTeam = new List<Combatant>()
+            {
+                new Combatant() { ScreenPosition = new Vector2(300, 300) },
+                new Combatant() { ScreenPosition = new Vector2(300, 500) },
+                new Combatant() { ScreenPosition = new Vector2(300, 700) },
+            };
+            var enemyTeam = new List<Combatant>()
+            {
+                new Combatant() { ScreenPosition = new Vector2(1500, 300) },
+                new Combatant() { ScreenPosition = new Vector2(1500, 500) },
+                new Combatant() { ScreenPosition = new Vector2(1500, 700) },
+            };
+            var testCombatScene = new CombatScene(playerTeam, enemyTeam);
+            testCombatScene.Initialize();
+            Global.SceneManager.SetCurrentScene(testCombatScene);
         }
 
         private void CreateGameComponents()
@@ -223,15 +242,18 @@ namespace ProjectDonut
                 Global.Penumbra.BeginDraw();
             }
 
-            GraphicsDevice.Clear(Color.Black);            
+            GraphicsDevice.Clear(Color.Black);
 
             // Minimap
-            Global.GraphicsDevice.SetRenderTarget(Global.CameraMinimap.RenderTarget);
-            Global.GraphicsDevice.Clear(Color.Black);
-            Global.SpriteBatch.Begin(transformMatrix: Global.CameraMinimap.GetTransformationMatrix());
-            Global.SceneManager.DrawMinimap(gameTime);
-            Global.SpriteBatch.End();
-            Global.GraphicsDevice.SetRenderTarget(null);
+            if (Global.SceneManager.CurrentScene is not CombatScene)
+            {
+                Global.GraphicsDevice.SetRenderTarget(Global.CameraMinimap.RenderTarget);
+                Global.GraphicsDevice.Clear(Color.Black);
+                Global.SpriteBatch.Begin(transformMatrix: Global.CameraMinimap.GetTransformationMatrix());
+                Global.SceneManager.DrawMinimap(gameTime);
+                Global.SpriteBatch.End();
+                Global.GraphicsDevice.SetRenderTarget(null);
+            }
 
 
 
@@ -253,8 +275,11 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            Global.CameraMinimap.Draw(gameTime);
-            Global.DayNightCycle.Draw(gameTime);
+            if (Global.SceneManager.CurrentScene is not CombatScene)
+            {
+                Global.CameraMinimap.Draw(gameTime);
+                Global.DayNightCycle.Draw(gameTime);
+            }
         }
     }
 }
