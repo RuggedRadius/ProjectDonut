@@ -12,6 +12,7 @@ using ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation;
 using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.BSP;
 using ProjectDonut.GameObjects.Doodads;
+using ProjectDonut.ProceduralGeneration.World;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -54,7 +55,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _debugTexture = new Texture2D(Global.GraphicsDevice, 1, 1);
             _debugTexture.SetData(new[] { Color.Magenta });
 
-            GenerateDungeon(true, false);
+            GenerateDungeon(true, true);
             WallPositions = FindWallPositions();
 
             mapWidth = _tilemap.Map.GetLength(0);
@@ -78,6 +79,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             var dungeonPopulater = new DungeonPopulater(DataMap);
             var scene = this;
+            Interactables.Clear();
             dungeonPopulater.PopulateDungeon(popSettings, ref scene);
             _populationMap = dungeonPopulater.CreateTileMap();
 
@@ -365,6 +367,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             // TEMP
             Global.PlayerObj.MovementSpeed = 150;
+
+            Global.CameraMinimap.OrthoCamera.Zoom = 0.25f;
         }
 
         public override void PrepareForPlayerExit()
@@ -372,6 +376,18 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             base.PrepareForPlayerExit();
 
             Global.PlayerObj.MovementSpeed = 2000;
+            Global.CameraMinimap.OrthoCamera.Zoom = 0.1f;
+        }
+
+        public void DrawMinimap(GameTime gameTime)
+        {
+            foreach (var tile in _tilemap.Map)
+            {
+                if (tile == null)
+                    continue;
+
+                tile.DrawMinimap(gameTime);
+            }
         }
     }
 }

@@ -198,6 +198,18 @@ namespace ProjectDonut.ProceduralGeneration
                 Color.White);
         }
 
+        public void DrawMinimap(GameTime gameTime)
+        {
+            if (!IsExplored)
+                return;
+
+            Global.SpriteBatch.Draw(
+                Texture,
+                new Vector2(xIndex * Global.TileSize, yIndex * Global.TileSize),
+                null,
+                Color.White);
+        }
+
         double Normalize(double value, double min, double max)
         {
             return (value - min) / (max - min);

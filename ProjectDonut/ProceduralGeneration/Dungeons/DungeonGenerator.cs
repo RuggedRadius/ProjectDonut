@@ -128,48 +128,48 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             {
                 // Wall internal
                 if (n != DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Wall && w != DungeonInteriorTileType.Floor && se == DungeonInteriorTileType.Floor)
-                    return GetRandomTextureFor("wall-nw");
+                    return SpriteLib.Dungeon.Walls["wall-nw"];
 
                 if (n != DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall) 
-                    return GetRandomTextureFor("wall-n");
+                    return SpriteLib.Dungeon.Walls["wall-n"];
 
                 if (n != DungeonInteriorTileType.Floor && e != DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Wall && sw == DungeonInteriorTileType.Floor) 
-                    return GetRandomTextureFor("wall-ne");
+                    return SpriteLib.Dungeon.Walls["wall-ne"];
 
                 if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w != DungeonInteriorTileType.Floor) 
-                    return GetRandomTextureFor("wall-w");
+                    return SpriteLib.Dungeon.Walls["wall-w"];
 
                 if (n == DungeonInteriorTileType.Wall && e != DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Floor) 
-                    return GetRandomTextureFor("wall-e");
+                    return SpriteLib.Dungeon.Walls["wall-e"];
 
                 if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Wall && s != DungeonInteriorTileType.Floor && w != DungeonInteriorTileType.Floor && ne == DungeonInteriorTileType.Floor) 
-                    return GetRandomTextureFor("wall-sw");
+                    return SpriteLib.Dungeon.Walls["wall-sw"];
 
                 if (n == DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s != DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall) 
-                    return GetRandomTextureFor("wall-s");
+                    return SpriteLib.Dungeon.Walls["wall-s"];
 
                 if (n == DungeonInteriorTileType.Wall && e != DungeonInteriorTileType.Floor && s != DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall && nw == DungeonInteriorTileType.Floor) 
-                    return GetRandomTextureFor("wall-se");
+                    return SpriteLib.Dungeon.Walls["wall-se"];
 
                 // Walls external
                 if (n == DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Floor)
-                    return GetRandomTextureFor("wall-ext-nw");
+                    return SpriteLib.Dungeon.Walls["wall-nw"];
 
                 if (n == DungeonInteriorTileType.Floor && e == DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Wall && w == DungeonInteriorTileType.Wall)
-                    return GetRandomTextureFor("wall-ext-ne");
+                    return SpriteLib.Dungeon.Walls["wall-junc-new"];
 
                 if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Wall && s == DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Floor)
-                    return GetRandomTextureFor("wall-ext-sw");
+                    return SpriteLib.Dungeon.Walls["wall-sw"];
 
                 if (n == DungeonInteriorTileType.Wall && e == DungeonInteriorTileType.Floor && s == DungeonInteriorTileType.Floor && w == DungeonInteriorTileType.Wall)
-                    return GetRandomTextureFor("wall-ext-se");
+                    return SpriteLib.Dungeon.Walls["wall-se"];
 
                 // No walls found, return floor
-                return GetRandomTextureFor("floor-01");
+                return SpriteLib.Dungeon.Floor["floor-c"];
             }
             else
             {
-                return GetRandomTextureFor("floor-01");
+                return SpriteLib.Dungeon.Floor["floor-c"];
             }
         }
 

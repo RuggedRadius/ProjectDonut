@@ -51,7 +51,7 @@ namespace ProjectDonut.GameObjects.Doodads
             }
 
             Global.SpriteBatch.Draw(_sprite, WorldPosition, 0.0f, Vector2.One);
-            Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
+            //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
         }
 
         private bool IsInCameraView()

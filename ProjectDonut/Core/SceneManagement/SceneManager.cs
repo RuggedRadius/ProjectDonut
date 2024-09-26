@@ -60,6 +60,11 @@ namespace ProjectDonut.Core.SceneManagement
             {
                 worldScene.DrawMinimap(gameTime);
             }
+
+            if (CurrentScene is DungeonScene dungeonScene)
+            {
+                dungeonScene.DrawMinimap(gameTime);
+            }
         }
 
         public void SetCurrentScene(IScene scene)
