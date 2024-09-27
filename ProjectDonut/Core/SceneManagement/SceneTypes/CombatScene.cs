@@ -16,75 +16,67 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public SceneType SceneType { get; set; }
         public Vector2 Position { get; set; }
 
-        public List<Combatant> PlayerTeam { get; set; }
-        public List<Combatant> EnemyTeam { get; set; }
+
+
+        private CombatUI _combatUI;
+        private CombatManager _manager;
+        private CombatTerrain _terrain;
+
+        public static int SceneScale = 4;
+
 
         public CombatScene(List<Combatant> playerTeam, List<Combatant> enemyTeam)
         {
             SceneType = SceneType.Combat;
-            EnemyTeam = enemyTeam;
-            PlayerTeam = playerTeam;
 
-            AllocateCombatantsPositions(PlayerTeam, true);
-            AllocateCombatantsPositions(EnemyTeam, false);
+            _manager = new CombatManager(playerTeam, enemyTeam);
+            _combatUI = new CombatUI(_manager);
+            _terrain = new CombatTerrain();
         }
 
         public void Initialize()
         {
-
+            _combatUI.Initialize();
         }
 
         public void LoadContent()
         {
-
         }
 
         public void Update(GameTime gameTime)
         {
-            foreach (var combatant in PlayerTeam)
-            {
-                combatant.Update(gameTime);
-            }
-
-            foreach (var combatant in EnemyTeam)
-            {
-                combatant.Update(gameTime);
-            }
-
-            if (InputManager.IsKeyPressed(Keys.G))
-            {
-                foreach (var combatant in PlayerTeam)
-                {
-                    combatant.Attack(AttackType.Melee);
-                }                
-            }
-
-            if (InputManager.IsKeyPressed(Keys.H))
-            {
-                foreach (var combatant in EnemyTeam)
-                {
-                    combatant.Attack(AttackType.Melee);
-                }
-            }
+            _manager.Update(gameTime);
+            _combatUI.Update(gameTime);
+            _terrain.Update(gameTime);
         }
+
+
 
         public void Draw(GameTime gameTime)
         {
             Global.SpriteBatch.Begin();
 
+            _terrain.DrawTerrainLayer(gameTime, "base");
+            _terrain.DrawTerrainLayer(gameTime, "obstacle");
+            _terrain.DrawTerrainLayer(gameTime, "decorative");
+            _terrain.DrawGrid(gameTime);
+
             // Draw player team
-            foreach (var combatant in PlayerTeam)
+            foreach (var combatant in _manager.PlayerTeam)
             {
                 combatant.Draw(gameTime);
+                combatant.DrawBounds();
             }
 
             // Draw enemy team
-            foreach (var combatant in EnemyTeam)
+            foreach (var combatant in _manager.EnemyTeam)
             {
                 combatant.Draw(gameTime);
+                combatant.DrawBounds();
             }
 
             // Draw combat UI
+            _combatUI.Draw(gameTime);
 
             Global.SpriteBatch.End();
         }
@@ -97,11 +89,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public void PrepareForPlayerExit()
         {
             
-        }
-
-        private void AllocateCombatantsPositions(List<Combatant> combatants, bool isPlayerTeam)
-        {
-
         }
     }
 }

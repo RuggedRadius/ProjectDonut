@@ -112,15 +112,17 @@ namespace ProjectDonut
 
             var playerTeam = new List<Combatant>()
             {
-                new Combatant() { ScreenPosition = new Vector2(300, 300) },
-                new Combatant() { ScreenPosition = new Vector2(300, 500) },
-                new Combatant() { ScreenPosition = new Vector2(300, 700) },
+                new Combatant(TeamType.Player),
+                new Combatant(TeamType.Player),
+                new Combatant(TeamType.Player),
+                new Combatant(TeamType.Player),
             };
             var enemyTeam = new List<Combatant>()
             {
-                new Combatant() { ScreenPosition = new Vector2(1500, 300) },
-                new Combatant() { ScreenPosition = new Vector2(1500, 500) },
-                new Combatant() { ScreenPosition = new Vector2(1500, 700) },
+                new Combatant(TeamType.Enemy),
+                new Combatant(TeamType.Enemy),
+                new Combatant(TeamType.Enemy),
+                new Combatant(TeamType.Enemy),
             };
             var testCombatScene = new CombatScene(playerTeam, enemyTeam);
             testCombatScene.Initialize();

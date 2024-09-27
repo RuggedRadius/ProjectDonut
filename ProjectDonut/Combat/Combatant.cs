@@ -5,6 +5,10 @@ using ProjectDonut.Core;
 using ProjectDonut.Interfaces;
 using MonoGame.Extended.Animations;
 using Microsoft.Xna.Framework;
+using ProjectDonut.GameObjects.PlayerComponents;
+using ProjectDonut.Combat.UI;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
+using MonoGame.Extended;
 
 namespace ProjectDonut.Combat
 {
@@ -15,10 +19,17 @@ namespace ProjectDonut.Combat
         Magic
     }
 
+    public enum TeamType
+    {
+        Player,
+        Enemy
+    }
+
     public interface ICombatant
     {
         AnimatedSprite Sprite { get; set; }
         Vector2 ScreenPosition { get; set; }
+        TeamType Team { get; set; }
 
         void Attack(AttackType attackType);
         void Defend();
@@ -34,12 +45,33 @@ namespace ProjectDonut.Combat
     {
         public AnimatedSprite Sprite { get; set; }
         public Vector2 ScreenPosition { get; set; }
+        public TeamType Team { get; set; }
+
+        public FloatingTextDisplay TextDisplay { get; set; }
+        public CombatantOHD OHD { get; set; }
+        public CombatantStats Stats { get; set; }
 
         private SpriteSheet _spriteSheet;       
+        private SpriteEffects _spriteEffects;
 
-        public Combatant()
+        public Rectangle Bounds;
+
+        public Combatant(TeamType team)
         {
-           InitialiseSprites();
+            InitialiseSprites();
+            Team = team;
+
+            TextDisplay = new FloatingTextDisplay(this);
+            OHD = new CombatantOHD(this);
+            Stats = new CombatantStats();
+
+            _spriteEffects = (Team == TeamType.Player) ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            Bounds = new Rectangle(
+                (int)ScreenPosition.X,
+                (int)ScreenPosition.Y,
+                Global.TileSize * CombatScene.SceneScale,
+                Global.TileSize * CombatScene.SceneScale);
         }
 
         private void InitialiseSprites()
@@ -68,20 +100,35 @@ namespace ProjectDonut.Combat
             });
 
             Sprite = new AnimatedSprite(_spriteSheet, "idle");
+
+            Sprite.Effect = (Team == TeamType.Player) ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         }
 
         public void Attack(AttackType attackType) // TODO: Add target argument here, think of multiple targets also
         {
-            Sprite.SetAnimation("attack").OnAnimationEvent += (sender, trigger) =>
+            switch (attackType)
             {
-                if (trigger == AnimationEventTrigger.AnimationCompleted)
-                {
-                    Sprite.SetAnimation("idle");
-                }
-            };
+                case AttackType.Melee:
+                case AttackType.Ranged:
+                case AttackType.Magic:
+                default:
+                    Sprite.SetAnimation("attack").OnAnimationEvent += (sender, trigger) =>
+                    {
+                        if (trigger == AnimationEventTrigger.AnimationCompleted)
+                        {
+                            Sprite.SetAnimation("idle");
+                        }
+                    };
+                    break;
+            }
         }
 
-        public void Defend()
+        public void TakeDamage(int damage)
+        {                      
+            TextDisplay.AddText(damage.ToString(), 0, Vector2.Zero, Color.Red);
+        }
+
+        public void Defend() // TODO: Make DEFEND an ability
         {
             throw new NotImplementedException();
         }
@@ -103,12 +150,35 @@ namespace ProjectDonut.Combat
 
         public void Update(GameTime gameTime)
         {
+            Bounds = new Rectangle(
+                (int)ScreenPosition.X,
+                (int)ScreenPosition.Y,
+                Global.TileSize * CombatScene.SceneScale,
+                Global.TileSize * CombatScene.SceneScale);
+
             Sprite.Update(gameTime);
+            TextDisplay.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Draw(Sprite, ScreenPosition, 0.0f, Vector2.One * 5);
+            Global.SpriteBatch.Draw(
+                texture: Sprite.TextureRegion.Texture,
+                position: ScreenPosition,
+                sourceRectangle: Sprite.TextureRegion.Bounds,
+                color: Color.White,
+                rotation: 0f,
+                origin: Vector2.Zero,
+                scale: Vector2.One * CombatScene.SceneScale,
+                effects: _spriteEffects,
+                layerDepth: 0f
+            );
+            TextDisplay.Draw(gameTime);
+        }
+
+        public void DrawBounds()
+        {                     
+            Global.SpriteBatch.DrawRectangle(Bounds, Color.Red, 1);
         }
     }
 }

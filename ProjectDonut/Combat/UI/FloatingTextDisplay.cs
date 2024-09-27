@@ -1,56 +1,44 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ProjectDonut.Core;
+using Microsoft.Xna.Framework;
 using ProjectDonut.Core.Input;
-using ProjectDonut.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ProjectDonut.Core;
 
-namespace ProjectDonut.GameObjects.PlayerComponents
+namespace ProjectDonut.Combat.UI
 {
-    public class PlayerText
+    public class FloatingText
     {
         public bool MoveVertical { get; set; }
-
         public string Text { get; set; }
         public float RemainingDuration { get; set; }
         public float TotalDuration { get; set; }
         public Color TextColour { get; set; }
-
         public int OffsetX { get; set; }
         public int OffsetY { get; set; }
     }
-
-    public class PlayerTextDisplay : IGameObject
+    public class FloatingTextDisplay
     {
-        public Queue<PlayerText> TextQueue { get; set; }
-        public List<PlayerText> Texts { get; set; }
+        private Queue<FloatingText> TextQueue { get; set; }
+        private List<FloatingText> Texts { get; set; }
+        private ICombatant Combatant { get; set; }
 
-        public bool IsVisible => throw new NotImplementedException();
-
-        public Texture2D Texture { get; set; }
-
-        public Vector2 WorldPosition { get; set; }
-
-        public int ZIndex { get; set; }
 
         private float _baseDuration = 2;
         private int _baseOffsetX = 5;
         private int _baseOffsetY = 5;
 
-        public PlayerTextDisplay()
+        public FloatingTextDisplay(ICombatant combatant)
         {
-            Texts = new List<PlayerText>();
-            TextQueue = new Queue<PlayerText>();
+            Texts = new List<FloatingText>();
+            TextQueue = new Queue<FloatingText>();
+            Combatant = combatant;
         }
 
         public void AddText(string text, int durationMod, Vector2 offsetMod, Color textColour, bool moveVertical = true)
         {
-            var playerText = new PlayerText
+            var playerText = new FloatingText
             {
                 Text = text,
                 TextColour = textColour,
@@ -68,7 +56,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Initialize()
         {
-            
+
         }
 
         public void LoadContent()
@@ -110,21 +98,17 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
-
             for (int i = 0; i < Texts.Count; i++)
             {
                 var text = Texts[i];
                 Global.SpriteBatch.DrawString(
-                    Global.FontDebug, 
-                    text.Text, 
+                    Global.FontDebug,
+                    text.Text,
                     new Vector2(
-                        Global.PlayerObj.WorldPosition.X + text.OffsetX, 
-                        Global.PlayerObj.WorldPosition.Y + text.OffsetY), 
-                    text.TextColour * (text.RemainingDuration/text.TotalDuration));
+                        Combatant.ScreenPosition.X + text.OffsetX,
+                        Combatant.ScreenPosition.Y + text.OffsetY),
+                    text.TextColour * (text.RemainingDuration / text.TotalDuration));
             }
-
-            Global.SpriteBatch.End();
         }
     }
 }
