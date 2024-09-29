@@ -9,9 +9,22 @@ using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Combat.UI;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using MonoGame.Extended;
+using System.Threading.Tasks;
 
 namespace ProjectDonut.Combat
 {
+    public enum CombatantMoveState
+    {
+        Idle,
+        MovingToPosition
+    }
+
+    public enum CombatantActionState
+    {
+        Idle,
+        Attacking,
+    }
+
     public enum AttackType
     {
         Melee,
@@ -30,6 +43,7 @@ namespace ProjectDonut.Combat
         AnimatedSprite Sprite { get; set; }
         Vector2 ScreenPosition { get; set; }
         TeamType Team { get; set; }
+        CombatantMoveState MoveState { get; set; }
 
         void Attack(AttackType attackType);
         void Defend();
@@ -44,8 +58,12 @@ namespace ProjectDonut.Combat
     public class Combatant : ICombatant
     {
         public AnimatedSprite Sprite { get; set; }
+        public Vector2 BaseScreenPosition { get; set; }
         public Vector2 ScreenPosition { get; set; }
+        public Vector2 TargetScreenPosition { get; set; }
         public TeamType Team { get; set; }
+        public CombatantMoveState MoveState { get; set; }
+        public CombatantActionState ActionState { get; set; }
 
         public FloatingTextDisplay TextDisplay { get; set; }
         public CombatantOHD OHD { get; set; }
@@ -55,6 +73,9 @@ namespace ProjectDonut.Combat
         private SpriteEffects _spriteEffects;
 
         public Rectangle Bounds;
+
+        private float _moveTimer = 0f;
+        private float _moveTime = 1.5f;
 
         public Combatant(TeamType team)
         {
@@ -72,6 +93,8 @@ namespace ProjectDonut.Combat
                 (int)ScreenPosition.Y,
                 Global.TileSize * CombatScene.SceneScale,
                 Global.TileSize * CombatScene.SceneScale);
+
+            MoveState = CombatantMoveState.Idle;
         }
 
         private void InitialiseSprites()
@@ -123,6 +146,13 @@ namespace ProjectDonut.Combat
             }
         }
 
+        public void MoveToScreenPosition(Vector2 screenPosition)
+        {
+            TargetScreenPosition = screenPosition;
+            MoveState = CombatantMoveState.MovingToPosition;
+            _moveTimer = 0f;
+        }
+
         public void TakeDamage(int damage)
         {                      
             TextDisplay.AddText(damage.ToString(), 0, Vector2.Zero, Color.Red);
@@ -156,6 +186,29 @@ namespace ProjectDonut.Combat
                 Global.TileSize * CombatScene.SceneScale,
                 Global.TileSize * CombatScene.SceneScale);
 
+            switch (MoveState)
+            {
+               case CombatantMoveState.Idle:
+                    break;
+
+                case CombatantMoveState.MovingToPosition:
+                    _moveTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    if (ScreenPosition != TargetScreenPosition)
+                    {
+                        ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer/_moveTime);
+                    }
+                    else
+                    {
+                        ScreenPosition = TargetScreenPosition;
+                        MoveState = CombatantMoveState.Idle;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+
             Sprite.Update(gameTime);
             TextDisplay.Update(gameTime);
         }
@@ -179,6 +232,57 @@ namespace ProjectDonut.Combat
         public void DrawBounds()
         {                     
             Global.SpriteBatch.DrawRectangle(Bounds, Color.Red, 1);
+        }
+
+        public void MoveToMeleePosition(Combatant targetCombatant)
+        {
+            if (ScreenPosition.X < targetCombatant.ScreenPosition.X)
+            {
+                MoveToScreenPosition(targetCombatant.ScreenPosition + new Vector2(Global.TileSize * CombatScene.SceneScale, 0));
+            }
+            else
+            {
+                MoveToScreenPosition(targetCombatant.ScreenPosition - new Vector2(Global.TileSize * CombatScene.SceneScale, 0));
+            }
+        }
+
+        public async void AttackCombatant(Combatant target, AttackType attackType)
+        {
+            if (ActionState != CombatantActionState.Idle)
+            {
+                return;
+            }
+
+            switch (attackType)
+            {
+                case AttackType.Melee:
+                    await Task.Run(() =>
+                    {
+                        ActionState = CombatantActionState.Attacking;
+
+                        MoveToScreenPosition(target.ScreenPosition - new Vector2(Global.TileSize * CombatScene.SceneScale, 0));
+                        while (MoveState != CombatantMoveState.Idle) { }
+
+                        Attack(AttackType.Melee);
+                        while (Sprite.Controller.IsAnimating) { }
+                        target.TakeDamage(10);
+
+                        MoveToScreenPosition(BaseScreenPosition);
+                        while (MoveState != CombatantMoveState.Idle) { }
+
+                        ActionState = CombatantActionState.Idle;
+                    });
+                    break;
+
+                case AttackType.Ranged:
+                    break;
+
+                case AttackType.Magic:
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

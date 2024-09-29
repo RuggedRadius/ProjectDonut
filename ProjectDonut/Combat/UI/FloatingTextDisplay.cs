@@ -73,6 +73,9 @@ namespace ProjectDonut.Combat.UI
 
                 foreach (var txt in Texts)
                 {
+                    if (txt == null)
+                        continue;
+
                     txt.OffsetY -= 20;
                 }
 
@@ -82,6 +85,9 @@ namespace ProjectDonut.Combat.UI
             for (int i = 0; i < Texts.Count; i++)
             {
                 var text = Texts[i];
+                if (text == null)
+                    continue;
+
                 text.RemainingDuration -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 if (text.MoveVertical)
@@ -101,6 +107,10 @@ namespace ProjectDonut.Combat.UI
             for (int i = 0; i < Texts.Count; i++)
             {
                 var text = Texts[i];
+
+                if (text == null)
+                    continue;
+
                 Global.SpriteBatch.DrawString(
                     Global.FontDebug,
                     text.Text,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -17,6 +18,8 @@ namespace ProjectDonut.Combat
         public Queue<Combatant> TurnOrder { get; set; } = new Queue<Combatant>();
         public List<Combatant> PlayerTeam { get; set; }
         public List<Combatant> EnemyTeam { get; set; }
+
+        private Random _random = new Random();
 
         public CombatManager(List<Combatant> playerTeam, List<Combatant> enemyTeam) 
         {
@@ -42,44 +45,18 @@ namespace ProjectDonut.Combat
             }
         }
 
-        private void TESTINPUTS()
+        private async void TESTINPUTS()
         {
             if (InputManager.IsKeyPressed(Keys.D1))
             {
-                PlayerTeam[0]?.Attack(AttackType.Melee);
-                EnemyTeam[0]?.TakeDamage(10);
-            }
+                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
 
-            if (InputManager.IsKeyPressed(Keys.D2))
-            {
-                PlayerTeam[1]?.Attack(AttackType.Melee);
-                EnemyTeam[1]?.TakeDamage(10);
-            }
-
-            if (InputManager.IsKeyPressed(Keys.D3))
-            {
-                PlayerTeam[2]?.Attack(AttackType.Melee);
-                EnemyTeam[2]?.TakeDamage(10);
-            }
-
-            if (InputManager.IsKeyPressed(Keys.D4))
-            {
-                EnemyTeam[0]?.Attack(AttackType.Melee);
-                PlayerTeam[0]?.TakeDamage(10);
-            }
-
-            if (InputManager.IsKeyPressed(Keys.D5))
-            {
-                EnemyTeam[1]?.Attack(AttackType.Melee);
-                PlayerTeam[1]?.TakeDamage(10);
-            }
-
-            if (InputManager.IsKeyPressed(Keys.D6))
-            {
-                EnemyTeam[2]?.Attack(AttackType.Melee);
-                PlayerTeam[2]?.TakeDamage(10);
-            }
+                character.AttackCombatant(target, AttackType.Melee);
+            }1
         }
+
+
 
         private void AllocateCombatantsPositions(List<Combatant> combatants, bool isPlayerTeam)
         {
@@ -92,6 +69,7 @@ namespace ProjectDonut.Combat
                     var x = 2 * tileSize;
                     var y = tileSize + (i * (tileSize * 1));
                     combatants[i].ScreenPosition = new Vector2(x, y);
+                    combatants[i].BaseScreenPosition = new Vector2(x, y);
                 }
             }
             else
@@ -104,8 +82,11 @@ namespace ProjectDonut.Combat
                     var x = screenWidth - (2 * tileSize) - curSpriteWidth;
                     var y = tileSize + (i * (tileSize * 1));
                     combatants[i].ScreenPosition = new Vector2(x, y);
+                    combatants[i].BaseScreenPosition = new Vector2(x, y);
                 }
             }
         }
+
+        
     }
 }
