@@ -29,6 +29,20 @@ namespace ProjectDonut.Combat
             AllocateCombatantsPositions(PlayerTeam, true);
             AllocateCombatantsPositions(EnemyTeam, false);
         }
+
+        private void PopulateTurnOrder()
+        {
+            var allCombatants = new List<Combatant>();
+            allCombatants.AddRange(PlayerTeam);
+            allCombatants.AddRange(EnemyTeam);
+
+            allCombatants = allCombatants.OrderByDescending(x => x.Stats.Speed).ToList();
+
+            foreach (var combatant in allCombatants)
+            {
+                TurnOrder.Enqueue(combatant);
+            }
+        }
         
         public void Update(GameTime gameTime)
         {
