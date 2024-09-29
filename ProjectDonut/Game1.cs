@@ -146,7 +146,7 @@ namespace ProjectDonut
 
 
 
-            _gameComponents.Add("sceneManager", Global.SceneManager);
+            //_gameComponents.Add("sceneManager", Global.SceneManager);
             _gameComponents.Add("camera", Global.Camera);
             
             //_gameComponents.Add("input", Global.InputManager);
@@ -194,6 +194,7 @@ namespace ProjectDonut
 
             Global.Player.TextDisplay = new PlayerTextDisplay();
             Global.Player.TextDisplay.Initialize();
+
             _gameObjects.Add("playerTextDisplay", Global.Player.TextDisplay);
         }
 

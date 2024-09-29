@@ -49,14 +49,76 @@ namespace ProjectDonut.Combat
         {
             if (InputManager.IsKeyPressed(Keys.D1))
             {
-                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+                if (_random.Next(100) >= 50)
+                {
+                    var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                    var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
 
-                character.AttackCombatant(target, AttackType.Melee);
-            }1
+                    character.AttackCombatant(target, (AttackType)_random.Next(3));
+                }
+                else
+                {
+                    var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
+                    var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
+
+                    character.AttackCombatant(target, (AttackType)_random.Next(3));
+                }
+            }
+
+            if (InputManager.IsKeyPressed(Keys.D2))
+            {
+                if (_random.Next(100) >= 50)
+                {
+                    var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                    var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+
+                    character.AttackCombatant(target, AttackType.Melee);
+                }
+                else
+                {
+                    var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
+                    var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
+
+                    character.AttackCombatant(target, AttackType.Melee);
+                }
+            }
+
+            if (InputManager.IsKeyPressed(Keys.D3))
+            {
+                if (_random.Next(100) >= 50)
+                {
+                    var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                    var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+
+                    character.AttackCombatant(target, AttackType.Ranged);
+                }
+                else
+                {
+                    var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
+                    var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
+
+                    character.AttackCombatant(target, AttackType.Ranged);
+                }
+            }
+
+            if (InputManager.IsKeyPressed(Keys.D4))
+            {
+                if (_random.Next(100) >= 50)
+                {
+                    var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                    var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+
+                    character.AttackCombatant(target, AttackType.Magic);
+                }
+                else
+                {
+                    var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
+                    var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
+
+                    character.AttackCombatant(target, AttackType.Magic);
+                }
+            }
         }
-
-
 
         private void AllocateCombatantsPositions(List<Combatant> combatants, bool isPlayerTeam)
         {

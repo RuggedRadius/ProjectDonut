@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Combat;
-using ProjectDonut.Core.Input;
-using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -15,8 +8,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
     {
         public SceneType SceneType { get; set; }
         public Vector2 Position { get; set; }
-
-
 
         private CombatUI _combatUI;
         private CombatManager _manager;
@@ -59,20 +50,20 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _terrain.DrawTerrainLayer(gameTime, "base");
             _terrain.DrawTerrainLayer(gameTime, "obstacle");
             _terrain.DrawTerrainLayer(gameTime, "decorative");
-            _terrain.DrawGrid(gameTime);
+            //_terrain.DrawGrid(gameTime);
 
             // Draw player team
             foreach (var combatant in _manager.PlayerTeam)
             {
                 combatant.Draw(gameTime);
-                combatant.DrawBounds();
+                //combatant.DrawBounds();
             }
 
             // Draw enemy team
             foreach (var combatant in _manager.EnemyTeam)
             {
                 combatant.Draw(gameTime);
-                combatant.DrawBounds();
+                //combatant.DrawBounds();
             }
 
             // Draw combat UI

@@ -10,6 +10,11 @@ using ProjectDonut.Combat.UI;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using MonoGame.Extended;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Threading;
 
 namespace ProjectDonut.Combat
 {
@@ -45,7 +50,7 @@ namespace ProjectDonut.Combat
         TeamType Team { get; set; }
         CombatantMoveState MoveState { get; set; }
 
-        void Attack(AttackType attackType);
+        void Attack(AttackType attackType, Combatant target);
         void Defend();
         void UseItem();
         void UseAbility(); //TODO: Implement abilities
@@ -70,12 +75,23 @@ namespace ProjectDonut.Combat
         public CombatantStats Stats { get; set; }
 
         private SpriteSheet _spriteSheet;       
-        private SpriteEffects _spriteEffects;
+        public SpriteEffects _spriteEffects;
 
         public Rectangle Bounds;
 
         private float _moveTimer = 0f;
         private float _moveTime = 1.5f;
+
+        private float _damageFlashDuration = 0.75f; // Duration of the entire flash effect
+        private float _damageFlashTimer = 0f;      // Timer to track how long to keep flashing
+        private bool _isDamaged = false;           // Flag to indicate if the player took damage
+        private int _flashFrameCounter = 0;        // Counter to alternate between red and white
+        private int _framesPerFlash = 8;           // Number of frames before switching colors
+        private Color _drawColour;
+
+        private Texture2D _arrowSprite;
+
+        private List<Projectile> Projectiles { get; set; } = new List<Projectile>();
 
         public Combatant(TeamType team)
         {
@@ -112,7 +128,7 @@ namespace ProjectDonut.Combat
 
             var cellTime = 0.25f;
 
-            _spriteSheet.DefineAnimation("attack", builder =>
+            _spriteSheet.DefineAnimation("melee", builder =>
             {
                 builder.IsLooping(false)
                     .AddFrame(regionIndex: 2, duration: TimeSpan.FromSeconds(cellTime))
@@ -122,20 +138,40 @@ namespace ProjectDonut.Combat
                     .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime));
             });
 
+            _spriteSheet.DefineAnimation("magic", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            _spriteSheet.DefineAnimation("ranged", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(15, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(16, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(17, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
             Sprite = new AnimatedSprite(_spriteSheet, "idle");
 
             Sprite.Effect = (Team == TeamType.Player) ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
         }
 
-        public void Attack(AttackType attackType) // TODO: Add target argument here, think of multiple targets also
+        public void Attack(AttackType attackType, Combatant target) // TODO: Add target argument here, think of multiple targets also
         {
             switch (attackType)
             {
                 case AttackType.Melee:
-                case AttackType.Ranged:
-                case AttackType.Magic:
-                default:
-                    Sprite.SetAnimation("attack").OnAnimationEvent += (sender, trigger) =>
+                    Sprite.SetAnimation("melee").OnAnimationEvent += (sender, trigger) =>
                     {
                         if (trigger == AnimationEventTrigger.AnimationCompleted)
                         {
@@ -143,6 +179,32 @@ namespace ProjectDonut.Combat
                         }
                     };
                     break;
+
+                case AttackType.Ranged:
+                    Sprite.SetAnimation("ranged").OnAnimationEvent += (sender, trigger) =>
+                    {
+                        if (trigger == AnimationEventTrigger.AnimationCompleted)
+                        {
+                            Sprite.SetAnimation("idle");
+                            Projectiles.Add(new Projectile(
+                                _arrowSprite,
+                                20f,
+                                ScreenPosition,
+                                target
+                            ));
+                        }
+                    };
+                    break;
+
+                case AttackType.Magic:
+                    Sprite.SetAnimation("magic").OnAnimationEvent += (sender, trigger) =>
+                    {
+                        if (trigger == AnimationEventTrigger.AnimationCompleted)
+                        {
+                            Sprite.SetAnimation("idle");
+                        }
+                    };
+                    break;                    
             }
         }
 
@@ -156,27 +218,16 @@ namespace ProjectDonut.Combat
         public void TakeDamage(int damage)
         {                      
             TextDisplay.AddText(damage.ToString(), 0, Vector2.Zero, Color.Red);
+            _isDamaged = true;
+            _damageFlashTimer = _damageFlashDuration; // Start the flash timer
+            _flashFrameCounter = 0;                  // Reset the frame counter
         }
 
-        public void Defend() // TODO: Make DEFEND an ability
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UseItem()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UseAbility()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Flee()
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Make DEFEND an ability
+        public void Defend() => throw new NotImplementedException();
+        public void UseItem() => throw new NotImplementedException();
+        public void UseAbility() => throw new NotImplementedException();
+        public void Flee() => throw new NotImplementedException();
 
         public void Update(GameTime gameTime)
         {
@@ -186,13 +237,42 @@ namespace ProjectDonut.Combat
                 Global.TileSize * CombatScene.SceneScale,
                 Global.TileSize * CombatScene.SceneScale);
 
+            _moveTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (_isDamaged)
+            {
+                _damageFlashTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _flashFrameCounter++;  // Increment the frame counter on each update
+
+                if (_damageFlashTimer <= 0)
+                {
+                    _isDamaged = false; // Stop flashing when the timer expires
+                    _damageFlashTimer = 0f;
+                }
+
+                // Reset the frame counter if it exceeds the flash interval
+                if (_flashFrameCounter >= _framesPerFlash)
+                {
+                    _flashFrameCounter = 0;
+                }
+            }
+
+            _drawColour = Color.White;
+
+            if (_isDamaged)
+            {
+                // Flash red or white depending on the current frame counter
+                _drawColour = (_flashFrameCounter < _framesPerFlash / 2) ? Color.Red : Color.White;
+            }
+
+
             switch (MoveState)
             {
                case CombatantMoveState.Idle:
                     break;
 
                 case CombatantMoveState.MovingToPosition:
-                    _moveTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    
 
                     if (ScreenPosition != TargetScreenPosition)
                     {
@@ -211,21 +291,38 @@ namespace ProjectDonut.Combat
 
             Sprite.Update(gameTime);
             TextDisplay.Update(gameTime);
+
+            Projectiles.ForEach(p => p.Update(gameTime));
+            Projectiles.Where(p => p.HasReachedDestination()).ToList().ForEach(p =>
+            {
+                Projectiles.Remove(p);
+                p.Target.TakeDamage(10);
+            });
         }
 
         public void Draw(GameTime gameTime)
         {
+            //Global.SpriteBatch.DrawString(
+            //    Global.FontDebug,
+            //    _flashSprite.ToString(),
+            //    ScreenPosition,
+            //    Color.White
+            //);
+
             Global.SpriteBatch.Draw(
                 texture: Sprite.TextureRegion.Texture,
                 position: ScreenPosition,
                 sourceRectangle: Sprite.TextureRegion.Bounds,
-                color: Color.White,
+                color: _drawColour,
                 rotation: 0f,
                 origin: Vector2.Zero,
                 scale: Vector2.One * CombatScene.SceneScale,
                 effects: _spriteEffects,
                 layerDepth: 0f
             );
+
+            Projectiles.ForEach(p => p.Draw(gameTime));
+
             TextDisplay.Draw(gameTime);
         }
 
@@ -236,13 +333,25 @@ namespace ProjectDonut.Combat
 
         public void MoveToMeleePosition(Combatant targetCombatant)
         {
-            if (ScreenPosition.X < targetCombatant.ScreenPosition.X)
+            if (ScreenPosition.X > targetCombatant.ScreenPosition.X)
             {
                 MoveToScreenPosition(targetCombatant.ScreenPosition + new Vector2(Global.TileSize * CombatScene.SceneScale, 0));
             }
             else
             {
                 MoveToScreenPosition(targetCombatant.ScreenPosition - new Vector2(Global.TileSize * CombatScene.SceneScale, 0));
+            }
+        }
+
+        public void MoveToRangedPosition()
+        {
+            if (Team == TeamType.Player)
+            {               
+                MoveToScreenPosition(BaseScreenPosition + new Vector2(Global.TileSize * CombatScene.SceneScale * 1, 0));
+            }
+            else
+            {
+                MoveToScreenPosition(BaseScreenPosition - new Vector2(Global.TileSize * CombatScene.SceneScale * 1, 0));
             }
         }
 
@@ -253,36 +362,50 @@ namespace ProjectDonut.Combat
                 return;
             }
 
-            switch (attackType)
+            ActionState = CombatantActionState.Attacking;
+
+            await Task.Run(() =>
             {
-                case AttackType.Melee:
-                    await Task.Run(() =>
-                    {
-                        ActionState = CombatantActionState.Attacking;
+                switch (attackType)
+                {
+                    case AttackType.Melee:
+                        MoveToMeleePosition(target);
 
-                        MoveToScreenPosition(target.ScreenPosition - new Vector2(Global.TileSize * CombatScene.SceneScale, 0));
                         while (MoveState != CombatantMoveState.Idle) { }
 
-                        Attack(AttackType.Melee);
-                        while (Sprite.Controller.IsAnimating) { }
+                        Attack(AttackType.Melee, target);
+                        while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "melee") { }
                         target.TakeDamage(10);
+                        break;
 
-                        MoveToScreenPosition(BaseScreenPosition);
+                    case AttackType.Ranged:
+                        MoveToRangedPosition();
+
                         while (MoveState != CombatantMoveState.Idle) { }
 
-                        ActionState = CombatantActionState.Idle;
-                    });
-                    break;
+                        Attack(AttackType.Ranged, target);
+                        //Thread.Sleep(1500);
+                        while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "ranged") { }
+                        while (Projectiles.Count > 0) { }
+                        //target.TakeDamage(10);
+                        break;
 
-                case AttackType.Ranged:
-                    break;
+                    case AttackType.Magic:
+                        MoveToRangedPosition();
 
-                case AttackType.Magic:
-                    break;
+                        while (MoveState != CombatantMoveState.Idle) { }
 
-                default:
-                    break;
-            }
+                        Attack(AttackType.Magic, target);
+                        while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "magic") { }
+                        target.TakeDamage(10);
+                        break;
+                }
+
+                MoveToScreenPosition(BaseScreenPosition);
+                while (MoveState != CombatantMoveState.Idle) { }
+
+                ActionState = CombatantActionState.Idle;
+            });
         }
     }
 }
