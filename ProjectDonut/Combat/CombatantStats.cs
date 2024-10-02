@@ -20,5 +20,12 @@ namespace ProjectDonut.Combat
         public int MaxMana { get; set; }
         public int Experience { get; set; }
         public int Level { get; set; }
+
+        public CombatantStats()
+        {
+            // TEMP
+            MaxHealth = 100;
+            Health = MaxHealth;
+        }
     }
 }

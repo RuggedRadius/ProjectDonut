@@ -2,19 +2,14 @@
 using System;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Core;
-using ProjectDonut.Interfaces;
 using MonoGame.Extended.Animations;
 using Microsoft.Xna.Framework;
-using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Combat.UI;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using MonoGame.Extended;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
-using System.Threading;
 
 namespace ProjectDonut.Combat
 {
@@ -221,6 +216,8 @@ namespace ProjectDonut.Combat
             _isDamaged = true;
             _damageFlashTimer = _damageFlashDuration; // Start the flash timer
             _flashFrameCounter = 0;                  // Reset the frame counter
+
+            Stats.Health -= damage;
         }
 
         // TODO: Make DEFEND an ability
@@ -324,6 +321,8 @@ namespace ProjectDonut.Combat
             Projectiles.ForEach(p => p.Draw(gameTime));
 
             TextDisplay.Draw(gameTime);
+
+            OHD.Draw(gameTime);
         }
 
         public void DrawBounds()
@@ -375,7 +374,7 @@ namespace ProjectDonut.Combat
 
                         Attack(AttackType.Melee, target);
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "melee") { }
-                        target.TakeDamage(10);
+                        target.TakeDamage(25);
                         break;
 
                     case AttackType.Ranged:
@@ -397,7 +396,7 @@ namespace ProjectDonut.Combat
 
                         Attack(AttackType.Magic, target);
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "magic") { }
-                        target.TakeDamage(10);
+                        target.TakeDamage(25);
                         break;
                 }
 

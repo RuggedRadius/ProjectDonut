@@ -654,6 +654,7 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Dialogue;
             public static Dictionary<string, Texture2D> Scroll;
             public static Dictionary<string, Texture2D> Minimap;
+            public static Dictionary<string, Texture2D> HealthBar;
 
             public static void Load()
             {
@@ -662,6 +663,7 @@ namespace ProjectDonut.Core.Sprites
                 LoadDialogueSystem();
                 LoadScroll();
                 LoadMinimapFrame();
+                LoadHealthBar();
             }
 
             public static void LoadItems()
@@ -727,6 +729,19 @@ namespace ProjectDonut.Core.Sprites
                     //{ "sw", ExtractSprite(sheet, 0, 2) },
                     //{ "s", ExtractSprite(sheet, 1, 2) },
                     //{ "se", ExtractSprite(sheet, 2, 2) }
+                };
+            }
+        
+            private static void LoadHealthBar()
+            {
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Combat/health-bar");
+
+                HealthBar = new Dictionary<string, Texture2D>()
+                {
+                    { "left", ExtractSprite(sheet, 0, 0, 1, 16) },
+                    { "empty", ExtractSprite(sheet, 1, 0, 1, 16) },
+                    { "right", ExtractSprite(sheet, 2, 0, 1, 16) },
+                    { "full", ExtractSprite(sheet, 3, 0, 1, 16) },
                 };
             }
         }

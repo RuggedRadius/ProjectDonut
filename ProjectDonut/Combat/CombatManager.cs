@@ -48,6 +48,9 @@ namespace ProjectDonut.Combat
         {
             TESTINPUTS();
 
+            PlayerTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => PlayerTeam.Remove(x));
+            EnemyTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => EnemyTeam.Remove(x));
+
             foreach (var combatant in PlayerTeam)
             {
                 combatant.Update(gameTime);
@@ -61,6 +64,11 @@ namespace ProjectDonut.Combat
 
         private async void TESTINPUTS()
         {
+            if (PlayerTeam.Count == 0 || EnemyTeam.Count == 0)
+            {
+                return;
+            }
+
             if (InputManager.IsKeyPressed(Keys.D1))
             {
                 if (_random.Next(100) >= 50)
