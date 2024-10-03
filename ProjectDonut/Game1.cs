@@ -124,8 +124,12 @@ namespace ProjectDonut
                 new Combatant(TeamType.Enemy),
                 new Combatant(TeamType.Enemy),
             };
+
+
+
             var testCombatScene = new CombatScene(playerTeam, enemyTeam);
             testCombatScene.Initialize();
+            testCombatScene.LoadContent();
             Global.SceneManager.SetCurrentScene(testCombatScene);
         }
 

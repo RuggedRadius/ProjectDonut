@@ -34,6 +34,30 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/OldeEnglishDescSubText.spritefont
 
+#begin Sprites/Combat/Backgrounds/bg-dungeon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Combat/Backgrounds/bg-dungeon.png
+
+#begin Sprites/Combat/Backgrounds/bg-forest.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Combat/Backgrounds/bg-forest.png
+
 #begin Sprites/Combat/health-bar.png
 /importer:TextureImporter
 /processor:TextureProcessor
