@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Combat;
+using ProjectDonut.Combat.UI;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -15,6 +16,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private CombatUI _combatUI;
         private CombatManager _manager;
         private CombatTerrain _terrain;
+        private CombatUIOptions _uiOptions;
 
         private Texture2D _background;
 
@@ -31,6 +33,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _manager = new CombatManager(playerTeam, enemyTeam);
             _combatUI = new CombatUI(_manager);
             _terrain = new CombatTerrain();
+
+            _uiOptions = new CombatUIOptions(_manager);
         }
 
         public void Initialize()
@@ -68,10 +72,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public void Update(GameTime gameTime)
         {
             _manager.Update(gameTime);
-            _combatUI.Update(gameTime);
+            //_combatUI.Update(gameTime);
             _terrain.Update(gameTime);
 
             Background.Update(gameTime);
+
+            _uiOptions.Update(gameTime);
         }
 
 
@@ -104,7 +110,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             }
 
             // Draw combat UI
-            _combatUI.Draw(gameTime);
+            //_combatUI.Draw(gameTime);
+
+            // Draw combat UI options
+            _uiOptions.Draw(gameTime);
 
             Global.SpriteBatch.End();
         }

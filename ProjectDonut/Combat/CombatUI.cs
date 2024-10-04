@@ -114,7 +114,7 @@ namespace ProjectDonut.Combat
         public void Draw(GameTime gameTime)
         {
             //Global.GraphicsDevice.Clear(Color.CornflowerBlue);
-            SystemManagers.Default.Draw();
+            //SystemManagers.Default.Draw();
         }
     }
 }
