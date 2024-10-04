@@ -293,7 +293,7 @@ namespace ProjectDonut.Combat
             Projectiles.Where(p => p.HasReachedDestination()).ToList().ForEach(p =>
             {
                 Projectiles.Remove(p);
-                p.Target.TakeDamage(10);
+                p.Target.TakeDamage(50);
             });
         }
 
@@ -374,7 +374,7 @@ namespace ProjectDonut.Combat
 
                         Attack(AttackType.Melee, target);
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "melee") { }
-                        target.TakeDamage(25);
+                        target.TakeDamage(50);
                         break;
 
                     case AttackType.Ranged:
@@ -386,7 +386,7 @@ namespace ProjectDonut.Combat
                         //Thread.Sleep(1500);
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "ranged") { }
                         while (Projectiles.Count > 0) { }
-                        //target.TakeDamage(10);
+                        //target.TakeDamage(50);
                         break;
 
                     case AttackType.Magic:
@@ -396,7 +396,7 @@ namespace ProjectDonut.Combat
 
                         Attack(AttackType.Magic, target);
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "magic") { }
-                        target.TakeDamage(25);
+                        target.TakeDamage(50);
                         break;
                 }
 

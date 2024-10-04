@@ -110,27 +110,27 @@ namespace ProjectDonut
             base.Initialize();
 
 
-            var playerTeam = new List<Combatant>()
-            {
-                new Combatant(TeamType.Player),
-                new Combatant(TeamType.Player),
-                new Combatant(TeamType.Player),
-                new Combatant(TeamType.Player),
-            };
-            var enemyTeam = new List<Combatant>()
-            {
-                new Combatant(TeamType.Enemy),
-                new Combatant(TeamType.Enemy),
-                new Combatant(TeamType.Enemy),
-                new Combatant(TeamType.Enemy),
-            };
+            //var playerTeam = new List<Combatant>()
+            //{
+            //    new Combatant(TeamType.Player),
+            //    new Combatant(TeamType.Player),
+            //    new Combatant(TeamType.Player),
+            //    new Combatant(TeamType.Player),
+            //};
+            //var enemyTeam = new List<Combatant>()
+            //{
+            //    new Combatant(TeamType.Enemy),
+            //    new Combatant(TeamType.Enemy),
+            //    new Combatant(TeamType.Enemy),
+            //    new Combatant(TeamType.Enemy),
+            //};
 
 
 
-            var testCombatScene = new CombatScene(playerTeam, enemyTeam);
-            testCombatScene.Initialize();
-            testCombatScene.LoadContent();
-            Global.SceneManager.SetCurrentScene(testCombatScene);
+            //var testCombatScene = new CombatScene(playerTeam, enemyTeam);
+            //testCombatScene.Initialize();
+            //testCombatScene.LoadContent();
+            //Global.SceneManager.SetCurrentScene(testCombatScene);
         }
 
         private void CreateGameComponents()

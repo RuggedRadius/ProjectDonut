@@ -25,8 +25,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public static int SceneScale = 4;
 
+        private IScene PreviousScene { get; set; }
 
-        public CombatScene(List<Combatant> playerTeam, List<Combatant> enemyTeam)
+
+        public CombatScene(List<Combatant> playerTeam, List<Combatant> enemyTeam, IScene previousScene)
         {
             SceneType = SceneType.Combat;
 
@@ -35,6 +37,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _terrain = new CombatTerrain();
 
             _uiOptions = new CombatUIOptions(_manager);
+            PreviousScene = previousScene;
         }
 
         public void Initialize()
@@ -78,9 +81,23 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             Background.Update(gameTime);
 
             _uiOptions.Update(gameTime);
+
+            if (_manager.PlayerTeam.Count == 0)
+            {
+                // Game over
+                //...
+
+            }
+            else if (_manager.EnemyTeam.Count == 0)
+            {
+                // Victory
+                
+                // Display victory screen
+                // EXP, Items, etc..
+
+                Global.SceneManager.SetCurrentScene(PreviousScene);
+            }
         }
-
-
 
         public void Draw(GameTime gameTime)
         {

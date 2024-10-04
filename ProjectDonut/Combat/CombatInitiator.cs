@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Core;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat
 {
@@ -24,6 +25,12 @@ namespace ProjectDonut.Combat
         private float _minTimeBetweenCombats = 3f;
 
         private Random _random = new Random();
+
+        public CombatInitiator()
+        {
+            _playerCurrentPosition = Global.PlayerObj.WorldPosition;
+            _playerPreviousPosition = _playerCurrentPosition;
+        }
 
         public bool ShouldStartCombat()
         {
@@ -54,7 +61,7 @@ namespace ProjectDonut.Combat
             _totalTimeTravelled += (float)gameTime.ElapsedGameTime.TotalSeconds;
             _timeSinceLastCombat += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (_distanceTravelledSinceLastCombat >= 100.0f || _timeSinceLastCombat >= 10.0f)
+            if (_timeSinceLastCombat >= 15.0f) //_distanceTravelledSinceLastCombat >= 100.0f && 
             {
                 if (ShouldStartCombat())
                 {
@@ -74,13 +81,42 @@ namespace ProjectDonut.Combat
 
         public void StartCombat()
         {
-            // Create scene
+            // TODO: Freeze player movement/ UI interaction
 
             // Gather player party
+            var playerTeam = new List<Combatant>()
+            {
+                new Combatant(TeamType.Player),
+                new Combatant(TeamType.Player),
+                new Combatant(TeamType.Player),
+                new Combatant(TeamType.Player),
+            };
 
             // Create enemy party
+            var enemyTeam = new List<Combatant>()
+            {
+                new Combatant(TeamType.Enemy),
+                new Combatant(TeamType.Enemy),
+                new Combatant(TeamType.Enemy),
+                new Combatant(TeamType.Enemy),
+            };
+
+            // Create scene
+            var scene = CreateCombatScene(playerTeam, enemyTeam);
+
+            // TODO: Transition FX HERE
 
             // Switch to combat scene
+            Global.SceneManager.SetCurrentScene(scene);
+        }
+
+        private CombatScene CreateCombatScene(List<Combatant> playerTeam, List<Combatant> enemyTeam)
+        {
+            var scene = new CombatScene(playerTeam, enemyTeam, Global.SceneManager.CurrentScene);
+            scene.Initialize();
+            scene.LoadContent();
+
+            return scene;
         }
     }
 }

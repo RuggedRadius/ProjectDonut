@@ -13,6 +13,7 @@ using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.BSP;
 using ProjectDonut.GameObjects.Doodads;
 using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.Combat;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -42,10 +43,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private int mapWidth;
         private int mapHeight;
 
+        private CombatInitiator _combatInitiator;
+
         public DungeonScene()
         {
             SceneType = SceneType.Dungeon;
             _bsp = new BSP();
+            _combatInitiator = new CombatInitiator();
         }
 
         public override void Initialize()
@@ -241,6 +245,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 .ForEach(x => Interactables.Remove(x));
 
             UpdateVisibility(Global.PlayerObj.WorldPosition, Global.INSTANCE_SIGHT_RADIUS);
+        
+            _combatInitiator.Update(gameTime);
         }
 
         public void UpdateVisibility(Vector2 playerPosition, int viewDistance)

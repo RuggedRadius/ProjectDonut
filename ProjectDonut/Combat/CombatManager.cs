@@ -64,6 +64,11 @@ namespace ProjectDonut.Combat
 
         public void TESTDoRandomPlayerTeamAttack()
         {
+            if (PlayerTeam.Count == 0 || EnemyTeam.Count == 0)
+            {
+                return;
+            }
+
             var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
             var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
 
@@ -72,6 +77,11 @@ namespace ProjectDonut.Combat
 
         public void TESTDoRandomEnemyTeamAttack()
         {
+            if (PlayerTeam.Count == 0 || EnemyTeam.Count == 0)
+            {
+                return;
+            }
+
             var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
             var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
 
