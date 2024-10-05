@@ -799,6 +799,25 @@ namespace ProjectDonut.Core.Sprites
             }
         }
 
+        public static class Combat
+        {
+            public static Dictionary<string, Texture2D> Avatars;
+
+            public static void Load()
+            {
+                LoadAvatars();
+            }
+
+            public static void LoadAvatars()
+            {
+                Avatars = new Dictionary<string, Texture2D>();
+
+                Avatars.Add("player", Global.ContentManager.Load<Texture2D>("Sprites/Combat/avatar_player"));
+                Avatars.Add("enemy", Global.ContentManager.Load<Texture2D>("Sprites/Combat/avatar_enemy"));
+            }
+        }
+
+
         public void LoadSpriteLibrary()
         {
             sheets = new Dictionary<string, Texture2D>();
@@ -819,6 +838,7 @@ namespace ProjectDonut.Core.Sprites
             Dungeon.Load();
             Player.Load();
             Doodads.Load();
+            Combat.Load();
         }
         
         public static Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)

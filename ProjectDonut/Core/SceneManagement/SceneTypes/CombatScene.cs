@@ -21,6 +21,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private CombatUIOptions _uiOptions;
         private CombatUITurnOrder _turnOrder;
         public CombatUILog Log;
+        public CombatUIAbility AbilityUI;
 
         private Texture2D _background;
 
@@ -44,6 +45,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _turnOrder = new CombatUITurnOrder(Manager);
 
             Log = new CombatUILog();
+            AbilityUI = new CombatUIAbility(Manager);
 
             _uiOptions = new CombatUIOptions(Manager);
             PreviousScene = previousScene;
@@ -91,8 +93,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             _uiOptions.Update(gameTime);
             _turnOrder.Update(gameTime);
-
-            Log.Update(gameTime);
+            AbilityUI.Update(gameTime);
 
             if (Manager.PlayerTeam.Count == 0)
             {
@@ -145,6 +146,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             _uiOptions.Draw(gameTime);
             _turnOrder.Draw(gameTime);
             Log.Draw(gameTime);
+            AbilityUI.Draw(gameTime);
 
             Global.SpriteBatch.End();
         }

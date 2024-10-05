@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat.UI
 {
@@ -38,25 +39,32 @@ namespace ProjectDonut.Combat.UI
 
         private Texture2D Indicator;
 
+        private int height = 220;
+        private int width = 300;
+        private int margin = 10;
+        private int padding = 10;
+        private int indicatorWidth = 32;
+        private int optionHeight = 50;
+        private int indicatorHeighOffset;
+
         public CombatUIOptions(CombatManager manager)
         {
             MenuAttackShown = false;
             MenuAbilityShown = false;
             MenuItemShown = false;
 
-            // 20px spacing in + up
-            // 50px per option
-            // 10px internal padding
-            ScreenPositionBackground = new Vector2(20, Global.GraphicsDeviceManager.PreferredBackBufferHeight - 240);
-            RectBackground = new Rectangle((int)ScreenPositionBackground.X, (int)ScreenPositionBackground.Y, 300, 220);
+            ScreenPositionBackground = new Vector2(margin, Global.GraphicsDeviceManager.PreferredBackBufferHeight - margin - height);
+            RectBackground = new Rectangle((int)ScreenPositionBackground.X, (int)ScreenPositionBackground.Y, width, height);
 
-            ScreenPositionAttack = new Vector2(ScreenPositionBackground.X + 50, ScreenPositionBackground.Y + 10);
-            ScreenPositionAbility = new Vector2(ScreenPositionBackground.X + 50, ScreenPositionBackground.Y + 10 + 50);
-            ScreenPositionItem = new Vector2(ScreenPositionBackground.X + 50, ScreenPositionBackground.Y + 10 + 100);
-            ScreenPositionFlee = new Vector2(ScreenPositionBackground.X + 50, ScreenPositionBackground.Y + 10 + 150);
+            ScreenPositionAttack = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding));
+            ScreenPositionAbility = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding) + optionHeight);
+            ScreenPositionItem = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding) + (2 * optionHeight));
+            ScreenPositionFlee = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding) + (3 * optionHeight));
 
             Indicator = Global.ContentManager.Load<Texture2D>("Sprites/Combat/indicator");
             _manager = manager;
+
+            indicatorHeighOffset = ((int)Global.FontDebug.MeasureString("ABC").Y / 2) + Indicator.Height / 2;
         }
 
         public void Update(GameTime gameTime)
@@ -111,7 +119,7 @@ namespace ProjectDonut.Combat.UI
                         break;
 
                     case CombatUIOptionsType.Ability:
-                        MenuAbilityShown = !MenuAbilityShown;
+                        CombatScene.Instance.AbilityUI.IsShown = !CombatScene.Instance.AbilityUI.IsShown;
 
                         MenuAttackShown = false;
                         MenuItemShown = false;
@@ -147,16 +155,16 @@ namespace ProjectDonut.Combat.UI
                 switch (_selectedOption)
                 {
                     case CombatUIOptionsType.Attack:
-                        Global.SpriteBatch.Draw(Indicator, ScreenPositionAttack - new Vector2(32, 0), Color.White);
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionAttack - new Vector2(32 + padding, 7), Color.White);
                         break;
                     case CombatUIOptionsType.Ability:
-                        Global.SpriteBatch.Draw(Indicator, ScreenPositionAbility - new Vector2(32, 0), Color.White);
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionAbility - new Vector2(32 + padding, 7), Color.White);
                         break;
                     case CombatUIOptionsType.Item:
-                        Global.SpriteBatch.Draw(Indicator, ScreenPositionItem - new Vector2(32, 0), Color.White);
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionItem - new Vector2(32 + padding, 7), Color.White);
                         break;
                     case CombatUIOptionsType.Flee:
-                        Global.SpriteBatch.Draw(Indicator, ScreenPositionFlee - new Vector2(32, 0), Color.White);
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionFlee - new Vector2(32 + padding, 7), Color.White);
                         break;
                 }
             }

@@ -11,16 +11,22 @@ namespace ProjectDonut.Combat
 
         private Rectangle Bounds { get; set; }
 
+        private int linesToShowCount = 10;
+        private int lineHeight = 20;
+        private int padding = 10;
         private int Width = 800;
         private int Height = 250;
+        private int margin = 10;
 
         public CombatUILog()
         {
             _logEntries = new List<string>();
 
+            Height = linesToShowCount * lineHeight + (2 * padding);
+
             Bounds = new Rectangle(
-                Global.GraphicsDeviceManager.PreferredBackBufferWidth - Width - 10,
-                Global.GraphicsDeviceManager.PreferredBackBufferHeight - Height - 10,
+                Global.GraphicsDeviceManager.PreferredBackBufferWidth - Width - margin,
+                Global.GraphicsDeviceManager.PreferredBackBufferHeight - Height - margin,
                 Width,
                 Height);
         }
@@ -30,15 +36,10 @@ namespace ProjectDonut.Combat
             _logEntries.Add(entry);
         }
 
-        public void Update(GameTime gameTime)
-        {
-
-        }
-
         public void Draw(GameTime gameTime)
         {
             // Draw background
-            Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, Bounds, Color.Black * 0.75f);
+            Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, Bounds, Color.Black * 0.5f);
 
             // Draw log entries
             int counter = 0;
@@ -54,7 +55,7 @@ namespace ProjectDonut.Combat
                     break;
                 }
 
-                var position = new Vector2(Bounds.X + 10, Bounds.Y + 10 + (counter * 20));
+                var position = new Vector2(Bounds.X + padding, Bounds.Y + padding + (counter * lineHeight));
                 //Global.SpriteBatch.DrawString(Global.FontDebug, _logEntries[i], position, Color.White);
                 var components = GetLogComponents(_logEntries[i]);
                 DrawLog(components, position);

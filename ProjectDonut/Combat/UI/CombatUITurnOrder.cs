@@ -19,6 +19,7 @@ namespace ProjectDonut.Combat.UI
         public Rectangle AvatarBounds { get; set; }
         public Vector2 NamePosition { get; set; }
         public bool IsPlayerTeam { get; set; }
+        public Color BackgroundColour { get; set; }
     }
 
     public class CombatUITurnOrder
@@ -54,12 +55,18 @@ namespace ProjectDonut.Combat.UI
                 if (i >= _manager.TurnOrder.Count || _manager.TurnOrder[i] == null)
                     break;
 
+                var avatar = _manager.TurnOrder[i].Team == TeamType.Player ?
+                    SpriteLib.Combat.Avatars["player"] :
+                    SpriteLib.Combat.Avatars["enemy"];
+                var isPlayerTeam = _manager.TurnOrder[i].Team == TeamType.Player;
+
                 _turnsToDraw.Add(new TurnOrderEntry()
                 {
                     Combatant = _manager.TurnOrder[i],
                     Name = _manager.TurnOrder[i].Details.Name.ToString(),
-                    Avatar = Global.MISSING_TEXTURE,
-                    IsPlayerTeam = _manager.TurnOrder[i].Team == TeamType.Player ? true : false,
+                    Avatar = avatar,
+                    IsPlayerTeam = isPlayerTeam,
+                    BackgroundColour = isPlayerTeam ? new Color(153, 255, 153) * 0.5f : new Color(255, 153, 153) * 0.5f,
                     Bounds = new Rectangle(
                         0,
                         250 + (i * TurnOrderEntryHeight),
@@ -86,7 +93,7 @@ namespace ProjectDonut.Combat.UI
                     break;
 
                 // Draw bounds
-                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, _turnsToDraw[i].Bounds, null, _turnsToDraw[i].IsPlayerTeam ? Color.Blue * 0.5f : Color.Red * 0.5f);
+                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, _turnsToDraw[i].Bounds, null, _turnsToDraw[i].BackgroundColour);
 
                 // Draw avatar
                 Global.SpriteBatch.Draw(_turnsToDraw[i].Avatar, _turnsToDraw[i].AvatarBounds, null, Color.White);

@@ -34,6 +34,30 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/OldeEnglishDescSubText.spritefont
 
+#begin Sprites/Combat/avatar_enemy.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Combat/avatar_enemy.png
+
+#begin Sprites/Combat/avatar_player.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Combat/avatar_player.png
+
 #begin Sprites/Combat/Backgrounds/bg-dungeon.png
 /importer:TextureImporter
 /processor:TextureProcessor
