@@ -10,6 +10,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
     public class CombatScene : IScene
     {
+        public static CombatScene Instance { get; private set; }
+
         public SceneType SceneType { get; set; }
         public Vector2 Position { get; set; }
 
@@ -18,6 +20,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private CombatTerrain _terrain;
         private CombatUIOptions _uiOptions;
         private CombatUITurnOrder _turnOrder;
+        public CombatUILog Log;
 
         private Texture2D _background;
 
@@ -31,12 +34,16 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public CombatScene(IScene previousScene)
         {
+            Instance = this;
+
             SceneType = SceneType.Combat;
 
             Manager = new CombatManager();
             _combatUI = new CombatUI(Manager);
             _terrain = new CombatTerrain();
             _turnOrder = new CombatUITurnOrder(Manager);
+
+            Log = new CombatUILog();
 
             _uiOptions = new CombatUIOptions(Manager);
             PreviousScene = previousScene;
@@ -84,6 +91,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             _uiOptions.Update(gameTime);
             _turnOrder.Update(gameTime);
+
+            Log.Update(gameTime);
 
             if (Manager.PlayerTeam.Count == 0)
             {
@@ -135,6 +144,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             // Draw combat UI options
             _uiOptions.Draw(gameTime);
             _turnOrder.Draw(gameTime);
+            Log.Draw(gameTime);
 
             Global.SpriteBatch.End();
         }

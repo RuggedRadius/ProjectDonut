@@ -93,13 +93,16 @@ namespace ProjectDonut.Combat
 
             // Handle enemy turn
             var nonIdleCombatants = TurnOrder.Where(x => x.ActionState != CombatantActionState.Idle).ToList();
-           if (TurnOrder[0].Team == TeamType.Enemy && nonIdleCombatants.Any() == false)
+            if (TurnOrder[0].Team == TeamType.Enemy && nonIdleCombatants.Any() == false)
             {
                 var enemy = TurnOrder[0];
                 var possibleTargets = PlayerTeam.Where(x => x.IsKOd == false).ToList();
-                var target = possibleTargets[_random.Next(possibleTargets.Count)];
 
-                enemy.AttackCombatant(target, (AttackType)_random.Next(3));
+                if (possibleTargets.Count > 0)
+                {
+                    var target = possibleTargets[_random.Next(possibleTargets.Count)];
+                    enemy.AttackCombatant(target, (AttackType)_random.Next(3));
+                }
             }
 
             // Re-populate turn order

@@ -419,7 +419,12 @@ namespace ProjectDonut.Combat
 
                 ActionState = CombatantActionState.TurnComplete;
 
+                CombatScene.Instance.Log.AddLogEntry($"{Details.Name} attacked {target.Details.Name} for 50 damage");
 
+                if (target.IsKOd)
+                {
+                    CombatScene.Instance.Log.AddLogEntry($"{target.Details.Name} has been KO'd");
+                }
             });
 
             _manager.TurnOrder.RemoveAt(0);
