@@ -10,6 +10,7 @@ using MonoGame.Extended;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using RenderingLibrary.Graphics;
 
 namespace ProjectDonut.Combat
 {
@@ -22,7 +23,8 @@ namespace ProjectDonut.Combat
     public enum CombatantActionState
     {
         Idle,
-        Attacking,
+        TurnInProgress,
+        TurnComplete
     }
 
     public enum AttackType
@@ -45,7 +47,9 @@ namespace ProjectDonut.Combat
         TeamType Team { get; set; }
         CombatantMoveState MoveState { get; set; }
 
-        void Attack(AttackType attackType, Combatant target);
+        int ExperienceGiven { get; set; }
+
+        //void Attack(AttackType attackType, Combatant target);
         void Defend();
         void UseItem();
         void UseAbility(); //TODO: Implement abilities
@@ -68,6 +72,11 @@ namespace ProjectDonut.Combat
         public FloatingTextDisplay TextDisplay { get; set; }
         public CombatantOHD OHD { get; set; }
         public CombatantStats Stats { get; set; }
+        public CombatantDetails Details { get; set; }
+        public CombatManager _manager { get; set; }
+        public int ExperienceGiven { get; set; }
+
+        public bool IsKOd => Stats.Health <= 0;
 
         private SpriteSheet _spriteSheet;       
         public SpriteEffects _spriteEffects;
@@ -88,8 +97,9 @@ namespace ProjectDonut.Combat
 
         private List<Projectile> Projectiles { get; set; } = new List<Projectile>();
 
-        public Combatant(TeamType team)
+        public Combatant(TeamType team, CombatManager manager)
         {
+            _manager = manager;
             InitialiseSprites();
             Team = team;
 
@@ -159,48 +169,6 @@ namespace ProjectDonut.Combat
             Sprite.Effect = (Team == TeamType.Player) ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
-        }
-
-        public void Attack(AttackType attackType, Combatant target) // TODO: Add target argument here, think of multiple targets also
-        {
-            switch (attackType)
-            {
-                case AttackType.Melee:
-                    Sprite.SetAnimation("melee").OnAnimationEvent += (sender, trigger) =>
-                    {
-                        if (trigger == AnimationEventTrigger.AnimationCompleted)
-                        {
-                            Sprite.SetAnimation("idle");
-                        }
-                    };
-                    break;
-
-                case AttackType.Ranged:
-                    Sprite.SetAnimation("ranged").OnAnimationEvent += (sender, trigger) =>
-                    {
-                        if (trigger == AnimationEventTrigger.AnimationCompleted)
-                        {
-                            Sprite.SetAnimation("idle");
-                            Projectiles.Add(new Projectile(
-                                _arrowSprite,
-                                20f,
-                                ScreenPosition,
-                                target
-                            ));
-                        }
-                    };
-                    break;
-
-                case AttackType.Magic:
-                    Sprite.SetAnimation("magic").OnAnimationEvent += (sender, trigger) =>
-                    {
-                        if (trigger == AnimationEventTrigger.AnimationCompleted)
-                        {
-                            Sprite.SetAnimation("idle");
-                        }
-                    };
-                    break;                    
-            }
         }
 
         public void MoveToScreenPosition(Vector2 screenPosition)
@@ -294,6 +262,7 @@ namespace ProjectDonut.Combat
             {
                 Projectiles.Remove(p);
                 p.Target.TakeDamage(50);
+                //ActionState = CombatantActionState.Idle;
             });
         }
 
@@ -306,23 +275,42 @@ namespace ProjectDonut.Combat
             //    Color.White
             //);
 
-            Global.SpriteBatch.Draw(
-                texture: Sprite.TextureRegion.Texture,
-                position: ScreenPosition,
-                sourceRectangle: Sprite.TextureRegion.Bounds,
-                color: _drawColour,
-                rotation: 0f,
-                origin: Vector2.Zero,
-                scale: Vector2.One * CombatScene.SceneScale,
-                effects: _spriteEffects,
-                layerDepth: 0f
-            );
+            if (IsKOd)
+            {
+                Global.SpriteBatch.Draw(
+                    texture: Sprite.TextureRegion.Texture,
+                    position: ScreenPosition,
+                    sourceRectangle: Sprite.TextureRegion.Bounds,
+                    color: Color.Gray * 0.25f,
+                    rotation: 0f,
+                    origin: Vector2.Zero,
+                    scale: Vector2.One * CombatScene.SceneScale,
+                    effects: _spriteEffects,
+                    layerDepth: 0f
+                );
+            }
+            else
+            {
+                Global.SpriteBatch.Draw(
+                    texture: Sprite.TextureRegion.Texture,
+                    position: ScreenPosition,
+                    sourceRectangle: Sprite.TextureRegion.Bounds,
+                    color: _drawColour,
+                    rotation: 0f,
+                    origin: Vector2.Zero,
+                    scale: Vector2.One * CombatScene.SceneScale,
+                    effects: _spriteEffects,
+                    layerDepth: 0f
+                );
+            }
 
             Projectiles.ForEach(p => p.Draw(gameTime));
 
             TextDisplay.Draw(gameTime);
 
             OHD.Draw(gameTime);
+
+            
         }
 
         public void DrawBounds()
@@ -361,7 +349,7 @@ namespace ProjectDonut.Combat
                 return;
             }
 
-            ActionState = CombatantActionState.Attacking;
+            ActionState = CombatantActionState.TurnInProgress;
 
             await Task.Run(() =>
             {
@@ -372,7 +360,14 @@ namespace ProjectDonut.Combat
 
                         while (MoveState != CombatantMoveState.Idle) { }
 
-                        Attack(AttackType.Melee, target);
+                        Sprite.SetAnimation("melee").OnAnimationEvent += (sender, trigger) =>
+                        {
+                            if (trigger == AnimationEventTrigger.AnimationCompleted)
+                            {
+                                Sprite.SetAnimation("idle");
+                            }
+                        };
+
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "melee") { }
                         target.TakeDamage(50);
                         break;
@@ -382,11 +377,23 @@ namespace ProjectDonut.Combat
 
                         while (MoveState != CombatantMoveState.Idle) { }
 
-                        Attack(AttackType.Ranged, target);
-                        //Thread.Sleep(1500);
+                        Sprite.SetAnimation("ranged").OnAnimationEvent += (sender, trigger) =>
+                        {
+                            if (trigger == AnimationEventTrigger.AnimationCompleted)
+                            {
+                                Sprite.SetAnimation("idle");
+                                //Projectiles.Add(new Projectile(
+                                //    _arrowSprite,
+                                //    20f,
+                                //    ScreenPosition,
+                                //    target
+                                //));
+                            }
+                        };
+
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "ranged") { }
-                        while (Projectiles.Count > 0) { }
-                        //target.TakeDamage(50);
+                        //while (Projectiles.Count > 0) { }
+                        target.TakeDamage(50);
                         break;
 
                     case AttackType.Magic:
@@ -394,7 +401,14 @@ namespace ProjectDonut.Combat
 
                         while (MoveState != CombatantMoveState.Idle) { }
 
-                        Attack(AttackType.Magic, target);
+                        Sprite.SetAnimation("magic").OnAnimationEvent += (sender, trigger) =>
+                        {
+                            if (trigger == AnimationEventTrigger.AnimationCompleted)
+                            {
+                                Sprite.SetAnimation("idle");
+                            }
+                        };
+
                         while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "magic") { }
                         target.TakeDamage(50);
                         break;
@@ -403,8 +417,14 @@ namespace ProjectDonut.Combat
                 MoveToScreenPosition(BaseScreenPosition);
                 while (MoveState != CombatantMoveState.Idle) { }
 
-                ActionState = CombatantActionState.Idle;
+                ActionState = CombatantActionState.TurnComplete;
+
+
             });
+
+            _manager.TurnOrder.RemoveAt(0);
+
+            ActionState = CombatantActionState.Idle;
         }
     }
 }

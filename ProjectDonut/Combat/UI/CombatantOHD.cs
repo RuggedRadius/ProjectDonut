@@ -26,6 +26,26 @@ namespace ProjectDonut.Combat.UI
         public void Draw(GameTime gameTime)
         {
             DrawHealthBar(_combatant.Stats.Health, _combatant.Stats.MaxHealth);
+
+            // Draw nameplate
+            if (CombatManager.Instance.TurnOrder[0] == _combatant)
+            {
+                if (_combatant.Team == TeamType.Player)
+                    Global.SpriteBatch.DrawString(Global.FontDebug, _combatant.Details.Name, _combatant.ScreenPosition + new Vector2(0, -20), Color.Green);
+                else
+                    Global.SpriteBatch.DrawString(Global.FontDebug, _combatant.Details.Name, _combatant.ScreenPosition + new Vector2(0, -20), Color.Red);
+            }
+            else
+            {
+                if (_combatant.IsKOd)
+                { 
+                    Global.SpriteBatch.DrawString(Global.FontDebug, _combatant.Details.Name, _combatant.ScreenPosition + new Vector2(0, -20), Color.Gray);
+                }
+                else
+                {
+                    Global.SpriteBatch.DrawString(Global.FontDebug, _combatant.Details.Name, _combatant.ScreenPosition + new Vector2(0, -20), Color.White);
+                }
+            }
         }
 
         private int healthBarWidth = 100;

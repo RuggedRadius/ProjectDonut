@@ -61,6 +61,11 @@ namespace ProjectDonut.Combat.UI
 
         public void Update(GameTime gameTime)
         {
+            if (_manager.TurnOrder[0].Team == TeamType.Enemy)
+            {
+                return;
+            }
+
             // Update the combat UI options
             if (InputManager.IsKeyPressed(Keys.Up))
             {
@@ -128,7 +133,7 @@ namespace ProjectDonut.Combat.UI
         public void Draw(GameTime gameTime)
         {
             // Draw background
-            Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, RectBackground, null, Color.White * 0.5f);
+            Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
 
             // Draw the combat UI options
             Global.SpriteBatch.DrawString(Global.FontDebug, "Attack", ScreenPositionAttack, Color.White);
@@ -137,20 +142,23 @@ namespace ProjectDonut.Combat.UI
             Global.SpriteBatch.DrawString(Global.FontDebug, "Flee", ScreenPositionFlee, Color.White);
 
             // Draw selection indicator
-            switch (_selectedOption)
+            if (_manager.TurnOrder[0].Team == TeamType.Player)
             {
-                case CombatUIOptionsType.Attack:
-                    Global.SpriteBatch.Draw(Indicator, ScreenPositionAttack - new Vector2(32, 0), Color.White);
-                    break;
-                case CombatUIOptionsType.Ability:
-                    Global.SpriteBatch.Draw(Indicator, ScreenPositionAbility - new Vector2(32, 0), Color.White);
-                    break;
-                case CombatUIOptionsType.Item:
-                    Global.SpriteBatch.Draw(Indicator, ScreenPositionItem - new Vector2(32, 0), Color.White);
-                    break;
-                case CombatUIOptionsType.Flee:
-                    Global.SpriteBatch.Draw(Indicator, ScreenPositionFlee - new Vector2(32, 0), Color.White);
-                    break;
+                switch (_selectedOption)
+                {
+                    case CombatUIOptionsType.Attack:
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionAttack - new Vector2(32, 0), Color.White);
+                        break;
+                    case CombatUIOptionsType.Ability:
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionAbility - new Vector2(32, 0), Color.White);
+                        break;
+                    case CombatUIOptionsType.Item:
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionItem - new Vector2(32, 0), Color.White);
+                        break;
+                    case CombatUIOptionsType.Flee:
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionFlee - new Vector2(32, 0), Color.White);
+                        break;
+                }
             }
 
             // Menus

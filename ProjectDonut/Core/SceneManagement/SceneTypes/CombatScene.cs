@@ -14,9 +14,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public Vector2 Position { get; set; }
 
         private CombatUI _combatUI;
-        private CombatManager _manager;
+        public CombatManager Manager;
         private CombatTerrain _terrain;
         private CombatUIOptions _uiOptions;
+        private CombatUITurnOrder _turnOrder;
 
         private Texture2D _background;
 
@@ -28,15 +29,16 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private IScene PreviousScene { get; set; }
 
 
-        public CombatScene(List<Combatant> playerTeam, List<Combatant> enemyTeam, IScene previousScene)
+        public CombatScene(IScene previousScene)
         {
             SceneType = SceneType.Combat;
 
-            _manager = new CombatManager(playerTeam, enemyTeam);
-            _combatUI = new CombatUI(_manager);
+            Manager = new CombatManager();
+            _combatUI = new CombatUI(Manager);
             _terrain = new CombatTerrain();
+            _turnOrder = new CombatUITurnOrder(Manager);
 
-            _uiOptions = new CombatUIOptions(_manager);
+            _uiOptions = new CombatUIOptions(Manager);
             PreviousScene = previousScene;
         }
 
@@ -74,21 +76,22 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public void Update(GameTime gameTime)
         {
-            _manager.Update(gameTime);
+            Manager.Update(gameTime);
             //_combatUI.Update(gameTime);
             _terrain.Update(gameTime);
 
             Background.Update(gameTime);
 
             _uiOptions.Update(gameTime);
+            _turnOrder.Update(gameTime);
 
-            if (_manager.PlayerTeam.Count == 0)
+            if (Manager.PlayerTeam.Count == 0)
             {
                 // Game over
                 //...
 
             }
-            else if (_manager.EnemyTeam.Count == 0)
+            else if (Manager.EnemyTeam.Count == 0)
             {
                 // Victory
                 
@@ -113,14 +116,14 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             //_terrain.DrawGrid(gameTime);
 
             // Draw player team
-            foreach (var combatant in _manager.PlayerTeam)
+            foreach (var combatant in Manager.PlayerTeam)
             {
                 combatant.Draw(gameTime);
                 //combatant.DrawBounds();
             }
 
             // Draw enemy team
-            foreach (var combatant in _manager.EnemyTeam)
+            foreach (var combatant in Manager.EnemyTeam)
             {
                 combatant.Draw(gameTime);
                 //combatant.DrawBounds();
@@ -131,6 +134,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             // Draw combat UI options
             _uiOptions.Draw(gameTime);
+            _turnOrder.Draw(gameTime);
 
             Global.SpriteBatch.End();
         }

@@ -15,32 +15,59 @@ namespace ProjectDonut.Combat
 {
     public class CombatManager : Interfaces.IUpdateable
     {
-        public Queue<Combatant> TurnOrder { get; set; } = new Queue<Combatant>();
+        public static CombatManager Instance { get; private set; }
+        public List<Combatant> TurnOrder { get; set; } = new List<Combatant>();
         public List<Combatant> PlayerTeam { get; set; }
         public List<Combatant> EnemyTeam { get; set; }
 
+        public int ExperienceEarnedTotal { get; set; } = 0;
+
         private Random _random = new Random();
 
-        public CombatManager(List<Combatant> playerTeam, List<Combatant> enemyTeam) 
+        public CombatManager() 
         {
-            PlayerTeam = playerTeam;
-            EnemyTeam = enemyTeam;
+            if (Instance != null)
+            {
+                throw new Exception("CombatManager is a singleton and should only be instantiated once.");
+            }
 
-            AllocateCombatantsPositions(PlayerTeam, true);
-            AllocateCombatantsPositions(EnemyTeam, false);
+            Instance = this;
+        }
+
+        public void AddTeam(List<Combatant> team, bool isPlayerTeam)
+        {
+            if (isPlayerTeam)
+            {
+                PlayerTeam = team;
+                AllocateCombatantsPositions(PlayerTeam, true);
+            }
+            else
+            {
+                EnemyTeam = team;
+                AllocateCombatantsPositions(EnemyTeam, false);
+            }
+
+            TurnOrder.Clear();
+            PopulateTurnOrder();
         }
 
         private void PopulateTurnOrder()
         {
-            var allCombatants = new List<Combatant>();
-            allCombatants.AddRange(PlayerTeam);
-            allCombatants.AddRange(EnemyTeam);
+            if (PlayerTeam == null || EnemyTeam == null)
+                return;
 
-            allCombatants = allCombatants.OrderByDescending(x => x.Stats.Speed).ToList();
+            var largestTeamSize = Math.Max(PlayerTeam.Count, EnemyTeam.Count);
 
-            foreach (var combatant in allCombatants)
+            while (TurnOrder.Count < 10)
             {
-                TurnOrder.Enqueue(combatant);
+                for (int i = 0; i < largestTeamSize; i++)
+                {
+                    if (i < PlayerTeam.Count && PlayerTeam[i] != null)
+                        TurnOrder.Add(PlayerTeam[i]);
+
+                    if (i < EnemyTeam.Count && EnemyTeam[i] != null)
+                        TurnOrder.Add(EnemyTeam[i]);
+                }
             }
         }
         
@@ -48,8 +75,8 @@ namespace ProjectDonut.Combat
         {
             TESTINPUTS();
 
-            PlayerTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => PlayerTeam.Remove(x));
-            EnemyTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => EnemyTeam.Remove(x));
+            PlayerTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => HandleCombatantDeath(x));
+            EnemyTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => HandleCombatantDeath(x));
 
             foreach (var combatant in PlayerTeam)
             {
@@ -60,6 +87,38 @@ namespace ProjectDonut.Combat
             {
                 combatant.Update(gameTime);
             }
+
+            // Re-populate turn order
+            PopulateTurnOrder();
+
+            // Handle enemy turn
+            var nonIdleCombatants = TurnOrder.Where(x => x.ActionState != CombatantActionState.Idle).ToList();
+           if (TurnOrder[0].Team == TeamType.Enemy && nonIdleCombatants.Any() == false)
+            {
+                var enemy = TurnOrder[0];
+                var possibleTargets = PlayerTeam.Where(x => x.IsKOd == false).ToList();
+                var target = possibleTargets[_random.Next(possibleTargets.Count)];
+
+                enemy.AttackCombatant(target, (AttackType)_random.Next(3));
+            }
+
+            // Re-populate turn order
+            PopulateTurnOrder();
+        }
+
+        private void HandleCombatantDeath(Combatant combatant)
+        {
+            if (PlayerTeam.Contains(combatant))
+            {
+                //PlayerTeam.Remove(combatant);
+            }
+            else if (EnemyTeam.Contains(combatant))
+            {
+                //EnemyTeam.Remove(combatant);
+                ExperienceEarnedTotal += combatant.Stats.Experience;
+            }
+
+            TurnOrder.RemoveAll(x => x == combatant);
         }
 
         public void TESTDoRandomPlayerTeamAttack()
@@ -69,8 +128,10 @@ namespace ProjectDonut.Combat
                 return;
             }
 
-            var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-            var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+            var character = TurnOrder[0];// PlayerTeam[_random.Next(PlayerTeam.Count)];
+
+            var possibleEnemies = EnemyTeam.Where(x => x.IsKOd == false).ToList();
+            var target = possibleEnemies[_random.Next(possibleEnemies.Count)];
 
             character.AttackCombatant(target, (AttackType)_random.Next(3));
         }
@@ -88,77 +149,43 @@ namespace ProjectDonut.Combat
             character.AttackCombatant(target, (AttackType)_random.Next(3));
         }
 
-        private async void TESTINPUTS()
+        private void TESTINPUTS()
         {
             if (PlayerTeam.Count == 0 || EnemyTeam.Count == 0)
             {
                 return;
             }
 
+            if (TurnOrder[0].Team == TeamType.Enemy)
+            {
+                return;
+            }
+
+            // TEST MELEE
             if (InputManager.IsKeyPressed(Keys.D1))
             {
-                if (_random.Next(100) >= 50)
-                {
-                    TESTDoRandomPlayerTeamAttack();
-                }
-                else
-                {
-                    TESTDoRandomEnemyTeamAttack();
-                }
+                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+
+                character.AttackCombatant(target, AttackType.Melee);
             }
 
+            // TEST RANGED
             if (InputManager.IsKeyPressed(Keys.D2))
             {
-                if (_random.Next(100) >= 50)
-                {
-                    var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-                    var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
 
-                    character.AttackCombatant(target, AttackType.Melee);
-                }
-                else
-                {
-                    var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
-                    var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
-
-                    character.AttackCombatant(target, AttackType.Melee);
-                }
+                character.AttackCombatant(target, AttackType.Ranged);
             }
 
+            // TEST MAGIC
             if (InputManager.IsKeyPressed(Keys.D3))
             {
-                if (_random.Next(100) >= 50)
-                {
-                    var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-                    var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
+                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
+                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
 
-                    character.AttackCombatant(target, AttackType.Ranged);
-                }
-                else
-                {
-                    var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
-                    var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
-
-                    character.AttackCombatant(target, AttackType.Ranged);
-                }
-            }
-
-            if (InputManager.IsKeyPressed(Keys.D4))
-            {
-                if (_random.Next(100) >= 50)
-                {
-                    var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-                    var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
-
-                    character.AttackCombatant(target, AttackType.Magic);
-                }
-                else
-                {
-                    var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
-                    var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
-
-                    character.AttackCombatant(target, AttackType.Magic);
-                }
+                character.AttackCombatant(target, AttackType.Magic);
             }
         }
 
@@ -189,8 +216,6 @@ namespace ProjectDonut.Combat
                     combatants[i].BaseScreenPosition = new Vector2(x, y);
                 }
             }
-        }
-
-        
+        }        
     }
 }

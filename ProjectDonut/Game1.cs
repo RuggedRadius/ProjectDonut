@@ -20,6 +20,7 @@ using ProjectDonut.Environment;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Combat;
+using ProjectDonut.Tools;
 
 namespace ProjectDonut
 {
@@ -71,6 +72,9 @@ namespace ProjectDonut
             Global.SpriteBatch = new SpriteBatch(GraphicsDevice);
             Global.ContentManager = Content;
 
+            Global.BLANK_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
+            Global.BLANK_TEXTURE.SetData(new[] { Color.White });
+
             Global.DEBUG_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
             Global.DEBUG_TEXTURE.SetData(new[] { Color.Magenta });
             Global.MISSING_TEXTURE = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
@@ -110,27 +114,44 @@ namespace ProjectDonut
             base.Initialize();
 
 
-            //var playerTeam = new List<Combatant>()
-            //{
-            //    new Combatant(TeamType.Player),
-            //    new Combatant(TeamType.Player),
-            //    new Combatant(TeamType.Player),
-            //    new Combatant(TeamType.Player),
-            //};
-            //var enemyTeam = new List<Combatant>()
-            //{
-            //    new Combatant(TeamType.Enemy),
-            //    new Combatant(TeamType.Enemy),
-            //    new Combatant(TeamType.Enemy),
-            //    new Combatant(TeamType.Enemy),
-            //};
+            TEST_COMBAT_SCENE();
+        }
 
+        private void TEST_COMBAT_SCENE()
+        {
+            var scene = new CombatScene(Global.SceneManager.CurrentScene);
 
+            var playerTeam = new List<Combatant>();
+            var enemyTeam = new List<Combatant>();
 
-            //var testCombatScene = new CombatScene(playerTeam, enemyTeam);
-            //testCombatScene.Initialize();
-            //testCombatScene.LoadContent();
-            //Global.SceneManager.SetCurrentScene(testCombatScene);
+            for (int i = 0; i < 4; i++)
+            {
+                playerTeam.Add(new Combatant(TeamType.Player, scene.Manager)
+                {
+                    Details = new CombatantDetails()
+                    {
+                        Name = NameGenerator.GenerateRandomName(2)
+                    }
+                });
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                enemyTeam.Add(new Combatant(TeamType.Enemy, scene.Manager)
+                {
+                    Details = new CombatantDetails()
+                    {
+                        Name = NameGenerator.GenerateRandomName(2)
+                    }
+                });
+            }
+
+            scene.Manager.AddTeam(playerTeam, true);
+            scene.Manager.AddTeam(enemyTeam, false);
+            
+            scene.Initialize();
+            scene.LoadContent();
+            Global.SceneManager.SetCurrentScene(scene);
         }
 
         private void CreateGameComponents()

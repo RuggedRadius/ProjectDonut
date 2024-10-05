@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Tools;
 
 namespace ProjectDonut.Combat
 {
@@ -82,41 +83,43 @@ namespace ProjectDonut.Combat
         public void StartCombat()
         {
             // TODO: Freeze player movement/ UI interaction
+            //...
 
-            // Gather player party
-            var playerTeam = new List<Combatant>()
+            var scene = new CombatScene(Global.SceneManager.CurrentScene);
+
+            var playerTeam = new List<Combatant>();
+            var enemyTeam = new List<Combatant>();
+
+            for (int i = 0; i < 4; i++)
             {
-                new Combatant(TeamType.Player),
-                new Combatant(TeamType.Player),
-                new Combatant(TeamType.Player),
-                new Combatant(TeamType.Player),
-            };
+                playerTeam.Add(new Combatant(TeamType.Player, scene.Manager)
+                {
+                    Details = new CombatantDetails()
+                    {
+                        Name = NameGenerator.GenerateRandomName(2)
+                    }
+                });
+            }
 
-            // Create enemy party
-            var enemyTeam = new List<Combatant>()
+            for (int i = 0; i < 4; i++)
             {
-                new Combatant(TeamType.Enemy),
-                new Combatant(TeamType.Enemy),
-                new Combatant(TeamType.Enemy),
-                new Combatant(TeamType.Enemy),
-            };
+                enemyTeam.Add(new Combatant(TeamType.Enemy, scene.Manager)
+                {
+                    Details = new CombatantDetails()
+                    {
+                        Name = NameGenerator.GenerateRandomName(2)
+                    }
+                });
+            }
 
-            // Create scene
-            var scene = CreateCombatScene(playerTeam, enemyTeam);
+            scene.Manager.AddTeam(playerTeam, true);
+            scene.Manager.AddTeam(enemyTeam, false);
 
-            // TODO: Transition FX HERE
+            // TODO: Scene transition FX
 
-            // Switch to combat scene
-            Global.SceneManager.SetCurrentScene(scene);
-        }
-
-        private CombatScene CreateCombatScene(List<Combatant> playerTeam, List<Combatant> enemyTeam)
-        {
-            var scene = new CombatScene(playerTeam, enemyTeam, Global.SceneManager.CurrentScene);
             scene.Initialize();
             scene.LoadContent();
-
-            return scene;
+            Global.SceneManager.SetCurrentScene(scene);
         }
     }
 }
