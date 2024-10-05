@@ -97,6 +97,8 @@ namespace ProjectDonut.Combat
 
         private List<Projectile> Projectiles { get; set; } = new List<Projectile>();
 
+        private Random _random = new Random();
+
         public Combatant(TeamType team, CombatManager manager)
         {
             _manager = manager;
@@ -116,6 +118,8 @@ namespace ProjectDonut.Combat
                 Global.TileSize * CombatScene.SceneScale);
 
             MoveState = CombatantMoveState.Idle;
+
+            ExperienceGiven = _random.Next(100, 201);
         }
 
         private void InitialiseSprites()
@@ -419,11 +423,39 @@ namespace ProjectDonut.Combat
 
                 ActionState = CombatantActionState.TurnComplete;
 
-                CombatScene.Instance.Log.AddLogEntry($"{Details.Name} attacked {target.Details.Name} for 50 damage");
+                if (Team == TeamType.Player)
+                {
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.Log.AddLogEntry($"[#green]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.Log.AddLogEntry($"[#green]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                }
+                else
+                {
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.Log.AddLogEntry($"[#red]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.Log.AddLogEntry($"[#red]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                }
 
                 if (target.IsKOd)
                 {
-                    CombatScene.Instance.Log.AddLogEntry($"{target.Details.Name} has been KO'd");
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.Log.AddLogEntry($"[#green]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.Log.AddLogEntry($"[#red]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                    }                    
                 }
             });
 

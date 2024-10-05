@@ -13,6 +13,12 @@ using ProjectDonut.Interfaces;
 
 namespace ProjectDonut.Combat
 {
+    public enum CombatState
+    {
+        InCombat,
+        CombatFinished
+    }
+
     public class CombatManager : Interfaces.IUpdateable
     {
         public static CombatManager Instance { get; private set; }
@@ -20,9 +26,14 @@ namespace ProjectDonut.Combat
         public List<Combatant> PlayerTeam { get; set; }
         public List<Combatant> EnemyTeam { get; set; }
 
+        public CombatState State { get; set; } = CombatState.InCombat;
+
         public int ExperienceEarnedTotal { get; set; } = 0;
 
         private Random _random = new Random();
+
+        private List<Combatant> baseTurnOrder;
+        private int baseTurnOrderIndex = 0;
 
         public CombatManager() 
         {
@@ -56,17 +67,38 @@ namespace ProjectDonut.Combat
             if (PlayerTeam == null || EnemyTeam == null)
                 return;
 
+            baseTurnOrder = new List<Combatant>();
+
+            var orderedPlayerTeam = PlayerTeam.OrderByDescending(x => x.Stats.Speed).ToList();
+            var orderedEnemyTeam = EnemyTeam.OrderByDescending(x => x.Stats.Speed).ToList();
+
             var largestTeamSize = Math.Max(PlayerTeam.Count, EnemyTeam.Count);
 
+            for (int i = 0; i < largestTeamSize; i++)
+            {
+                if (i < PlayerTeam.Count && PlayerTeam[i] != null)
+                    baseTurnOrder.Add(PlayerTeam[i]);
+
+                if (i < EnemyTeam.Count && EnemyTeam[i] != null)
+                    baseTurnOrder.Add(EnemyTeam[i]);
+            }
+
+            baseTurnOrderIndex = 0;
+
+            TurnOrder = new List<Combatant>(baseTurnOrder);
+        }
+
+        private void ReplenishTurnOrder()
+        {
             while (TurnOrder.Count < 10)
             {
-                for (int i = 0; i < largestTeamSize; i++)
-                {
-                    if (i < PlayerTeam.Count && PlayerTeam[i] != null)
-                        TurnOrder.Add(PlayerTeam[i]);
+                TurnOrder.Add(baseTurnOrder[baseTurnOrderIndex]);
 
-                    if (i < EnemyTeam.Count && EnemyTeam[i] != null)
-                        TurnOrder.Add(EnemyTeam[i]);
+                baseTurnOrderIndex++;
+
+                if (baseTurnOrderIndex >= baseTurnOrder.Count)
+                {
+                    baseTurnOrderIndex = 0;
                 }
             }
         }
@@ -89,7 +121,7 @@ namespace ProjectDonut.Combat
             }
 
             // Re-populate turn order
-            PopulateTurnOrder();
+            ReplenishTurnOrder();
 
             // Handle enemy turn
             var nonIdleCombatants = TurnOrder.Where(x => x.ActionState != CombatantActionState.Idle).ToList();
@@ -106,7 +138,28 @@ namespace ProjectDonut.Combat
             }
 
             // Re-populate turn order
-            PopulateTurnOrder();
+            ReplenishTurnOrder();
+
+            if (State != CombatState.CombatFinished)
+            {
+                var activePlayerMembers = PlayerTeam.Where(x => x.ActionState == CombatantActionState.TurnInProgress).ToList().Count;
+                var activeEnemyMembers = EnemyTeam.Where(x => x.ActionState == CombatantActionState.TurnInProgress).ToList().Count;
+
+                if (activePlayerMembers == 0 && activeEnemyMembers == 0)
+                {
+                    if (PlayerTeam.Where(x => x.IsKOd).Count() == PlayerTeam.Count)
+                    {
+                        CombatScene.Instance.Log.AddLogEntry("[#magenta]The battle has been lost, and your journey ended.[/]");
+                        State = CombatState.CombatFinished;
+                    }
+                    else if (EnemyTeam.Where(x => x.IsKOd).Count() == EnemyTeam.Count)
+                    {
+                        CombatScene.Instance.Log.AddLogEntry($"[#yellow]You have gained[/] [#cyan]{EnemyTeam.Sum(x => x.ExperienceGiven)}[/] [#yellow]experience points.[/]");
+                        CombatScene.Instance.Log.AddLogEntry("[#magenta]The battle has been won, and your journey continues.[/]");
+                        State = CombatState.CombatFinished;
+                    }
+                }
+            }
         }
 
         private void HandleCombatantDeath(Combatant combatant)
@@ -134,21 +187,13 @@ namespace ProjectDonut.Combat
             var character = TurnOrder[0];// PlayerTeam[_random.Next(PlayerTeam.Count)];
 
             var possibleEnemies = EnemyTeam.Where(x => x.IsKOd == false).ToList();
-            var target = possibleEnemies[_random.Next(possibleEnemies.Count)];
 
-            character.AttackCombatant(target, (AttackType)_random.Next(3));
-        }
-
-        public void TESTDoRandomEnemyTeamAttack()
-        {
-            if (PlayerTeam.Count == 0 || EnemyTeam.Count == 0)
+            if (possibleEnemies.Count == 0)
             {
                 return;
             }
 
-            var character = EnemyTeam[_random.Next(EnemyTeam.Count)];
-            var target = PlayerTeam[_random.Next(PlayerTeam.Count)];
-
+            var target = possibleEnemies[_random.Next(possibleEnemies.Count)];
             character.AttackCombatant(target, (AttackType)_random.Next(3));
         }
 
