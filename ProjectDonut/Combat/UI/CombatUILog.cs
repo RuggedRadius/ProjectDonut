@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using ProjectDonut.Core;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace ProjectDonut.Combat
+namespace ProjectDonut.Combat.UI
 {
     public class CombatUILog
     {
@@ -22,7 +22,7 @@ namespace ProjectDonut.Combat
         {
             _logEntries = new List<string>();
 
-            Height = linesToShowCount * lineHeight + (2 * padding);
+            Height = linesToShowCount * lineHeight + 2 * padding;
 
             Bounds = new Rectangle(
                 Global.GraphicsDeviceManager.PreferredBackBufferWidth - Width - margin,
@@ -55,7 +55,7 @@ namespace ProjectDonut.Combat
                     break;
                 }
 
-                var position = new Vector2(Bounds.X + padding, Bounds.Y + padding + (counter * lineHeight));
+                var position = new Vector2(Bounds.X + padding, Bounds.Y + padding + counter * lineHeight);
                 var components = GetLogComponents(_logEntries[i]);
                 DrawLog(components, position);
 
@@ -84,7 +84,7 @@ namespace ProjectDonut.Combat
             for (int i = 0; i < log.Length; i++)
             {
                 if (i < log.Length - 3 &&
-                    log[i] == '[' &&  
+                    log[i] == '[' &&
                     log[i + 1] == '#')
                 {
                     // Begin colour
@@ -103,7 +103,7 @@ namespace ProjectDonut.Combat
                     i += colourString.Length + 2;
                 }
                 else if (i < log.Length - 2 &&
-                    log[i] == '[' && 
+                    log[i] == '[' &&
                     log[i + 1] == '/' &&
                     log[i + 2] == ']')
                 {
@@ -125,10 +125,10 @@ namespace ProjectDonut.Combat
             return components;
         }
 
-        private Color GetColor(string name) 
+        private Color GetColor(string name)
         {
-            switch (name.ToLower()) 
-            { 
+            switch (name.ToLower())
+            {
                 case "red": return Color.Red;
                 case "green": return Color.Green;
                 case "blue": return Color.Blue;

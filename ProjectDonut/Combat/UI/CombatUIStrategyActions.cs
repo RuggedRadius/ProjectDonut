@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Penumbra;
+using ProjectDonut.Combat.Combatants;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 
-namespace ProjectDonut.Combat
+namespace ProjectDonut.Combat.UI
 {
     public class CombatUIStrategyActions : ITargetableCombatUI
     {

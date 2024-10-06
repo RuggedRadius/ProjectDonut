@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace ProjectDonut.Combat
+namespace ProjectDonut.Combat.UI
 {
     public interface ITargetableCombatUI
     {

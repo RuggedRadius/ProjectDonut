@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Combat.Combatants;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects.PlayerComponents;
 
-namespace ProjectDonut.Combat
+namespace ProjectDonut.Combat.UI
 {
     public class CombatUITargetPicker : ITargetableCombatUI
     {
         public bool IsShown { get; set; } = false;
-        
+
         public TeamType TargetTeam { get; set; }
         public Combatant TargetCombatant { get; set; }
         public int _targetIndex = 0;
-        
+
         private CombatManager _manager;
 
         private Texture2D _indicatorTexture;
@@ -75,7 +76,7 @@ namespace ProjectDonut.Combat
 
             Global.SpriteBatch.Draw(
                 _indicatorTexture,
-                IndicatorBounds, 
+                IndicatorBounds,
                 Color.White);
         }
 
@@ -174,8 +175,8 @@ namespace ProjectDonut.Combat
 
         public void DecrementIndex(TeamType teamType)
         {
-            var team = teamType == TeamType.Player ? 
-                CombatManager.Instance.PlayerTeam : 
+            var team = teamType == TeamType.Player ?
+                CombatManager.Instance.PlayerTeam :
                 CombatManager.Instance.EnemyTeam;
 
             if (_targetIndex > 0)

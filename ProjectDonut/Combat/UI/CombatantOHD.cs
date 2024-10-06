@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.Combat.Combatants;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
 

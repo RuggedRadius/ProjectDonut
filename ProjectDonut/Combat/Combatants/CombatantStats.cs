@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.Combat
+namespace ProjectDonut.Combat.Combatants
 {
     public class CombatantStats
     {

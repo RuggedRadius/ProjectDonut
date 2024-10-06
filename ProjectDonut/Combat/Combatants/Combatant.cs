@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RenderingLibrary.Graphics;
 
-namespace ProjectDonut.Combat
+namespace ProjectDonut.Combat.Combatants
 {
     public enum CombatantMoveState
     {
@@ -90,7 +90,7 @@ namespace ProjectDonut.Combat
 
         public bool IsKOd => Stats.Health <= 0;
 
-        private SpriteSheet _spriteSheet;       
+        private SpriteSheet _spriteSheet;
         public SpriteEffects _spriteEffects;
 
         public Rectangle Bounds;
@@ -122,7 +122,7 @@ namespace ProjectDonut.Combat
             Stats = new CombatantStats();
             Stats.TEST_RandomiseStats();
 
-            _spriteEffects = (Team == TeamType.Player) ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            _spriteEffects = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Bounds = new Rectangle(
                 (int)ScreenPosition.X,
@@ -389,7 +389,7 @@ namespace ProjectDonut.Combat
 
             Sprite = new AnimatedSprite(_spriteSheet, "idle");
 
-            Sprite.Effect = (Team == TeamType.Player) ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Sprite.Effect = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
         }
@@ -402,7 +402,7 @@ namespace ProjectDonut.Combat
         }
 
         public void TakeDamage(int damage)
-        {                      
+        {
             if (damage < 0)
                 damage = 0;
 
@@ -453,21 +453,21 @@ namespace ProjectDonut.Combat
             if (_isDamaged)
             {
                 // Flash red or white depending on the current frame counter
-                _drawColour = (_flashFrameCounter < _framesPerFlash / 2) ? Color.Red : Color.White;
+                _drawColour = _flashFrameCounter < _framesPerFlash / 2 ? Color.Red : Color.White;
             }
 
 
             switch (MoveState)
             {
-               case CombatantMoveState.Idle:
+                case CombatantMoveState.Idle:
                     break;
 
                 case CombatantMoveState.MovingToPosition:
-                    
+
 
                     if (ScreenPosition != TargetScreenPosition)
                     {
-                        ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer/_moveTime);
+                        ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
                     }
                     else
                     {
@@ -475,7 +475,7 @@ namespace ProjectDonut.Combat
                         MoveState = CombatantMoveState.Idle;
                     }
                     break;
-                    
+
                 default:
                     break;
             }
@@ -529,11 +529,11 @@ namespace ProjectDonut.Combat
 
             OHD.Draw(gameTime);
 
-            
+
         }
 
         public void DrawBounds()
-        {                     
+        {
             Global.SpriteBatch.DrawRectangle(Bounds, Color.Red, 1);
         }
 
@@ -552,7 +552,7 @@ namespace ProjectDonut.Combat
         public void MoveToRangedPosition()
         {
             if (Team == TeamType.Player)
-            {               
+            {
                 MoveToScreenPosition(BaseScreenPosition + new Vector2(Global.TileSize * CombatScene.SceneScale * 1, 0));
             }
             else
@@ -577,11 +577,11 @@ namespace ProjectDonut.Combat
                     // Flee
                     break;
 
-                    case StrategyAction.MovePosition:
+                case StrategyAction.MovePosition:
                     // Move to a new position
                     break;
 
-                    case StrategyAction.Taunt:
+                case StrategyAction.Taunt:
                     // Taunt
                     break;
             }

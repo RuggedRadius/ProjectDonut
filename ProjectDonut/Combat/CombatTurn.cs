@@ -1,4 +1,6 @@
-﻿namespace ProjectDonut.Combat
+﻿using ProjectDonut.Combat.Combatants;
+
+namespace ProjectDonut.Combat
 {
     public class CombatTurn
     {

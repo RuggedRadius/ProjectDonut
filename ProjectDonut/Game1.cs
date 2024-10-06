@@ -19,8 +19,8 @@ using Penumbra;
 using ProjectDonut.Environment;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
-using ProjectDonut.Combat;
 using ProjectDonut.Tools;
+using ProjectDonut.Combat.Combatants;
 
 namespace ProjectDonut
 {

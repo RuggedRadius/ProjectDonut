@@ -1,15 +1,20 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Combat.Combatants;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.Sprites;
-using RenderingLibrary.Math.Geometry;
 
-namespace ProjectDonut.Combat
+namespace ProjectDonut.Combat.UI
 {
-    public class CombatUIAbility : ITargetableCombatUI
+    public class CombatUIItem : ITargetableCombatUI
     {
         public bool IsShown { get; set; } = false;
 
@@ -37,11 +42,11 @@ namespace ProjectDonut.Combat
 
         public bool IsFirstFrame { get; set; } // Gross
 
-        public CombatUIAbility(CombatManager manager)
+        public CombatUIItem()
         {
-            _manager = manager;
+            _manager = CombatScene.Instance.Manager;
 
-            Height = (linesToShowCount * lineHeight) + (padding * 2) + (2 * lineHeight);
+            Height = linesToShowCount * lineHeight + padding * 2 + 2 * lineHeight;
 
             Bounds = new Rectangle(
                 320,
@@ -87,7 +92,6 @@ namespace ProjectDonut.Combat
                 {
                     _indcatorIndex++;
 
-                    //if (_indcatorIndex >= linesOffset + linesToShowCount)
                     if (_indcatorIndex >= linesToShowCount)
                         linesOffset++;
                 }
@@ -95,13 +99,15 @@ namespace ProjectDonut.Combat
 
             IndicatorPosition = new Vector2(
                 Bounds.X + padding,
-                Bounds.Y + padding + (_indcatorIndex * lineHeight) - (linesOffset * lineHeight) + lineHeight);
+                Bounds.Y + padding + _indcatorIndex * lineHeight - linesOffset * lineHeight + lineHeight);
 
             if (InputManager.IsKeyPressed(Keys.Space))
             {
-                CombatScene.Instance.Manager.CombatTurnCurrent.Ability = _manager.TurnOrder[0].Abilities[_indcatorIndex];
-                CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.MagicAttack;
+                CombatScene.Instance.Manager.CombatTurnCurrent.Item = CombatScene.Instance.PlayerItems[_indcatorIndex];
+                CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.UseItem;
                 CombatScene.Instance.ChangeTargetUI(CombatScene.Instance.TargetPickerUI);
+
+                // TODO: Maybe set the targetter to default on the character using the item?
             }
         }
 
@@ -115,7 +121,7 @@ namespace ProjectDonut.Combat
 
             DrawBackground();
             DrawIndicator();
-            DrawAbilities();
+            DrawItems();
             DrawMoreIndicators();
         }
 
@@ -140,31 +146,31 @@ namespace ProjectDonut.Combat
             }
         }
 
-        private void DrawAbilities()
+        private void DrawItems()
         {
             int counter = 0;
-            for (int i = 0 + linesOffset; i < _manager.TurnOrder[0].Abilities.Count; i++)
+            for (int i = 0 + linesOffset; i < CombatScene.Instance.PlayerItems.Count; i++)
             {
-                var ability = _manager.TurnOrder[0].Abilities[i];
+                var item = CombatScene.Instance.PlayerItems[i];
 
                 if (i == _indcatorIndex)
                 {
                     Global.SpriteBatch.DrawString(
                         Global.FontDebug,
-                        ability.Name,
+                        item.Name,
                         new Vector2(
-                            Bounds.X + padding + 32 + padding, 
-                            Bounds.Y + padding + (i * 20) - (linesOffset * 20) + lineHeight),
+                            Bounds.X + padding + 32 + padding,
+                            Bounds.Y + padding + i * 20 - linesOffset * 20 + lineHeight),
                         Color.White);
                 }
                 else
                 {
                     Global.SpriteBatch.DrawString(
                         Global.FontDebug,
-                        ability.Name,
+                        item.Name,
                         new Vector2(
-                            Bounds.X + padding + 32 + padding, 
-                            Bounds.Y + padding + (i * 20) - (linesOffset * 20) + lineHeight),
+                            Bounds.X + padding + 32 + padding,
+                            Bounds.Y + padding + i * 20 - linesOffset * 20 + lineHeight),
                         Color.Gray);
                 }
 
@@ -181,16 +187,16 @@ namespace ProjectDonut.Combat
             {
                 Global.SpriteBatch.Draw(IndicatorMoreUp,
                     new Vector2(
-                        Bounds.X + (Width / 2) - (IndicatorMoreUp.Width / 2),
+                        Bounds.X + Width / 2 - IndicatorMoreUp.Width / 2,
                         Bounds.Y + padding),
                     Color.Gray);
             }
 
-            if (linesOffset < (_manager.TurnOrder[0].Abilities.Count - linesToShowCount))
+            if (linesOffset < _manager.TurnOrder[0].Abilities.Count - linesToShowCount)
             {
                 Global.SpriteBatch.Draw(IndicatorMoreDown,
                     new Vector2(
-                        Bounds.X + (Width / 2) - (IndicatorMoreDown.Width / 2),
+                        Bounds.X + Width / 2 - IndicatorMoreDown.Width / 2,
                         Bounds.Y + Height - padding - lineHeight),
                     Color.Gray);
             }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Combat.Combatants;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
@@ -176,9 +177,9 @@ namespace ProjectDonut.Combat.UI
 
             // Draw the combat UI options
             Global.SpriteBatch.DrawString(Global.FontDebug, "Melee Attack", ScreenPositionAttack, _selectedOption == CombatUIOptionsType.Attack ? Color.White : Color.Gray);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Ability", ScreenPositionAbility, _selectedOption == CombatUIOptionsType.Ability ? Color.White : Color.Gray);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Item", ScreenPositionItem, _selectedOption == CombatUIOptionsType.Item ? Color.White : Color.Gray);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Combat Actions", ScreenPositionCombatActions, _selectedOption == CombatUIOptionsType.CombatAction ? Color.White : Color.Gray);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Ability", ScreenPositionAbility, _selectedOption == CombatUIOptionsType.Ability ? Color.White : Color.Gray);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Item", ScreenPositionItem, _selectedOption == CombatUIOptionsType.Item ? Color.White : Color.Gray);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Strategy Action", ScreenPositionCombatActions, _selectedOption == CombatUIOptionsType.CombatAction ? Color.White : Color.Gray);
 
             // Draw selection indicator
             if (CombatScene.Instance.CurrentTargetUI != this)
