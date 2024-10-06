@@ -13,6 +13,7 @@ namespace ProjectDonut.Combat
         public int Defence { get; set; }
         public int Magic { get; set; }
         public int Resistance { get; set; }
+        public int Armour { get; set; }
         public int Luck { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; set; }
@@ -64,11 +65,30 @@ namespace ProjectDonut.Combat
         public int ManaRegenRateAmountRateRate { get; set;
          * */
 
+        private Random _random = new Random();
+
         public CombatantStats()
         {
             // TEMP
             MaxHealth = 100;
             Health = MaxHealth;
+        }
+
+        public void TEST_RandomiseStats()
+        {
+            Speed = _random.Next(1, 10);
+            Strength = _random.Next(1, 10);
+            Defence = _random.Next(1, 10);
+            Magic = _random.Next(1, 10);
+            Resistance = _random.Next(1, 10);
+            Armour = _random.Next(1, 10);
+            Luck = _random.Next(1, 10);
+            //Health = _random.Next(1, 100);
+            //MaxHealth = Health;
+            //Mana = _random.Next(1, 100);    
+            //MaxMana = Mana;
+            //Experience = _random.Next(1, 100);
+            Level = _random.Next(1, 10);
         }
     }
 }

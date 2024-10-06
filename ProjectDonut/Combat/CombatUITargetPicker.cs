@@ -160,7 +160,7 @@ namespace ProjectDonut.Combat
                 _targetIndex++;
                 maxTries--;
 
-                if (_targetIndex >= team.Count - 1)
+                if (_targetIndex >= team.Count)
                 {
                     _targetIndex = 0;
                 }

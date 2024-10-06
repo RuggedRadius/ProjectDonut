@@ -9,17 +9,22 @@
 
         public CombatAbility Ability { get; set; }
         public CombatItem Item { get; set; }
-        public CombatAction CombatAction { get; set; }
+        public StrategyAction StrategyAction { get; set; }
+
+        public int DamageDealt { get; set; }
+        public int HealingDealt { get; set; }
+
+        public bool TurnComplete { get; set; }
 
         public CombatTurn(Combatant attacker)
         {
             Attacker = attacker;
 
             Action = CombatTurnAction.Undecided;
-            CombatAction = CombatAction.Undecided;
+            StrategyAction = StrategyAction.Undecided;
         }
 
-        public bool IsTurnComplete()
+        public bool ReadyToExecute()
         {
             bool hasAttacker = Attacker != null;
             bool hasTarget = Target != null;
@@ -38,7 +43,7 @@
                     return hasAttacker && hasTarget && hasItem;
 
                 case CombatTurnAction.UseCombatAction:
-                    return hasAttacker && hasAttacker && CombatAction != CombatAction.Undecided;
+                    return hasAttacker && hasAttacker && StrategyAction != StrategyAction.Undecided;
 
                 default:
                     return false;
