@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using RenderingLibrary.Graphics;
+using System.ComponentModel;
 
 namespace ProjectDonut.Combat.Combatants
 {
@@ -33,15 +34,16 @@ namespace ProjectDonut.Combat.Combatants
         PhysicalAttack,
         MagicAttack,
         UseItem,
-        UseCombatAction
+        StrategyAction
     }
 
     public enum StrategyAction
     {
-        Undecided,
-        Flee,
-        MovePosition,
-        Taunt
+        [Description("None")] None,
+        [Description("Flee")] Flee,
+        [Description("Taunt")] Taunt,
+        [Description("Defend")] Defend,
+        [Description("Swap Positions")] MovePosition,        
     }
 
     public enum TeamType

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectDonut.Combat.Combatants;
@@ -34,13 +36,14 @@ namespace ProjectDonut.Combat.UI
                     log = WriteUseItemLog(turn);
                     break;
 
-                case CombatTurnAction.UseCombatAction:
+                case CombatTurnAction.StrategyAction:
+                    log = WriteStrategicActionLog(turn);
                     break;
             }
 
             CombatScene.Instance.LogUI.AddLogEntry(log);
 
-            if (turn.Target.IsKOd)
+            if (turn.Target != null && turn.Target.IsKOd)
             {
                 if (turn.Target.Team == TeamType.Player)
                 {
@@ -51,6 +54,50 @@ namespace ProjectDonut.Combat.UI
                     CombatScene.Instance.LogUI.AddLogEntry($"[#red]{turn.Target.Details.Name}[/] has been [#gray]KO'd[/]");
                 }
             }
+        }
+
+        private string WriteStrategicActionLog(CombatTurn turn)
+        {                    
+            var log = "";
+
+            // Attack text
+            if (turn.Attacker.Team == TeamType.Player)
+            {
+                log += $"[#green]{turn.Attacker.Details.Name}[/]";
+            }
+            else
+            {
+                log += $"[#red]{turn.Attacker.Details.Name}[/]";
+            }
+
+            log += $" used [#yellow]{GetEnumDescription(turn.StrategyAction)}[/]";
+
+            if (turn.Target != null)
+            {
+                log += " on ";
+
+                if (turn.Target.Team == TeamType.Player)
+                {
+                    log += $"[#green]{turn.Target.Details.Name}[/].";
+                }
+                else
+                {
+                    log += $"[#red]{turn.Target.Details.Name}[/].";
+                }
+            }
+
+            return log;
+        }
+
+        private string GetEnumDescription(Enum value)
+        {
+            FieldInfo fi = value.GetType().GetField(value.ToString());
+            DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+            if (attributes != null && attributes.Length > 0)
+                return attributes[0].Description;
+            else
+                return value.ToString();
         }
 
         private string WriteUseItemLog(CombatTurn turn)

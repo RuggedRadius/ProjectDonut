@@ -146,6 +146,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 var itemUI = CurrentTargetUI as CombatUIItem;
                 itemUI.IsFirstFrame = true;
             }
+
+            if (CurrentTargetUI is CombatUIStrategyActions)
+            {
+                var combatActionsUI = CurrentTargetUI as CombatUIStrategyActions;
+                combatActionsUI.IsFirstFrame = true;
+            }
         }
 
         public void ReturnToPreviousTargetUI()

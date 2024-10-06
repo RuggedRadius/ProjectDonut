@@ -138,7 +138,7 @@ namespace ProjectDonut.Combat
                         turn.Attacker.UseItem(ref turn);
                         break;
 
-                    case CombatTurnAction.UseCombatAction:
+                    case CombatTurnAction.StrategyAction:
                         turn.Attacker.UseCombatAction(ref turn);
                         break;
                 }

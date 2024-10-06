@@ -128,7 +128,7 @@ namespace ProjectDonut.Combat.UI
                     break;
 
                 case CombatUIOptionsType.CombatAction:
-                    CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.UseCombatAction;
+                    CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.StrategyAction;
                     CombatScene.Instance.ChangeTargetUI(CombatScene.Instance.CombatActionsUI);
                     break;
             }
@@ -171,9 +171,14 @@ namespace ProjectDonut.Combat.UI
 
             // Draw background
             if (CombatScene.Instance.CurrentTargetUI != this)
+            {
                 Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
+            }
             else
-                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Yellow * 0.5f);
+            {
+                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
+                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Yellow * 0.25f);
+            }
 
             // Draw the combat UI options
             Global.SpriteBatch.DrawString(Global.FontDebug, "Melee Attack", ScreenPositionAttack, _selectedOption == CombatUIOptionsType.Attack ? Color.White : Color.Gray);

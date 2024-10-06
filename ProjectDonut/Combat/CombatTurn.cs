@@ -1,4 +1,6 @@
-﻿using ProjectDonut.Combat.Combatants;
+﻿using System;
+using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat
 {
@@ -23,7 +25,7 @@ namespace ProjectDonut.Combat
             Attacker = attacker;
 
             Action = CombatTurnAction.Undecided;
-            StrategyAction = StrategyAction.Undecided;
+            StrategyAction = StrategyAction.None;
         }
 
         public bool ReadyToExecute()
@@ -44,8 +46,21 @@ namespace ProjectDonut.Combat
                 case CombatTurnAction.UseItem:
                     return hasAttacker && hasTarget && hasItem;
 
-                case CombatTurnAction.UseCombatAction:
-                    return hasAttacker && hasAttacker && StrategyAction != StrategyAction.Undecided;
+                case CombatTurnAction.StrategyAction:
+                    switch (StrategyAction)
+                    {
+                        case StrategyAction.Taunt:
+                        case StrategyAction.MovePosition:
+                            return hasAttacker && hasTarget && StrategyAction != StrategyAction.None;
+
+                        case StrategyAction.Flee:
+                        case StrategyAction.Defend:
+                        default:
+                            return hasAttacker && StrategyAction != StrategyAction.None;
+
+                        case StrategyAction.None:
+                            return false;
+                    }
 
                 default:
                     return false;
