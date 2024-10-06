@@ -71,6 +71,9 @@ namespace ProjectDonut.Combat.UI
                 return;
             }
 
+            if (_manager.IsExecutingTurn)
+                return;
+
             if (CombatScene.Instance.CurrentTargetUI != this)
                 return;
 

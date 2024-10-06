@@ -78,13 +78,15 @@ namespace ProjectDonut.Combat.UI
 
                 if (turn.Target.Team == TeamType.Player)
                 {
-                    log += $"[#green]{turn.Target.Details.Name}[/].";
+                    log += $"[#green]{turn.Target.Details.Name}[/]";
                 }
                 else
                 {
-                    log += $"[#red]{turn.Target.Details.Name}[/].";
+                    log += $"[#red]{turn.Target.Details.Name}[/]";
                 }
             }
+
+            log += ".";
 
             return log;
         }

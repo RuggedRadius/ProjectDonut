@@ -147,6 +147,8 @@ namespace ProjectDonut.Combat
                 CombatScene.Instance.LogWriter.WriteLog(turn);
                 IsExecutingTurn = false;
             });
+
+            CombatScene.Instance.ChangeTargetUI(CombatScene.Instance.OptionsUI);
         }
                 
         public void Update(GameTime gameTime)

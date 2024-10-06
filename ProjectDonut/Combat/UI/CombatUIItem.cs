@@ -119,6 +119,9 @@ namespace ProjectDonut.Combat.UI
             if (_manager.TurnOrder[0].Team == TeamType.Enemy)
                 return;
 
+            if (_manager.IsExecutingTurn)
+                return;
+
             DrawBackground();
             DrawIndicator();
             DrawItems();
