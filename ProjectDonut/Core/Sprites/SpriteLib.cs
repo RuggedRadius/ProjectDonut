@@ -823,6 +823,8 @@ namespace ProjectDonut.Core.Sprites
                 Indicators = new Dictionary<string, Texture2D>();
 
                 Indicators.Add("pointer-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/MouseCursorSide"));
+                Indicators.Add("arrow-up", Global.ContentManager.Load<Texture2D>("Sprites/Combat/ui-arrow-up"));
+                Indicators.Add("arrow-down", Global.ContentManager.Load<Texture2D>("Sprites/Combat/ui-arrow-down"));
             }
         }
 

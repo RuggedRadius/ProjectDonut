@@ -25,7 +25,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public CombatUILogWriter LogWriter;
         public CombatUIAbility AbilityUI;
         public CombatUIItem ItemUI;
-        public CombatUICombatActions CombatActionsUI;
+        public CombatUIStrategyActions CombatActionsUI;
         public CombatUITargetPicker TargetPickerUI;
         public List<ITargetableCombatUI> TargetUIHistory;
         public ITargetableCombatUI CurrentTargetUI;
@@ -57,7 +57,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             ItemUI = new CombatUIItem();
             TargetPickerUI = new CombatUITargetPicker();
             OptionsUI = new CombatUIOptions();
-            CombatActionsUI = new CombatUICombatActions();
+            CombatActionsUI = new CombatUIStrategyActions();
 
             TargetUIHistory = new List<ITargetableCombatUI>();
             CurrentTargetUI = OptionsUI;
@@ -133,6 +133,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 targetPicker.IncrementIndex(targetPicker.TargetTeam);     
                 
                 targetPicker.IsFirstFrame = true;
+            }
+
+            if (CurrentTargetUI is CombatUIAbility)
+            {
+                var abilityUI = CurrentTargetUI as CombatUIAbility;
+                abilityUI.IsFirstFrame = true;
             }
         }
 

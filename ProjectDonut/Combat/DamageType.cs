@@ -2,6 +2,8 @@
 {
     public enum DamageType
     {
+        None, 
+
         PhysicalBlunt,
         PhysicalSharp,
 

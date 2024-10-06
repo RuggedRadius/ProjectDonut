@@ -109,7 +109,6 @@ namespace ProjectDonut.Combat
             }
         }
 
-        private int TMP_TurnsExecuted = 0;
         public void ExecuteTurn(CombatTurn turn)
         {
             if (IsExecutingTurn)
@@ -142,14 +141,9 @@ namespace ProjectDonut.Combat
                         turn.Attacker.UseCombatAction(ref turn);
                         break;
                 }
-
                 
                 CombatTurnCurrent.TurnComplete = true;
-                
-
                 CombatScene.Instance.LogWriter.WriteLog(turn);
-
-                TMP_TurnsExecuted++;
                 IsExecutingTurn = false;
             });
         }
@@ -162,13 +156,6 @@ namespace ProjectDonut.Combat
                 TurnOrder.RemoveAt(0);
                 CombatTurnCurrent = new CombatTurn(TurnOrder[0]);
             }
-
-            //if (CombatTurnCurrent == null)
-            //{
-            //    CombatTurnCurrent = new CombatTurn(TurnOrder[0]);
-            //}
-
-            //TESTINPUTS();
 
             PlayerTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => HandleCombatantDeath(x));
             EnemyTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => HandleCombatantDeath(x));

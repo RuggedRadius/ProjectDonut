@@ -175,10 +175,10 @@ namespace ProjectDonut.Combat.UI
                 Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Yellow * 0.5f);
 
             // Draw the combat UI options
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Melee Attack", ScreenPositionAttack, Color.White);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Ability", ScreenPositionAbility, Color.White);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Item", ScreenPositionItem, Color.White);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Combat Actions", ScreenPositionCombatActions, Color.White);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Melee Attack", ScreenPositionAttack, _selectedOption == CombatUIOptionsType.Attack ? Color.White : Color.Gray);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Ability", ScreenPositionAbility, _selectedOption == CombatUIOptionsType.Ability ? Color.White : Color.Gray);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Item", ScreenPositionItem, _selectedOption == CombatUIOptionsType.Item ? Color.White : Color.Gray);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Combat Actions", ScreenPositionCombatActions, _selectedOption == CombatUIOptionsType.CombatAction ? Color.White : Color.Gray);
 
             // Draw selection indicator
             if (CombatScene.Instance.CurrentTargetUI != this)

@@ -12,7 +12,7 @@ using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat
 {
-    public class CombatUICombatActions : ITargetableCombatUI
+    public class CombatUIStrategyActions : ITargetableCombatUI
     {
         public bool IsShown { get; set; }
 
@@ -25,7 +25,7 @@ namespace ProjectDonut.Combat
         private CombatManager _manager;
 
 
-        public CombatUICombatActions()
+        public CombatUIStrategyActions()
         {
             _manager = CombatScene.Instance.Manager;
             Bounds = new Rectangle(

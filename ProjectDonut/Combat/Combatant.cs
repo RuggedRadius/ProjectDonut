@@ -173,6 +173,171 @@ namespace ProjectDonut.Combat
                 DamageMax = 20,
                 DamageType = DamageType.ElementalWater
             });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Earthquake",
+                Description = "An earth attack.",
+                ManaCost = 10,
+                EnergyCost = 0,
+                DamageMin = 10,
+                DamageMax = 20,
+                DamageType = DamageType.ElementalEarth
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Heal",
+                Description = "Heal yourself.",
+                ManaCost = 10,
+                EnergyCost = 0,
+                DamageMin = 10,
+                DamageMax = 20,
+                DamageType = DamageType.Holy
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Revive",
+                Description = "Revive a fallen ally.",
+                ManaCost = 10,
+                EnergyCost = 0,
+                DamageMin = 10,
+                DamageMax = 20,
+                DamageType = DamageType.Holy
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Defend",
+                Description = "Increase your defense.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Taunt",
+                Description = "Taunt the enemy.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Flee",
+                Description = "Run away.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Move",
+                Description = "Move to a new position.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Item",
+                Description = "Use an item.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Physical Attack",
+                Description = "A physical attack.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 5,
+                DamageMax = 10,
+                DamageType = DamageType.PhysicalBlunt
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Magic Attack",
+                Description = "A magic attack.",
+                ManaCost = 10,
+                EnergyCost = 0,
+                DamageMin = 10,
+                DamageMax = 20,
+                DamageType = DamageType.ElementalThunder
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Item",
+                Description = "Use an item.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Combat Action",
+                Description = "Flee, change position.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Physical Attack",
+                Description = "A physical attack.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 5,
+                DamageMax = 10,
+                DamageType = DamageType.PhysicalBlunt
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Magic Attack",
+                Description = "A magic attack.",
+                ManaCost = 10,
+                EnergyCost = 0,
+                DamageMin = 10,
+                DamageMax = 20,
+                DamageType = DamageType.ElementalThunder
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Item",
+                Description = "Use an item.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 0,
+                DamageMax = 0,
+                DamageType = DamageType.None
+            });
         }
 
 
@@ -238,6 +403,9 @@ namespace ProjectDonut.Combat
 
         public void TakeDamage(int damage)
         {                      
+            if (damage < 0)
+                damage = 0;
+
             TextDisplay.AddText(damage.ToString(), 0, Vector2.Zero, Color.Red);
             _isDamaged = true;
             _damageFlashTimer = _damageFlashDuration; // Start the flash timer

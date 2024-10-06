@@ -130,6 +130,30 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Combat/placeholder-combatant.png
 
+#begin Sprites/Combat/ui-arrow-down.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Combat/ui-arrow-down.png
+
+#begin Sprites/Combat/ui-arrow-up.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Combat/ui-arrow-up.png
+
 #begin Sprites/Doodads/Barrels/Barrel01.png
 /importer:TextureImporter
 /processor:TextureProcessor
