@@ -1,4 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
@@ -6,14 +11,13 @@ using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat
 {
-    public class CombatUIAbility : ITargetableCombatUI
+    public class CombatUIItem : ITargetableCombatUI
     {
         public bool IsShown { get; set; } = false;
 
         private CombatManager _manager;
 
-        public Rectangle Bounds { get; set; }
-
+        private Rectangle Bounds { get; set; }
         private int linesToShowCount = 10;
         private int lineHeight = 20;
         private int padding = 10;
@@ -21,9 +25,9 @@ namespace ProjectDonut.Combat
         private int Height = 220;
         private int margin = 10;
 
-        public CombatUIAbility(CombatManager manager)
+        public CombatUIItem() 
         {
-            _manager = manager;
+            _manager = CombatScene.Instance.Manager;
 
             Bounds = new Rectangle(
                 320,
@@ -32,7 +36,7 @@ namespace ProjectDonut.Combat
                 Height);
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime) 
         {
             if (CombatScene.Instance.CurrentTargetUI != this)
                 return;
@@ -61,11 +65,15 @@ namespace ProjectDonut.Combat
                 Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, Bounds, Color.Black * 0.5f);
             }
 
-            // Draw abilities
-            for (int i = 0; i < _manager.TurnOrder[0].Abilities.Count; i++)
+            // Draw items
+            for (int i = 0; i < CombatScene.Instance.PlayerItems.Count; i++)
             {
-                var ability = _manager.TurnOrder[0].Abilities[i];
-                Global.SpriteBatch.DrawString(Global.FontDebug, ability.Name, new Vector2(Bounds.X + padding, Bounds.Y + padding + (i * 20)), Color.White);
+                var item = CombatScene.Instance.PlayerItems[i];
+                Global.SpriteBatch.DrawString(
+                    Global.FontDebug, 
+                    item.Name, 
+                    new Vector2(Bounds.X + padding, Bounds.Y + padding + (i * 20)), 
+                    Color.White);
             }
         }
     }

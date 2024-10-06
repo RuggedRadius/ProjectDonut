@@ -1,30 +1,33 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Penumbra;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat
 {
-    public class CombatUIAbility : ITargetableCombatUI
+    public class CombatUICombatActions : ITargetableCombatUI
     {
-        public bool IsShown { get; set; } = false;
+        public bool IsShown { get; set; }
 
-        private CombatManager _manager;
-
-        public Rectangle Bounds { get; set; }
-
-        private int linesToShowCount = 10;
-        private int lineHeight = 20;
+        private Rectangle Bounds;
         private int padding = 10;
         private int Width = 600;
         private int Height = 220;
         private int margin = 10;
 
-        public CombatUIAbility(CombatManager manager)
-        {
-            _manager = manager;
+        private CombatManager _manager;
 
+
+        public CombatUICombatActions()
+        {
+            _manager = CombatScene.Instance.Manager;
             Bounds = new Rectangle(
                 320,
                 Global.GraphicsDeviceManager.PreferredBackBufferHeight - Height - margin,
@@ -34,6 +37,9 @@ namespace ProjectDonut.Combat
 
         public void Update(GameTime gameTime)
         {
+            if (IsShown == false)
+                return;
+
             if (CombatScene.Instance.CurrentTargetUI != this)
                 return;
 
@@ -59,13 +65,6 @@ namespace ProjectDonut.Combat
             else
             {
                 Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, Bounds, Color.Black * 0.5f);
-            }
-
-            // Draw abilities
-            for (int i = 0; i < _manager.TurnOrder[0].Abilities.Count; i++)
-            {
-                var ability = _manager.TurnOrder[0].Abilities[i];
-                Global.SpriteBatch.DrawString(Global.FontDebug, ability.Name, new Vector2(Bounds.X + padding, Bounds.Y + padding + (i * 20)), Color.White);
             }
         }
     }

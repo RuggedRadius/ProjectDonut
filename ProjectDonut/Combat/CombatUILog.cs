@@ -56,7 +56,6 @@ namespace ProjectDonut.Combat
                 }
 
                 var position = new Vector2(Bounds.X + padding, Bounds.Y + padding + (counter * lineHeight));
-                //Global.SpriteBatch.DrawString(Global.FontDebug, _logEntries[i], position, Color.White);
                 var components = GetLogComponents(_logEntries[i]);
                 DrawLog(components, position);
 

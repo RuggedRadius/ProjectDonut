@@ -802,10 +802,12 @@ namespace ProjectDonut.Core.Sprites
         public static class Combat
         {
             public static Dictionary<string, Texture2D> Avatars;
+            public static Dictionary<string, Texture2D> Indicators;
 
             public static void Load()
             {
                 LoadAvatars();
+                LoadIndcators();
             }
 
             public static void LoadAvatars()
@@ -814,6 +816,13 @@ namespace ProjectDonut.Core.Sprites
 
                 Avatars.Add("player", Global.ContentManager.Load<Texture2D>("Sprites/Combat/avatar_player"));
                 Avatars.Add("enemy", Global.ContentManager.Load<Texture2D>("Sprites/Combat/avatar_enemy"));
+            }
+
+            public static void LoadIndcators()
+            {
+                Indicators = new Dictionary<string, Texture2D>();
+
+                Indicators.Add("pointer-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/MouseCursorSide"));
             }
         }
 

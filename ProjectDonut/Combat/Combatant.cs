@@ -27,11 +27,21 @@ namespace ProjectDonut.Combat
         TurnComplete
     }
 
-    public enum AttackType
+    public enum CombatTurnAction
     {
-        Melee,
-        Ranged,
-        Magic
+        Undecided,
+        PhysicalAttack,
+        MagicAttack,
+        UseItem,
+        UseCombatAction
+    }
+
+    public enum CombatAction
+    {
+        Undecided,
+        Flee,
+        MovePosition,
+        Taunt
     }
 
     public enum TeamType
@@ -49,7 +59,6 @@ namespace ProjectDonut.Combat
 
         int ExperienceGiven { get; set; }
 
-        //void Attack(AttackType attackType, Combatant target);
         void Defend();
         void UseItem();
         void UseAbility(); //TODO: Implement abilities
@@ -68,6 +77,9 @@ namespace ProjectDonut.Combat
         public TeamType Team { get; set; }
         public CombatantMoveState MoveState { get; set; }
         public CombatantActionState ActionState { get; set; }
+
+        public List<CombatAbility> Abilities { get; set; }
+
 
         public FloatingTextDisplay TextDisplay { get; set; }
         public CombatantOHD OHD { get; set; }
@@ -120,7 +132,48 @@ namespace ProjectDonut.Combat
             MoveState = CombatantMoveState.Idle;
 
             ExperienceGiven = _random.Next(100, 201);
+
+            InitialiseAbilities();
         }
+
+        private void InitialiseAbilities()
+        {
+            Abilities = new List<CombatAbility>();
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Attack",
+                Description = "A basic attack.",
+                ManaCost = 0,
+                EnergyCost = 0,
+                DamageMin = 5,
+                DamageMax = 10,
+                DamageType = DamageType.PhysicalBlunt
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Fireball",
+                Description = "A fireball attack.",
+                ManaCost = 10,
+                EnergyCost = 0,
+                DamageMin = 10,
+                DamageMax = 20,
+                DamageType = DamageType.ElementalFire
+            });
+
+            Abilities.Add(new CombatAbility
+            {
+                Name = "Heal",
+                Description = "Heal yourself.",
+                ManaCost = 10,
+                EnergyCost = 0,
+                DamageMin = 10,
+                DamageMax = 20,
+                DamageType = DamageType.Holy
+            });
+        }
+
 
         private void InitialiseSprites()
         {
@@ -272,13 +325,6 @@ namespace ProjectDonut.Combat
 
         public void Draw(GameTime gameTime)
         {
-            //Global.SpriteBatch.DrawString(
-            //    Global.FontDebug,
-            //    _flashSprite.ToString(),
-            //    ScreenPosition,
-            //    Color.White
-            //);
-
             if (IsKOd)
             {
                 Global.SpriteBatch.Draw(
@@ -346,7 +392,8 @@ namespace ProjectDonut.Combat
             }
         }
 
-        public async void AttackCombatant(Combatant target, AttackType attackType)
+        #region Combat Options
+        public void UseCombatAction(CombatAction action, Combatant? target)
         {
             if (ActionState != CombatantActionState.Idle)
             {
@@ -355,94 +402,118 @@ namespace ProjectDonut.Combat
 
             ActionState = CombatantActionState.TurnInProgress;
 
-            await Task.Run(() =>
+
+            switch (action)
             {
-                switch (attackType)
+                case CombatAction.Flee:
+                    // Flee
+                    break;
+
+                    case CombatAction.MovePosition:
+                    // Move to a new position
+                    break;
+
+                    case CombatAction.Taunt:
+                    // Taunt
+                    break;
+            }
+
+            #region Write Logs
+            if (Team == TeamType.Player)
+            {
+                if (target.Team == TeamType.Player)
                 {
-                    case AttackType.Melee:
-                        MoveToMeleePosition(target);
-
-                        while (MoveState != CombatantMoveState.Idle) { }
-
-                        Sprite.SetAnimation("melee").OnAnimationEvent += (sender, trigger) =>
-                        {
-                            if (trigger == AnimationEventTrigger.AnimationCompleted)
-                            {
-                                Sprite.SetAnimation("idle");
-                            }
-                        };
-
-                        while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "melee") { }
-                        target.TakeDamage(50);
-                        break;
-
-                    case AttackType.Ranged:
-                        MoveToRangedPosition();
-
-                        while (MoveState != CombatantMoveState.Idle) { }
-
-                        Sprite.SetAnimation("ranged").OnAnimationEvent += (sender, trigger) =>
-                        {
-                            if (trigger == AnimationEventTrigger.AnimationCompleted)
-                            {
-                                Sprite.SetAnimation("idle");
-                                //Projectiles.Add(new Projectile(
-                                //    _arrowSprite,
-                                //    20f,
-                                //    ScreenPosition,
-                                //    target
-                                //));
-                            }
-                        };
-
-                        while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "ranged") { }
-                        //while (Projectiles.Count > 0) { }
-                        target.TakeDamage(50);
-                        break;
-
-                    case AttackType.Magic:
-                        MoveToRangedPosition();
-
-                        while (MoveState != CombatantMoveState.Idle) { }
-
-                        Sprite.SetAnimation("magic").OnAnimationEvent += (sender, trigger) =>
-                        {
-                            if (trigger == AnimationEventTrigger.AnimationCompleted)
-                            {
-                                Sprite.SetAnimation("idle");
-                            }
-                        };
-
-                        while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "magic") { }
-                        target.TakeDamage(50);
-                        break;
+                    CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
                 }
+                else
+                {
+                    CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                }
+            }
+            else
+            {
+                if (target.Team == TeamType.Player)
+                {
+                    CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                }
+                else
+                {
+                    CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                }
+            }
 
+            if (target.IsKOd)
+            {
+                if (target.Team == TeamType.Player)
+                {
+                    CombatScene.Instance.LogUI.AddLogEntry($"[#green]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                }
+                else
+                {
+                    CombatScene.Instance.LogUI.AddLogEntry($"[#red]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                }
+            }
+            #endregion
+
+
+            ActionState = CombatantActionState.Idle;
+        }
+
+        public void PhysicalAttack(Combatant target)
+        {
+            if (ActionState != CombatantActionState.Idle)
+            {
+                return;
+            }
+
+            ActionState = CombatantActionState.TurnInProgress;
+
+            //await Task.Run(() =>
+            //{
+                // Move into position
+                MoveToMeleePosition(target);
+                while (MoveState != CombatantMoveState.Idle) { }
+
+                // Animate
+                Sprite.SetAnimation("melee").OnAnimationEvent += (sender, trigger) =>
+                {
+                    if (trigger == AnimationEventTrigger.AnimationCompleted)
+                    {
+                        Sprite.SetAnimation("idle");
+                    }
+                };
+                while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "melee") { }
+
+                // Deal damage
+                target.TakeDamage(50);
+
+                // Move back to base position
                 MoveToScreenPosition(BaseScreenPosition);
                 while (MoveState != CombatantMoveState.Idle) { }
 
                 ActionState = CombatantActionState.TurnComplete;
 
+                #region Write Logs
                 if (Team == TeamType.Player)
                 {
                     if (target.Team == TeamType.Player)
                     {
-                        CombatScene.Instance.Log.AddLogEntry($"[#green]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
                     }
                     else
                     {
-                        CombatScene.Instance.Log.AddLogEntry($"[#green]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
                     }
                 }
                 else
                 {
                     if (target.Team == TeamType.Player)
                     {
-                        CombatScene.Instance.Log.AddLogEntry($"[#red]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
                     }
                     else
                     {
-                        CombatScene.Instance.Log.AddLogEntry($"[#red]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
                     }
                 }
 
@@ -450,18 +521,163 @@ namespace ProjectDonut.Combat
                 {
                     if (target.Team == TeamType.Player)
                     {
-                        CombatScene.Instance.Log.AddLogEntry($"[#green]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{target.Details.Name}[/] has been [#gray]KO'd[/]");
                     }
                     else
                     {
-                        CombatScene.Instance.Log.AddLogEntry($"[#red]{target.Details.Name}[/] has been [#gray]KO'd[/]");
-                    }                    
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                    }
                 }
-            });
+                #endregion
+            //});
 
-            _manager.TurnOrder.RemoveAt(0);
+            //_manager.TurnOrder.RemoveAt(0);
 
             ActionState = CombatantActionState.Idle;
         }
+
+        public void UseAbility(Combatant target, CombatAbility ability)
+        {
+            if (ActionState != CombatantActionState.Idle)
+            {
+                return;
+            }
+
+            ActionState = CombatantActionState.TurnInProgress;
+
+            //await Task.Run(() =>
+            //{
+                // Move into position
+                MoveToRangedPosition();
+                while (MoveState != CombatantMoveState.Idle) { }
+
+                // Animate
+                Sprite.SetAnimation("magic").OnAnimationEvent += (sender, trigger) =>
+                {
+                    if (trigger == AnimationEventTrigger.AnimationCompleted)
+                    {
+                        Sprite.SetAnimation("idle");
+                    }
+                };
+                while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "magic") { }
+
+                // Deal damage
+                var damage = _random.Next(ability.DamageMin, ability.DamageMax);
+                target.TakeDamage(damage);
+
+                // Move back to base position
+                MoveToScreenPosition(BaseScreenPosition);
+                while (MoveState != CombatantMoveState.Idle) { }
+                ActionState = CombatantActionState.TurnComplete;
+
+                // Write logs
+                if (Team == TeamType.Player)
+                {
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                }
+                else
+                {
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                }
+
+                if (target.IsKOd)
+                {
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{target.Details.Name}[/] has been [#gray]KO'd[/]");
+                    }
+                }
+            //});
+
+            //_manager.TurnOrder.RemoveAt(0);
+
+            ActionState = CombatantActionState.Idle;
+        }
+
+        public void UseItem(Combatant target, CombatItem item)
+        {
+            if (ActionState != CombatantActionState.Idle)
+            {
+                return;
+            }
+
+            ActionState = CombatantActionState.TurnInProgress;
+
+            //await Task.Run(() =>
+            //{
+                // Move into position
+                MoveToRangedPosition();
+                while (MoveState != CombatantMoveState.Idle) { }
+
+                // Animate
+                Sprite.SetAnimation("magic").OnAnimationEvent += (sender, trigger) =>
+                {
+                    if (trigger == AnimationEventTrigger.AnimationCompleted)
+                    {
+                        Sprite.SetAnimation("idle");
+                    }
+                };
+                while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "magic") { }
+
+                // TODO: Apply item effects
+                // ...
+
+                // Move back to base position
+                MoveToScreenPosition(BaseScreenPosition);
+                while (MoveState != CombatantMoveState.Idle) { }
+                ActionState = CombatantActionState.TurnComplete;
+
+                #region Write Logs
+                if (Team == TeamType.Player)
+                {
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#green]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                }
+                else
+                {
+                    if (target.Team == TeamType.Player)
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#green]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                    else
+                    {
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#red]{Details.Name}[/] attacked [#red]{target.Details.Name}[/] for [#cyan]50[/] damage");
+                    }
+                }
+
+
+                #endregion
+            //});
+
+            //_manager.TurnOrder.RemoveAt(0);
+
+            ActionState = CombatantActionState.Idle;
+        }
+
+        #endregion
     }
 }

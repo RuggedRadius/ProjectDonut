@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Core.Sprites;
 
 namespace ProjectDonut.Combat.UI
 {
@@ -17,25 +14,23 @@ namespace ProjectDonut.Combat.UI
         Attack,
         Ability,
         Item,
-        Flee
+        CombatAction // flee, change position
     }
 
-    public class CombatUIOptions
+    public class CombatUIOptions : ITargetableCombatUI
     { 
+        public bool IsShown { get; set; }
+
         private CombatManager _manager;
 
         private CombatUIOptionsType _selectedOption;
-
-        public bool MenuAttackShown { get; set; }
-        public bool MenuAbilityShown { get; set; }
-        public bool MenuItemShown { get; set; }
 
         private Rectangle RectBackground { get; set; }
         private Vector2 ScreenPositionBackground { get; set; }
         private Vector2 ScreenPositionAttack { get; set; }
         private Vector2 ScreenPositionAbility { get; set; }
         private Vector2 ScreenPositionItem { get; set; }
-        private Vector2 ScreenPositionFlee { get; set; }
+        private Vector2 ScreenPositionCombatActions { get; set; }
 
         private Texture2D Indicator;
 
@@ -47,11 +42,9 @@ namespace ProjectDonut.Combat.UI
         private int optionHeight = 50;
         private int indicatorHeighOffset;
 
-        public CombatUIOptions(CombatManager manager)
+        public CombatUIOptions()
         {
-            MenuAttackShown = false;
-            MenuAbilityShown = false;
-            MenuItemShown = false;
+            IsShown = true;
 
             ScreenPositionBackground = new Vector2(margin, Global.GraphicsDeviceManager.PreferredBackBufferHeight - margin - height);
             RectBackground = new Rectangle((int)ScreenPositionBackground.X, (int)ScreenPositionBackground.Y, width, height);
@@ -59,20 +52,24 @@ namespace ProjectDonut.Combat.UI
             ScreenPositionAttack = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding));
             ScreenPositionAbility = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding) + optionHeight);
             ScreenPositionItem = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding) + (2 * optionHeight));
-            ScreenPositionFlee = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding) + (3 * optionHeight));
+            ScreenPositionCombatActions = new Vector2(ScreenPositionBackground.X + (3 * padding) + indicatorWidth, ScreenPositionBackground.Y + (2 * padding) + (3 * optionHeight));
 
-            Indicator = Global.ContentManager.Load<Texture2D>("Sprites/Combat/indicator");
-            _manager = manager;
+            Indicator = SpriteLib.Combat.Indicators["pointer-right"];
+            _manager = CombatScene.Instance.Manager;
 
             indicatorHeighOffset = ((int)Global.FontDebug.MeasureString("ABC").Y / 2) + Indicator.Height / 2;
         }
 
         public void Update(GameTime gameTime)
         {
-            if (_manager.TurnOrder[0].Team == TeamType.Enemy)
-            {
+            if (_manager.IsExecutingTurn)
                 return;
-            }
+
+            if (_manager.TurnOrder[0].Team == TeamType.Enemy)
+                return;
+
+            if (CombatScene.Instance.CurrentTargetUI != this)
+                return;
 
             // Update the combat UI options
             if (InputManager.IsKeyPressed(Keys.Up))
@@ -101,55 +98,92 @@ namespace ProjectDonut.Combat.UI
                 _selectedOption = (CombatUIOptionsType)index;
             }
 
-            // Update the combat UI options
-            if (InputManager.IsKeyPressed(Keys.Space))
+            HandleComponentWindowVisibility();
+            HandleInput();
+        }
+
+        private void HandleInput()
+        {
+            if (InputManager.IsKeyPressed(Keys.Space) == false)
             {
-                switch (_selectedOption)
-                {
-                    case CombatUIOptionsType.Attack:
-                        // TEMP **************************
-                        _manager.TESTDoRandomPlayerTeamAttack();
-                        break;
-                        // *******************************
+                return;
+            }
 
-                        MenuAttackShown = !MenuAttackShown;
+            switch (_selectedOption)
+            {
+                case CombatUIOptionsType.Attack:
+                    CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.PhysicalAttack;
+                    CombatScene.Instance.ChangeTargetUI(CombatScene.Instance.TargetPickerUI);
+                    break;
 
-                        MenuAbilityShown = false;
-                        MenuItemShown = false;
-                        break;
+                case CombatUIOptionsType.Ability:
+                    CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.MagicAttack;
+                    CombatScene.Instance.ChangeTargetUI(CombatScene.Instance.AbilityUI);
+                    break;
 
-                    case CombatUIOptionsType.Ability:
-                        CombatScene.Instance.AbilityUI.IsShown = !CombatScene.Instance.AbilityUI.IsShown;
+                case CombatUIOptionsType.Item:
+                    CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.UseItem;
+                    CombatScene.Instance.ChangeTargetUI(CombatScene.Instance.ItemUI);
+                    break;
 
-                        MenuAttackShown = false;
-                        MenuItemShown = false;
-                        break;
+                case CombatUIOptionsType.CombatAction:
+                    CombatScene.Instance.Manager.CombatTurnCurrent.Action = CombatTurnAction.UseCombatAction;
+                    CombatScene.Instance.ChangeTargetUI(CombatScene.Instance.CombatActionsUI);
+                    break;
+            }
+        }
 
-                    case CombatUIOptionsType.Item:
-                        MenuItemShown = !MenuItemShown;
+        private void HandleComponentWindowVisibility()
+        {
+            switch (_selectedOption)
+            {
+                case CombatUIOptionsType.Attack:
+                    CombatScene.Instance.AbilityUI.IsShown = false;
+                    CombatScene.Instance.ItemUI.IsShown = false;
+                    CombatScene.Instance.CombatActionsUI.IsShown = false;
+                    break;
 
-                        MenuAttackShown = false;
-                        MenuAbilityShown = false;
-                        break;
+                case CombatUIOptionsType.Ability:
+                    CombatScene.Instance.AbilityUI.IsShown = true;
+                    CombatScene.Instance.ItemUI.IsShown = false;
+                    CombatScene.Instance.CombatActionsUI.IsShown = false;
+                    break;
 
-                    case CombatUIOptionsType.Flee:
-                        break;
-                }
+                case CombatUIOptionsType.Item:
+                    CombatScene.Instance.ItemUI.IsShown = true;
+                    CombatScene.Instance.AbilityUI.IsShown = false;
+                    CombatScene.Instance.CombatActionsUI.IsShown = false;
+                    break;
+
+                case CombatUIOptionsType.CombatAction:
+                    CombatScene.Instance.CombatActionsUI.IsShown = true;
+                    CombatScene.Instance.AbilityUI.IsShown = false;
+                    CombatScene.Instance.ItemUI.IsShown = false;
+                    break;
             }
         }
 
         public void Draw(GameTime gameTime)
         {
+            if (_manager.IsExecutingTurn)
+                return;
+
             // Draw background
-            Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
+            if (CombatScene.Instance.CurrentTargetUI != this)
+                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
+            else
+                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Yellow * 0.5f);
 
             // Draw the combat UI options
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Attack", ScreenPositionAttack, Color.White);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Ability", ScreenPositionAbility, Color.White);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Item", ScreenPositionItem, Color.White);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Flee", ScreenPositionFlee, Color.White);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Melee Attack", ScreenPositionAttack, Color.White);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Ability", ScreenPositionAbility, Color.White);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Use Item", ScreenPositionItem, Color.White);
+            Global.SpriteBatch.DrawString(Global.FontDebug, "Combat Actions", ScreenPositionCombatActions, Color.White);
 
             // Draw selection indicator
+            if (CombatScene.Instance.CurrentTargetUI != this)
+                return;
+
             if (_manager.TurnOrder[0].Team == TeamType.Player)
             {
                 switch (_selectedOption)
@@ -163,24 +197,10 @@ namespace ProjectDonut.Combat.UI
                     case CombatUIOptionsType.Item:
                         Global.SpriteBatch.Draw(Indicator, ScreenPositionItem - new Vector2(32 + padding, 7), Color.White);
                         break;
-                    case CombatUIOptionsType.Flee:
-                        Global.SpriteBatch.Draw(Indicator, ScreenPositionFlee - new Vector2(32 + padding, 7), Color.White);
+                    case CombatUIOptionsType.CombatAction:
+                        Global.SpriteBatch.Draw(Indicator, ScreenPositionCombatActions - new Vector2(32 + padding, 7), Color.White);
                         break;
                 }
-            }
-
-            // Menus
-            if (MenuAttackShown)
-            {
-                Global.SpriteBatch.DrawString(Global.FontDebug, "Attack Menu", new Vector2(200, 100), Color.White);
-            }
-            if (MenuAbilityShown)
-            {
-                Global.SpriteBatch.DrawString(Global.FontDebug, "Ability Menu", new Vector2(200, 120), Color.White);
-            }
-            if (MenuItemShown)
-            {
-                Global.SpriteBatch.DrawString(Global.FontDebug, "Item Menu", new Vector2(200, 140), Color.White);
             }
         }
     }

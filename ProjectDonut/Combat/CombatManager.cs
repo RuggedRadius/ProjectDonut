@@ -35,6 +35,11 @@ namespace ProjectDonut.Combat
         private List<Combatant> baseTurnOrder;
         private int baseTurnOrderIndex = 0;
 
+        public CombatTurn CombatTurnCurrent { get; set; }
+        public List<CombatTurn> CombatTurnHistory { get; set; } = new List<CombatTurn>();
+
+        public bool IsExecutingTurn { get; set; }
+
         public CombatManager() 
         {
             if (Instance != null)
@@ -102,10 +107,115 @@ namespace ProjectDonut.Combat
                 }
             }
         }
+
+        public void ExecuteTurn(CombatTurn turn)
+        {
+            Task.Run(() =>
+            {
+                if (turn.IsTurnComplete() == false)
+                {
+                    return;
+                }
+
+                IsExecutingTurn = true;
+
+                switch (turn.Action)
+                {
+                    case CombatTurnAction.PhysicalAttack:
+                        turn.Attacker.PhysicalAttack(turn.Target);
+                        break;
+
+                    case CombatTurnAction.MagicAttack:
+                        turn.Attacker.UseAbility(turn.Target, turn.Ability);
+                        break;
+
+                    case CombatTurnAction.UseItem:
+                        turn.Attacker.UseItem(turn.Target, turn.Item);
+                        break;
+
+                    case CombatTurnAction.UseCombatAction:
+                        turn.Attacker.UseCombatAction(turn.CombatAction, turn.Target);
+                        break;
+                }
+
+                CombatTurnHistory.Add(turn);
+                CombatTurnCurrent = null;
+                TurnOrder.RemoveAt(0);
+
+                CombatScene.Instance.LogWriter.WriteLog(turn);
+
+                IsExecutingTurn = false;
+            });
+        }
+
+        //private void WriteTurnLogs(CombatTurn turn)
+        //{
+        //    switch (turn.Action)
+        //    {
+        //        case CombatTurnAction.PhysicalAttack:
+        //            turn.Attacker.PhysicalAttack(turn.Target);
+        //            break;
+
+        //        case CombatTurnAction.MagicAttack:
+        //            turn.Attacker.UseAbility(turn.Target, turn.Ability);
+        //            break;
+
+        //        case CombatTurnAction.UseItem:
+        //            turn.Attacker.UseItem(turn.Target, turn.Item);
+        //            break;
+
+        //        case CombatTurnAction.UseCombatAction:
+        //            turn.Attacker.UseCombatAction(turn.CombatAction, turn.Target);
+        //            break;
+        //    }
+
+
+
+
+        //    if (turn.Attacker.Team == TeamType.Player)
+        //    {
+        //        if (turn.Target.Team == TeamType.Player)
+        //        {
+        //            CombatScene.Instance.LogUI.AddLogEntry($"[#green]{turn.Attacker.Details.Name}[/] attacked [#green]{turn.Target.Details.Name}[/] for [#cyan]50[/] damage");
+        //        }
+        //        else
+        //        {
+        //            CombatScene.Instance.LogUI.AddLogEntry($"[#green]{turn.Attacker.Details.Name}[/] attacked [#red]{turn.Target.Details.Name}[/] for [#cyan]50[/] damage");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (turn.Target.Team == TeamType.Player)
+        //        {
+        //            CombatScene.Instance.LogUI.AddLogEntry($"[#red]{turn.Attacker.Details.Name}[/] attacked [#green]{turn.Target.Details.Name}[/] for [#cyan]50[/] damage");
+        //        }
+        //        else
+        //        {
+        //            CombatScene.Instance.LogUI.AddLogEntry($"[#red]{turn.Attacker.Details.Name}[/] attacked [#red]{turn.Target.Details.Name}[/] for [#cyan]50[/] damage");
+        //        }
+        //    }
+
+        //    if (turn.Target.IsKOd)
+        //    {
+        //        if (turn.Target.Team == TeamType.Player)
+        //        {
+        //            CombatScene.Instance.LogUI.AddLogEntry($"[#green]{turn.Target.Details.Name}[/] has been [#gray]KO'd[/]");
+        //        }
+        //        else
+        //        {
+        //            CombatScene.Instance.LogUI.AddLogEntry($"[#red]{turn.Target.Details.Name}[/] has been [#gray]KO'd[/]");
+        //        }
+        //    }
+        //}
         
         public void Update(GameTime gameTime)
         {
-            TESTINPUTS();
+            if (CombatTurnCurrent == null)
+            {
+                CombatTurnCurrent = new CombatTurn(TurnOrder[0]);
+            }
+
+            //TESTINPUTS();
 
             PlayerTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => HandleCombatantDeath(x));
             EnemyTeam.Where(x => x.Stats.Health <= 0).ToList().ForEach(x => HandleCombatantDeath(x));
@@ -132,13 +242,31 @@ namespace ProjectDonut.Combat
 
                 if (possibleTargets.Count > 0)
                 {
-                    var target = possibleTargets[_random.Next(possibleTargets.Count)];
-                    enemy.AttackCombatant(target, (AttackType)_random.Next(3));
+                    CombatTurnCurrent.Target= possibleTargets[_random.Next(possibleTargets.Count)];
+                }
+
+                var randomAction = _random.Next(2);
+                switch (randomAction)
+                {
+                    case 0:// Physical attack
+                        CombatTurnCurrent.Action = CombatTurnAction.PhysicalAttack;
+                        CombatTurnCurrent.Ability = null;
+                        break;
+
+                    case 1: // Magical attack
+                        CombatTurnCurrent.Action = CombatTurnAction.MagicAttack;
+                        CombatTurnCurrent.Ability = enemy.Abilities[_random.Next(enemy.Abilities.Count)];
+                        break;
                 }
             }
 
             // Re-populate turn order
             ReplenishTurnOrder();
+
+            if (CombatTurnCurrent != null && CombatTurnCurrent.IsTurnComplete())
+            {
+                ExecuteTurn(CombatTurnCurrent);
+            }
 
             if (State != CombatState.CombatFinished)
             {
@@ -149,13 +277,13 @@ namespace ProjectDonut.Combat
                 {
                     if (PlayerTeam.Where(x => x.IsKOd).Count() == PlayerTeam.Count)
                     {
-                        CombatScene.Instance.Log.AddLogEntry("[#magenta]The battle has been lost, and your journey ended.[/]");
+                        CombatScene.Instance.LogUI.AddLogEntry("[#magenta]The battle has been lost, and your journey ended.[/]");
                         State = CombatState.CombatFinished;
                     }
                     else if (EnemyTeam.Where(x => x.IsKOd).Count() == EnemyTeam.Count)
                     {
-                        CombatScene.Instance.Log.AddLogEntry($"[#yellow]You have gained[/] [#cyan]{EnemyTeam.Sum(x => x.ExperienceGiven)}[/] [#yellow]experience points.[/]");
-                        CombatScene.Instance.Log.AddLogEntry("[#magenta]The battle has been won, and your journey continues.[/]");
+                        CombatScene.Instance.LogUI.AddLogEntry($"[#yellow]You have gained[/] [#cyan]{EnemyTeam.Sum(x => x.ExperienceGiven)}[/] [#yellow]experience points.[/]");
+                        CombatScene.Instance.LogUI.AddLogEntry("[#magenta]The battle has been won, and your journey continues.[/]");
                         State = CombatState.CombatFinished;
                     }
                 }
@@ -175,66 +303,6 @@ namespace ProjectDonut.Combat
             }
 
             TurnOrder.RemoveAll(x => x == combatant);
-        }
-
-        public void TESTDoRandomPlayerTeamAttack()
-        {
-            if (PlayerTeam.Count == 0 || EnemyTeam.Count == 0)
-            {
-                return;
-            }
-
-            var character = TurnOrder[0];// PlayerTeam[_random.Next(PlayerTeam.Count)];
-
-            var possibleEnemies = EnemyTeam.Where(x => x.IsKOd == false).ToList();
-
-            if (possibleEnemies.Count == 0)
-            {
-                return;
-            }
-
-            var target = possibleEnemies[_random.Next(possibleEnemies.Count)];
-            character.AttackCombatant(target, (AttackType)_random.Next(3));
-        }
-
-        private void TESTINPUTS()
-        {
-            if (PlayerTeam.Count == 0 || EnemyTeam.Count == 0)
-            {
-                return;
-            }
-
-            if (TurnOrder[0].Team == TeamType.Enemy)
-            {
-                return;
-            }
-
-            // TEST MELEE
-            if (InputManager.IsKeyPressed(Keys.D1))
-            {
-                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
-
-                character.AttackCombatant(target, AttackType.Melee);
-            }
-
-            // TEST RANGED
-            if (InputManager.IsKeyPressed(Keys.D2))
-            {
-                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
-
-                character.AttackCombatant(target, AttackType.Ranged);
-            }
-
-            // TEST MAGIC
-            if (InputManager.IsKeyPressed(Keys.D3))
-            {
-                var character = PlayerTeam[_random.Next(PlayerTeam.Count)];
-                var target = EnemyTeam[_random.Next(EnemyTeam.Count)];
-
-                character.AttackCombatant(target, AttackType.Magic);
-            }
         }
 
         private void AllocateCombatantsPositions(List<Combatant> combatants, bool isPlayerTeam)

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Combat;
 using ProjectDonut.Combat.UI;
+using ProjectDonut.Core.Input;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -15,15 +16,23 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public SceneType SceneType { get; set; }
         public Vector2 Position { get; set; }
 
-        private CombatUI _combatUI;
+        //private CombatUI _combatUI;
         public CombatManager Manager;
-        private CombatTerrain _terrain;
-        private CombatUIOptions _uiOptions;
         private CombatUITurnOrder _turnOrder;
-        public CombatUILog Log;
+
+        public CombatUIOptions OptionsUI;        
+        public CombatUILog LogUI;
+        public CombatUILogWriter LogWriter;
         public CombatUIAbility AbilityUI;
+        public CombatUIItem ItemUI;
+        public CombatUICombatActions CombatActionsUI;
+        public CombatUITargetPicker TargetPickerUI;
+        public List<ITargetableCombatUI> TargetUIHistory;
+        public ITargetableCombatUI CurrentTargetUI;
 
         private Texture2D _background;
+
+        public List<CombatItem> PlayerItems;
 
         public AnimatedSprite Background { get; set; }
         private SpriteSheet _spriteSheet;
@@ -40,20 +49,53 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             SceneType = SceneType.Combat;
 
             Manager = new CombatManager();
-            _combatUI = new CombatUI(Manager);
-            _terrain = new CombatTerrain();
             _turnOrder = new CombatUITurnOrder(Manager);
 
-            Log = new CombatUILog();
+            LogUI = new CombatUILog();
+            LogWriter = new CombatUILogWriter();
             AbilityUI = new CombatUIAbility(Manager);
+            ItemUI = new CombatUIItem();
+            TargetPickerUI = new CombatUITargetPicker();
+            OptionsUI = new CombatUIOptions();
+            CombatActionsUI = new CombatUICombatActions();
 
-            _uiOptions = new CombatUIOptions(Manager);
+            TargetUIHistory = new List<ITargetableCombatUI>();
+            CurrentTargetUI = OptionsUI;
+
             PreviousScene = previousScene;
+
+
+
+            TESTPopulatePlayerItems();
+        }
+
+        private void TESTPopulatePlayerItems()
+        {
+            PlayerItems = new List<CombatItem>();
+
+            PlayerItems.Add(new CombatItem()
+            {
+                Name = "Health Potion",
+                Description = "Heals 50 HP",
+                Quantity = 5
+            });
+            PlayerItems.Add(new CombatItem()
+            {
+                Name = "Mana Potion",
+                Description = "Restores 50 MP",
+                Quantity = 5
+            });
+            PlayerItems.Add(new CombatItem()
+            {
+                Name = "Energy Potion",
+                Description = "Restores 50 EP",
+                Quantity = 5
+            });
         }
 
         public void Initialize()
         {
-            _combatUI.Initialize();
+            //_combatUI.Initialize();
 
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Backgrounds/bg-dungeon");
             var atlas = Texture2DAtlas.Create("combatant", sheetTexture, 480, 270);
@@ -78,6 +120,28 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             Background.SetAnimation("idle");
         }
 
+        public void ChangeTargetUI(ITargetableCombatUI newTarget)
+        {
+            TargetUIHistory.Add(CurrentTargetUI);
+            CurrentTargetUI = newTarget;
+            CurrentTargetUI.IsShown = true;
+
+            if (CurrentTargetUI is CombatUITargetPicker)
+            {
+                var targetPicker = CurrentTargetUI as CombatUITargetPicker;
+                targetPicker.DecrementIndex(targetPicker.TargetTeam);
+                targetPicker.IncrementIndex(targetPicker.TargetTeam);     
+                
+                targetPicker.IsFirstFrame = true;
+            }
+        }
+
+        public void ReturnToPreviousTargetUI()
+        {
+            CurrentTargetUI = TargetUIHistory[0];
+            TargetUIHistory.RemoveAt(0);
+        }
+
         public void LoadContent()
         {
             //_background = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Backgrounds/bg-dungeon");
@@ -87,13 +151,16 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         {
             Manager.Update(gameTime);
             //_combatUI.Update(gameTime);
-            _terrain.Update(gameTime);
+            //_terrain.Update(gameTime);
 
             Background.Update(gameTime);
 
-            _uiOptions.Update(gameTime);
+            OptionsUI.Update(gameTime);
             _turnOrder.Update(gameTime);
             AbilityUI.Update(gameTime);
+            ItemUI.Update(gameTime);
+            TargetPickerUI.Update(gameTime);
+            CombatActionsUI.Update(gameTime);
 
             if (Manager.PlayerTeam.Count == 0)
             {
@@ -117,13 +184,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             Global.SpriteBatch.Begin();
 
             // Draw background
-            //Global.SpriteBatch.Draw(_background, new Rectangle(0, 0, Global.GraphicsDeviceManager.PreferredBackBufferWidth, Global.GraphicsDeviceManager.PreferredBackBufferHeight), Color.White);
             Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * CombatScene.SceneScale);
-
-            _terrain.DrawTerrainLayer(gameTime, "base");
-            _terrain.DrawTerrainLayer(gameTime, "obstacle");
-            _terrain.DrawTerrainLayer(gameTime, "decorative");
-            //_terrain.DrawGrid(gameTime);
 
             // Draw player team
             foreach (var combatant in Manager.PlayerTeam)
@@ -139,14 +200,15 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 //combatant.DrawBounds();
             }
 
-            // Draw combat UI
-            //_combatUI.Draw(gameTime);
-
             // Draw combat UI options
-            _uiOptions.Draw(gameTime);
             _turnOrder.Draw(gameTime);
-            Log.Draw(gameTime);
+                       
+            LogUI.Draw(gameTime);
             AbilityUI.Draw(gameTime);
+            ItemUI.Draw(gameTime);
+            TargetPickerUI.Draw(gameTime);
+            CombatActionsUI.Draw(gameTime);
+            OptionsUI.Draw(gameTime);
 
             Global.SpriteBatch.End();
         }
