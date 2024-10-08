@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GumRuntime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
@@ -132,20 +133,48 @@ namespace ProjectDonut.Environment
         private string ConvertFloatToTime(float hours)
         {
             // Clamp the value to the 0-24 range
-            if (hours < 0.0f) hours = 0.0f;
+            if (hours < 1.0f) hours = 1.0f;
             if (hours > 24.0f) hours = 24.0f;
 
             // Calculate the hours and minutes
             int hour = (int)hours; // Get the integer part as hours
-            int minutes = (int)((hours - hour) * 60); // Get the fractional part as minutes
+            //int minutes = (int)((hours - hour) * 60); // Get the fractional part as minutes
 
             // Adjust for 12-hour format and determine AM/PM
-            string suffix = (hour >= 12 && hour < 24) ? "PM" : "AM";
-            if (hour == 0) hour = 12; // Midnight is 12 AM
-            else if (hour > 12) hour -= 12; // Convert to 12-hour format
+            //string suffix = (hour >= 12 && hour < 24) ? "PM" : "AM";
+            //if (hour == 0) hour = 12; // Midnight is 12 AM
+            //else 
+            if (hour > 24) hour = 1; // Convert to 12-hour format
 
             // Format the time string
-            return $"{hour:D2}:{minutes:D2} {suffix}";
+            if (hour % 10 == 1)
+            {
+                if (hour == 11)
+                    return $"{hour}th Hour";
+                else
+                    return $"{hour}st Hour";
+            }
+            else if (hour % 10 == 2)
+            {
+                if (hour == 12)
+                    return $"{hour}th Hour";
+                else
+                    return $"{hour}nd Hour";
+            }
+            else if (hour % 10 == 3)
+            {
+                if (hour == 13)
+                    return $"{hour}th Hour";
+                else
+                    return $"{hour}rd Hour";
+            }
+            else
+            {
+                return $"{hour}th Hour";
+            }
+
+
+            //return $"{hour:D2}:{minutes:D2} {suffix}";
         }
 
 

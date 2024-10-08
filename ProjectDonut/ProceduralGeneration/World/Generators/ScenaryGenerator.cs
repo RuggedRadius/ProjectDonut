@@ -286,6 +286,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
+                    if (chunk.BiomeData[i, j] != (int)Biome.Ashlands)
+                    {
+                        continue;
+                    }
+
                     var halfTileSize = Global.TileSize / 2;
 
                     var chunkPosX = i * Global.TileSize;

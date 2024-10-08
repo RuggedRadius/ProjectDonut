@@ -238,16 +238,19 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
             chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
 
-            
-            chunk.MineableObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
-            //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
-            chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
+            var testingLargerChunks = true;
+            if (testingLargerChunks == false)
+            {
+                chunk.MineableObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
+                //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
+                chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
 
-            chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
-            chunk.MineableObjects["trees"].AddRange(_genScenary.GenerateWinterTrees(chunk));
+                chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
+                chunk.MineableObjects["trees"].AddRange(_genScenary.GenerateWinterTrees(chunk));
 
-            chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
-            chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
+                chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
+                chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
+            }
 
             chunk.Initialize();
             chunk.LoadContent();
