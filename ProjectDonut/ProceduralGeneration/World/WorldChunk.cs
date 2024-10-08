@@ -45,7 +45,8 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Rectangle ChunkBounds { get; set; }
 
-        public List<Tilemap> TownFloor { get; set; }
+        //public List<Tilemap> TownFloor { get; set; }
+        public Town Town { get; set; }
 
         public int Width
         {
@@ -207,10 +208,9 @@ namespace ProjectDonut.ProceduralGeneration.World
                 //RenderThumbnail(gameTime);                
             }
 
-            foreach (var tm in TownFloor)
+            if (Town != null)
             {
-                if (tm != null)
-                    tm.Update(gameTime);
+                Town.Update(gameTime);
             }
         }
 
@@ -249,10 +249,10 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             //MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
 
-            foreach (var tm in TownFloor)
+
+            if (Town != null)
             {
-                if (tm != null)
-                    tm.Draw(gameTime);
+                Town.Draw(gameTime);
             }
         }
 

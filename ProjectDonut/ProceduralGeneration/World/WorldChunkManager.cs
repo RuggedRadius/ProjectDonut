@@ -254,7 +254,8 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             ExistingChunks.Add((chunkX, chunkY));
 
-            _townBuilder.Build(ref chunk);
+            if (new Random().Next(0, 100) > 95)
+                _townBuilder.Build(ref chunk);  
 
             return chunk;
         }

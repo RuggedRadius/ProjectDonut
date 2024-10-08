@@ -8,189 +8,428 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Penumbra;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectDonut.ProceduralGeneration.World.MineableItems;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
+    public class Town
+    {
+        public Vector2 CenterWorldPosition { get; set; }
+        public Vector2 CenterLocalPosition { get; set; }
+
+        public List<TownPlot> Plots { get; set; }
+
+        public Dictionary<string, Tilemap> Tilemaps { get; set; }
+
+        public Town(Vector2 centerWorldPosition, Vector2 centerLocalPosition)
+        {
+            CenterWorldPosition = centerWorldPosition;
+            CenterLocalPosition = centerLocalPosition;
+
+            Plots = new List<TownPlot>();
+            Tilemaps = new Dictionary<string, Tilemap>();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            foreach (var tilemap in Tilemaps)
+            {
+                tilemap.Value.Update(gameTime);
+            }
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            //Tilemaps["base"].Draw(gameTime);
+            Tilemaps["road"].Draw(gameTime);
+            Tilemaps["floor"].Draw(gameTime);
+        }
+    }
+
+    public class TownPlot
+    {
+        public Vector2 WorldPosition { get; set; }
+        public Vector2 LocalPosition { get; set; }
+
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public Rectangle LocalBounds
+        {
+            get
+            {
+                return new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, Width, Height);
+            }
+        }
+
+        public Rectangle WorldBounds
+        {
+            get
+            {
+                return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Width, Height);
+            }
+        }
+    }
+
     public class TownBuilder
     {
         private WorldMapSettings Settings;
         private Random _random = new Random();
+
+        private int spreadFromCenter = 50 * Global.TileSize;
 
         public TownBuilder(WorldMapSettings settings)
         {
             Settings = settings;
         }
 
-        public Tilemap BuildTown(ref WorldChunk chunk)
-        {
-            var townTileMap = new Tilemap(Settings.Width, Settings.Height);
-            townTileMap.WorldPosition = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
-
-            // get position
-            var localPosition = new Vector2(
-                (Settings.Width * Settings.TileSize) / 4,
-                (Settings.Height * Settings.TileSize) / 4);
-
-            var position = new Vector2(
-                chunk.WorldCoordX + localPosition.X,
-                chunk.WorldCoordY + localPosition.Y);
-
-            var width = 10;
-            var height = 10;
-
-            // Check for placement
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (chunk.Tilemaps["base"].Map[i, j].WorldTileType == WorldTileType.Water)
-                    {
-                        return null;
-                    }
-                }
-            }
-
-            // Place floor
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    var tile = new Tile(false)
-                    {
-                        ChunkX = chunk.ChunkCoordX,
-                        ChunkY = chunk.ChunkCoordY,
-                        xIndex = i,
-                        yIndex = j,
-                        LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + localPosition,
-                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                        Texture = SpriteLib.Town.Floor["floor-c"],
-                        TileType = TileType.Instance,
-                        IsExplored = true
-                    };
-
-                    townTileMap.Map[i, j] = tile;
-                }
-            }
-
-            return townTileMap;
-        }
-
         public void Build(ref WorldChunk chunk)
         {
-            // Create floor tile map
-            chunk.TownFloor = new List<Tilemap>();
-            //chunk.TownFloor = new Tilemap(Settings.Width, Settings.Height);
-            
-
-            // Choose center point in local space
-            var localPosition = new Vector2(
+            var localCenterPosition = new Vector2(
                 _random.Next((Settings.Width / 2) * Settings.TileSize) + (Settings.Width / 4),
                 _random.Next((Settings.Height / 2) * Settings.TileSize) + (Settings.Height / 4));
+            var worldCenterPosition = new Vector2(
+                chunk.WorldCoordX + localCenterPosition.X,
+                chunk.WorldCoordY + localCenterPosition.Y);
 
-            var worldPosition = new Vector2(
-                chunk.WorldCoordX + localPosition.X,
-                chunk.WorldCoordY + localPosition.Y);
+            var town = new Town(worldCenterPosition, localCenterPosition);
+            chunk.Town = town;
 
-            // Generate building plots around center
-            var plots = CreatePlots(worldPosition, localPosition, ref chunk);
+            CreatePlots(10, ref chunk);
+            FloorPlots(ref chunk);
 
-            FloorPlots(plots, worldPosition, ref chunk);
+            // Clear trees around center point and each plot in circular fashion
+            ClearObstaclesAroundTown(ref chunk);
+
+            // Create roads between plots and the center point
+            CreateRoadsBetweenPlotsAndCenterPoint(ref chunk);
+
+            // Create roads between plots
+            CreateRoadsBetweenPlots(ref chunk);
+
+            CreateBaseDirt(ref chunk);
         }
 
-        private void FloorPlots(List<Rectangle> plots, Vector2 worldPosition, ref WorldChunk chunk)
+        private void FloorPlots(ref WorldChunk chunk)
         {
-            var tiles = new List<Texture2D> 
+            var tilemap = new Tilemap(chunk.Width, chunk.Height);
+            tilemap.WorldPosition = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
+
+            foreach (var plot in chunk.Town.Plots)
             {
-                SpriteLib.Town.Floor["floor-c"],
-                SpriteLib.Town.Walls["wall-n"],
-                SpriteLib.Town.Stairs["stairs-top-02"],
-
-            };
-            var tempCounter = 0;
-
-            foreach (var plot in plots)
-            {
-                var tm = new Tilemap(plot.Width / Global.TileSize, plot.Height / Global.TileSize);
-                tm.WorldPosition = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
-                chunk.TownFloor.Add(tm);
-
-                var plotWidthInTiles = plot.Width / Global.TileSize;
-                var plotHeightInTiles = plot.Height / Global.TileSize;
-
-                var startX = ((plot.X - chunk.WorldCoordX) / Global.TileSize);
-                var startY = ((plot.Y - chunk.WorldCoordY) / Global.TileSize);
-
-                for (int i = 0; i < 0 + plotWidthInTiles; i++)
+                for (int i = plot.LocalBounds.Left; i <= plot.LocalBounds.Right; i += Global.TileSize)
                 {
-                    for (int j = 0; j < 0 + plotHeightInTiles; j++)
+                    for (int j = plot.LocalBounds.Top; j <= plot.LocalBounds.Bottom; j += Global.TileSize)
                     {
-                        var localX = ((plot.X - chunk.WorldCoordX)) + (i * Global.TileSize);
-                        var localY = ((plot.Y - chunk.WorldCoordY)) + (j * Global.TileSize);
-
-                        var tile = new Tile(false)
+                        tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile(false)
                         {
                             ChunkX = chunk.ChunkCoordX,
                             ChunkY = chunk.ChunkCoordY,
-                            xIndex = i,
-                            yIndex = j,
-                            //LocalPosition = new Vector2(i * Global.TileSize, j * Global.TileSize) + localPosition,
-                            LocalPosition = new Vector2(localX, localY),
+                            xIndex = i / Global.TileSize,
+                            yIndex = j / Global.TileSize,
+                            LocalPosition = new Vector2(i, j),
                             Size = new Vector2(Global.TileSize, Global.TileSize),
-                            //Texture = SpriteLib.Town.Floor["floor-c"],
-                            Texture = tiles[tempCounter],
+                            Texture = SpriteLib.Town.Floor["floor-c"],
                             TileType = TileType.Instance,
                             IsExplored = true
                         };
-
-                        if (tm.Map[i, j] == null)
-                            tm.Map[i, j] = tile;
                     }
                 }
+            }
 
-                tempCounter++;
+            chunk.Town.Tilemaps.Add("floor", tilemap);
+            return;
+        }
+
+        private void CreatePlots(int plotCount, ref WorldChunk chunk)
+        {
+            chunk.Town.Plots = new List<TownPlot>();
+
+            for (int i = 0; i < plotCount; i++)
+            {
+                var plotCreated = false;
+                var maxTries = 100;
+
+                while (plotCreated == false)
+                {
+                    var plotWidth = _random.Next(5, 10);
+                    var plotHeight = _random.Next(5, 10);
+
+                    var offsetFromCenterX = _random.Next(-spreadFromCenter, spreadFromCenter);
+                    var offsetFromCenterY = _random.Next(-spreadFromCenter, spreadFromCenter);
+
+                    var townPlot = new TownPlot()
+                    {
+                        WorldPosition = chunk.Town.CenterWorldPosition + new Vector2(offsetFromCenterX, offsetFromCenterY),
+                        LocalPosition = chunk.Town.CenterLocalPosition + new Vector2(offsetFromCenterX, offsetFromCenterY),
+                        Width = plotWidth * Global.TileSize,
+                        Height = plotHeight * Global.TileSize
+                    };
+
+                    maxTries--;
+
+                    if (IsPlotViable(townPlot, chunk))
+                    {
+                        chunk.Town.Plots.Add(townPlot);
+                        plotCreated = true;
+                    }
+                    else
+                    {
+                        if (maxTries <= 0)
+                            break;
+                    }
+                }
             }
         }
 
-        private List<Rectangle> CreatePlots(Vector2 worldPosition, Vector2 localPosition, ref WorldChunk chunk)
+        private bool IsPlotViable(TownPlot townPlot, WorldChunk chunk)
         {
-            var spreadFromCenter = 20 * Global.TileSize;
-            var plots = new List<Rectangle>();
-            for (int i = 0; i < 3; i++)
+            // Is plot within chunk bounds
+            var testCorners = new List<Vector2> {
+                new Vector2(townPlot.WorldBounds.Left, townPlot.WorldBounds.Top),
+                new Vector2(townPlot.WorldBounds.Left, townPlot.WorldBounds.Bottom),
+                new Vector2(townPlot.WorldBounds.Right, townPlot.WorldBounds.Top),
+                new Vector2(townPlot.WorldBounds.Right, townPlot.WorldBounds.Bottom)
+            };
+            foreach (var testCorner in testCorners)
             {
-                var houseWidth = _random.Next(5, 10);
-                var houseHeight = _random.Next(5, 10);
-
-                var offsetFromCenterX = _random.Next(-spreadFromCenter, spreadFromCenter);
-                var offsetFromCenterY = _random.Next(-spreadFromCenter, spreadFromCenter);
-
-                var plot = new Rectangle(
-                    (int)worldPosition.X + offsetFromCenterX, //+ (int)localPosition.X,
-                    (int)worldPosition.Y + offsetFromCenterY, //+ (int)localPosition.Y,
-                    houseWidth * Global.TileSize,
-                    houseHeight * Global.TileSize);
-
-                var plotViable = true;
-
-                var testCorners = new List<Vector2> {
-                    new Vector2(plot.X, plot.Y),
-                    new Vector2(plot.X + plot.Width, plot.Y),
-                    new Vector2(plot.X, plot.Y + plot.Height),
-                    new Vector2(plot.X + plot.Width, plot.Y + plot.Height)
-                };
-
-                foreach (var testCorner in testCorners)
+                if (chunk.ChunkBounds.Contains(testCorner) == false)
                 {
-                    if (chunk.ChunkBounds.Contains(testCorner) == false)
-                    {
-                        plotViable = false;
-                    }
+                    return false;
                 }
-
-                if (plotViable)
-                    plots.Add(plot);
             }
 
-            return plots;
+            // Is plot intersecting with other plots
+            foreach (var p in chunk.Town.Plots)
+            {
+                if (p.LocalBounds.Intersects(townPlot.LocalBounds))
+                {
+                    return false;
+                }
+            }
+
+            // Is plot intersecting with water
+            for (int i = townPlot.LocalBounds.Left; i <= townPlot.LocalBounds.Right; i += Global.TileSize)
+            {
+                for (int j = townPlot.LocalBounds.Top; j <= townPlot.LocalBounds.Bottom; j += Global.TileSize)
+                {
+                    if (chunk.Tilemaps["base"].Map[i / Global.TileSize, j / Global.TileSize].WorldTileType == WorldTileType.Water)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+    
+        private void CreateRoadsBetweenPlotsAndCenterPoint(ref WorldChunk chunk)
+        {
+            // Create roads between plots and the center point
+            var tilemap = new Tilemap(chunk.Width, chunk.Height);
+            tilemap.WorldPosition = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
+
+            foreach (var plot in chunk.Town.Plots)
+            {
+                var center = chunk.Town.CenterLocalPosition;
+                var plotCenter = plot.LocalPosition + new Vector2(plot.Width / 2, plot.Height / 2);
+
+                var road = new List<Vector2>();
+                road.Add(center);
+                road.Add(plotCenter);
+
+                foreach (var point in road)
+                {
+                    var x = (int)point.X;
+                    var y = (int)point.Y;
+
+                    while (x != plotCenter.X || y != plotCenter.Y)
+                    {
+                        if (x < plotCenter.X)
+                        {
+                            x++;
+                        }
+                        else if (x > plotCenter.X)
+                        {
+                            x--;
+                        }
+
+                        if (y < plotCenter.Y)
+                        {
+                            y++;
+                        }
+                        else if (y > plotCenter.Y)
+                        {
+                            y--;
+                        }
+
+                        if (chunk.Tilemaps["base"].Map[x / Global.TileSize, y / Global.TileSize].WorldTileType == WorldTileType.Water)
+                            continue;
+
+                        tilemap.Map[x / Global.TileSize, y / Global.TileSize] = new Tile(false)
+                        {
+                            ChunkX = chunk.ChunkCoordX,
+                            ChunkY = chunk.ChunkCoordY,
+                            xIndex = x / Global.TileSize,
+                            yIndex = y / Global.TileSize,
+                            LocalPosition = new Vector2(x, y),
+                            Size = new Vector2(Global.TileSize, Global.TileSize),
+                            //Texture = SpriteLib.Town.Road["road-c"],
+                            Texture = Global.MISSING_TEXTURE,
+                            TileType = TileType.Instance,
+                            IsExplored = true
+                        };
+                    }
+                }
+            }
+
+            chunk.Town.Tilemaps.Add("road", tilemap);
+        }
+    
+        private void CreateRoadsBetweenPlots(ref WorldChunk chunk)
+        {
+            var tilemap = chunk.Town.Tilemaps["road"];
+
+            foreach (var plot in chunk.Town.Plots)
+            {
+                foreach (var plot2 in chunk.Town.Plots)
+                {
+                    if (plot == plot2)
+                        continue;
+
+                    var target = plot2;
+                    var plotCenter = plot.LocalPosition + new Vector2(plot.Width / 2, plot.Height / 2);
+
+                    var road = new List<Vector2>();
+                    road.Add(target.LocalPosition);
+                    road.Add(plotCenter);
+
+                    foreach (var point in road)
+                    {
+                        var x = (int)point.X;
+                        var y = (int)point.Y;
+
+                        while (x != plotCenter.X || y != plotCenter.Y)
+                        {
+                            if (x < plotCenter.X)
+                            {
+                                x++;
+                            }
+                            else if (x > plotCenter.X)
+                            {
+                                x--;
+                            }
+
+                            if (y < plotCenter.Y)
+                            {
+                                y++;
+                            }
+                            else if (y > plotCenter.Y)
+                            {
+                                y--;
+                            }
+
+                            tilemap.Map[x / Global.TileSize, y / Global.TileSize] = new Tile(false)
+                            {
+                                ChunkX = chunk.ChunkCoordX,
+                                ChunkY = chunk.ChunkCoordY,
+                                xIndex = x / Global.TileSize,
+                                yIndex = y / Global.TileSize,
+                                LocalPosition = new Vector2(x, y),
+                                Size = new Vector2(Global.TileSize, Global.TileSize),
+                                //Texture = SpriteLib.Town.Road["road-c"],
+                                Texture = Global.MISSING_TEXTURE,
+                                TileType = TileType.Instance,
+                                IsExplored = true
+                            };
+                        }
+                    }
+                }
+            }
+        }
+    
+        private void CreateBaseDirt(ref WorldChunk chunk)
+        {
+            var dirtTilemap = new Tilemap(chunk.Width, chunk.Height);
+            dirtTilemap.WorldPosition = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
+
+            int pathWidth = 1;
+            var obstaclesToClear = new List<IMineable>();
+
+            for (int i = 0; i < chunk.Width; i++)
+            {
+                for (int j = 0; j < chunk.Height; j++)
+                {
+                    if (chunk.Town.Tilemaps["road"].Map[i, j] != null)
+                    {                        
+                        for (int x = -pathWidth; x <= pathWidth; x++)
+                        {
+                            for (int y = -pathWidth; y <= pathWidth; y++)
+                            {
+                                var coordX = i + x;
+                                var coordY = j + y;
+
+                                if (coordX < 0 || coordX >= chunk.Width || coordY < 0 || coordY >= chunk.Height)
+                                    continue;
+
+                                dirtTilemap.Map[i + x, j + y] = new Tile(false)
+                                {
+                                    ChunkX = chunk.ChunkCoordX,
+                                    ChunkY = chunk.ChunkCoordY,
+                                    xIndex = i + x,
+                                    yIndex = j + y,
+                                    LocalPosition = new Vector2((i + x) * Global.TileSize, (j + y) * Global.TileSize),
+                                    Size = new Vector2(Global.TileSize, Global.TileSize),
+                                    Texture = SpriteLib.Town.Terrain["dirt-c"],
+                                    TileType = TileType.Instance,
+                                    IsExplored = true,
+                                    Bounds = new Rectangle(
+                                        (i + x) * Global.TileSize,
+                                        (j + y) * Global.TileSize, 
+                                        Global.TileSize, 
+                                        Global.TileSize)
+                                };
+
+                                foreach (var mineables in chunk.MineableObjects.Values)
+                                {
+                                    foreach (var mineable in mineables)
+                                    {
+                                        if (mineable.InteractBounds.Intersects(dirtTilemap.Map[i + x, j + y].Bounds))
+                                        {
+                                            obstaclesToClear.Add(mineable);
+                                        }
+                                    }
+                                }
+                            }
+                        }                    
+                    }
+                }
+            }
+
+            chunk.Town.Tilemaps.Add("base", dirtTilemap);
+
+            chunk.MineableObjects.Values.ToList().ForEach(x => x.RemoveAll(y => obstaclesToClear.Contains(y)));
+        }
+    
+        private void ClearObstaclesAroundTown(ref WorldChunk chunk)
+        {
+            var obstaclesToClear = new List<IMineable>();
+
+            foreach (var mineables in chunk.MineableObjects.Values)
+            {
+                foreach(var mineable in mineables)
+                {
+                    foreach (var plot in chunk.Town.Plots)
+                    {
+                        if (mineable.InteractBounds.Intersects(plot.WorldBounds))
+                        {
+                            obstaclesToClear.Add(mineable);
+                        }
+                    }
+                }
+            }
+
+            chunk.MineableObjects.Values.ToList().ForEach(x => x.RemoveAll(y => obstaclesToClear.Contains(y)));
         }
     }
 }
