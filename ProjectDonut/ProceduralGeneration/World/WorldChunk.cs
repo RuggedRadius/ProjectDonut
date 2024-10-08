@@ -43,6 +43,10 @@ namespace ProjectDonut.ProceduralGeneration.World
         public Dictionary<string, List<ISceneObject>> SceneObjects;
         public Dictionary<string, List<IMineable>> MineableObjects;
 
+        public Rectangle ChunkBounds { get; set; }
+
+        public List<Tilemap> TownFloor { get; set; }
+
         public int Width
         {
             get
@@ -202,6 +206,12 @@ namespace ProjectDonut.ProceduralGeneration.World
                 //}
                 //RenderThumbnail(gameTime);                
             }
+
+            foreach (var tm in TownFloor)
+            {
+                if (tm != null)
+                    tm.Update(gameTime);
+            }
         }
 
         public void Draw(GameTime gameTime)
@@ -239,7 +249,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             //MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
 
-            return;
+            foreach (var tm in TownFloor)
+            {
+                if (tm != null)
+                    tm.Draw(gameTime);
+            }
         }
 
         public void DrawSceneObjectsBelowPlayer(GameTime gameTime)
@@ -328,11 +342,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                     if (x == 0 || y == 0)
                     {
-                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta * 0.25f);
                     }
                     else if (x == Width - 1 || y == Height - 1)
                     {
-                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta * 0.25f);
                     }
                 }
             }

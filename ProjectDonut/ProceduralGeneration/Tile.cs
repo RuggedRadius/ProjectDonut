@@ -139,23 +139,23 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            if (!IsInCameraView())
-                return;
+            //if (!IsInCameraView())
+            //    return;
 
-                if (Global.SceneManager.CurrentScene is DungeonScene)
-                {
-                if (!IsVisible)
-                {
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
-                }
-                else
-                {
-                    // TODO: storing a lot of variables each frame here, can be reduced
-                    var dist = Vector2.Distance(WorldPosition, Global.PlayerObj.WorldPosition);
-                    var absValue = Math.Abs(dist);
-                    var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * alphaValue);
-                }
+            if (Global.SceneManager.CurrentScene is DungeonScene)
+            {
+            if (!IsVisible)
+            {
+                Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
+            }
+            else
+            {
+                // TODO: storing a lot of variables each frame here, can be reduced
+                var dist = Vector2.Distance(WorldPosition, Global.PlayerObj.WorldPosition);
+                var absValue = Math.Abs(dist);
+                var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
+                Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * alphaValue);
+            }
             }
             else if (Global.SceneManager.CurrentScene is WorldScene)
             {

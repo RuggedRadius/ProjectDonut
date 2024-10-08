@@ -46,6 +46,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private MountainGenerator genMountain;
         private StructureGenerator genStructure;
         private ScenaryGenerator _genScenary;
+        private TownBuilder _townBuilder;
 
         private GrasslandsRules rulesGrasslands;
 
@@ -77,6 +78,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             genMountain = new MountainGenerator(settings);
             genStructure = new StructureGenerator(settings);
             _genScenary = new ScenaryGenerator(settings);
+            _townBuilder = new TownBuilder(settings);
 
             rulesGrasslands = new GrasslandsRules();
 
@@ -211,6 +213,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             var chunk = new WorldChunk(chunkX, chunkY, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.ChunkBounds = new Rectangle(
+                chunkX * Global.ChunkSize * Global.TileSize, 
+                chunkY * Global.ChunkSize * Global.TileSize, 
+                Settings.Width * Global.TileSize, 
+                Settings.Height * Global.TileSize);
 
             //genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
@@ -247,8 +254,13 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             ExistingChunks.Add((chunkX, chunkY));
 
+            _townBuilder.Build(ref chunk);
+
             return chunk;
         }
+
+        
+
 
         public void LoadContent()
         {
