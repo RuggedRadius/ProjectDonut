@@ -17,7 +17,8 @@ namespace ProjectDonut.Combat.Combatants
     public enum CombatantMoveState
     {
         Idle,
-        MovingToPosition
+        MovingToPosition,
+        MovingBackToBasePosition
     }
 
     public enum CombatantActionState
@@ -75,6 +76,7 @@ namespace ProjectDonut.Combat.Combatants
         public Vector2 BaseScreenPosition { get; set; }
         public Vector2 ScreenPosition { get; set; }
         public Vector2 TargetScreenPosition { get; set; }
+        public Vector2 LastPosition { get; set; }
         public TeamType Team { get; set; }
         public CombatantMoveState MoveState { get; set; }
         public CombatantActionState ActionState { get; set; }
@@ -97,7 +99,7 @@ namespace ProjectDonut.Combat.Combatants
         public Rectangle Bounds;
 
         private float _moveTimer = 0f;
-        private float _moveTime = 1.5f;
+        private float _moveTime = 3.5f;
 
         private float _damageFlashDuration = 0.75f; // Duration of the entire flash effect
         private float _damageFlashTimer = 0f;      // Timer to track how long to keep flashing
@@ -123,7 +125,7 @@ namespace ProjectDonut.Combat.Combatants
             Stats = new CombatantStats();
             Stats.TEST_RandomiseStats();
 
-            _spriteEffects = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            _spriteEffects = Team != TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Bounds = new Rectangle(
                 (int)ScreenPosition.X,
@@ -342,9 +344,62 @@ namespace ProjectDonut.Combat.Combatants
         }
 
 
+        //private void InitialiseSprites()
+        //{
+        //    var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-combatant");
+        //    var atlas = Texture2DAtlas.Create("combatant", sheetTexture, Global.TileSize, Global.TileSize);
+        //    _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
+
+        //    _spriteSheet.DefineAnimation("idle", builder =>
+        //    {
+        //        builder.IsLooping(true)
+        //            .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1))
+        //            .AddFrame(regionIndex: 1, duration: TimeSpan.FromSeconds(1));
+        //    });
+
+        //    var cellTime = 0.25f;
+
+        //    _spriteSheet.DefineAnimation("melee", builder =>
+        //    {
+        //        builder.IsLooping(false)
+        //            .AddFrame(regionIndex: 2, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime));
+        //    });
+
+        //    _spriteSheet.DefineAnimation("magic", builder =>
+        //    {
+        //        builder.IsLooping(false)
+        //            .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime));
+        //    });
+
+        //    _spriteSheet.DefineAnimation("ranged", builder =>
+        //    {
+        //        builder.IsLooping(false)
+        //            .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(15, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(16, duration: TimeSpan.FromSeconds(cellTime))
+        //            .AddFrame(17, duration: TimeSpan.FromSeconds(cellTime));
+        //    });
+
+        //    Sprite = new AnimatedSprite(_spriteSheet, "idle");
+
+        //    Sprite.Effect = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+        //    _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
+        //}
+
         private void InitialiseSprites()
         {
-            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-combatant");
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Characters/Goblin");
             var atlas = Texture2DAtlas.Create("combatant", sheetTexture, Global.TileSize, Global.TileSize);
             _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
 
@@ -355,37 +410,44 @@ namespace ProjectDonut.Combat.Combatants
                     .AddFrame(regionIndex: 1, duration: TimeSpan.FromSeconds(1));
             });
 
-            var cellTime = 0.25f;
+            var cellTime = 0.1f;
+
+            _spriteSheet.DefineAnimation("walk", builder =>
+            {
+                builder.IsLooping(true)
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime));
+            });
 
             _spriteSheet.DefineAnimation("melee", builder =>
             {
                 builder.IsLooping(false)
-                    .AddFrame(regionIndex: 2, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             _spriteSheet.DefineAnimation("magic", builder =>
             {
                 builder.IsLooping(false)
-                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             _spriteSheet.DefineAnimation("ranged", builder =>
             {
                 builder.IsLooping(false)
+                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(15, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(16, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(17, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             Sprite = new AnimatedSprite(_spriteSheet, "idle");
@@ -464,15 +526,27 @@ namespace ProjectDonut.Combat.Combatants
                     break;
 
                 case CombatantMoveState.MovingToPosition:
-
-
                     if (ScreenPosition != TargetScreenPosition)
                     {
-                        ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
+                        ScreenPosition = Vector2.Lerp(BaseScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
+                        //ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
                     }
                     else
                     {
                         ScreenPosition = TargetScreenPosition;
+                        MoveState = CombatantMoveState.Idle;
+                    }
+                    break;
+
+                case CombatantMoveState.MovingBackToBasePosition:
+                    if (ScreenPosition != BaseScreenPosition)
+                    {
+                        ScreenPosition = Vector2.Lerp(LastPosition, BaseScreenPosition, _moveTimer / _moveTime);
+                        //ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
+                    }
+                    else
+                    {
+                        ScreenPosition = BaseScreenPosition;
                         MoveState = CombatantMoveState.Idle;
                     }
                     break;
@@ -538,6 +612,13 @@ namespace ProjectDonut.Combat.Combatants
             Global.SpriteBatch.DrawRectangle(Bounds, Color.Red, 1);
         }
 
+        public void MoveBackToBasePosition()
+        {
+            LastPosition = ScreenPosition;
+            MoveState = CombatantMoveState.MovingBackToBasePosition;
+            _moveTimer = 0f;
+        }
+
         public void MoveToMeleePosition(Combatant targetCombatant)
         {
             if (ScreenPosition.X > targetCombatant.ScreenPosition.X)
@@ -600,6 +681,7 @@ namespace ProjectDonut.Combat.Combatants
             ActionState = CombatantActionState.TurnInProgress;
 
             // Move into position
+            Sprite.SetAnimation("walk");
             MoveToMeleePosition(turn.Target);
             while (MoveState != CombatantMoveState.Idle) { }
 
@@ -613,15 +695,16 @@ namespace ProjectDonut.Combat.Combatants
             };
             while (Sprite.Controller.IsAnimating && Sprite.CurrentAnimation == "melee") { }
 
-            // TODO: Properly calculate damage here
             // Deal damage
             var damage = CalculatePhysicalDamage(turn.Target);
             turn.DamageDealt = damage;
             turn.Target.TakeDamage(damage);
 
             // Move back to base position
-            MoveToScreenPosition(BaseScreenPosition);
+            Sprite.SetAnimation("walk");
+            MoveBackToBasePosition();
             while (MoveState != CombatantMoveState.Idle) { }
+            Sprite.SetAnimation("idle");
 
             ActionState = CombatantActionState.TurnComplete;
             ActionState = CombatantActionState.Idle;
@@ -637,6 +720,7 @@ namespace ProjectDonut.Combat.Combatants
             ActionState = CombatantActionState.TurnInProgress;
 
             // Move into position
+            Sprite.SetAnimation("walk");
             MoveToRangedPosition();
             while (MoveState != CombatantMoveState.Idle) { }
 
@@ -656,8 +740,10 @@ namespace ProjectDonut.Combat.Combatants
             turn.Target.TakeDamage(damage);
 
             // Move back to base position
-            MoveToScreenPosition(BaseScreenPosition);
+            Sprite.SetAnimation("walk");
+            MoveBackToBasePosition();
             while (MoveState != CombatantMoveState.Idle) { }
+            Sprite.SetAnimation("idle");
             ActionState = CombatantActionState.TurnComplete;
 
             ActionState = CombatantActionState.Idle;
@@ -673,6 +759,7 @@ namespace ProjectDonut.Combat.Combatants
             ActionState = CombatantActionState.TurnInProgress;
 
             // Move into position
+            Sprite.SetAnimation("walk");
             MoveToRangedPosition();
             while (MoveState != CombatantMoveState.Idle) { }
 
@@ -690,8 +777,10 @@ namespace ProjectDonut.Combat.Combatants
             // ...
 
             // Move back to base position
-            MoveToScreenPosition(BaseScreenPosition);
+            Sprite.SetAnimation("walk");
+            MoveBackToBasePosition();
             while (MoveState != CombatantMoveState.Idle) { }
+            Sprite.SetAnimation("idle");
             ActionState = CombatantActionState.TurnComplete;
 
             ActionState = CombatantActionState.Idle;

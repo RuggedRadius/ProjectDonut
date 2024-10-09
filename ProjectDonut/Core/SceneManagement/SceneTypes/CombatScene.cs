@@ -97,7 +97,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         {
             //_combatUI.Initialize();
 
-            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Backgrounds/bg-dungeon");
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/bg-dungeon");
             var atlas = Texture2DAtlas.Create("combatant", sheetTexture, 480, 270);
             _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
 
@@ -199,7 +199,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public void Draw(GameTime gameTime)
         {
-            Global.SpriteBatch.Begin();
+            Global.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             // Draw background
             Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * CombatScene.SceneScale);
