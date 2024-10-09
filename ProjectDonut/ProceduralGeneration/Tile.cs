@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
+using MonoGame.Extended;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
@@ -61,6 +61,7 @@ namespace ProjectDonut.ProceduralGeneration
         public bool IsExplored { get; set; }
         public bool IsBlocked{ get; set; }
         public Texture2D Texture { get; set; }
+        public bool IsPlayerBlocking { get; set; }
 
         public Rectangle Bounds { get; set; }
 
@@ -136,11 +137,18 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Draw(GameTime gameTime)
         {
+            if (IsPlayerBlocking)
+            {
+                return;
+            }
+
             if (!IsExplored)
                 return;
 
             //if (!IsInCameraView())
             //    return;
+
+
 
             if (Global.SceneManager.CurrentScene is DungeonScene)
             {
@@ -182,6 +190,8 @@ namespace ProjectDonut.ProceduralGeneration
 
                 }
             }
+
+            //Global.SpriteBatch.DrawRectangle(Bounds, Color.Black, 1f);
         }
 
         private bool IsInCameraView()

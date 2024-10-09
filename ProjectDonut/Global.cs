@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
+using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core.Sprites;
@@ -13,7 +14,7 @@ using ProjectDonut.UI.DialogueSystem;
 using ProjectDonut.UI.ScrollDisplay;
 using QuakeConsole;
 
-namespace ProjectDonut.Core
+namespace ProjectDonut
 {
     public static class Global
     {
@@ -32,6 +33,9 @@ namespace ProjectDonut.Core
 
         // DAY/NIGHT
         public static DayNightCycle DayNightCycle;
+        public static float timeOfDay = 0f; // Start at midnight
+        //public static float timeSpeed = 1f / 60f;
+        public static float timeSpeed = 1f;
 
         // LIGHTING
         public static PenumbraComponent Penumbra;
@@ -80,7 +84,7 @@ namespace ProjectDonut.Core
 
         public static PlayerObj PlayerObj;
         public static class Player
-        {            
+        {
             public static PlayerInventory Inventory;
             public static PlayerTextDisplay TextDisplay;
             public static PlayerEquipment Equipment;

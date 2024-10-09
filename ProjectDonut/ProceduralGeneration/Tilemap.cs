@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended;
-using ProjectDonut.Core;
 
 namespace ProjectDonut.ProceduralGeneration
 {

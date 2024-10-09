@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
-using ProjectDonut.Core;
 
 namespace ProjectDonut.GameObjects.Doodads
 {

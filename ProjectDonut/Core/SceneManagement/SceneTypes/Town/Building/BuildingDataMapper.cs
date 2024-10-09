@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ProjectDonut.Core.Global;
+using static ProjectDonut.Global;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
 {

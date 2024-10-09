@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using ProjectDonut.Core;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjectDonut.Combat.UI

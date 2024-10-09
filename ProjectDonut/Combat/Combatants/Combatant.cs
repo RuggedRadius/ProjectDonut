@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 using MonoGame.Extended.Graphics;
-using ProjectDonut.Core;
 using MonoGame.Extended.Animations;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Combat.UI;

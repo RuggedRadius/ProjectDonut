@@ -77,6 +77,7 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Stairs;
             public static Dictionary<string, Texture2D> Doors;
             public static Dictionary<string, Texture2D> Roof;
+            public static Dictionary<string, Texture2D> Roof2;
 
             public static void Load()
             {
@@ -88,10 +89,12 @@ namespace ProjectDonut.Core.Sprites
                 Stairs = new Dictionary<string, Texture2D>();
                 Doors = new Dictionary<string, Texture2D>();
                 Roof = new Dictionary<string, Texture2D>();
+                Roof2 = new Dictionary<string, Texture2D>();
 
                 var townTerrainSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Town01");
                 var buildingBlocksSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites3");
                 var roofSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/RoofTiles");
+                var roofSheet2 = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/roof2");
 
                 LoadGrass(townTerrainSheet);
                 LoadDirt(townTerrainSheet);
@@ -103,8 +106,20 @@ namespace ProjectDonut.Core.Sprites
                 LoadDoors(buildingBlocksSheet);
 
                 LoadRoof(roofSheet);
+                LoadRoof2(roofSheet2);
 
                 LoadDoodads();
+            }
+
+            private static void LoadRoof2(Texture2D sheet)
+            {
+                Roof2.Add("edge-nw", ExtractSprite(sheet, 0, 0));
+                Roof2.Add("edge-ne", ExtractSprite(sheet, 3, 0));
+                Roof2.Add("edge-sw", ExtractSprite(sheet, 0, 3));
+                Roof2.Add("edge-se", ExtractSprite(sheet, 3, 3));
+                Roof2.Add("face-middle", ExtractSprite(sheet, 1, 0));
+                Roof2.Add("face-left", ExtractSprite(sheet, 0, 1));
+                Roof2.Add("face-right", ExtractSprite(sheet, 3, 1));
             }
 
             private static void LoadGrass(Texture2D sheet)
@@ -150,7 +165,7 @@ namespace ProjectDonut.Core.Sprites
             {
                 Walls.Add("wall-nw", ExtractSprite(sheet, 4, 1));
                 Walls.Add("wall-n", ExtractSprite(sheet, 5, 1));
-                Walls.Add("wall-ne", ExtractSprite(sheet, 6, 3));
+                Walls.Add("wall-ne", ExtractSprite(sheet, 6, 1));
                 Walls.Add("wall-w", ExtractSprite(sheet, 4, 2));
                 Walls.Add("wall-e", ExtractSprite(sheet, 6, 2));
                 Walls.Add("wall-sw", ExtractSprite(sheet, 4, 3));

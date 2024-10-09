@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Penumbra;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.Debugging;

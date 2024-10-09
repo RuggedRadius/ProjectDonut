@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;

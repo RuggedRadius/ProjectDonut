@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.ProceduralGeneration.World;
 using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;

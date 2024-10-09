@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.SceneManagement.SceneTypes.Town;

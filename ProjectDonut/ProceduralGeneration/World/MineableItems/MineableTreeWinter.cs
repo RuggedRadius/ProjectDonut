@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Animations;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Core.Input;
-using ProjectDonut.Core;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using Microsoft.Xna.Framework.Input;

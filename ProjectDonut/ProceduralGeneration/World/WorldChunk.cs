@@ -5,7 +5,6 @@ using System.Linq;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using ProjectDonut.UI.ScrollDisplay;
-using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
 using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.World.Generators;
@@ -169,7 +168,44 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
-            // Update each tile
+            if (Town != null)
+            {
+                foreach (var plot in Town.Plots)
+                {
+                    if (plot.WorldBounds.Contains(Global.PlayerObj.WorldPosition))
+                    {
+                        foreach (var tile in Town.Tilemaps["roofs"].Map)
+                        {
+                            if (tile == null)
+                                continue;
+
+                            if (tile.Bounds.Intersects(plot.LocalBounds))
+                            {
+                                tile.IsPlayerBlocking = true;
+                            }
+                            else
+                            {
+                                tile.IsPlayerBlocking = false;
+                            }
+                        }                        
+                    }
+                    else
+                    {
+                        foreach (var tile in Town.Tilemaps["roofs"].Map)
+                        {
+                            if (tile == null)
+                                continue;
+
+                            if (tile.Bounds.Intersects(plot.LocalBounds))
+                            {
+                                tile.IsPlayerBlocking = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+                // Update each tile
             foreach (var tilemap in Tilemaps)
             {
                 tilemap.Value.Update(gameTime);
