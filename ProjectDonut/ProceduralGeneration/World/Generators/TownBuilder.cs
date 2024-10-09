@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework;
 using Penumbra;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
+using MonoGame.Extended;
+using ProjectDonut.Tools;
 
 namespace ProjectDonut.ProceduralGeneration.World.Generators
 {
@@ -40,13 +42,46 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
         public void Draw(GameTime gameTime)
         {
-            //Tilemaps["base"].Draw(gameTime);
+            Tilemaps["base"].Draw(gameTime);
             Tilemaps["road"].Draw(gameTime);
             Tilemaps["floor"].Draw(gameTime);
+
+            foreach (var plot in Plots)
+            {
+                Global.SpriteBatch.DrawRectangle(plot.WorldBounds, Color.Red, 1);
+                Global.SpriteBatch.DrawRectangle(plot.Building.WorldBounds, Color.Blue, 1);
+            }
         }
     }
 
     public class TownPlot
+    {
+        public Vector2 WorldPosition { get; set; }
+        public Vector2 LocalPosition { get; set; }
+
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public TownBuilding Building { get; set; }
+
+        public Rectangle LocalBounds
+        {
+            get
+            {
+                return new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, Width, Height);
+            }
+        }
+
+        public Rectangle WorldBounds
+        {
+            get
+            {
+                return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Width, Height);
+            }
+        }
+    }
+
+    public class TownBuilding
     {
         public Vector2 WorldPosition { get; set; }
         public Vector2 LocalPosition { get; set; }
@@ -76,7 +111,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         private WorldMapSettings Settings;
         private Random _random = new Random();
 
+        // Settings
         private int spreadFromCenter = 50 * Global.TileSize;
+        private int roadWidth = 1;
+        private Vector2Int PlotSizeMin = new Vector2Int(10, 10);
+        private Vector2Int PlotSizeMax = new Vector2Int(20, 20);
+        private Vector2Int BuildingSizeMin = new Vector2Int(5, 5);
+        private Vector2Int BuildingSizeMax = new Vector2Int(9, 9);
 
         public TownBuilder(WorldMapSettings settings)
         {
@@ -96,7 +137,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             chunk.Town = town;
 
             CreatePlots(10, ref chunk);
-            FloorPlots(ref chunk);
+            CreateBuildingsInPlots(ref chunk);
+            FloorBuildings(ref chunk);
 
             // Clear trees around center point and each plot in circular fashion
             ClearObstaclesAroundTown(ref chunk);
@@ -107,19 +149,20 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             // Create roads between plots
             CreateRoadsBetweenPlots(ref chunk);
 
-            CreateBaseDirt(ref chunk);
+            CreateBaseDirtAroundRoads(ref chunk);
+            CreateDirtAroundPlots(ref chunk);
         }
 
-        private void FloorPlots(ref WorldChunk chunk)
+        private void FloorBuildings(ref WorldChunk chunk)
         {
             var tilemap = new Tilemap(chunk.Width, chunk.Height);
             tilemap.WorldPosition = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
 
             foreach (var plot in chunk.Town.Plots)
             {
-                for (int i = plot.LocalBounds.Left; i <= plot.LocalBounds.Right; i += Global.TileSize)
+                for (int i = plot.Building.LocalBounds.Left; i < plot.Building.LocalBounds.Right; i += Global.TileSize)
                 {
-                    for (int j = plot.LocalBounds.Top; j <= plot.LocalBounds.Bottom; j += Global.TileSize)
+                    for (int j = plot.Building.LocalBounds.Top; j < plot.Building.LocalBounds.Bottom; j += Global.TileSize)
                     {
                         tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile(false)
                         {
@@ -152,8 +195,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                 while (plotCreated == false)
                 {
-                    var plotWidth = _random.Next(5, 10);
-                    var plotHeight = _random.Next(5, 10);
+                    var plotWidth = _random.Next(PlotSizeMin.X, PlotSizeMax.X);
+                    var plotHeight = _random.Next(PlotSizeMin.Y, PlotSizeMax.Y);
 
                     var offsetFromCenterX = _random.Next(-spreadFromCenter, spreadFromCenter);
                     var offsetFromCenterY = _random.Next(-spreadFromCenter, spreadFromCenter);
@@ -179,6 +222,34 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                             break;
                     }
                 }
+            }
+        }
+
+        private void CreateBuildingsInPlots(ref WorldChunk chunk)
+        {
+            foreach (var plot in chunk.Town.Plots)
+            {
+                var plotWidth = plot.Width / Global.TileSize;
+                var plotHeight = plot.Height / Global.TileSize;
+
+                // Randomise building size
+                var buildingWidth = _random.Next(BuildingSizeMin.X, plotWidth - 2);
+                var buildingHeight = _random.Next(BuildingSizeMin.Y, plotHeight - 2);
+
+                // Randomise building position
+                var buildingX = _random.Next(1, plotWidth - buildingWidth - 1);
+                var buildingY = _random.Next(1, plotHeight - buildingHeight - 1);
+
+                // Create building
+                var building = new TownBuilding()
+                {
+                    WorldPosition = new Vector2(plot.WorldPosition.X + (buildingX * Global.TileSize), plot.WorldPosition.Y + (buildingY * Global.TileSize)),
+                    LocalPosition = new Vector2(plot.LocalPosition.X + (buildingX * Global.TileSize), plot.LocalPosition.Y + (buildingY * Global.TileSize)),
+                    Width = buildingWidth * Global.TileSize,
+                    Height = buildingHeight * Global.TileSize
+                };
+
+                plot.Building = building;
             }
         }
 
@@ -348,12 +419,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             }
         }
     
-        private void CreateBaseDirt(ref WorldChunk chunk)
+        private void CreateBaseDirtAroundRoads(ref WorldChunk chunk)
         {
             var dirtTilemap = new Tilemap(chunk.Width, chunk.Height);
             dirtTilemap.WorldPosition = new Vector2(chunk.WorldCoordX, chunk.WorldCoordY);
 
-            int pathWidth = 1;
             var obstaclesToClear = new List<IMineable>();
 
             for (int i = 0; i < chunk.Width; i++)
@@ -361,10 +431,10 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 for (int j = 0; j < chunk.Height; j++)
                 {
                     if (chunk.Town.Tilemaps["road"].Map[i, j] != null)
-                    {                        
-                        for (int x = -pathWidth; x <= pathWidth; x++)
+                    {
+                        for (int x = -roadWidth; x <= roadWidth; x++)
                         {
-                            for (int y = -pathWidth; y <= pathWidth; y++)
+                            for (int y = -roadWidth; y <= roadWidth; y++)
                             {
                                 var coordX = i + x;
                                 var coordY = j + y;
@@ -385,8 +455,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                                     IsExplored = true,
                                     Bounds = new Rectangle(
                                         (i + x) * Global.TileSize,
-                                        (j + y) * Global.TileSize, 
-                                        Global.TileSize, 
+                                        (j + y) * Global.TileSize,
+                                        Global.TileSize,
                                         Global.TileSize)
                                 };
 
@@ -401,7 +471,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                                     }
                                 }
                             }
-                        }                    
+                        }
                     }
                 }
             }
@@ -409,6 +479,52 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             chunk.Town.Tilemaps.Add("base", dirtTilemap);
 
             chunk.MineableObjects.Values.ToList().ForEach(x => x.RemoveAll(y => obstaclesToClear.Contains(y)));
+        }
+
+        private void CreateDirtAroundPlots(ref WorldChunk chunk)
+        {
+            var map = chunk.Town.Tilemaps["base"];
+
+            foreach (var plot in chunk.Town.Plots)
+            {
+                var startX = (plot.LocalBounds.Left / Global.TileSize) - 3;
+                var startY = (plot.LocalBounds.Top / Global.TileSize) - 3;
+                var endX = (plot.LocalBounds.Right / Global.TileSize) + 3;
+                var endY = (plot.LocalBounds.Bottom / Global.TileSize) + 3;
+
+                if (startX < 0)
+                    startX = 0;
+                if (startY < 0)
+                    startY = 0;
+                if (endX > chunk.Width)
+                    endX = chunk.Width;
+                if (endY > chunk.Height)
+                    endY = chunk.Height;
+
+                for (int i = startX; i < endX; i++)
+                {
+                    for (int j = startY; j < endY; j++)
+                    {
+                        map.Map[i,j] = new Tile(false)
+                        {
+                            ChunkX = chunk.ChunkCoordX,
+                            ChunkY = chunk.ChunkCoordY,
+                            xIndex = i,
+                            yIndex = j,
+                            LocalPosition = new Vector2((i) * Global.TileSize, (j) * Global.TileSize),
+                            Size = new Vector2(Global.TileSize, Global.TileSize),
+                            Texture = SpriteLib.Town.Terrain["dirt-c"],
+                            TileType = TileType.Instance,
+                            IsExplored = true,
+                            Bounds = new Rectangle(
+                                        (i) * Global.TileSize,
+                                        (j) * Global.TileSize,
+                                        Global.TileSize,
+                                        Global.TileSize)
+                        };
+                    }
+                }
+            }
         }
     
         private void ClearObstaclesAroundTown(ref WorldChunk chunk)
