@@ -202,7 +202,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             Global.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             // Draw background
-            Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (SceneScale - 1));
+            Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (SceneScale ));
 
             // Draw player team
             foreach (var combatant in Manager.PlayerTeam)
