@@ -255,8 +255,8 @@ namespace ProjectDonut.Combat
             {
                 for (int i = 0; i < combatants.Count; i++)
                 {
-                    var x = 4 * tileSize - (i * 0.5f * tileSize);
-                    var y = (2 * tileSize) + (i * (tileSize * 0.5f));
+                    var x = 2 * tileSize - (i * 0.5f * tileSize);
+                    var y = (0.5f * tileSize) + (i * (tileSize * 0.5f));
                     combatants[i].ScreenPosition = new Vector2(x, y);
                     combatants[i].BaseScreenPosition = new Vector2(x, y);
                 }
@@ -268,8 +268,8 @@ namespace ProjectDonut.Combat
 
                 for (int i = 0; i < combatants.Count; i++)
                 {
-                    var x = screenWidth - (4 * tileSize) - curSpriteWidth + (i * 0.5f * tileSize); 
-                    var y = (2 * tileSize) + (i * (tileSize * 0.5f));
+                    var x = screenWidth - (2 * tileSize) - curSpriteWidth + (i * 0.5f * tileSize); 
+                    var y = (0.5f * tileSize) + (i * (tileSize * 0.5f));
                     combatants[i].ScreenPosition = new Vector2(x, y);
                     combatants[i].BaseScreenPosition = new Vector2(x, y);
                 }

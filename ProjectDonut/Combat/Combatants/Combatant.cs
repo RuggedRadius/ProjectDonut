@@ -480,11 +480,11 @@ namespace ProjectDonut.Combat.Combatants
             _spriteSheet.DefineAnimation("walk", builder =>
             {
                 builder.IsLooping(true)
-                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime*2f))
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime*2f))
+                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime*2f))
+                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime*2f))
+                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime*2f));
             });
 
             _spriteSheet.DefineAnimation("melee", builder =>

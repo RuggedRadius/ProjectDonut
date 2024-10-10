@@ -37,7 +37,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         public AnimatedSprite Background { get; set; }
         private SpriteSheet _spriteSheet;
 
-        public static int SceneScale = 5;
+        public static int SceneScale = 8;
 
         private IScene PreviousScene { get; set; }
 
@@ -202,7 +202,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             Global.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             // Draw background
-            Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (SceneScale ));
+            Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (4 )); // TEMP TODO: 4 should be combat.SceneScale here
 
             // Draw player team
             foreach (var combatant in Manager.PlayerTeam)
