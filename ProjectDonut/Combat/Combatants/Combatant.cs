@@ -99,7 +99,7 @@ namespace ProjectDonut.Combat.Combatants
         public Rectangle Bounds;
 
         private float _moveTimer = 0f;
-        private float _moveTime = 3.5f;
+        private float _moveTime = 1.5f;
 
         private float _damageFlashDuration = 0.75f; // Duration of the entire flash effect
         private float _damageFlashTimer = 0f;      // Timer to track how long to keep flashing
@@ -117,7 +117,12 @@ namespace ProjectDonut.Combat.Combatants
         public Combatant(TeamType team, CombatManager manager)
         {
             _manager = manager;
-            InitialiseSprites();
+
+            if (_random.Next(2) == 0)
+                InitialiseSpritesGoblin();
+            else
+                InitialiseSpritesSkeleton();
+
             Team = team;
 
             TextDisplay = new FloatingTextDisplay(this);
@@ -397,7 +402,7 @@ namespace ProjectDonut.Combat.Combatants
         //    _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
         //}
 
-        private void InitialiseSprites()
+        private void InitialiseSpritesGoblin()
         {
             var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Characters/Goblin");
             var atlas = Texture2DAtlas.Create("combatant", sheetTexture, Global.TileSize, Global.TileSize);
@@ -448,6 +453,77 @@ namespace ProjectDonut.Combat.Combatants
                     .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            Sprite = new AnimatedSprite(_spriteSheet, "idle");
+
+            Sprite.Effect = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
+        }
+
+        private void InitialiseSpritesSkeleton()
+        {
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Characters/Skeleton2");
+            var atlas = Texture2DAtlas.Create("combatant", sheetTexture, Global.TileSize, Global.TileSize);
+            _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
+
+            _spriteSheet.DefineAnimation("idle", builder =>
+            {
+                builder.IsLooping(true)
+                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1))
+                    .AddFrame(regionIndex: 1, duration: TimeSpan.FromSeconds(1));
+            });
+
+            var cellTime = 0.05f;
+
+            _spriteSheet.DefineAnimation("walk", builder =>
+            {
+                builder.IsLooping(true)
+                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            _spriteSheet.DefineAnimation("melee", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            _spriteSheet.DefineAnimation("magic", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime));
+            });
+
+            _spriteSheet.DefineAnimation("ranged", builder =>
+            {
+                builder.IsLooping(false)
+                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             Sprite = new AnimatedSprite(_spriteSheet, "idle");
@@ -528,26 +604,76 @@ namespace ProjectDonut.Combat.Combatants
                 case CombatantMoveState.MovingToPosition:
                     if (ScreenPosition != TargetScreenPosition)
                     {
-                        ScreenPosition = Vector2.Lerp(BaseScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
-                        //ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
+                        if (BaseScreenPosition.X < TargetScreenPosition.X)
+                        {
+                            if (ScreenPosition.X > TargetScreenPosition.X)
+                            {
+                                ScreenPosition = TargetScreenPosition;
+                                MoveState = CombatantMoveState.Idle;
+                                _spriteEffects = Team != TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                            }
+                            else
+                            {
+                                ScreenPosition = Vector2.Lerp(BaseScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
+                            }
+                        }                        
+                        else if (BaseScreenPosition.X > TargetScreenPosition.X)
+                        {
+                            if (ScreenPosition.X < TargetScreenPosition.X)
+                            {
+                                ScreenPosition = TargetScreenPosition;
+                                MoveState = CombatantMoveState.Idle;
+                                _spriteEffects = Team != TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                            }
+                            else
+                            {
+                                ScreenPosition = Vector2.Lerp(BaseScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
+                            }
+                        }
                     }
                     else
                     {
                         ScreenPosition = TargetScreenPosition;
                         MoveState = CombatantMoveState.Idle;
+                        _spriteEffects = Team != TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                     }
                     break;
 
                 case CombatantMoveState.MovingBackToBasePosition:
                     if (ScreenPosition != BaseScreenPosition)
                     {
-                        ScreenPosition = Vector2.Lerp(LastPosition, BaseScreenPosition, _moveTimer / _moveTime);
-                        //ScreenPosition = Vector2.Lerp(ScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
+                        if (LastPosition.X < BaseScreenPosition.X)
+                        {
+                            if (ScreenPosition.X > BaseScreenPosition.X)
+                            {
+                                ScreenPosition = BaseScreenPosition;
+                                MoveState = CombatantMoveState.Idle;
+                                _spriteEffects = Team != TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                            }
+                            else
+                            {
+                                ScreenPosition = Vector2.Lerp(LastPosition, BaseScreenPosition, _moveTimer / _moveTime);
+                            }
+                        }
+                        else if (LastPosition.X > BaseScreenPosition.X)
+                        {
+                            if (ScreenPosition.X < BaseScreenPosition.X)
+                            {
+                                ScreenPosition = BaseScreenPosition;
+                                MoveState = CombatantMoveState.Idle;
+                                _spriteEffects = Team != TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                            }
+                            else
+                            {
+                                ScreenPosition = Vector2.Lerp(LastPosition, BaseScreenPosition, _moveTimer / _moveTime);
+                            }
+                        }
                     }
                     else
                     {
                         ScreenPosition = BaseScreenPosition;
                         MoveState = CombatantMoveState.Idle;
+                        _spriteEffects = Team != TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                     }
                     break;
 
@@ -614,6 +740,7 @@ namespace ProjectDonut.Combat.Combatants
 
         public void MoveBackToBasePosition()
         {
+            _spriteEffects = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             LastPosition = ScreenPosition;
             MoveState = CombatantMoveState.MovingBackToBasePosition;
             _moveTimer = 0f;

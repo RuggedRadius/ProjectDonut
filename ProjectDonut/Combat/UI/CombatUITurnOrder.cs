@@ -41,7 +41,7 @@ namespace ProjectDonut.Combat.UI
 
             RectBackground = new Rectangle(
                 0, 
-                250, 
+                0, 
                 TurnOrderEntryWidth, 
                 TurnsToDrawCount * TurnOrderEntryHeight);
         }
@@ -69,15 +69,15 @@ namespace ProjectDonut.Combat.UI
                     BackgroundColour = isPlayerTeam ? new Color(153, 255, 153) * 0.5f : new Color(255, 153, 153) * 0.5f,
                     Bounds = new Rectangle(
                         0,
-                        250 + (i * TurnOrderEntryHeight),
+                        0 + (i * TurnOrderEntryHeight),
                         TurnOrderEntryWidth,
                         TurnOrderEntryHeight),
                     AvatarBounds = new Rectangle(
                         0,
-                        250 + (i * TurnOrderEntryHeight),
+                        0 + (i * TurnOrderEntryHeight),
                         50,
                         50),
-                    NamePosition = new Vector2(0 + 50 + 20, 250 + 5 + (i * TurnOrderEntryHeight))
+                    NamePosition = new Vector2(0 + 50 + 20, 0 + 5 + (i * TurnOrderEntryHeight))
                 });               
             }
         }
