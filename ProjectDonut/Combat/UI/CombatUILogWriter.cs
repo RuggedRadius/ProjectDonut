@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Combat.Combatants.Base;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat.UI

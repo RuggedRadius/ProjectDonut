@@ -1,5 +1,5 @@
 ﻿using System;
-using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Combat.Combatants.Base;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat

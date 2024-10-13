@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Combat.Combatants.Base;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Tools;
 

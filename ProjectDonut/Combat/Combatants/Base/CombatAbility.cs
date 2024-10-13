@@ -1,4 +1,4 @@
-﻿namespace ProjectDonut.Combat.Combatants
+﻿namespace ProjectDonut.Combat.Combatants.Base
 {
     public class CombatAbility
     {

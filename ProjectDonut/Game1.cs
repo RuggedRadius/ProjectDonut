@@ -21,6 +21,7 @@ using ProjectDonut.Core.Sprites;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Tools;
 using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Combat.Combatants.Base;
 
 namespace ProjectDonut
 {
@@ -126,24 +127,38 @@ namespace ProjectDonut
 
             for (int i = 0; i < 4; i++)
             {
-                playerTeam.Add(new Combatant(TeamType.Player, scene.Manager)
+                var randomIndex = random.Next(0, 3);
+
+                switch (randomIndex)
                 {
-                    Details = new CombatantDetails()
-                    {
-                        Name = NameGenerator.GenerateRandomName(2)
-                    }
-                });
+                    case 0: 
+                        playerTeam.Add(new Goblin(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } }); 
+                        break;
+                    case 1:
+                        playerTeam.Add(new Skeleton(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+                    case 2:
+                        playerTeam.Add(new Slime(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+                }
             }
 
             for (int i = 0; i < 4; i++)
             {
-                enemyTeam.Add(new Combatant(TeamType.Enemy, scene.Manager)
+                var randomIndex = random.Next(0, 3);
+
+                switch (randomIndex)
                 {
-                    Details = new CombatantDetails()
-                    {
-                        Name = NameGenerator.GenerateRandomName(2)
-                    }
-                });
+                    case 0:
+                        enemyTeam.Add(new Goblin(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+                    case 1:
+                        enemyTeam.Add(new Skeleton(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+                    case 2:
+                        enemyTeam.Add(new Slime(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+                }
             }
 
             scene.Manager.AddTeam(playerTeam, true);

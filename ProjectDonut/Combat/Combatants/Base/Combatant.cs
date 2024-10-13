@@ -12,7 +12,7 @@ using System.Linq;
 using RenderingLibrary.Graphics;
 using System.ComponentModel;
 
-namespace ProjectDonut.Combat.Combatants
+namespace ProjectDonut.Combat.Combatants.Base
 {
     public enum CombatantMoveState
     {
@@ -43,7 +43,7 @@ namespace ProjectDonut.Combat.Combatants
         [Description("Flee")] Flee,
         [Description("Taunt")] Taunt,
         [Description("Defend")] Defend,
-        [Description("Swap Positions")] MovePosition,        
+        [Description("Swap Positions")] MovePosition,
     }
 
     public enum TeamType
@@ -93,7 +93,7 @@ namespace ProjectDonut.Combat.Combatants
 
         public bool IsKOd => Stats.Health <= 0;
 
-        private SpriteSheet _spriteSheet;
+        public SpriteSheet _spriteSheet;
         public SpriteEffects _spriteEffects;
 
         public Rectangle Bounds;
@@ -108,7 +108,7 @@ namespace ProjectDonut.Combat.Combatants
         private int _framesPerFlash = 8;           // Number of frames before switching colors
         private Color _drawColour;
 
-        private Texture2D _arrowSprite;
+        public Texture2D ArrowSprite;
 
         private List<Projectile> Projectiles { get; set; } = new List<Projectile>();
 
@@ -117,12 +117,6 @@ namespace ProjectDonut.Combat.Combatants
         public Combatant(TeamType team, CombatManager manager)
         {
             _manager = manager;
-
-            if (_random.Next(2) == 0)
-                InitialiseSpritesGoblin();
-            else
-                InitialiseSpritesSkeleton();
-
             Team = team;
 
             TextDisplay = new FloatingTextDisplay(this);
@@ -145,7 +139,7 @@ namespace ProjectDonut.Combat.Combatants
             InitialiseAbilities();
         }
 
-        private void InitialiseAbilities()
+        public virtual void InitialiseAbilities()
         {
             Abilities = new List<CombatAbility>();
 
@@ -349,62 +343,9 @@ namespace ProjectDonut.Combat.Combatants
         }
 
 
-        //private void InitialiseSprites()
-        //{
-        //    var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-combatant");
-        //    var atlas = Texture2DAtlas.Create("combatant", sheetTexture, Global.TileSize, Global.TileSize);
-        //    _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
-
-        //    _spriteSheet.DefineAnimation("idle", builder =>
-        //    {
-        //        builder.IsLooping(true)
-        //            .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1))
-        //            .AddFrame(regionIndex: 1, duration: TimeSpan.FromSeconds(1));
-        //    });
-
-        //    var cellTime = 0.25f;
-
-        //    _spriteSheet.DefineAnimation("melee", builder =>
-        //    {
-        //        builder.IsLooping(false)
-        //            .AddFrame(regionIndex: 2, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime));
-        //    });
-
-        //    _spriteSheet.DefineAnimation("magic", builder =>
-        //    {
-        //        builder.IsLooping(false)
-        //            .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime));
-        //    });
-
-        //    _spriteSheet.DefineAnimation("ranged", builder =>
-        //    {
-        //        builder.IsLooping(false)
-        //            .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(15, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(16, duration: TimeSpan.FromSeconds(cellTime))
-        //            .AddFrame(17, duration: TimeSpan.FromSeconds(cellTime));
-        //    });
-
-        //    Sprite = new AnimatedSprite(_spriteSheet, "idle");
-
-        //    Sprite.Effect = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-
-        //    _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
-        //}
-
-        private void InitialiseSpritesGoblin()
+        public virtual void InitialiseSprites()
         {
-            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Characters/Goblin");
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-combatant");
             var atlas = Texture2DAtlas.Create("combatant", sheetTexture, Global.TileSize, Global.TileSize);
             _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
 
@@ -415,89 +356,16 @@ namespace ProjectDonut.Combat.Combatants
                     .AddFrame(regionIndex: 1, duration: TimeSpan.FromSeconds(1));
             });
 
-            var cellTime = 0.1f;
+            var cellTime = 0.25f;
 
-            _spriteSheet.DefineAnimation("walk", builder =>
+            _spriteSheet.DefineAnimation("melee", builder =>
             {
-                builder.IsLooping(true)
-                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
+                builder.IsLooping(false)
+                    .AddFrame(regionIndex: 2, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime));
-            });
-
-            _spriteSheet.DefineAnimation("melee", builder =>
-            {
-                builder.IsLooping(false)
-                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime));
-            });
-
-            _spriteSheet.DefineAnimation("magic", builder =>
-            {
-                builder.IsLooping(false)
-                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime));
-            });
-
-            _spriteSheet.DefineAnimation("ranged", builder =>
-            {
-                builder.IsLooping(false)
-                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime));
-            });
-
-            Sprite = new AnimatedSprite(_spriteSheet, "idle");
-
-            Sprite.Effect = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-
-            _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
-        }
-
-        private void InitialiseSpritesSkeleton()
-        {
-            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Characters/Skeleton2");
-            var atlas = Texture2DAtlas.Create("combatant", sheetTexture, Global.TileSize, Global.TileSize);
-            _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
-
-            _spriteSheet.DefineAnimation("idle", builder =>
-            {
-                builder.IsLooping(true)
-                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(1))
-                    .AddFrame(regionIndex: 1, duration: TimeSpan.FromSeconds(1));
-            });
-
-            var cellTime = 0.05f;
-
-            _spriteSheet.DefineAnimation("walk", builder =>
-            {
-                builder.IsLooping(true)
-                    .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime*2f))
-                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime*2f))
-                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime*2f))
-                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime*2f))
-                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime*2f));
-            });
-
-            _spriteSheet.DefineAnimation("melee", builder =>
-            {
-                builder.IsLooping(false)
-                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(6, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             _spriteSheet.DefineAnimation("magic", builder =>
@@ -507,30 +375,25 @@ namespace ProjectDonut.Combat.Combatants
                     .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             _spriteSheet.DefineAnimation("ranged", builder =>
             {
                 builder.IsLooping(false)
-                    .AddFrame(7, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(8, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(9, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(10, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(11, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(12, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(13, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(14, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(15, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(16, duration: TimeSpan.FromSeconds(cellTime))
+                    .AddFrame(17, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             Sprite = new AnimatedSprite(_spriteSheet, "idle");
 
             Sprite.Effect = Team == TeamType.Player ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            _arrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
+            ArrowSprite = Global.ContentManager.Load<Texture2D>("Sprites/Combat/placeholder-arrow");
         }
 
         public void MoveToScreenPosition(Vector2 screenPosition)
@@ -559,7 +422,7 @@ namespace ProjectDonut.Combat.Combatants
         public void UseAbility() => throw new NotImplementedException();
         public void Flee() => throw new NotImplementedException();
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             Bounds = new Rectangle(
                 (int)ScreenPosition.X,
@@ -616,7 +479,7 @@ namespace ProjectDonut.Combat.Combatants
                             {
                                 ScreenPosition = Vector2.Lerp(BaseScreenPosition, TargetScreenPosition, _moveTimer / _moveTime);
                             }
-                        }                        
+                        }
                         else if (BaseScreenPosition.X > TargetScreenPosition.X)
                         {
                             if (ScreenPosition.X < TargetScreenPosition.X)
@@ -693,7 +556,7 @@ namespace ProjectDonut.Combat.Combatants
             });
         }
 
-        public void Draw(GameTime gameTime)
+        public virtual void Draw(GameTime gameTime)
         {
             if (IsKOd)
             {

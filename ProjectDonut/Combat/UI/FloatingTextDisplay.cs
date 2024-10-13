@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using ProjectDonut.Core.Input;
-using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Combat.Combatants.Base;
 
 namespace ProjectDonut.Combat.UI
 {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ProjectDonut.Combat.Combatants
+namespace ProjectDonut.Combat.Combatants.Base
 {
     public class CombatantDetails
     {

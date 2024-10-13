@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Combat.Combatants.Base;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.Combat
