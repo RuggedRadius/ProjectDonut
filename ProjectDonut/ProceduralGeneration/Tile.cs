@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
-using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;
@@ -127,19 +125,6 @@ namespace ProjectDonut.ProceduralGeneration
                     alphaValue = 1f;
                 }
             }
-            //else if (Global.SceneManager.CurrentScene is TownScene)
-            //{
-            //    if (!IsVisible)
-            //    {
-            //        Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);
-            //    }
-            //    else
-            //    {
-            //        Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
-            //        //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
-
-            //    }
-            //}
         }
 
         private void HandleAnimation(GameTime gameTime)
@@ -177,8 +162,7 @@ namespace ProjectDonut.ProceduralGeneration
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition));
-            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+            IsVisible = (Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition)) <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)
                 IsExplored = true;

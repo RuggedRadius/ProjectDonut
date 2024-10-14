@@ -144,6 +144,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             WallBuildings(ref chunk);
             FencePlots(ref chunk);
             CreateBuildingRoofs(ref chunk);
+            PlaceDoorsOnBuildings(ref chunk);
 
             // Clear trees around center point and each plot in circular fashion
             ClearObstaclesAroundTown(ref chunk);
@@ -702,220 +703,115 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
             foreach (var plot in chunk.Town.Plots)
             {
-                var halfWidth = plot.Building.Width / 2;
-                var width = plot.Building.Width / Global.TileSize;
-                var height = (plot.Building.Height / Global.TileSize) - 1;
+                var widthInTiles = plot.Building.Width / Global.TileSize;
+                var heightInTiles = plot.Building.Height / Global.TileSize;
 
-                var startX = 0;
-                var startY = 0;
+                var xCounter = 0;
+                var yCounter = 0;
 
-                while (width > 0 && height > 0)
+                for (int i = plot.Building.LocalBounds.Left; i < plot.Building.LocalBounds.Right; i += Global.TileSize)
                 {
-                    for (var x = startX; x < width; x++)
+                    yCounter = 0;
+                    for (int j = plot.Building.LocalBounds.Top; j < plot.Building.LocalBounds.Bottom + Global.TileSize; j += Global.TileSize)
                     {
-                        for (var y = startY; y < height; y++)
+                        Texture2D texture = null;
+                        if (yCounter == 0) // Top row
                         {
-                            var tileX = ((int)plot.Building.LocalPosition.X / Global.TileSize) + x;
-                            var tileY = ((int)plot.Building.LocalPosition.Y / Global.TileSize) + y;
-
-                            if (y == startY)
+                            if (xCounter == 0)
                             {
-                                if (x == startX)
-                                {
-                                    tilemap.Map[tileX, tileY] = new Tile(false)
-                                    {
-                                        ChunkX = chunk.ChunkCoordX,
-                                        ChunkY = chunk.ChunkCoordY,
-                                        xIndex = tileX,
-                                        yIndex = tileY,
-                                        LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                                        Texture = SpriteLib.Town.Roof2["edge-nw"],
-                                        TileType = TileType.Instance,
-                                        IsExplored = true,
-                                        IsPlayerBlocking = false,
-                                        Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                    };
-                                }
-                                else if (x == width - 1)
-                                {
-                                    tilemap.Map[tileX, tileY] = new Tile(false)
-                                    {
-                                        ChunkX = chunk.ChunkCoordX,
-                                        ChunkY = chunk.ChunkCoordY,
-                                        xIndex = tileX,
-                                        yIndex = tileY,
-                                        LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                                        Texture = SpriteLib.Town.Roof2["edge-ne"],
-                                        TileType = TileType.Instance,
-                                        IsExplored = true,
-                                        IsPlayerBlocking = false,
-                                        Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                    };
-                                }
-                                else
-                                {
-                                    tilemap.Map[tileX, tileY] = new Tile(false)
-                                    {
-                                        ChunkX = chunk.ChunkCoordX,
-                                        ChunkY = chunk.ChunkCoordY,
-                                        xIndex = tileX,
-                                        yIndex = tileY,
-                                        LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                                        Texture = SpriteLib.Town.Roof2["face-middle"],
-                                        TileType = TileType.Instance,
-                                        IsExplored = true,
-                                        IsPlayerBlocking = false,
-                                        Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                    };
-                                }
-
-                                continue;
+                                texture = SpriteLib.Town.Roof3["nw"];
                             }
-
-                            if (y == height - 1)
+                            else if (xCounter == widthInTiles - 1)
                             {
-                                if (x == startX)
-                                {
-                                    tilemap.Map[tileX, tileY] = new Tile(false)
-                                    {
-                                        ChunkX = chunk.ChunkCoordX,
-                                        ChunkY = chunk.ChunkCoordY,
-                                        xIndex = tileX,
-                                        yIndex = tileY,
-                                        LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                                        Texture = SpriteLib.Town.Roof2["edge-sw"],
-                                        TileType = TileType.Instance,
-                                        IsExplored = true,
-                                        IsPlayerBlocking = false,
-                                        Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                    };
-                                }
-                                else if (x == width - 1)
-                                {
-                                    tilemap.Map[tileX, tileY] = new Tile(false)
-                                    {
-                                        ChunkX = chunk.ChunkCoordX,
-                                        ChunkY = chunk.ChunkCoordY,
-                                        xIndex = tileX,
-                                        yIndex = tileY,
-                                        LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                                        Texture = SpriteLib.Town.Roof2["edge-se"],
-                                        TileType = TileType.Instance,
-                                        IsExplored = true,
-                                        IsPlayerBlocking = false,
-                                        Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                    };
-                                }
-                                else
-                                {
-                                    tilemap.Map[tileX, tileY] = new Tile(false)
-                                    {
-                                        ChunkX = chunk.ChunkCoordX,
-                                        ChunkY = chunk.ChunkCoordY,
-                                        xIndex = tileX,
-                                        yIndex = tileY,
-                                        LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                        Size = new Vector2(Global.TileSize, Global.TileSize),
-                                        Texture = SpriteLib.Town.Roof2["face-middle"],
-                                        TileType = TileType.Instance,
-                                        IsExplored = true,
-                                        IsPlayerBlocking = false,
-                                        Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                    };
-                                }
-
-                                continue;
+                                texture = SpriteLib.Town.Roof3["ne"];
                             }
-
-                            if (x == startX)
+                            else
                             {
-                                tilemap.Map[tileX, tileY] = new Tile(false)
-                                {
-                                    ChunkX = chunk.ChunkCoordX,
-                                    ChunkY = chunk.ChunkCoordY,
-                                    xIndex = tileX,
-                                    yIndex = tileY,
-                                    LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                    Size = new Vector2(Global.TileSize, Global.TileSize),
-                                    Texture = SpriteLib.Town.Roof2["face-left"],
-                                    TileType = TileType.Instance,
-                                    IsExplored = true,
-                                    IsPlayerBlocking = false,
-                                    Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                };
-
-                                continue;
+                                texture = SpriteLib.Town.Roof3["n"];
                             }
-                            else if (x == width - 1)
-                            {
-                                tilemap.Map[tileX, tileY] = new Tile(false)
-                                {
-                                    ChunkX = chunk.ChunkCoordX,
-                                    ChunkY = chunk.ChunkCoordY,
-                                    xIndex = tileX,
-                                    yIndex = tileY,
-                                    LocalPosition = new Vector2(tileX * Global.TileSize, tileY * Global.TileSize),
-                                    Size = new Vector2(Global.TileSize, Global.TileSize),
-                                    Texture = SpriteLib.Town.Roof2["face-right"],
-                                    TileType = TileType.Instance,
-                                    IsExplored = true,
-                                    IsPlayerBlocking = false,
-                                    Bounds = new Rectangle(
-                                            tileX * Global.TileSize,
-                                            tileY * Global.TileSize,
-                                            Global.TileSize,
-                                            Global.TileSize)
-                                };
-
-                                continue;
-                            }
-
-                            continue;
                         }
+                        else if (yCounter == heightInTiles - 1) // Bottom row
+                        {
+                            if (xCounter == 0)
+                            {
+                                texture = SpriteLib.Town.Roof3["sw"];
+                            }
+                            else if (xCounter == widthInTiles - 1)
+                            {
+                                texture = SpriteLib.Town.Roof3["se"];
+                            }
+                            else
+                            {
+                                texture = SpriteLib.Town.Roof3["s"];
+                            }
+                        }
+                        else if (yCounter >= heightInTiles) // Gutter
+                        {
+                            texture = SpriteLib.Town.Roof3["gutter"];
+                        }
+                        else // Middle row
+                        {
+                            if (xCounter == 0)
+                            {
+                                texture = SpriteLib.Town.Roof3["w"];
+                            }
+                            else if (xCounter == widthInTiles - 1)
+                            {
+                                texture = SpriteLib.Town.Roof3["e"];
+                            }
+                            else
+                            {
+                                texture = SpriteLib.Town.Roof3["c"];
+                            }
+                        }
+
+                        tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile(false)
+                        {
+                            ChunkX = chunk.ChunkCoordX,
+                            ChunkY = chunk.ChunkCoordY,
+                            xIndex = (i / Global.TileSize) - 0,
+                            yIndex = (j / Global.TileSize) - 1,
+                            LocalPosition = new Vector2(i, j - Global.TileSize),
+                            Size = new Vector2(Global.TileSize, Global.TileSize),
+                            Texture = texture,
+                            TileType = TileType.Instance,
+                            IsExplored = true,
+                            Bounds = new Rectangle(i, j - Global.TileSize, Global.TileSize, Global.TileSize)
+                        };
+
+                        yCounter++;
                     }
 
-                    width -= 1;
-                    height -= 1;
-                    startX++;
-                    startY++;
+                    xCounter++;
                 }
             }
 
             chunk.Town.Tilemaps.Add("roofs", tilemap);
-            //RuleTiler.Town.ApplyRulesToBuildingForFloors(ref chunk);
+        }
+
+        private void PlaceDoorsOnBuildings(ref WorldChunk chunk)
+        {
+            var tm = chunk.Town.Tilemaps["walls"];
+
+            foreach (var plot in chunk.Town.Plots)
+            {
+                var building = plot.Building;
+                var doorx = building.LocalPosition.X + ((_random.Next(building.Width / Global.TileSize) * Global.TileSize));
+                var doorPosition = new Vector2(doorx, building.LocalPosition.Y + building.Height - Global.TileSize);
+
+                tm.Map[(int)doorPosition.X / Global.TileSize, (int)doorPosition.Y / Global.TileSize] = new Tile(false)
+                {
+                    ChunkX = chunk.ChunkCoordX,
+                    ChunkY = chunk.ChunkCoordY,
+                    xIndex = (int)doorPosition.X / Global.TileSize,
+                    yIndex = (int)doorPosition.Y / Global.TileSize,
+                    LocalPosition = new Vector2(doorPosition.X, doorPosition.Y),
+                    Size = new Vector2(Global.TileSize, Global.TileSize),
+                    Texture = SpriteLib.Town.Doors["door-int"],
+                    TileType = TileType.Instance,
+                    IsExplored = true
+                };
+            }
         }
     }
 }

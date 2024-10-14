@@ -78,6 +78,8 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Doors;
             public static Dictionary<string, Texture2D> Roof;
             public static Dictionary<string, Texture2D> Roof2;
+            public static Dictionary<string, Texture2D> Roof3;
+
 
             public static void Load()
             {
@@ -95,6 +97,7 @@ namespace ProjectDonut.Core.Sprites
                 var buildingBlocksSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites3");
                 var roofSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/RoofTiles");
                 var roofSheet2 = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/roof2");
+                var roofSheet3 = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Roof3");
 
                 LoadGrass(townTerrainSheet);
                 LoadDirt(townTerrainSheet);
@@ -107,8 +110,26 @@ namespace ProjectDonut.Core.Sprites
 
                 LoadRoof(roofSheet);
                 LoadRoof2(roofSheet2);
+                LoadRoof3(roofSheet3);
 
                 LoadDoodads();
+            }
+
+            private static void LoadRoof3(Texture2D sheet)
+            {
+                Roof3 = new Dictionary<string, Texture2D>()
+                {
+                    { "nw", ExtractSprite(sheet, 0, 0) },
+                    { "n", ExtractSprite(sheet, 1, 0) },
+                    { "ne", ExtractSprite(sheet, 2, 0) },
+                    { "w", ExtractSprite(sheet, 0, 1) },
+                    { "c", ExtractSprite(sheet, 1, 1) },
+                    { "e", ExtractSprite(sheet, 2, 1) },
+                    { "sw", ExtractSprite(sheet, 0, 2) },
+                    { "s", ExtractSprite(sheet, 1, 2) },
+                    { "se", ExtractSprite(sheet, 2, 2) },
+                    { "gutter", ExtractSprite(sheet, 0, 3) }
+                };                
             }
 
             private static void LoadRoof2(Texture2D sheet)

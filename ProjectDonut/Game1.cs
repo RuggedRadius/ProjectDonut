@@ -127,36 +127,48 @@ namespace ProjectDonut
 
             for (int i = 0; i < 4; i++)
             {
-                var randomIndex = random.Next(0, 3);
+                var randomIndex = random.Next(0, 4);
 
                 switch (randomIndex)
                 {
                     case 0: 
                         playerTeam.Add(new Goblin(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } }); 
                         break;
+
                     case 1:
                         playerTeam.Add(new Skeleton(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
                         break;
+
                     case 2:
                         playerTeam.Add(new Slime(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+
+                    case 3:
+                        playerTeam.Add(new Rat(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
                         break;
                 }
             }
 
             for (int i = 0; i < 4; i++)
             {
-                var randomIndex = random.Next(0, 3);
+                var randomIndex = random.Next(0, 4);
 
                 switch (randomIndex)
                 {
                     case 0:
                         enemyTeam.Add(new Goblin(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
                         break;
+
                     case 1:
                         enemyTeam.Add(new Skeleton(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
                         break;
+
                     case 2:
                         enemyTeam.Add(new Slime(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+
+                    case 3:
+                        enemyTeam.Add(new Rat(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
                         break;
                 }
             }

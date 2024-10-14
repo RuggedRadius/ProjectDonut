@@ -172,7 +172,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             {
                 foreach (var plot in Town.Plots)
                 {
-                    if (plot.WorldBounds.Contains(Global.PlayerObj.WorldPosition))
+                    if (plot.Building.WorldBounds.Contains(Global.PlayerObj.WorldPosition))
                     {
                         foreach (var tile in Town.Tilemaps["roofs"].Map)
                         {
