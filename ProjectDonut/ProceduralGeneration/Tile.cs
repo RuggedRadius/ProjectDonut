@@ -47,12 +47,6 @@ namespace ProjectDonut.ProceduralGeneration
         public WorldTileType WorldTileType { get; set; }
         public Biome Biome { get; set; }
 
-        // Animation
-        public bool IsAnimated { get; set; }
-        public List<Texture2D> Frames { get; set; }
-        private double _frameTimer { get; set; }
-        private double _frameInterval { get; set; }
-        private int _frameIndex { get; set; }
 
         // Visibility and Appearance
         public bool IsVisible { get; set; }
@@ -63,16 +57,8 @@ namespace ProjectDonut.ProceduralGeneration
 
         public Rectangle Bounds { get; set; }
 
-        public Tile(bool isAnimated)
+        public Tile()
         {
-            IsAnimated = isAnimated;
-
-            if (IsAnimated)
-            {
-                _frameInterval = 0.5f;
-                _frameIndex = 0;
-                _frameTimer = 0f;
-            }
         }
 
         public void Initialize()
@@ -87,7 +73,7 @@ namespace ProjectDonut.ProceduralGeneration
         public void Update(GameTime gameTime)
         {
             UpdateObjectVisibility();
-            HandleAnimation(gameTime);
+            //HandleAnimation(gameTime);
             UpdateDrawValues();
         }
 
@@ -95,7 +81,7 @@ namespace ProjectDonut.ProceduralGeneration
         private Color drawColour;
         private float distanceToPlayer;
         private float distanceToPlayerAbsolute;
-        private void UpdateDrawValues()
+        public void UpdateDrawValues()
         {
             if (Global.SceneManager.CurrentScene is DungeonScene)
             {
@@ -127,32 +113,6 @@ namespace ProjectDonut.ProceduralGeneration
             }
         }
 
-        private void HandleAnimation(GameTime gameTime)
-        {
-            if (Frames == null || Frames.Count == 0)
-            {
-                return;
-            }
-
-            if (IsAnimated)
-            {
-                _frameTimer += gameTime.ElapsedGameTime.TotalSeconds;
-
-                if (_frameTimer >= _frameInterval)
-                {
-                    _frameTimer = 0;
-                    _frameIndex++;
-
-                    if (_frameIndex >= Frames.Count)
-                    {
-                        _frameIndex = 0;
-                    }
-
-                    Texture = Frames[_frameIndex];
-                }
-            }
-        }
-
         public void UpdateObjectVisibility()
         {
             if (Global.SHOW_FOG_OF_WAR == false)
@@ -177,8 +137,8 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            //if (!IsInCameraView())
-            //    return;
+            if (!IsInCameraView())
+                return;
 
             Global.SpriteBatch.Draw(Texture, WorldPosition, null, drawColour * alphaValue);
         }

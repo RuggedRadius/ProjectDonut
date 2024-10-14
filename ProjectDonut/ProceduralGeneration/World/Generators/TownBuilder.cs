@@ -128,6 +128,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
         public void Build(ref WorldChunk chunk)
         {
+            if (Global.WorldSettings.BUILD_TOWNS == false)
+                return;
+
             var localCenterPosition = new Vector2(
                 _random.Next((Settings.Width / 2) * Settings.TileSize) + (Settings.Width / 4),
                 _random.Next((Settings.Height / 2) * Settings.TileSize) + (Settings.Height / 4));
@@ -170,7 +173,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 {
                     for (int j = plot.Building.LocalBounds.Top; j < plot.Building.LocalBounds.Bottom; j += Global.TileSize)
                     {
-                        tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile(false)
+                        tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile()
                         {
                             ChunkX = chunk.ChunkCoordX,
                             ChunkY = chunk.ChunkCoordY,
@@ -204,7 +207,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         if (i == plot.Building.LocalBounds.Left || i == plot.Building.LocalBounds.Right - Global.TileSize ||
                             j == plot.Building.LocalBounds.Top || j == plot.Building.LocalBounds.Bottom - Global.TileSize)
                         {
-                            tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile(false)
+                            tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile()
                             {
                                 ChunkX = chunk.ChunkCoordX,
                                 ChunkY = chunk.ChunkCoordY,
@@ -239,7 +242,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         if (i == plot.LocalBounds.Left || i == plot.LocalBounds.Right - Global.TileSize ||
                             j == plot.LocalBounds.Top || j == plot.LocalBounds.Bottom - Global.TileSize)
                         {
-                            tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile(false)
+                            tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile()
                             {
                                 ChunkX = chunk.ChunkCoordX,
                                 ChunkY = chunk.ChunkCoordY,
@@ -425,7 +428,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         if (chunk.Tilemaps["base"].Map[x / Global.TileSize, y / Global.TileSize].WorldTileType == WorldTileType.Water)
                             continue;
 
-                        tilemap.Map[x / Global.TileSize, y / Global.TileSize] = new Tile(false)
+                        tilemap.Map[x / Global.TileSize, y / Global.TileSize] = new Tile()
                         {
                             ChunkX = chunk.ChunkCoordX,
                             ChunkY = chunk.ChunkCoordY,
@@ -488,7 +491,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                                 y--;
                             }
 
-                            tilemap.Map[x / Global.TileSize, y / Global.TileSize] = new Tile(false)
+                            tilemap.Map[x / Global.TileSize, y / Global.TileSize] = new Tile()
                             {
                                 ChunkX = chunk.ChunkCoordX,
                                 ChunkY = chunk.ChunkCoordY,
@@ -530,7 +533,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                                 if (coordX < 0 || coordX >= chunk.Width || coordY < 0 || coordY >= chunk.Height)
                                     continue;
 
-                                dirtTilemap.Map[i + x, j + y] = new Tile(false)
+                                dirtTilemap.Map[i + x, j + y] = new Tile()
                                 {
                                     ChunkX = chunk.ChunkCoordX,
                                     ChunkY = chunk.ChunkCoordY,
@@ -609,7 +612,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         // Check if the tile is within the circular radius
                         if (distance <= radius)
                         {
-                            map.Map[i, j] = new Tile(false)
+                            map.Map[i, j] = new Tile()
                             {
                                 ChunkX = chunk.ChunkCoordX,
                                 ChunkY = chunk.ChunkCoordY,
@@ -653,7 +656,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 {
                     for (int j = startY; j < endY; j++)
                     {
-                        map.Map[i, j] = new Tile(false)
+                        map.Map[i, j] = new Tile()
                         {
                             ChunkX = chunk.ChunkCoordX,
                             ChunkY = chunk.ChunkCoordY,
@@ -765,7 +768,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                             }
                         }
 
-                        tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile(false)
+                        tilemap.Map[i / Global.TileSize, j / Global.TileSize] = new Tile()
                         {
                             ChunkX = chunk.ChunkCoordX,
                             ChunkY = chunk.ChunkCoordY,
@@ -799,7 +802,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 var doorx = building.LocalPosition.X + ((_random.Next(building.Width / Global.TileSize) * Global.TileSize));
                 var doorPosition = new Vector2(doorx, building.LocalPosition.Y + building.Height - Global.TileSize);
 
-                tm.Map[(int)doorPosition.X / Global.TileSize, (int)doorPosition.Y / Global.TileSize] = new Tile(false)
+                tm.Map[(int)doorPosition.X / Global.TileSize, (int)doorPosition.Y / Global.TileSize] = new Tile()
                 {
                     ChunkX = chunk.ChunkCoordX,
                     ChunkY = chunk.ChunkCoordY,

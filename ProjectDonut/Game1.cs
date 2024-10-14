@@ -115,7 +115,7 @@ namespace ProjectDonut
             base.Initialize();
 
 
-            TEST_COMBAT_SCENE();
+            //TEST_COMBAT_SCENE();
         }
 
         private void TEST_COMBAT_SCENE()

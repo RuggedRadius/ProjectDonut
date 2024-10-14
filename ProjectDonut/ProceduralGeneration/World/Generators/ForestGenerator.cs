@@ -110,7 +110,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var positionVariantX = _random.Next(-settings.TileSize / 4, settings.TileSize / 4);
                     var positionVariantY = _random.Next(-settings.TileSize / 4, settings.TileSize / 4);
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,

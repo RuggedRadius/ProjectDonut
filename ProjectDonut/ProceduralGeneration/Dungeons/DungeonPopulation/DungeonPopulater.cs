@@ -192,7 +192,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,

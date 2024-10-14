@@ -168,7 +168,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var biomeValue = chunk.BiomeData[i, j];
                     var heightValue = chunk.HeightData[i, j];
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,

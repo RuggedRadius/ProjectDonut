@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
@@ -180,13 +181,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             TargetPickerUI.Update(gameTime);
             CombatActionsUI.Update(gameTime);
 
-            if (Manager.PlayerTeam.Count == 0)
+            if (Manager.PlayerTeam.Where(x => !x.IsKOd).Count() == 0)
             {
                 // Game over
                 //...
 
             }
-            else if (Manager.EnemyTeam.Count == 0)
+            else if (Manager.EnemyTeam.Where(x => !x.IsKOd).Count() == 0)
             {
                 // Victory
                 

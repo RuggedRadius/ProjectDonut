@@ -34,6 +34,18 @@ namespace ProjectDonut.ProceduralGeneration
             }
         }
 
+        public void UpdateDrawValues(GameTime gameTime)
+        {
+
+           foreach (var tile in Map)
+           {
+                if (tile == null)
+                    continue;
+
+                tile.UpdateDrawValues();
+           }
+        }
+
         public void Draw(GameTime gameTime)
         {
             foreach (var tile in Map)

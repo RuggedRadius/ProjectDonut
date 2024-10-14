@@ -87,6 +87,9 @@ namespace ProjectDonut.Combat.UI
             // Draw background
             //Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
 
+            if (_turnsToDraw == null || _turnsToDraw.Count == 0)
+                return;
+
             for (int i = 0; i < TurnsToDrawCount; i++)
             {
                 if (i >= _manager.TurnOrder.Count || _manager.TurnOrder[i] == null)

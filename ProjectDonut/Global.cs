@@ -31,6 +31,12 @@ namespace ProjectDonut
             public static Vector2 MIN_ROOM_SIZE = new Vector2(20, 20);
         }
 
+        public static class WorldSettings
+        {
+            public static bool BUILD_TOWNS = false;
+        }
+
+
         // DAY/NIGHT
         public static DayNightCycle DayNightCycle;
         public static float timeOfDay = 0f; // Start at midnight

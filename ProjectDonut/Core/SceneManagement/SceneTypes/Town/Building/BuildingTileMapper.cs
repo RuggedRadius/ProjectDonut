@@ -24,7 +24,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,
@@ -60,7 +60,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,
@@ -99,7 +99,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,
@@ -132,7 +132,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,
@@ -183,7 +183,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town.Building
                     {
                         for (int l = 0; l < 3; l++)
                         {
-                            tm.Map[i + k, j + l] = new Tile(false)
+                            tm.Map[i + k, j + l] = new Tile()
                             {
                                 xIndex = i + k,
                                 yIndex = j + l,
