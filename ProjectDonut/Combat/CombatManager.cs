@@ -21,7 +21,7 @@ namespace ProjectDonut.Combat
 
     public class CombatManager : Interfaces.IUpdateable
     {
-        public static CombatManager Instance { get; private set; }
+        public static CombatManager Instance { get; set; }
         public List<Combatant> TurnOrder { get; set; } = new List<Combatant>();
         public List<Combatant> PlayerTeam { get; set; }
         public List<Combatant> EnemyTeam { get; set; }

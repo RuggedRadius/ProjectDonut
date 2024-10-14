@@ -194,7 +194,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 // Display victory screen
                 // EXP, Items, etc..
 
+
                 Global.SceneManager.SetCurrentScene(PreviousScene);
+                CombatManager.Instance = null;
             }
         }
 
@@ -203,7 +205,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             Global.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             // Draw background
-            Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (4 )); // TEMP TODO: 4 should be combat.SceneScale here
+            Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (SceneScale / 2)); // TEMP TODO: 4 should be combat.SceneScale here
 
             // Draw player team
             foreach (var combatant in Manager.PlayerTeam)
