@@ -52,7 +52,7 @@ namespace ProjectDonut
 
         // MAP SETTINGS
         public static int TileSize = 32;
-        public static int ChunkSize = 50;
+        public static int ChunkSize = 150;
 
         // MINING
         public static int TEMP_PLAYER_DAMAGE = 10;

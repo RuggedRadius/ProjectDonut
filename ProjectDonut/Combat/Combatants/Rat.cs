@@ -33,9 +33,10 @@ namespace ProjectDonut.Combat.Combatants
             _spriteSheet.DefineAnimation("walk", builder =>
             {
                 builder.IsLooping(true)
-                    .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime * idleSpeedMultiplier))
-                    .AddFrame(regionIndex: 1, duration: TimeSpan.FromSeconds(cellTime * idleSpeedMultiplier))
-                    .AddFrame(regionIndex: 2, duration: TimeSpan.FromSeconds(cellTime * idleSpeedMultiplier));
+                    .AddFrame(regionIndex: 12, duration: TimeSpan.FromSeconds(cellTime * idleSpeedMultiplier))
+                    .AddFrame(regionIndex: 13, duration: TimeSpan.FromSeconds(cellTime * idleSpeedMultiplier))
+                    .AddFrame(regionIndex: 14, duration: TimeSpan.FromSeconds(cellTime * idleSpeedMultiplier))
+                    .AddFrame(regionIndex: 15, duration: TimeSpan.FromSeconds(cellTime * idleSpeedMultiplier));
             });
 
             _spriteSheet.DefineAnimation("melee", builder =>

@@ -187,19 +187,19 @@ namespace ProjectDonut.Combat
                     CombatTurnCurrent.Target= possibleTargets[_random.Next(possibleTargets.Count)];
                 }
 
-                var randomAction = _random.Next(2);
-                switch (randomAction)
-                {
-                    case 0:// Physical attack
+                //var randomAction = _random.Next(2);
+                //switch (randomAction)
+                //{
+                //    case 0:// Physical attack
                         CombatTurnCurrent.Action = CombatTurnAction.PhysicalAttack;
                         CombatTurnCurrent.Ability = null;
-                        break;
+                //        break;
 
-                    case 1: // Magical attack
-                        CombatTurnCurrent.Action = CombatTurnAction.MagicAttack;
-                        CombatTurnCurrent.Ability = enemy.Abilities[_random.Next(enemy.Abilities.Count)];
-                        break;
-                }
+                //    case 1: // Magical attack
+                //        CombatTurnCurrent.Action = CombatTurnAction.MagicAttack;
+                //        CombatTurnCurrent.Ability = enemy.Abilities[_random.Next(enemy.Abilities.Count)];
+                //        break;
+                //}
             }
 
             // Re-populate turn order
