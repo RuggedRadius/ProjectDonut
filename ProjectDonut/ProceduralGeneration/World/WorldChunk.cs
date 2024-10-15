@@ -5,9 +5,9 @@ using System.Linq;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
-using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
+using ProjectDonut.WorldTowns;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -165,6 +165,18 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
+            // Update each tile
+            foreach (var tilemap in Tilemaps)
+            {
+                tilemap.Value.Update(gameTime);
+            }
+
+            if (Town != null)
+            {
+                Town.Update(gameTime);
+            }
+
+            // Hide roofs in player is on a plot
             if (Town != null)
             {
                 foreach (var plot in Town.Plots)
@@ -184,28 +196,9 @@ namespace ProjectDonut.ProceduralGeneration.World
                             {
                                 tile.IsPlayerBlocking = false;
                             }
-                        }                        
-                    }
-                    else
-                    {
-                        foreach (var tile in Town.Tilemaps["roofs"].Map)
-                        {
-                            if (tile == null)
-                                continue;
-
-                            if (tile.Bounds.Intersects(plot.LocalBounds))
-                            {
-                                tile.IsPlayerBlocking = false;
-                            }
                         }
                     }
                 }
-            }
-
-                // Update each tile
-            foreach (var tilemap in Tilemaps)
-            {
-                tilemap.Value.Update(gameTime);
             }
 
             foreach (var kvp in SceneObjects)
@@ -216,15 +209,15 @@ namespace ProjectDonut.ProceduralGeneration.World
                 }
             }
 
-            if (Global.SceneManager.CurrentScene is WorldScene && 
-                Global.WorldChunkManager.CurrentChunks.Contains(this))
-            {
-                //if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
-                //{
-                //    ScrollDisplayer.CurrentStructure = null;
-                //    Global.ScrollDisplay.HideScroll();
-                //}
-            }
+            //if (Global.SceneManager.CurrentScene is WorldScene && 
+            //    Global.WorldChunkManager.CurrentChunks.Contains(this))
+            //{
+            //    //if (!Structures.Where(x => x.PlayerWithinScrollBounds).Any())
+            //    //{
+            //    //    ScrollDisplayer.CurrentStructure = null;
+            //    //    Global.ScrollDisplay.HideScroll();
+            //    //}
+            //}
 
 
             MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Update(gameTime)));
@@ -239,11 +232,6 @@ namespace ProjectDonut.ProceduralGeneration.World
                     RenderThumbnail(gameTime);
                 //}
                 //RenderThumbnail(gameTime);                
-            }
-
-            if (Town != null)
-            {
-                Town.Update(gameTime);
             }
         }
 

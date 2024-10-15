@@ -59,6 +59,11 @@ namespace ProjectDonut.ProceduralGeneration
 
         public Tile()
         {
+            if (Global.SHOW_FOG_OF_WAR == false)
+            {
+                IsVisible = true;
+                IsExplored = true;
+            }
         }
 
         public void Initialize()
@@ -72,6 +77,7 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Update(GameTime gameTime)
         {
+            IsPlayerBlocking = false;
             UpdateObjectVisibility();
             //HandleAnimation(gameTime);
             UpdateDrawValues();
@@ -116,11 +122,7 @@ namespace ProjectDonut.ProceduralGeneration
         public void UpdateObjectVisibility()
         {
             if (Global.SHOW_FOG_OF_WAR == false)
-            {
-                IsVisible = true;
-                IsExplored = true;
                 return;
-            }
 
             IsVisible = (Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition)) <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 

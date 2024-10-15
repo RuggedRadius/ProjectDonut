@@ -7,6 +7,7 @@ using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
 using ProjectDonut.ProceduralGeneration.World.TileRules;
+using ProjectDonut.WorldTowns;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -116,15 +117,15 @@ namespace ProjectDonut.ProceduralGeneration.World
                         var chunk = GetChunk((x, y));
                         if (chunk == null)
                         {
-                            Task.Run(() =>
-                            {
+                            //Task.Run(() =>
+                            //{
                                 chunk = CreateChunk(x, y);
 
                                 if (_chunks.ContainsKey((x, y)) == false)
                                 {
                                     _chunks.Add((x, y), chunk);
                                 }
-                            });
+                            //});
                         }
                     }
                 }
