@@ -463,7 +463,14 @@ namespace ProjectDonut.ProceduralGeneration.BSP
             {
                 foreach (var step in path)
                 {
-                    canvas[step.Item1, step.Item2] = 2;
+                    for (int i = -1; i <= 1; i++)
+                    {
+                        for (int j = -1; j <= 1; j++)
+                        {
+                            canvas[step.Item1 + i, step.Item2 + j] = 2;
+                        }
+                    }
+                    //canvas[step.Item1, step.Item2] = 2;
                 }
             }
 

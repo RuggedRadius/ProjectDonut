@@ -50,7 +50,8 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
                         Size = new Vector2(Global.TileSize, Global.TileSize),
                         Texture = DetermineTexture(data, i, j),
                         TileType = TileType.World,
-                        DungeonTileType = DetermineTileType(data, i, j)
+                        DungeonTileType = DetermineTileType(data, i, j),
+                        IsCollidable = DetermineTileType(data, i, j) == DungeonTileType.Wall,
                     };
                     tile.Initialize();
                     tilemap.Map[i, j] = tile;
@@ -75,31 +76,31 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons
             }
         }
 
-        private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
-        {
-            var width = Global.TileSize;
-            var height = Global.TileSize;
+        //private Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)
+        //{
+        //    var width = Global.TileSize;
+        //    var height = Global.TileSize;
 
-            x *= width;
-            y *= height;
+        //    x *= width;
+        //    y *= height;
 
-            Rectangle sourceRectangle = new Rectangle(x, y, width, height);
+        //    Rectangle sourceRectangle = new Rectangle(x, y, width, height);
 
-            // Extract the pixel data from the spritesheet
-            Color[] data = new Color[width * height];
+        //    // Extract the pixel data from the spritesheet
+        //    Color[] data = new Color[width * height];
 
 
-            SynchronizationContext.Current.Post(_ =>
-            {
-                spriteSheet.GetData(0, sourceRectangle, data, 0, data.Length);
-            }, null);
+        //    SynchronizationContext.Current.Post(_ =>
+        //    {
+        //        spriteSheet.GetData(0, sourceRectangle, data, 0, data.Length);
+        //    }, null);
 
-            // Create a new texture for the sprite and set the pixel data
-            Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
-            sprite.SetData(data);
+        //    // Create a new texture for the sprite and set the pixel data
+        //    Texture2D sprite = new Texture2D(Global.GraphicsDevice, width, height);
+        //    sprite.SetData(data);
 
-            return sprite;
-        }
+        //    return sprite;
+        //}
 
         public enum DungeonInteriorTileType
         {

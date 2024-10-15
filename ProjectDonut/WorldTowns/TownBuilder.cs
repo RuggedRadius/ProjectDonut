@@ -130,7 +130,8 @@ namespace ProjectDonut.WorldTowns
                                 Size = new Vector2(Global.TileSize, Global.TileSize),
                                 Texture = SpriteLib.Town.Walls["wall-n"],
                                 TileType = TileType.Instance,
-                                IsExplored = true
+                                IsExplored = true,
+                                IsCollidable = true
                             };
                         }
                     }
@@ -165,7 +166,8 @@ namespace ProjectDonut.WorldTowns
                                 Size = new Vector2(Global.TileSize, Global.TileSize),
                                 Texture = SpriteLib.Town.Fences["fence-n"],
                                 TileType = TileType.Instance,
-                                IsExplored = true
+                                IsExplored = true,
+                                IsCollidable = true
                             };
                         }
                     }
@@ -783,7 +785,8 @@ namespace ProjectDonut.WorldTowns
             //    }
             //}
 
-            var tms = new List<string>() { "base", "fences", "floor", "walls" };
+            //var tms = new List<string>() { "base", "fences", "floor", "walls" };
+            var tms = new List<string>() { "base", "floor" };
 
             foreach (var tm in tms)
             {
@@ -801,9 +804,9 @@ namespace ProjectDonut.WorldTowns
             Global.SpriteBatch.End();
             Global.GraphicsDevice.SetRenderTarget(null);
 
-            var tmRoof = chunk.Town.Tilemaps["roofs"];
-            chunk.Town.Tilemaps.Clear();
-            chunk.Town.Tilemaps.Add("roofs", tmRoof);
+            chunk.Town.Tilemaps.Remove("base");
+            chunk.Town.Tilemaps.Remove("floor");
+
             chunk.Town.RenderedTexture = target;
 
             //DebugMapData.SaveMapThumbnail(chunk.ChunkCoordX, chunk.ChunkCoordY, target);

@@ -165,23 +165,28 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
+            if (Global.Camera.OrthoCamera.BoundingRectangle.Intersects(ChunkBounds) == false)
+                return;
+
             // Update each tile
-            foreach (var tilemap in Tilemaps)
-            {
-                tilemap.Value.Update(gameTime);
-            }
+            //foreach (var tilemap in Tilemaps)
+            //{
+            //    tilemap.Value.Update(gameTime);
+            //}
 
             if (Town != null)
             {
                 Town.Update(gameTime);
             }
 
+          
+
             // Hide roofs in player is on a plot
-            if (Town != null)
+            if (Town != null && Global.Camera.OrthoCamera.Zoom > 0.25f)
             {
                 foreach (var plot in Town.Plots)
                 {
-                    if (plot.Building.WorldBounds.Contains(Global.PlayerObj.WorldPosition))
+                    if (plot.Building.WorldBounds.Intersects(Global.PlayerObj.InteractBounds))
                     {
                         foreach (var tile in Town.Tilemaps["roofs"].Map)
                         {
@@ -191,10 +196,6 @@ namespace ProjectDonut.ProceduralGeneration.World
                             if (tile.Bounds.Intersects(plot.LocalBounds))
                             {
                                 tile.IsPlayerBlocking = true;
-                            }
-                            else
-                            {
-                                tile.IsPlayerBlocking = false;
                             }
                         }
                     }
@@ -237,6 +238,9 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Draw(GameTime gameTime)
         {
+            if (Global.Camera.OrthoCamera.BoundingRectangle.Intersects(ChunkBounds) == false)
+                return;
+
             //Global.SpriteBatch.Begin(transformMatrix: Global.Camera.GetTransformationMatrix());
             foreach (var tilemap in Tilemaps)
             {

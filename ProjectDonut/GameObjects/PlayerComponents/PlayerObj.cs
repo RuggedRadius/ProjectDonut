@@ -15,6 +15,7 @@ namespace ProjectDonut.GameObjects.PlayerComponents
     public class PlayerObj : IGameObject
     {
         public Vector2 WorldPosition { get; set; }
+        public Vector2 LastWorldPosition { get; set; }
         public Vector2 ChunkPosition
         {
             get
@@ -59,6 +60,11 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         private Dictionary<string, Texture2D> _textures;
         public PointLight Light;
+
+        public bool MovementNorthBlocked { get; set; }
+        public bool MovementEastBlocked { get; set; }
+        public bool MovementSouthBlocked { get; set; }
+        public bool MovementWestBlocked { get; set; }
 
         public static IMineable CurrentInteractedObject { get; set; }
 
@@ -198,7 +204,23 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
             UpdateAnimationFrame(movement);
 
+            LastWorldPosition = WorldPosition;
+
+            if (MovementEastBlocked && movement.X > 0)
+                movement.X = 0;
+            if (MovementWestBlocked && movement.X < 0)
+                movement.X = 0;
+            if (MovementSouthBlocked && movement.Y > 0)
+                movement.Y = 0;
+            if (MovementNorthBlocked && movement.Y < 0)
+                movement.Y = 0;
+
             WorldPosition += movement;
+
+            MovementNorthBlocked = false;
+            MovementEastBlocked = false;
+            MovementSouthBlocked = false;
+            MovementWestBlocked = false;
         }
 
         private Vector2 _textureOrigin;

@@ -29,10 +29,13 @@ namespace ProjectDonut.WorldTowns
 
         public void Update(GameTime gameTime)
         {
-            foreach (var tilemap in Tilemaps)
-            {
-                tilemap.Value.Update(gameTime);
-            }
+            Tilemaps["fences"].Update(gameTime);
+            Tilemaps["walls"].Update(gameTime);
+            Tilemaps["roofs"].Update(gameTime);
+            //foreach (var tilemap in Tilemaps)
+            //{
+            //    tilemap.Value.Update(gameTime);
+            //}
         }
 
         public void Draw(GameTime gameTime)
@@ -44,6 +47,8 @@ namespace ProjectDonut.WorldTowns
             //Tilemaps["fences"].Draw(gameTime);
             //Tilemaps["floor"].Draw(gameTime);
             //Tilemaps["walls"].Draw(gameTime);
+            Tilemaps["fences"].Draw(gameTime);
+            Tilemaps["walls"].Draw(gameTime);
             Tilemaps["roofs"].Draw(gameTime);
 
             //foreach (var plot in Plots)

@@ -52,6 +52,8 @@ namespace ProjectDonut.ProceduralGeneration
         public bool IsVisible { get; set; }
         public bool IsExplored { get; set; }
         public bool IsBlocked{ get; set; }
+        public bool IsCollidable { get; set; }
+
         public Texture2D Texture { get; set; }
         public bool IsPlayerBlocking { get; set; }
 
@@ -64,6 +66,9 @@ namespace ProjectDonut.ProceduralGeneration
                 IsVisible = true;
                 IsExplored = true;
             }
+
+            drawColour = Color.White;
+            alphaValue = 1f;
         }
 
         public void Initialize()
@@ -77,10 +82,45 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Update(GameTime gameTime)
         {
+            if (Bounds == Rectangle.Empty)
+                Bounds = new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Global.TileSize, Global.TileSize);
+
             IsPlayerBlocking = false;
             UpdateObjectVisibility();
             //HandleAnimation(gameTime);
             UpdateDrawValues();
+            DetectPlayerCollision();
+        }
+
+        private int collisionCorrectionAmount = 16;
+        public void DetectPlayerCollision()
+        {
+            if (IsCollidable && IsInCameraView())
+            {
+                if (Bounds.Intersects(Global.PlayerObj.InteractBounds))
+                {
+                    if (Bounds.X < Global.PlayerObj.InteractBounds.X)
+                    {
+                        //Global.PlayerObj.WorldPosition = Global.PlayerObj.LastWorldPosition;
+                        Global.PlayerObj.WorldPosition = new Vector2(Bounds.Right + collisionCorrectionAmount, Global.PlayerObj.LastWorldPosition.Y);
+                    }
+                    else if (Bounds.X > Global.PlayerObj.InteractBounds.X)
+                    {
+                        //Global.PlayerObj.WorldPosition = Global.PlayerObj.LastWorldPosition;
+                        Global.PlayerObj.WorldPosition = new Vector2(Bounds.Left - collisionCorrectionAmount, Global.PlayerObj.LastWorldPosition.Y);
+                    }
+                    else if (Bounds.Y < Global.PlayerObj.InteractBounds.Y)
+                    {
+                        //Global.PlayerObj.WorldPosition = Global.PlayerObj.LastWorldPosition;
+                        Global.PlayerObj.WorldPosition = new Vector2(Global.PlayerObj.LastWorldPosition.X, Bounds.Bottom + collisionCorrectionAmount);
+                    }
+                    else if (Bounds.Y > Global.PlayerObj.InteractBounds.Y)
+                    {
+                        //Global.PlayerObj.WorldPosition = Global.PlayerObj.LastWorldPosition;
+                        Global.PlayerObj.WorldPosition = new Vector2(Global.PlayerObj.LastWorldPosition.X, Bounds.Top - collisionCorrectionAmount);
+                    }
+                }
+            }
         }
 
         private float alphaValue;
@@ -104,19 +144,19 @@ namespace ProjectDonut.ProceduralGeneration
                     drawColour = Color.White;
                 }
             }
-            else if (Global.SceneManager.CurrentScene is WorldScene)
-            {
-                if (!IsVisible)
-                {
-                    drawColour = Color.Gray;
-                    alphaValue = 1f;
-                }
-                else
-                {
-                    drawColour = Color.White;
-                    alphaValue = 1f;
-                }
-            }
+            //else if (Global.SceneManager.CurrentScene is WorldScene)
+            //{
+            //    if (!IsVisible)
+            //    {
+            //        drawColour = Color.Gray;
+            //        alphaValue = 1f;
+            //    }
+            //    else
+            //    {
+            //        drawColour = Color.White;
+            //        alphaValue = 1f;
+            //    }
+            //}
         }
 
         public void UpdateObjectVisibility()
@@ -139,16 +179,16 @@ namespace ProjectDonut.ProceduralGeneration
             if (!IsExplored)
                 return;
 
-            if (!IsInCameraView())
-                return;
+            //if (!IsInCameraView())
+            //    return;
 
             Global.SpriteBatch.Draw(Texture, WorldPosition, null, drawColour * alphaValue);
         }
 
         private bool IsInCameraView()
         {
-            //return Global.Camera.OrthoCamera.BoundingRectangle.Intersects(Bounds);
-            return Global.Camera.OrthoCamera.BoundingRectangle.Contains(WorldPosition);
+            return Global.Camera.OrthoCamera.BoundingRectangle.Intersects(Bounds);
+            //return Global.Camera.OrthoCamera.BoundingRectangle.Contains(WorldPosition);
         }
 
         public void DrawThumbnail(GameTime gameTime)

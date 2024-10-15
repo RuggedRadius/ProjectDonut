@@ -241,8 +241,17 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             UpdateVisibility(Global.PlayerObj.WorldPosition, Global.INSTANCE_SIGHT_RADIUS);
             _tilemap.UpdateDrawValues(gameTime);
-        
-            _combatInitiator.Update(gameTime);
+
+            foreach (var item in _tilemap.Map)
+            {
+                if ( item == null)
+                {
+                    continue;
+                }
+
+                item.DetectPlayerCollision();
+            }
+            //_combatInitiator.Update(gameTime); // TEMP OFF
         }
 
         public void UpdateVisibility(Vector2 playerPosition, int viewDistance)
