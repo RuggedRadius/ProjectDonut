@@ -116,9 +116,9 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         // Settings
         private int spreadFromCenter = 50 * Global.TileSize;
         private int roadWidth = 1;
-        private Vector2Int PlotSizeMin = new Vector2Int(20, 20);
-        private Vector2Int PlotSizeMax = new Vector2Int(30, 30);
-        private Vector2Int BuildingSizeMin = new Vector2Int(10, 10);
+        private Vector2Int PlotSizeMin = new Vector2Int(10, 10);
+        private Vector2Int PlotSizeMax = new Vector2Int(15, 15);
+        private Vector2Int BuildingSizeMin = new Vector2Int(6, 6);
         //private Vector2Int BuildingSizeMax = new Vector2Int(9, 9);
 
         public TownBuilder(WorldMapSettings settings)
@@ -569,12 +569,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
             chunk.Town.Tilemaps.Add("base", dirtTilemap);
 
-            chunk.MineableObjects.Values.ToList().ForEach(x => x.RemoveAll(y => obstaclesToClear.Contains(y)));
+            if (obstaclesToClear.Count > 0)
+                chunk.MineableObjects.Values.ToList().ForEach(x => x.RemoveAll(y => obstaclesToClear.Contains(y)));
         }
 
         private void CreateDirtAroundPlots(ref WorldChunk chunk)
         {
             var map = chunk.Town.Tilemaps["base"];
+            var objectsToClear = new List<IMineable>();
 
             foreach (var plot in chunk.Town.Plots)
             {
@@ -629,6 +631,17 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                                             Global.TileSize,
                                             Global.TileSize)
                             };
+
+                            foreach (var mineables in chunk.MineableObjects.Values)
+                            {
+                                foreach (var mineable in mineables)
+                                {
+                                    if (mineable.InteractBounds.Intersects(map.Map[i, j].Bounds))
+                                    {
+                                        objectsToClear.Add(mineable);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -673,9 +686,23 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                                         Global.TileSize,
                                         Global.TileSize)
                         };
+
+                        foreach (var mineables in chunk.MineableObjects.Values)
+                        {
+                            foreach (var mineable in mineables)
+                            {
+                                if (mineable.InteractBounds.Intersects(map.Map[i, j].Bounds))
+                                {
+                                    objectsToClear.Add(mineable);
+                                }
+                            }
+                        }
                     }
                 }
             }
+        
+            if (objectsToClear.Count > 0)
+                chunk.MineableObjects.Values.ToList().ForEach(x => x.RemoveAll(y => objectsToClear.Contains(y)));
         }
 
         private void ClearObstaclesAroundTown(ref WorldChunk chunk)

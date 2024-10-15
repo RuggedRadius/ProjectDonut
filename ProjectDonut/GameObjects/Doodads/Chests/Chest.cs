@@ -59,16 +59,12 @@ namespace ProjectDonut.GameObjects.Doodads.Chests
                     .AddFrame(regionIndex: 0, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(1, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(5, duration: TimeSpan.FromSeconds(cellTime));
+                    .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime));
             });
 
             _spriteSheet.DefineAnimation("close", builder =>
             {
                 builder.IsLooping(false)
-                    .AddFrame(regionIndex: 5, duration: TimeSpan.FromSeconds(cellTime))
-                    .AddFrame(4, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(3, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(2, duration: TimeSpan.FromSeconds(cellTime))
                     .AddFrame(1, duration: TimeSpan.FromSeconds(cellTime))

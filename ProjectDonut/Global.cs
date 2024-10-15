@@ -33,7 +33,7 @@ namespace ProjectDonut
 
         public static class WorldSettings
         {
-            public static bool BUILD_TOWNS = false;
+            public static bool BUILD_TOWNS = true;
         }
 
 
@@ -52,7 +52,7 @@ namespace ProjectDonut
 
         // MAP SETTINGS
         public static int TileSize = 32;
-        public static int ChunkSize = 100;
+        public static int ChunkSize = 50;
 
         // MINING
         public static int TEMP_PLAYER_DAMAGE = 10;

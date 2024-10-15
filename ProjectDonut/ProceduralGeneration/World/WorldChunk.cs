@@ -255,6 +255,12 @@ namespace ProjectDonut.ProceduralGeneration.World
                 tilemap.Value.Draw(gameTime);
             }
 
+            if (Town != null)
+            {
+                Town.Draw(gameTime);
+            }
+
+
             // TODO: Stop creating a variable every frame for this
             var objs = new List<ISceneObject>();
             SceneObjects
@@ -283,10 +289,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             //MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
 
 
-            if (Town != null)
-            {
-                Town.Draw(gameTime);
-            }
+
         }
 
         public void DrawSceneObjectsBelowPlayer(GameTime gameTime)

@@ -37,8 +37,8 @@ namespace ProjectDonut
         private Random random = new Random();
 
         private List<IGameObject> _objectsToDraw;
+        private FPSCounter _fpsCounter;
 
-        
 
         public Game1()
         {
@@ -65,6 +65,11 @@ namespace ProjectDonut
             System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG");
             System.IO.Directory.CreateDirectory($@"C:\Users\benro\Documents\DEBUG\MapThumbnails");
             // ****************** TEMP DEBUG ***********************
+
+            _fpsCounter = new FPSCounter();
+            IsFixedTimeStep = false; // Allow the game to run at variable frame rates
+            Global.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false; // Disable VSync
+            Global.GraphicsDeviceManager.ApplyChanges(); // Apply the changes to the graphics settings
         }
 
         protected override void Initialize()
@@ -287,6 +292,8 @@ namespace ProjectDonut
             Global.CameraMinimap.Update(gameTime);
             Global.DayNightCycle.Update(gameTime);
 
+            _fpsCounter.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -321,6 +328,8 @@ namespace ProjectDonut
                 .ThenBy(x => x.ZIndex)
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
+
+            _fpsCounter.Draw(gameTime);
 
             base.Draw(gameTime);
 
