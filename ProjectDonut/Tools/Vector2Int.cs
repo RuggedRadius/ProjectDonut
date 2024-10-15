@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDonut.GameObjects
+namespace ProjectDonut.Tools
 {
     public class Vector2Int
     {

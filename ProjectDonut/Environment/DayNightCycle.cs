@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.BitmapFonts;
-using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Interfaces;
 
@@ -14,8 +7,7 @@ namespace ProjectDonut.Environment
 {
     public class DayNightCycle : IGameObject
     {
-        private float timeOfDay = 0f; // Start at midnight
-        private float timeSpeed = 1f; // Speed of time (how fast time passes)
+ // Speed of time (how fast time passes)
 
         public bool IsVisible { get; set; }
         public Texture2D Texture { get; set; }
@@ -58,17 +50,17 @@ namespace ProjectDonut.Environment
 
         public void Update(GameTime gameTime)
         {
-            // Update the time of day based on timeSpeed
-            timeOfDay += timeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // Update the time of day based on Global.timeSpeed
+            Global.timeOfDay += Global.timeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Keep timeOfDay within a 24-hour range
-            if (timeOfDay >= 24f)
-                timeOfDay -= 24f;
+            if (Global.timeOfDay >= 24f)
+                Global.timeOfDay -= 24f;
 
 
             if (Global.SceneManager.CurrentScene is WorldScene)
             {
-                if (timeOfDay < 6f || timeOfDay >= 20f)
+                if (Global.timeOfDay < 6f || Global.timeOfDay >= 20f)
                 {
                     TargetFOW = 500;
                     TargetLightScale = 1000f;
@@ -119,7 +111,7 @@ namespace ProjectDonut.Environment
 
             //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, DebugRect, Color.Black);
             Global.SpriteBatch.DrawString(_fontSubText, 
-                $"{ConvertFloatToTime(timeOfDay)}",
+                $"{ConvertFloatToTime(Global.timeOfDay)}",
                 TimeDisplayPosition, 
                 Color.Black);
 
@@ -132,36 +124,64 @@ namespace ProjectDonut.Environment
         private string ConvertFloatToTime(float hours)
         {
             // Clamp the value to the 0-24 range
-            if (hours < 0.0f) hours = 0.0f;
+            if (hours < 1.0f) hours = 1.0f;
             if (hours > 24.0f) hours = 24.0f;
 
             // Calculate the hours and minutes
             int hour = (int)hours; // Get the integer part as hours
-            int minutes = (int)((hours - hour) * 60); // Get the fractional part as minutes
+            //int minutes = (int)((hours - hour) * 60); // Get the fractional part as minutes
 
             // Adjust for 12-hour format and determine AM/PM
-            string suffix = (hour >= 12 && hour < 24) ? "PM" : "AM";
-            if (hour == 0) hour = 12; // Midnight is 12 AM
-            else if (hour > 12) hour -= 12; // Convert to 12-hour format
+            //string suffix = (hour >= 12 && hour < 24) ? "PM" : "AM";
+            //if (hour == 0) hour = 12; // Midnight is 12 AM
+            //else 
+            if (hour > 24) hour = 1; // Convert to 12-hour format
 
             // Format the time string
-            return $"{hour:D2}:{minutes:D2} {suffix}";
+            if (hour % 10 == 1)
+            {
+                if (hour == 11)
+                    return $"{hour}th Hour";
+                else
+                    return $"{hour}st Hour";
+            }
+            else if (hour % 10 == 2)
+            {
+                if (hour == 12)
+                    return $"{hour}th Hour";
+                else
+                    return $"{hour}nd Hour";
+            }
+            else if (hour % 10 == 3)
+            {
+                if (hour == 13)
+                    return $"{hour}th Hour";
+                else
+                    return $"{hour}rd Hour";
+            }
+            else
+            {
+                return $"{hour}th Hour";
+            }
+
+
+            //return $"{hour:D2}:{minutes:D2} {suffix}";
         }
 
 
         public Color GetTimeOfDayColor()
         {
-            if (timeOfDay >= 6f && timeOfDay < 18f)
+            if (Global.timeOfDay >= 6f && Global.timeOfDay < 18f)
             {
                 // Daytime: Bright and natural lighting
                 return Color.White;
             }
-            else if (timeOfDay >= 18f && timeOfDay < 20f)
+            else if (Global.timeOfDay >= 18f && Global.timeOfDay < 20f)
             {
                 // Evening: Darker, more orange/red lighting
                 return new Color(255, 200, 150); // Orange tint
             }
-            else if (timeOfDay >= 4f && timeOfDay < 6f)
+            else if (Global.timeOfDay >= 4f && Global.timeOfDay < 6f)
             {
                 // Early morning: Slightly blue tint
                 return new Color(180, 220, 255); // Light blue tint

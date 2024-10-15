@@ -8,10 +8,10 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Animations;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Core.Input;
-using ProjectDonut.Core;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
 using Microsoft.Xna.Framework.Input;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 
 namespace ProjectDonut.ProceduralGeneration.World.MineableItems
 {
@@ -128,7 +128,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             {
                 _sprite.Color = Color.White;
                 Global.SpriteBatch.Draw(_sprite, WorldPosition, 0.0f, Vector2.One);
-                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
+                //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
             }
         }
 
@@ -176,14 +176,18 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             replacementTree.Initialize();
 
             //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH
-            if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("tree-stump"))
+            if (Global.SceneManager.CurrentScene is WorldScene worldscene)
             {
-                Global.SceneManager.CurrentScene._sceneObjects["tree-stump"].Add(replacementTree);
+                if (worldscene._sceneObjects.ContainsKey("tree-stump"))
+                {
+                    worldscene._sceneObjects["tree-stump"].Add(replacementTree);
+                }
+                else
+                {
+                    worldscene._sceneObjects.Add("tree-stump", new List<ISceneObject> { replacementTree });
+                }
             }
-            else
-            {
-                Global.SceneManager.CurrentScene._sceneObjects.Add("tree-stump", new List<ISceneObject> { replacementTree });
-            }
+
         }
 
         private InventoryItem CreateInventoryItem()

@@ -186,7 +186,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
             {
                 for (int j = 0; j < tm.Map.GetLength(1); j++)
                 {
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,

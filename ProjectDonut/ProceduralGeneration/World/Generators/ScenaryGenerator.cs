@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
@@ -282,6 +281,11 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     }
 
                     if (_random.NextDouble() < 0.995)
+                    {
+                        continue;
+                    }
+
+                    if (chunk.BiomeData[i, j] != (int)Biome.Ashlands)
                     {
                         continue;
                     }

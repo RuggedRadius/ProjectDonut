@@ -34,7 +34,7 @@ namespace ProjectDonut.Core
             var viewportAdapter = new BoxingViewportAdapter(_game.Window, Global.GraphicsDevice, 800, 480);
             OrthoCamera = new OrthographicCamera(viewportAdapter);
             OrthoCamera.MaximumZoom = 4;
-            OrthoCamera.MinimumZoom = 0.1f;
+            OrthoCamera.MinimumZoom = 0.05f;
 
             if (IsMinimap)
             {

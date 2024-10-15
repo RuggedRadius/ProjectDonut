@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Interfaces;
 using System;
@@ -78,11 +77,6 @@ namespace ProjectDonut.GameObjects.PlayerComponents
 
         public void Update(GameTime gameTime)
         {
-            if (InputManager.KeyboardState.IsKeyDown(Keys.G))
-            {
-                AddText("Testing 123", 0, Vector2.Zero, Color.White);
-            }
-
             if (TextQueue.Count > 0)
             {
                 var text = TextQueue.Dequeue();
@@ -132,6 +126,4 @@ namespace ProjectDonut.GameObjects.PlayerComponents
             Global.SpriteBatch.End();
         }
     }
-
-
 }

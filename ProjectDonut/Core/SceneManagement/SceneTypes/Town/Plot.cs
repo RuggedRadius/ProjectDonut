@@ -87,7 +87,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,
@@ -120,7 +120,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes.Town
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,

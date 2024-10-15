@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects.Doodads.Chests;
 using ProjectDonut.GameObjects.Doodads;
@@ -193,7 +192,7 @@ namespace ProjectDonut.ProceduralGeneration.Dungeons.DungeonPopulation
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = 0,
                         ChunkY = 0,

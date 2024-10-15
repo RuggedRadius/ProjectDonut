@@ -18,6 +18,10 @@ using ProjectDonut.Core.Input;
 using Penumbra;
 using ProjectDonut.Environment;
 using ProjectDonut.Core.Sprites;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
+using ProjectDonut.Tools;
+using ProjectDonut.Combat.Combatants;
+using ProjectDonut.Combat.Combatants.Base;
 
 namespace ProjectDonut
 {
@@ -69,6 +73,9 @@ namespace ProjectDonut
             Global.SpriteBatch = new SpriteBatch(GraphicsDevice);
             Global.ContentManager = Content;
 
+            Global.BLANK_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
+            Global.BLANK_TEXTURE.SetData(new[] { Color.White });
+
             Global.DEBUG_TEXTURE = new Texture2D(Global.GraphicsDevice, 1, 1);
             Global.DEBUG_TEXTURE.SetData(new[] { Color.Magenta });
             Global.MISSING_TEXTURE = new Texture2D(Global.GraphicsDevice, Global.TileSize, Global.TileSize);
@@ -106,6 +113,72 @@ namespace ProjectDonut
             //});
 
             base.Initialize();
+
+
+            //TEST_COMBAT_SCENE();
+        }
+
+        private void TEST_COMBAT_SCENE()
+        {
+            var scene = new CombatScene(Global.SceneManager.CurrentScene);
+
+            var playerTeam = new List<Combatant>();
+            var enemyTeam = new List<Combatant>();
+
+            for (int i = 0; i < 4; i++)
+            {
+                var randomIndex = random.Next(0, 4);
+
+                switch (randomIndex)
+                {
+                    case 0: 
+                        playerTeam.Add(new Goblin(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } }); 
+                        break;
+
+                    case 1:
+                        playerTeam.Add(new Skeleton(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+
+                    case 2:
+                        playerTeam.Add(new Slime(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+
+                    case 3:
+                        playerTeam.Add(new Rat(TeamType.Player, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                var randomIndex = random.Next(0, 4);
+
+                switch (randomIndex)
+                {
+                    case 0:
+                        enemyTeam.Add(new Goblin(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+
+                    case 1:
+                        enemyTeam.Add(new Skeleton(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+
+                    case 2:
+                        enemyTeam.Add(new Slime(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+
+                    case 3:
+                        enemyTeam.Add(new Rat(TeamType.Enemy, scene.Manager) { Details = new CombatantDetails() { Name = NameGenerator.GenerateRandomName(2) } });
+                        break;
+                }
+            }
+
+            scene.Manager.AddTeam(playerTeam, true);
+            scene.Manager.AddTeam(enemyTeam, false);
+            
+            scene.Initialize();
+            scene.LoadContent();
+            Global.SceneManager.SetCurrentScene(scene);
         }
 
         private void CreateGameComponents()
@@ -125,7 +198,7 @@ namespace ProjectDonut
 
 
 
-            _gameComponents.Add("sceneManager", Global.SceneManager);
+            //_gameComponents.Add("sceneManager", Global.SceneManager);
             _gameComponents.Add("camera", Global.Camera);
             
             //_gameComponents.Add("input", Global.InputManager);
@@ -173,6 +246,7 @@ namespace ProjectDonut
 
             Global.Player.TextDisplay = new PlayerTextDisplay();
             Global.Player.TextDisplay.Initialize();
+
             _gameObjects.Add("playerTextDisplay", Global.Player.TextDisplay);
         }
 
@@ -223,15 +297,18 @@ namespace ProjectDonut
                 Global.Penumbra.BeginDraw();
             }
 
-            GraphicsDevice.Clear(Color.Black);            
+            GraphicsDevice.Clear(Color.Black);
 
             // Minimap
-            Global.GraphicsDevice.SetRenderTarget(Global.CameraMinimap.RenderTarget);
-            Global.GraphicsDevice.Clear(Color.Black);
-            Global.SpriteBatch.Begin(transformMatrix: Global.CameraMinimap.GetTransformationMatrix());
-            Global.SceneManager.DrawMinimap(gameTime);
-            Global.SpriteBatch.End();
-            Global.GraphicsDevice.SetRenderTarget(null);
+            if (Global.SceneManager.CurrentScene is not CombatScene)
+            {
+                Global.GraphicsDevice.SetRenderTarget(Global.CameraMinimap.RenderTarget);
+                Global.GraphicsDevice.Clear(Color.Black);
+                Global.SpriteBatch.Begin(transformMatrix: Global.CameraMinimap.GetTransformationMatrix());
+                Global.SceneManager.DrawMinimap(gameTime);
+                Global.SpriteBatch.End();
+                Global.GraphicsDevice.SetRenderTarget(null);
+            }
 
 
 
@@ -253,8 +330,11 @@ namespace ProjectDonut
                 .ToList()
                 .ForEach(x => x.Draw(gameTime));
 
-            Global.CameraMinimap.Draw(gameTime);
-            Global.DayNightCycle.Draw(gameTime);
+            if (Global.SceneManager.CurrentScene is not CombatScene)
+            {
+                Global.CameraMinimap.Draw(gameTime);
+                Global.DayNightCycle.Draw(gameTime);
+            }
         }
     }
 }

@@ -7,6 +7,7 @@
         World,
         Dungeon,
         Cave,
-        Town
+        Town,
+        Combat
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended;
-using ProjectDonut.Core;
 
 namespace ProjectDonut.ProceduralGeneration
 {
@@ -33,6 +32,18 @@ namespace ProjectDonut.ProceduralGeneration
 
                 tile.Update(gameTime);
             }
+        }
+
+        public void UpdateDrawValues(GameTime gameTime)
+        {
+
+           foreach (var tile in Map)
+           {
+                if (tile == null)
+                    continue;
+
+                tile.UpdateDrawValues();
+           }
         }
 
         public void Draw(GameTime gameTime)

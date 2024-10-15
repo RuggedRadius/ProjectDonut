@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects;
@@ -46,6 +45,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private MountainGenerator genMountain;
         private StructureGenerator genStructure;
         private ScenaryGenerator _genScenary;
+        private TownBuilder _townBuilder;
 
         private GrasslandsRules rulesGrasslands;
 
@@ -77,6 +77,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             genMountain = new MountainGenerator(settings);
             genStructure = new StructureGenerator(settings);
             _genScenary = new ScenaryGenerator(settings);
+            _townBuilder = new TownBuilder(settings);
 
             rulesGrasslands = new GrasslandsRules();
 
@@ -211,6 +212,11 @@ namespace ProjectDonut.ProceduralGeneration.World
             var chunk = new WorldChunk(chunkX, chunkY, this);
             chunk.HeightData = genHeight.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
             chunk.BiomeData = genBiomes.GenerateBiomes(Settings.Width, Settings.Height, chunkX, chunkY);
+            chunk.ChunkBounds = new Rectangle(
+                chunkX * Global.ChunkSize * Global.TileSize, 
+                chunkY * Global.ChunkSize * Global.TileSize, 
+                Settings.Width * Global.TileSize, 
+                Settings.Height * Global.TileSize);
 
             //genRiver.GenerateRivers(chunk);
             genForest.GenerateForestData(chunk);
@@ -231,24 +237,33 @@ namespace ProjectDonut.ProceduralGeneration.World
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
             chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
 
-            
-            chunk.MineableObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
-            //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
-            chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
+            var testingLargerChunks = false;
+            if (testingLargerChunks == false)
+            {
+                chunk.MineableObjects.Add("rocks", _genScenary.GenerateRocks(chunk));
+                //chunk.SceneObjects.Add("trees", _genScenary.GenerateLooseTrees(chunk)); // TEMP TURNED OFF
+                chunk.SceneObjects.Add("cactus", _genScenary.GenerateCactai(chunk));
 
-            chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
-            chunk.MineableObjects["trees"].AddRange(_genScenary.GenerateWinterTrees(chunk));
+                chunk.MineableObjects.Add("trees", _genScenary.GenerateTrees(chunk));
+                chunk.MineableObjects["trees"].AddRange(_genScenary.GenerateWinterTrees(chunk));
 
-            chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk));
-            chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
+                chunk.SceneObjects.Add("castles", genStructure.GenerateCastles(chunk)); // TODO: Generate these on the world
+                //chunk.SceneObjects.Add("towns", genStructure.GenerateTowns(chunk));
+            }
 
             chunk.Initialize();
             chunk.LoadContent();
 
             ExistingChunks.Add((chunkX, chunkY));
 
+            if (new Random().Next(0, 100) > 60)
+                _townBuilder.Build(ref chunk);  
+
             return chunk;
         }
+
+        
+
 
         public void LoadContent()
         {

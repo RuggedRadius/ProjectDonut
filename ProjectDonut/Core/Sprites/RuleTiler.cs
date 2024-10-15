@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Tiled;
 using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.ProceduralGeneration.World.Generators;
+using System;
 using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;
 
 namespace ProjectDonut.Core.Sprites
@@ -58,83 +61,83 @@ namespace ProjectDonut.Core.Sprites
          * 
          */
 
-        public static Texture2D DetermineBuildingWallCapTexture(int[,] wallMap, int[,] floorMap, Tilemap wallTiles, int x, int y)
-        {
-            var nb = new NeighbourDataTiles(wallMap, x, y);
+        //public static Texture2D DetermineBuildingWallCapTexture(int[,] wallMap, int[,] floorMap, Tilemap wallTiles, int x, int y)
+        //{
+        //    var nb = new NeighbourDataTiles(wallMap, x, y);
 
-            // Explicit corners
-            if (nb.North && nb.East && !nb.West)
-            {
-                return SpriteLib.Town.Walls["wall-cap-sw"];
-            }
+        //    // Explicit corners
+        //    if (nb.North && nb.East && !nb.West)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-sw"];
+        //    }
 
-            if (nb.North && nb.West && !nb.East)
-            {
-                return SpriteLib.Town.Walls["wall-cap-se"];
-            }
+        //    if (nb.North && nb.West && !nb.East)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-se"];
+        //    }
 
-            if (nb.South && nb.East && !nb.West)
-            {
-                return SpriteLib.Town.Walls["wall-cap-nw"];
-            }
+        //    if (nb.South && nb.East && !nb.West)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-nw"];
+        //    }
 
-            if (nb.South && nb.West && !nb.East)
-            {
-                return SpriteLib.Town.Walls["wall-cap-ne"];
-            }
+        //    if (nb.South && nb.West && !nb.East)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-ne"];
+        //    }
 
-            if (nb.North && nb.East && nb.South && nb.West)
-                return SpriteLib.Town.Walls["wall-cap-se"];
-
-
-
-            if (nb.East && nb.South)
-            {
-                return SpriteLib.Town.Walls["wall-cap-nw"];
-            }
-
-            if (nb.South && nb.West)
-            {
-                return SpriteLib.Town.Walls["wall-cap-ne"];
-            }
+        //    if (nb.North && nb.East && nb.South && nb.West)
+        //        return SpriteLib.Town.Walls["wall-cap-se"];
 
 
 
-            if (nb.North && nb.West)
-            {
-                return SpriteLib.Town.Walls["wall-cap-se"];
-            }
+        //    if (nb.East && nb.South)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-nw"];
+        //    }
+
+        //    if (nb.South && nb.West)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-ne"];
+        //    }
 
 
 
-            if (!nb.North)
-            {
-                return SpriteLib.Town.Walls["wall-cap-n"];
-            }
+        //    if (nb.North && nb.West)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-se"];
+        //    }
 
-            if (!nb.East)
-            {
-                if (floorMap[x - 1, y] == 1)
-                    return SpriteLib.Town.Walls["wall-cap-e"];
 
-                if (floorMap[x + 1, y] == 1)
-                    return SpriteLib.Town.Walls["wall-cap-w"];
 
-                return Global.MISSING_TEXTURE;
-            }
+        //    if (!nb.North)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-n"];
+        //    }
 
-            if (!nb.South)
-            {
-                return SpriteLib.Town.Walls["wall-cap-s"];
-            }
+        //    if (!nb.East)
+        //    {
+        //        if (floorMap[x - 1, y] == 1)
+        //            return SpriteLib.Town.Walls["wall-cap-e"];
 
-            if (!nb.West)
-            {
-                return SpriteLib.Town.Walls["wall-cap-w"];
-            }
+        //        if (floorMap[x + 1, y] == 1)
+        //            return SpriteLib.Town.Walls["wall-cap-w"];
 
-            return Global.MISSING_TEXTURE;
-        }
+        //        return Global.MISSING_TEXTURE;
+        //    }
+
+        //    if (!nb.South)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-s"];
+        //    }
+
+        //    if (!nb.West)
+        //    {
+        //        return SpriteLib.Town.Walls["wall-cap-w"];
+        //    }
+
+        //    return Global.MISSING_TEXTURE;
+        //}
 
         public static class Town
         {
@@ -204,6 +207,221 @@ namespace ProjectDonut.Core.Sprites
                     return SpriteLib.Town.Fences["fence-se"];
                 else
                     return SpriteLib.Town.Fences["fence-s"];
+            }
+
+            public static void ApplyRulesToPlotForFences(ref WorldChunk chunk)
+            {
+                var tilemap = chunk.Town.Tilemaps["fences"];
+
+                foreach (var plot in chunk.Town.Plots)
+                {
+                    for (int i = plot.LocalBounds.Left; i < plot.LocalBounds.Right; i += Global.TileSize)
+                    {
+                        for (int j = plot.LocalBounds.Top; j < plot.LocalBounds.Bottom; j += Global.TileSize)
+                        {
+                            // NORTH-WEST
+                            if (i == plot.LocalBounds.Left && j == plot.LocalBounds.Top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-nw"];
+                                continue;
+                            }
+
+                            // NORTH-EAST
+                            if (i == plot.LocalBounds.Right - Global.TileSize && j == plot.LocalBounds.Top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-ne"];
+                                continue;
+                            }
+
+                            // SOUTH-WEST
+                            if (i == plot.LocalBounds.Left && j == plot.LocalBounds.Bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-sw"];
+                                continue;
+                            }
+
+                            // SOUTH-EAST
+                            if (i == plot.LocalBounds.Right - Global.TileSize && j == plot.LocalBounds.Bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-se"];
+                                continue;
+                            }
+
+                            // WEST
+                            if (i == plot.LocalBounds.Left)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-w"];
+                                continue;
+                            }
+
+                            // EAST
+                            if (i == plot.LocalBounds.Right - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-e"];
+                                continue;
+                            }
+
+                            // NORTH
+                            if (j == plot.LocalBounds.Top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-n"];
+                                continue;
+                            }
+
+                            // SOUTH
+                            if (j == plot.LocalBounds.Bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Fences["fence-s"];
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+            public static void ApplyRulesToBuildingForWalls(ref WorldChunk chunk)
+            {
+                var tilemap = chunk.Town.Tilemaps["walls"];
+
+                foreach (var plot in chunk.Town.Plots)
+                {
+                    for (int i = plot.Building.LocalBounds.Left; i < plot.Building.LocalBounds.Right; i += Global.TileSize)
+                    {
+                        for (int j = plot.Building.LocalBounds.Top; j < plot.Building.LocalBounds.Bottom; j += Global.TileSize)
+                        {
+                            // NORTH-WEST
+                            if (i == plot.Building.LocalBounds.Left && j == plot.Building.LocalBounds.Top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-nw"];
+                                continue;
+                            }
+
+                            // NORTH-EAST
+                            if (i == plot.Building.LocalBounds.Right - Global.TileSize && j == plot.Building.LocalBounds.Top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-ne"];
+                                continue;
+                            }
+
+                            // SOUTH-WEST
+                            if (i == plot.Building.LocalBounds.Left && j == plot.Building.LocalBounds.Bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-sw"];
+                                continue;
+                            }
+
+                            // SOUTH-EAST
+                            if (i == plot.Building.LocalBounds.Right - Global.TileSize && j == plot.Building.LocalBounds.Bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-se"];
+                                continue;
+                            }
+
+                            // WEST
+                            if (i == plot.Building.LocalBounds.Left)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-w"];
+                                continue;
+                            }
+
+                            // EAST
+                            if (i == plot.Building.LocalBounds.Right - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-e"];
+                                continue;
+                            }
+
+                            // NORTH
+                            if (j == plot.Building.LocalBounds.Top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-n"];
+                                continue;
+                            }
+
+                            // SOUTH
+                            if (j == plot.Building.LocalBounds.Bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Walls["wall-s"];
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+            public static void ApplyRulesToBuildingForFloors(ref WorldChunk chunk)
+            {
+                var tilemap = chunk.Town.Tilemaps["floor"];
+
+                foreach (var plot in chunk.Town.Plots)
+                {
+                    var left = plot.Building.LocalBounds.Left + Global.TileSize;
+                    var right = plot.Building.LocalBounds.Right - Global.TileSize;
+                    var top = plot.Building.LocalBounds.Top + Global.TileSize;
+                    var bottom = plot.Building.LocalBounds.Bottom - Global.TileSize;
+
+                    for (int i = plot.Building.LocalBounds.Left; i < plot.Building.LocalBounds.Right; i += Global.TileSize)
+                    {
+                        for (int j = plot.Building.LocalBounds.Top; j < plot.Building.LocalBounds.Bottom; j += Global.TileSize)
+                        {
+                            // NORTH-WEST
+                            if (i == left && j == top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-nw"];
+                                continue;
+                            }
+
+                            // NORTH-EAST
+                            if (i == right - Global.TileSize && j == top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-ne"];
+                                continue;
+                            }
+
+                            // SOUTH-WEST
+                            if (i == left && j == bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-sw"];
+                                continue;
+                            }
+
+                            // SOUTH-EAST
+                            if (i == right - Global.TileSize && j == bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-se"];
+                                continue;
+                            }
+
+                            // WEST
+                            if (i == left)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-w"];
+                                continue;
+                            }
+
+                            // EAST
+                            if (i == right - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-e"];
+                                continue;
+                            }
+
+                            // NORTH
+                            if (j == top)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-n"];
+                                continue;
+                            }
+
+                            // SOUTH
+                            if (j == bottom - Global.TileSize)
+                            {
+                                tilemap.Map[i / Global.TileSize, j / Global.TileSize].Texture = SpriteLib.Town.Floor["floor-s"];
+                                continue;
+                            }
+                        }
+                    }
+                }
             }
 
             public static Texture2D WallTexture(int[,] wallMap, int[,] floorMap, int x, int y)

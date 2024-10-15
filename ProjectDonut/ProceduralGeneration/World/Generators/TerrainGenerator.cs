@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Sprites;
 using System;
 using System.Collections.Generic;
@@ -26,12 +25,13 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             //_noise[0].SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
             _noise[0].SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             _noise[0].SetSeed(new Random().Next(int.MinValue, int.MaxValue));
+            _noise[0].SetFrequency(0.002f);
 
             _noise[1] = new FastNoiseLite();
             _noise[1].SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
             //_noise[1].SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             _noise[1].SetSeed(new Random().Next(int.MinValue, int.MaxValue));
-            _noise[1].SetFrequency(0.5f);
+            _noise[1].SetFrequency(0.002f);
             _noise[1].SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Manhattan);
         }
 
@@ -168,7 +168,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var biomeValue = chunk.BiomeData[i, j];
                     var heightValue = chunk.HeightData[i, j];
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,

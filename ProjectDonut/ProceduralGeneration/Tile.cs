@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
-using ProjectDonut.Core.SceneManagement.SceneTypes.Town;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.Tools;
@@ -49,31 +47,18 @@ namespace ProjectDonut.ProceduralGeneration
         public WorldTileType WorldTileType { get; set; }
         public Biome Biome { get; set; }
 
-        // Animation
-        public bool IsAnimated { get; set; }
-        public List<Texture2D> Frames { get; set; }
-        private double _frameTimer { get; set; }
-        private double _frameInterval { get; set; }
-        private int _frameIndex { get; set; }
 
         // Visibility and Appearance
         public bool IsVisible { get; set; }
         public bool IsExplored { get; set; }
         public bool IsBlocked{ get; set; }
         public Texture2D Texture { get; set; }
+        public bool IsPlayerBlocking { get; set; }
 
         public Rectangle Bounds { get; set; }
 
-        public Tile(bool isAnimated)
+        public Tile()
         {
-            IsAnimated = isAnimated;
-
-            if (IsAnimated)
-            {
-                _frameInterval = 0.5f;
-                _frameIndex = 0;
-                _frameTimer = 0f;
-            }
         }
 
         public void Initialize()
@@ -88,31 +73,42 @@ namespace ProjectDonut.ProceduralGeneration
         public void Update(GameTime gameTime)
         {
             UpdateObjectVisibility();
-            HandleAnimation(gameTime);
+            //HandleAnimation(gameTime);
+            UpdateDrawValues();
         }
 
-        private void HandleAnimation(GameTime gameTime)
+        private float alphaValue;
+        private Color drawColour;
+        private float distanceToPlayer;
+        private float distanceToPlayerAbsolute;
+        public void UpdateDrawValues()
         {
-            if (Frames == null || Frames.Count == 0)
+            if (Global.SceneManager.CurrentScene is DungeonScene)
             {
-                return;
-            }
-
-            if (IsAnimated)
-            {
-                _frameTimer += gameTime.ElapsedGameTime.TotalSeconds;
-
-                if (_frameTimer >= _frameInterval)
+                if (!IsVisible)
                 {
-                    _frameTimer = 0;
-                    _frameIndex++;
-
-                    if (_frameIndex >= Frames.Count)
-                    {
-                        _frameIndex = 0;
-                    }
-
-                    Texture = Frames[_frameIndex];
+                    alphaValue = 0.05f;
+                    drawColour = Color.White;
+                }
+                else
+                {
+                    distanceToPlayer = Vector2.Distance(WorldPosition, Global.PlayerObj.WorldPosition);
+                    distanceToPlayerAbsolute = Math.Abs(distanceToPlayer);
+                    alphaValue = ((float)Normalize(distanceToPlayer, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
+                    drawColour = Color.White;
+                }
+            }
+            else if (Global.SceneManager.CurrentScene is WorldScene)
+            {
+                if (!IsVisible)
+                {
+                    drawColour = Color.Gray;
+                    alphaValue = 1f;
+                }
+                else
+                {
+                    drawColour = Color.White;
+                    alphaValue = 1f;
                 }
             }
         }
@@ -126,8 +122,7 @@ namespace ProjectDonut.ProceduralGeneration
                 return;
             }
 
-            float distance = Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition));
-            IsVisible = (distance <= Global.FOG_OF_WAR_RADIUS) ? true : false;
+            IsVisible = (Math.Abs(Vector2.Distance(Global.PlayerObj.WorldPosition, WorldPosition)) <= Global.FOG_OF_WAR_RADIUS) ? true : false;
 
             if (IsVisible && !IsExplored)
                 IsExplored = true;
@@ -136,57 +131,22 @@ namespace ProjectDonut.ProceduralGeneration
 
         public void Draw(GameTime gameTime)
         {
+            if (IsPlayerBlocking)
+                return;
+
             if (!IsExplored)
                 return;
 
             if (!IsInCameraView())
                 return;
 
-                if (Global.SceneManager.CurrentScene is DungeonScene)
-                {
-                if (!IsVisible)
-                {
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * 0.05f);
-                }
-                else
-                {
-                    // TODO: storing a lot of variables each frame here, can be reduced
-                    var dist = Vector2.Distance(WorldPosition, Global.PlayerObj.WorldPosition);
-                    var absValue = Math.Abs(dist);
-                    var alphaValue = ((float)Normalize(dist, Global.INSTANCE_SIGHT_RADIUS * 65, 0)).Clamp(0.05f, 1f);
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White * alphaValue);
-                }
-            }
-            else if (Global.SceneManager.CurrentScene is WorldScene)
-            {
-                if (!IsVisible)
-                {
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);
-                }
-                else
-                {
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
-                    //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
-                }
-            }
-            else if (Global.SceneManager.CurrentScene is TownScene)
-            {
-                if (!IsVisible)
-                {
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.Gray);
-                }
-                else
-                {
-                    Global.SpriteBatch.Draw(Texture, WorldPosition, null, Color.White);
-                    //Global.SpriteBatch.DrawString(Global.FontDebug, WorldTileType.ToString(), Position, Color.Red);
-
-                }
-            }
+            Global.SpriteBatch.Draw(Texture, WorldPosition, null, drawColour * alphaValue);
         }
 
         private bool IsInCameraView()
         {
-            return Global.Camera.OrthoCamera.BoundingRectangle.Intersects(Bounds);
+            //return Global.Camera.OrthoCamera.BoundingRectangle.Intersects(Bounds);
+            return Global.Camera.OrthoCamera.BoundingRectangle.Contains(WorldPosition);
         }
 
         public void DrawThumbnail(GameTime gameTime)

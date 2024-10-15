@@ -77,6 +77,9 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Stairs;
             public static Dictionary<string, Texture2D> Doors;
             public static Dictionary<string, Texture2D> Roof;
+            public static Dictionary<string, Texture2D> Roof2;
+            public static Dictionary<string, Texture2D> Roof3;
+
 
             public static void Load()
             {
@@ -88,10 +91,13 @@ namespace ProjectDonut.Core.Sprites
                 Stairs = new Dictionary<string, Texture2D>();
                 Doors = new Dictionary<string, Texture2D>();
                 Roof = new Dictionary<string, Texture2D>();
+                Roof2 = new Dictionary<string, Texture2D>();
 
                 var townTerrainSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Town01");
                 var buildingBlocksSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/house_sprites3");
                 var roofSheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/RoofTiles");
+                var roofSheet2 = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/roof2");
+                var roofSheet3 = Global.ContentManager.Load<Texture2D>("Sprites/Map/Town/Roof3");
 
                 LoadGrass(townTerrainSheet);
                 LoadDirt(townTerrainSheet);
@@ -103,8 +109,38 @@ namespace ProjectDonut.Core.Sprites
                 LoadDoors(buildingBlocksSheet);
 
                 LoadRoof(roofSheet);
+                LoadRoof2(roofSheet2);
+                LoadRoof3(roofSheet3);
 
                 LoadDoodads();
+            }
+
+            private static void LoadRoof3(Texture2D sheet)
+            {
+                Roof3 = new Dictionary<string, Texture2D>()
+                {
+                    { "nw", ExtractSprite(sheet, 0, 0) },
+                    { "n", ExtractSprite(sheet, 1, 0) },
+                    { "ne", ExtractSprite(sheet, 2, 0) },
+                    { "w", ExtractSprite(sheet, 0, 1) },
+                    { "c", ExtractSprite(sheet, 1, 1) },
+                    { "e", ExtractSprite(sheet, 2, 1) },
+                    { "sw", ExtractSprite(sheet, 0, 2) },
+                    { "s", ExtractSprite(sheet, 1, 2) },
+                    { "se", ExtractSprite(sheet, 2, 2) },
+                    { "gutter", ExtractSprite(sheet, 0, 3) }
+                };                
+            }
+
+            private static void LoadRoof2(Texture2D sheet)
+            {
+                Roof2.Add("edge-nw", ExtractSprite(sheet, 0, 0));
+                Roof2.Add("edge-ne", ExtractSprite(sheet, 3, 0));
+                Roof2.Add("edge-sw", ExtractSprite(sheet, 0, 3));
+                Roof2.Add("edge-se", ExtractSprite(sheet, 3, 3));
+                Roof2.Add("face-middle", ExtractSprite(sheet, 1, 0));
+                Roof2.Add("face-left", ExtractSprite(sheet, 0, 1));
+                Roof2.Add("face-right", ExtractSprite(sheet, 3, 1));
             }
 
             private static void LoadGrass(Texture2D sheet)
@@ -150,7 +186,7 @@ namespace ProjectDonut.Core.Sprites
             {
                 Walls.Add("wall-nw", ExtractSprite(sheet, 4, 1));
                 Walls.Add("wall-n", ExtractSprite(sheet, 5, 1));
-                Walls.Add("wall-ne", ExtractSprite(sheet, 6, 3));
+                Walls.Add("wall-ne", ExtractSprite(sheet, 6, 1));
                 Walls.Add("wall-w", ExtractSprite(sheet, 4, 2));
                 Walls.Add("wall-e", ExtractSprite(sheet, 6, 2));
                 Walls.Add("wall-sw", ExtractSprite(sheet, 4, 3));
@@ -654,6 +690,7 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Dialogue;
             public static Dictionary<string, Texture2D> Scroll;
             public static Dictionary<string, Texture2D> Minimap;
+            public static Dictionary<string, Texture2D> HealthBar;
 
             public static void Load()
             {
@@ -662,6 +699,7 @@ namespace ProjectDonut.Core.Sprites
                 LoadDialogueSystem();
                 LoadScroll();
                 LoadMinimapFrame();
+                LoadHealthBar();
             }
 
             public static void LoadItems()
@@ -729,6 +767,19 @@ namespace ProjectDonut.Core.Sprites
                     //{ "se", ExtractSprite(sheet, 2, 2) }
                 };
             }
+        
+            private static void LoadHealthBar()
+            {
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Combat/health-bar");
+
+                HealthBar = new Dictionary<string, Texture2D>()
+                {
+                    { "left", ExtractSprite(sheet, 0, 0, 1, 16) },
+                    { "empty", ExtractSprite(sheet, 1, 0, 1, 16) },
+                    { "right", ExtractSprite(sheet, 2, 0, 1, 16) },
+                    { "full", ExtractSprite(sheet, 3, 0, 1, 16) },
+                };
+            }
         }
 
         public static class Player
@@ -784,6 +835,36 @@ namespace ProjectDonut.Core.Sprites
             }
         }
 
+        public static class Combat
+        {
+            public static Dictionary<string, Texture2D> Avatars;
+            public static Dictionary<string, Texture2D> Indicators;
+
+            public static void Load()
+            {
+                LoadAvatars();
+                LoadIndcators();
+            }
+
+            public static void LoadAvatars()
+            {
+                Avatars = new Dictionary<string, Texture2D>();
+
+                Avatars.Add("player", Global.ContentManager.Load<Texture2D>("Sprites/Combat/avatar_player"));
+                Avatars.Add("enemy", Global.ContentManager.Load<Texture2D>("Sprites/Combat/avatar_enemy"));
+            }
+
+            public static void LoadIndcators()
+            {
+                Indicators = new Dictionary<string, Texture2D>();
+
+                Indicators.Add("pointer-right", Global.ContentManager.Load<Texture2D>("Sprites/UI/MouseCursorSide"));
+                Indicators.Add("arrow-up", Global.ContentManager.Load<Texture2D>("Sprites/Combat/ui-arrow-up"));
+                Indicators.Add("arrow-down", Global.ContentManager.Load<Texture2D>("Sprites/Combat/ui-arrow-down"));
+            }
+        }
+
+
         public void LoadSpriteLibrary()
         {
             sheets = new Dictionary<string, Texture2D>();
@@ -804,6 +885,7 @@ namespace ProjectDonut.Core.Sprites
             Dungeon.Load();
             Player.Load();
             Doodads.Load();
+            Combat.Load();
         }
         
         public static Texture2D ExtractSprite(Texture2D spriteSheet, int x, int y)

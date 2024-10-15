@@ -4,14 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World.Structures;
-using ProjectDonut.UI.ScrollDisplay;
-using ProjectDonut.Core;
 using IGameComponent = ProjectDonut.Interfaces.IGameComponent;
-using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.ProceduralGeneration.World.MineableItems;
-using ProjectDonut.Debugging;
 
 namespace ProjectDonut.ProceduralGeneration.World
 {
@@ -42,6 +38,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public Dictionary<string, List<ISceneObject>> SceneObjects;
         public Dictionary<string, List<IMineable>> MineableObjects;
+
+        public Rectangle ChunkBounds { get; set; }
+
+        //public List<Tilemap> TownFloor { get; set; }
+        public Town Town { get; set; }
 
         public int Width
         {
@@ -164,7 +165,44 @@ namespace ProjectDonut.ProceduralGeneration.World
 
         public void Update(GameTime gameTime)
         {
-            // Update each tile
+            if (Town != null)
+            {
+                foreach (var plot in Town.Plots)
+                {
+                    if (plot.Building.WorldBounds.Contains(Global.PlayerObj.WorldPosition))
+                    {
+                        foreach (var tile in Town.Tilemaps["roofs"].Map)
+                        {
+                            if (tile == null)
+                                continue;
+
+                            if (tile.Bounds.Intersects(plot.LocalBounds))
+                            {
+                                tile.IsPlayerBlocking = true;
+                            }
+                            else
+                            {
+                                tile.IsPlayerBlocking = false;
+                            }
+                        }                        
+                    }
+                    else
+                    {
+                        foreach (var tile in Town.Tilemaps["roofs"].Map)
+                        {
+                            if (tile == null)
+                                continue;
+
+                            if (tile.Bounds.Intersects(plot.LocalBounds))
+                            {
+                                tile.IsPlayerBlocking = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+                // Update each tile
             foreach (var tilemap in Tilemaps)
             {
                 tilemap.Value.Update(gameTime);
@@ -201,6 +239,11 @@ namespace ProjectDonut.ProceduralGeneration.World
                     RenderThumbnail(gameTime);
                 //}
                 //RenderThumbnail(gameTime);                
+            }
+
+            if (Town != null)
+            {
+                Town.Update(gameTime);
             }
         }
 
@@ -239,7 +282,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             //MineableObjects.Values.ToList().ForEach(x => x.ForEach(y => y.Draw(gameTime)));
 
-            return;
+
+            if (Town != null)
+            {
+                Town.Draw(gameTime);
+            }
         }
 
         public void DrawSceneObjectsBelowPlayer(GameTime gameTime)
@@ -328,11 +375,11 @@ namespace ProjectDonut.ProceduralGeneration.World
 
                     if (x == 0 || y == 0)
                     {
-                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta * 0.25f);
                     }
                     else if (x == Width - 1 || y == Height - 1)
                     {
-                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta);
+                        Global.SpriteBatch.Draw(tempTexture, position, null, Color.Magenta * 0.25f);
                     }
                 }
             }

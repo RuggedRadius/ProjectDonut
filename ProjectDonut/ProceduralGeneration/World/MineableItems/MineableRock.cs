@@ -8,8 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Animations;
 using MonoGame.Extended.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
+using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Core.Sprites;
 using ProjectDonut.GameObjects.PlayerComponents;
 using ProjectDonut.Interfaces;
@@ -130,7 +130,7 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
             {
                 _sprite.Color = Color.White;
                 Global.SpriteBatch.Draw(_sprite, WorldPosition, 0.0f, Vector2.One);
-                Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
+                //Global.SpriteBatch.Draw(Global.DEBUG_TEXTURE, InteractBounds, Color.Blue * 0.1f);
             }
 
             //Global.SpriteBatch.End();
@@ -174,13 +174,16 @@ namespace ProjectDonut.ProceduralGeneration.World.MineableItems
                 replacementRockRubble.Initialize();
 
                 //Global.SceneManager.CurrentScene.AddSceneObject(replacementTree); TODO: I WISH it was this easy
-                if (Global.SceneManager.CurrentScene._sceneObjects.ContainsKey("rock-rubble"))
+                if (Global.SceneManager.CurrentScene is WorldScene worldscene)
                 {
-                    Global.SceneManager.CurrentScene._sceneObjects["rock-rubble"].Add(replacementRockRubble);
-                }
-                else
-                {
-                    Global.SceneManager.CurrentScene._sceneObjects.Add("rock-rubble", new List<ISceneObject> { replacementRockRubble });
+                    if (worldscene._sceneObjects.ContainsKey("rock-rubble"))
+                    {
+                        worldscene._sceneObjects["rock-rubble"].Add(replacementRockRubble);
+                    }
+                    else
+                    {
+                        worldscene._sceneObjects.Add("rock-rubble", new List<ISceneObject> { replacementRockRubble });
+                    }
                 }
             }
         }

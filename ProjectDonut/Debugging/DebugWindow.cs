@@ -4,7 +4,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectDonut.Core;
 using ProjectDonut.GameObjects;
 using ProjectDonut.Interfaces;
 

@@ -13,6 +13,7 @@ using ProjectDonut.Core.Input;
 using ProjectDonut.ProceduralGeneration.BSP;
 using ProjectDonut.GameObjects.Doodads;
 using ProjectDonut.ProceduralGeneration.World;
+using ProjectDonut.Combat;
 
 namespace ProjectDonut.Core.SceneManagement.SceneTypes
 {
@@ -42,10 +43,13 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         private int mapWidth;
         private int mapHeight;
 
+        private CombatInitiator _combatInitiator;
+
         public DungeonScene()
         {
             SceneType = SceneType.Dungeon;
             _bsp = new BSP();
+            _combatInitiator = new CombatInitiator();
         }
 
         public override void Initialize()
@@ -180,29 +184,29 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             base.Update(gameTime);
 
 
-            if (InputManager.KeyboardState.IsKeyDown(Keys.F1))
-            {
-                GenerateDungeon(false, false);
-            }
+            //if (InputManager.KeyboardState.IsKeyDown(Keys.F1))
+            //{
+            //    GenerateDungeon(false, false);
+            //}
 
-            if (InputManager.KeyboardState.IsKeyDown(Keys.F2))
-            {
-                _gameObjects.Clear();
-                GenerateDungeon(false, true);
-            }
+            //if (InputManager.KeyboardState.IsKeyDown(Keys.F2))
+            //{
+            //    _gameObjects.Clear();
+            //    GenerateDungeon(false, true);
+            //}
 
-            if (InputManager.KeyboardState.IsKeyDown(Keys.F4))
-            {
-                var path = @"C:\DungeonData.txt";
-                DataMap = Debugging.DebugWindow.LoadIntArrayFromFile(path);
-                _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
-            }
+            //if (InputManager.KeyboardState.IsKeyDown(Keys.F4))
+            //{
+            //    var path = @"C:\DungeonData.txt";
+            //    DataMap = Debugging.DebugWindow.LoadIntArrayFromFile(path);
+            //    _tilemap = GenerateDungeonTileMap(Dimension, Dimension, true, true);
+            //}
 
-            if (InputManager.KeyboardState.IsKeyDown(Keys.F5))
-            {
-                var path = @"C:\DungeonData.txt";
-                Debugging.DebugWindow.SaveIntArrayToFile(DataMap, path);
-            }
+            //if (InputManager.KeyboardState.IsKeyDown(Keys.F5))
+            //{
+            //    var path = @"C:\DungeonData.txt";
+            //    Debugging.DebugWindow.SaveIntArrayToFile(DataMap, path);
+            //}
 
             if (InputManager.KeyboardState.IsKeyDown(Keys.C))
             {
@@ -224,11 +228,6 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 }
             }
 
-            foreach (var enemy in Enemies)
-            {
-                enemy.Update(gameTime);
-            }
-
             foreach (var interactable in Interactables)
             {
                 interactable.Update(gameTime);
@@ -241,6 +240,9 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
                 .ForEach(x => Interactables.Remove(x));
 
             UpdateVisibility(Global.PlayerObj.WorldPosition, Global.INSTANCE_SIGHT_RADIUS);
+            _tilemap.UpdateDrawValues(gameTime);
+        
+            _combatInitiator.Update(gameTime);
         }
 
         public void UpdateVisibility(Vector2 playerPosition, int viewDistance)

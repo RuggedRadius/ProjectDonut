@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ProjectDonut.Core;
 using ProjectDonut.Core.Input;
 using ProjectDonut.Interfaces;
 

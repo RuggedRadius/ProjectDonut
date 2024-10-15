@@ -52,7 +52,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
-                    var tile = new Tile(false)
+                    var tile = new Tile()
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,

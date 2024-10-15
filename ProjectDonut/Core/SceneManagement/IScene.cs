@@ -14,11 +14,6 @@ namespace ProjectDonut.Core.SceneManagement
         SceneType SceneType { get; set; }
         Vector2 Position { get; set; }
 
-        Dictionary<string, IGameObject> _gameObjects { get; set; }
-        Dictionary<string, IScreenObject> _screenObjects { get; set; }
-        Dictionary<string, IGameComponent> _gameComponents { get; set; }
-        Dictionary<string, List<ISceneObject>> _sceneObjects{ get; set; }
-
         void PrepareForPlayerEntry();
         void PrepareForPlayerExit();
 
@@ -26,7 +21,5 @@ namespace ProjectDonut.Core.SceneManagement
         void LoadContent();
         void Update(GameTime gameTime);
         void Draw(GameTime gameTime);
-        void DrawMinimap(GameTime gameTime);
-
     }
 }
