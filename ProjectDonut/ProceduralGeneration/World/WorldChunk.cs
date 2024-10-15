@@ -169,10 +169,10 @@ namespace ProjectDonut.ProceduralGeneration.World
                 return;
 
             // Update each tile
-            //foreach (var tilemap in Tilemaps)
-            //{
-            //    tilemap.Value.Update(gameTime);
-            //}
+            foreach (var tilemap in Tilemaps)
+            {
+                tilemap.Value.Update(gameTime);
+            }
 
             if (Town != null)
             {

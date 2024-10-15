@@ -154,10 +154,10 @@ namespace ProjectDonut.ProceduralGeneration.World
 
             PlayerChunk = GetCurrentChunk();
 
-            foreach (var chunk in CurrentChunks)
-            {
-                chunk.Update(gameTime);
-            }
+            //foreach (var chunk in CurrentChunks)
+            //{
+            //    chunk.Update(gameTime);
+            //}
         }
 
         public void Draw(GameTime gameTime)

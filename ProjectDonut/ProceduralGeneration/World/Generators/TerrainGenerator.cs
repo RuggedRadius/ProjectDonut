@@ -168,19 +168,29 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                     var biomeValue = chunk.BiomeData[i, j];
                     var heightValue = chunk.HeightData[i, j];
 
+                    var isCollidableCoastTile = IsCollidableCoastTile(chunk.HeightData, i, j);
+
+                    if (isCollidableCoastTile)
+                    {
+                        ;
+                    }
+
                     var tile = new Tile()
                     {
                         ChunkX = chunk.ChunkCoordX,
                         ChunkY = chunk.ChunkCoordY,
                         xIndex = i,
                         yIndex = j,
-                        //Position = new Vector2(i * settings.TileSize, j * settings.TileSize) + chunk.Position,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = RuleTiler.World.DetermineTerrainTexture(i, j, biomeValue, chunk.HeightData, settings),
+                        //Texture = RuleTiler.World.DetermineTerrainTexture(i, j, biomeValue, chunk.HeightData, settings),
+                        Texture = isCollidableCoastTile ? 
+                            Global.MISSING_TEXTURE : 
+                            RuleTiler.World.DetermineTerrainTexture(i, j, biomeValue, chunk.HeightData, settings),
                         TileType = TileType.World,
-                        WorldTileType = DetermineTileType(i, j, heightValue),
-                        Biome = (Biome)chunk.BiomeData[i, j]
+                        WorldTileType = DetermineTileType(heightValue),
+                        Biome = (Biome)chunk.BiomeData[i, j],
+                        IsCollidable = isCollidableCoastTile
                     };
                     tile.Initialize();
 
@@ -201,7 +211,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         
     
 
-        private WorldTileType DetermineTileType(int x, int y, int heightValue)
+        private WorldTileType DetermineTileType(int heightValue)
         {
             if (heightValue >= settings.MountainHeightMin)
             {
@@ -215,6 +225,35 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
             {
                 return WorldTileType.Water;
             }
+        }
+
+        private int coastCollisionRange = 5;
+        private bool IsCollidableCoastTile(int[,] heghtMap, int x, int y)
+        {
+            var tileType = DetermineTileType(heghtMap[x, y]);
+
+            if (tileType != WorldTileType.Water)
+                return false;
+
+            var allInvolvedTiles = new List<WorldTileType>();
+
+            for (int i = -coastCollisionRange; i <= coastCollisionRange; i++)
+            {
+                for (int j = -coastCollisionRange; j <= coastCollisionRange; j++)
+                {
+                    var xIndex = x + i;
+                    var yIndex = y + j;
+
+                    if (xIndex < 0 || xIndex >= heghtMap.GetLength(0) || yIndex < 0 || yIndex >= heghtMap.GetLength(1))
+                    {
+                        continue;
+                    }
+
+                    allInvolvedTiles.Add(DetermineTileType(heghtMap[xIndex, yIndex]));
+                }
+            }
+
+            return allInvolvedTiles.Any(x => x != WorldTileType.Water);
         }
     }
 }
