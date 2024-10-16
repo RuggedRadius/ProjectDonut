@@ -24,6 +24,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         public int[,] ForestData;
         public int[,] RiverData;
         public int[,] StructureData;
+        public int[,] RaisedRockData;
 
         public Dictionary<string, Tilemap> Tilemaps;
 

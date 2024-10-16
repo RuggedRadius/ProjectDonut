@@ -288,7 +288,7 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Ashlands;
 
             public static Dictionary<string, Texture2D> Structures;
-
+            public static Dictionary<string, Texture2D> RaisedRock;
 
 
             public static void Load()
@@ -317,6 +317,26 @@ namespace ProjectDonut.Core.Sprites
                 LoadWater();
 
                 LoadStructures();
+                LoadRaisedRock();
+            }
+
+            private static void LoadRaisedRock()
+            {
+                RaisedRock = new Dictionary<string, Texture2D>();
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/RaisedTerrain");
+
+                RaisedRock.Add("nw", ExtractSprite(sheet, 0, 0));
+                RaisedRock.Add("n", ExtractSprite(sheet, 1, 0));
+                RaisedRock.Add("ne", ExtractSprite(sheet, 2, 0));
+                RaisedRock.Add("w", ExtractSprite(sheet, 0, 1));
+                RaisedRock.Add("c", ExtractSprite(sheet, 1, 1));
+                RaisedRock.Add("e", ExtractSprite(sheet, 2, 1));
+                RaisedRock.Add("sw", ExtractSprite(sheet, 0, 2));
+                RaisedRock.Add("s", ExtractSprite(sheet, 1, 3));
+                RaisedRock.Add("se", ExtractSprite(sheet, 2, 2));
+
+                RaisedRock.Add("entrance-1", ExtractSprite(sheet, 3, 2));
+                RaisedRock.Add("entrance-2", ExtractSprite(sheet, 3, 3));
             }
 
             private static void LoadGrasslands()

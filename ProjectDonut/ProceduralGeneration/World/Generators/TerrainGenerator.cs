@@ -170,11 +170,6 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
 
                     var isCollidableCoastTile = IsCollidableCoastTile(chunk.HeightData, i, j);
 
-                    if (isCollidableCoastTile)
-                    {
-                        ;
-                    }
-
                     var tile = new Tile()
                     {
                         ChunkX = chunk.ChunkCoordX,

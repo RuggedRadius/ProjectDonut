@@ -44,6 +44,7 @@ namespace ProjectDonut.ProceduralGeneration.World
         private ForestGenerator genForest;
         private RiverGenerator genRiver;
         private MountainGenerator genMountain;
+        private RaisedRockGenerator genRaisedRock;
         private StructureGenerator genStructure;
         private ScenaryGenerator _genScenary;
         private TownBuilder _townBuilder;
@@ -79,6 +80,7 @@ namespace ProjectDonut.ProceduralGeneration.World
             genStructure = new StructureGenerator(settings);
             _genScenary = new ScenaryGenerator(settings);
             _townBuilder = new TownBuilder(settings);
+            genRaisedRock = new RaisedRockGenerator(settings);
 
             rulesGrasslands = new GrasslandsRules();
 
@@ -228,12 +230,16 @@ namespace ProjectDonut.ProceduralGeneration.World
             //var tilemapStructures = genStructure.CreateTileMap(chunk);
             var tilemapMountains = genMountain.CreateTilemap(chunk);
 
+            // Raised Rock Layer
+            chunk.RaisedRockData = genRaisedRock.GenerateHeightMap(Settings.Width, Settings.Height, chunkX, chunkY);
+
             tilemapBase = rulesGrasslands.ApplyRules(tilemapBase);
 
             chunk.Tilemaps.Add("base", tilemapBase);
             //chunk.Tilemaps.Add("forest", tilemapForest);
             chunk.Tilemaps.Add("mountains", tilemapMountains);
             //chunk.Tilemaps.Add("structures", tilemapStructures);
+            chunk.Tilemaps.Add("raised-rock", genRaisedRock.CreateTerrainTilemap(chunk));
 
             chunk.SceneObjects = new Dictionary<string, List<ISceneObject>>();
             chunk.MineableObjects = new Dictionary<string, List<IMineable>>();
