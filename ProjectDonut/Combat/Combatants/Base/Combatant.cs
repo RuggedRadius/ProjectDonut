@@ -129,8 +129,8 @@ namespace ProjectDonut.Combat.Combatants.Base
             Bounds = new Rectangle(
                 (int)ScreenPosition.X,
                 (int)ScreenPosition.Y,
-                Global.TileSize * CombatScene.SceneScale,
-                Global.TileSize * CombatScene.SceneScale);
+                (int)(Global.TileSize * CombatScene.SceneScale),
+                (int)(Global.TileSize * CombatScene.SceneScale));
 
             MoveState = CombatantMoveState.Idle;
 
@@ -427,8 +427,8 @@ namespace ProjectDonut.Combat.Combatants.Base
             Bounds = new Rectangle(
                 (int)ScreenPosition.X,
                 (int)ScreenPosition.Y,
-                Global.TileSize * CombatScene.SceneScale,
-                Global.TileSize * CombatScene.SceneScale);
+                (int)(Global.TileSize * CombatScene.SceneScale),
+                (int)(Global.TileSize * CombatScene.SceneScale));
 
             _moveTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 

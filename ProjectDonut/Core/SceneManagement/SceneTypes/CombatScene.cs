@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.Graphics;
 using ProjectDonut.Combat;
 using ProjectDonut.Combat.UI;
@@ -35,10 +37,12 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
         public List<CombatItem> PlayerItems;
 
+        private Rectangle BackgroundRect { get; set; }
+        private Transform2 BackgroundTransform { get; set; }
         public AnimatedSprite Background { get; set; }
         private SpriteSheet _spriteSheet;
 
-        public static int SceneScale = 8;
+        public static float SceneScale = 5.33f;
 
         private IScene PreviousScene { get; set; }
 
@@ -65,7 +69,10 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
             PreviousScene = previousScene;
 
-
+            BackgroundRect = new Rectangle(0, 0,
+                Global.GraphicsDevice.Viewport.Width,
+                Global.GraphicsDevice.Viewport.Height);
+            BackgroundTransform = new Transform2(new Vector2(0, 0), 0.0f, new Vector2(SceneScale, SceneScale));
 
             TESTPopulatePlayerItems();
         }
@@ -98,8 +105,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
         {
             //_combatUI.Initialize();
 
-            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/bg-dungeon");
-            var atlas = Texture2DAtlas.Create("combatant", sheetTexture, 480, 270);
+            var sheetTexture = Global.ContentManager.Load<Texture2D>("Sprites/Combat/Backgrounds/bg-dungeon");
+            var atlas = Texture2DAtlas.Create("combatant", sheetTexture, 360, 202);
             _spriteSheet = new SpriteSheet("SpriteSheet/combatant", atlas);
 
             var frameTime = 0.1f;
@@ -205,7 +212,8 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
             Global.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             // Draw background
-            Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (SceneScale / 2)); // TEMP TODO: 4 should be combat.SceneScale here
+            //Global.SpriteBatch.Draw(Background, Vector2.Zero, 0.0f, Vector2.One * (SceneScale)); // TEMP TODO: 4 should be combat.SceneScale here
+            Global.SpriteBatch.Draw(Background, BackgroundTransform); // TEMP TODO: 4 should be combat.SceneScale here
 
             // Draw player team
             foreach (var combatant in Manager.PlayerTeam)
