@@ -70,6 +70,8 @@ namespace ProjectDonut
             IsFixedTimeStep = false; // Allow the game to run at variable frame rates
             Global.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false; // Disable VSync
             Global.GraphicsDeviceManager.ApplyChanges(); // Apply the changes to the graphics settings
+
+            //Global.GraphicsDeviceManager.IsFullScreen = true;
         }
 
         protected override void Initialize()

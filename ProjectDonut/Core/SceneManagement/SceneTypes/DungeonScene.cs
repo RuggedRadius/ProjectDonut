@@ -251,7 +251,7 @@ namespace ProjectDonut.Core.SceneManagement.SceneTypes
 
                 item.DetectPlayerCollision();
             }
-            //_combatInitiator.Update(gameTime); // TEMP OFF
+            _combatInitiator.Update(gameTime); // TEMP OFF
         }
 
         public void UpdateVisibility(Vector2 playerPosition, int viewDistance)
