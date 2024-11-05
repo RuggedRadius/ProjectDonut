@@ -356,6 +356,8 @@ namespace ProjectDonut.WorldTowns
                             TileType = TileType.Instance,
                             IsExplored = true
                         };
+
+                        //chunk.RaisedRockData[x, y] = 0;
                     }
                 }
             }
@@ -476,6 +478,8 @@ namespace ProjectDonut.WorldTowns
                                         }
                                     }
                                 }
+
+                                chunk.RaisedRockData[coordX, coordY] = 0;
                             }
                         }
                     }
@@ -557,6 +561,11 @@ namespace ProjectDonut.WorldTowns
                                     }
                                 }
                             }
+                        }
+
+                        if (distance <= radius + 2)
+                        {
+                            chunk.RaisedRockData[i, j] = 0;
                         }
                     }
                 }

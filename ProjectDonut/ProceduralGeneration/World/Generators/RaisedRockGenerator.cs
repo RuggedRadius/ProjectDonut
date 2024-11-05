@@ -54,7 +54,7 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                 {
                     var rockValue = chunk.RaisedRockData[i, j];
 
-                    if (chunk.RaisedRockData[i, j] < 70)
+                    if (chunk.RaisedRockData[i, j] < Global.RaisedRockHeight)
                     {
                         continue;
                     }
@@ -64,6 +64,20 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         continue;
                     }
 
+                    //if (chunk.Town != null)
+                    //{
+                    //    var x = chunk.ChunkBounds.X + (chunk.ChunkCoordX * Global.ChunkSize * Global.TileSize) + (i * Global.TileSize);
+                    //    var y = chunk.ChunkBounds.Y + (chunk.ChunkCoordY * Global.ChunkSize * Global.TileSize) + (j * Global.TileSize);
+
+                    //    foreach (var plot in chunk.Town.Plots)
+                    //    {
+                    //        if (plot.WorldBounds.Contains(x, y))
+                    //        {
+                    //            continue;
+                    //        }
+                    //    }
+                    //}
+
                     var tile = new Tile()
                     {
                         ChunkX = chunk.ChunkCoordX,
@@ -72,7 +86,8 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = SpriteLib.World.RaisedRock["s"],
+                        Texture = RuleTiler.World.DetermineRaisedRockTexture(chunk.RaisedRockData, i, j),
+                        //Texture = SpriteLib.World.RaisedRock["s"],
                         TileType = TileType.World,
                         WorldTileType = WorldTileType.Ground,
                         Biome = (Biome)chunk.BiomeData[i, j],

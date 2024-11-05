@@ -264,7 +264,10 @@ namespace ProjectDonut.ProceduralGeneration.World
             ExistingChunks.Add((chunkX, chunkY));
 
             if (new Random().Next(0, 100) > 60)
-                _townBuilder.Build(ref chunk);  
+            {
+                _townBuilder.Build(ref chunk);
+                chunk.Tilemaps["raised-rocks"] = genRaisedRock.CreateTerrainTilemap(chunk);
+            }
 
             return chunk;
         }

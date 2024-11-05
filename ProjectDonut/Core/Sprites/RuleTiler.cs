@@ -13,28 +13,28 @@ namespace ProjectDonut.Core.Sprites
         public NeighbourDataTiles(int[,] map, int x, int y)
         {
             if (y > 0 && x > 0)
-                NorthWest = map[x - 1, y - 1] == 1;
+                NorthWest = map[x - 1, y - 1] > Global.RaisedRockHeight;
 
             if (y > 0)
-                North = map[x, y - 1] == 1;
+                North = map[x, y - 1] > Global.RaisedRockHeight;
 
             if (y > 0 && x < map.GetLength(0) - 1)
-                NorthEast = map[x + 1, y - 1] == 1;
+                NorthEast = map[x + 1, y - 1] > Global.RaisedRockHeight;
 
             if (x > 0)
-                West = map[x - 1, y] == 1;
+                West = map[x - 1, y] > Global.RaisedRockHeight;
 
             if (x < map.GetLength(0) - 1)
-                East = map[x + 1, y] == 1;
+                East = map[x + 1, y] > Global.RaisedRockHeight;
 
             if (y < map.GetLength(1) - 1 && x > 0)
-                SouthWest = map[x - 1, y + 1] == 1;
+                SouthWest = map[x - 1, y + 1] > Global.RaisedRockHeight;
 
             if (y < map.GetLength(1) - 1)
-                South = map[x, y + 1] == 1;
+                South = map[x, y + 1] > Global.RaisedRockHeight;
 
             if (y < map.GetLength(1) - 1 && x < map.GetLength(0) - 1)
-                SouthEast = map[x + 1, y + 1] == 1;
+                SouthEast = map[x + 1, y + 1] > Global.RaisedRockHeight;
         }
 
         public bool NorthWest { get; set; }
@@ -769,6 +769,42 @@ namespace ProjectDonut.Core.Sprites
                         return SpriteLib.GetSprite("deepwater-C");
                     }
                 }
+            }
+
+            public static Texture2D DetermineRaisedRockTexture(int[,] dataMap, int x, int y)
+            {
+                var nbs = new NeighbourDataTiles(dataMap, x, y);
+                var lib = SpriteLib.World.RaisedRock;
+
+                // CORNERS
+                if (!nbs.North && nbs.East && nbs.South && !nbs.West) // ES
+                    return lib["nw"];
+
+                if (!nbs.North && !nbs.East && nbs.South && nbs.West) // SW
+                    return lib["ne"];
+
+                if (nbs.North && !nbs.East && !nbs.South && nbs.West) // NW
+                    return lib["2se"];
+
+                if (nbs.North && nbs.East && !nbs.South && !nbs.West) // NE
+                    return lib["2sw"];
+
+                // STRAIGHTS
+                if (!nbs.North && nbs.East && nbs.South && nbs.West) // EW
+                    return lib["n"];
+
+                if (nbs.North && !nbs.East && nbs.South && nbs.West) // NS
+                    return lib["e"];
+
+                if (nbs.North && nbs.East && !nbs.South && nbs.West) // EW
+                    return lib["s"];
+
+                if (nbs.North && nbs.East && nbs.South && !nbs.West) // NS
+                    return lib["w"];
+
+
+
+                return lib["c"];
             }
         }
     }
