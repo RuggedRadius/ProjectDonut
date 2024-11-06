@@ -106,7 +106,7 @@ namespace ProjectDonut
             Global.PlayerObj.Initialize();
 
             Global.Fonts.OldeEnglishDescLarge = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
-            Global.Fonts.OldeEnglishDescMedium = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDescSubText ");
+            Global.Fonts.OldeEnglishDescMedium = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDescSubText");
 
             CreateGameComponents();
             CreateGameObjects();
