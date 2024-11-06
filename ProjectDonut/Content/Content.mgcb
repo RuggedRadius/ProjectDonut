@@ -634,6 +634,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/TestPlayer.png
 
+#begin Sprites/UI/battleframeui.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/battleframeui.png
+
 #begin Sprites/UI/Dialogue.png
 /importer:TextureImporter
 /processor:TextureProcessor

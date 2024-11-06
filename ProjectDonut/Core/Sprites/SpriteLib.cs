@@ -715,6 +715,7 @@ namespace ProjectDonut.Core.Sprites
             public static Dictionary<string, Texture2D> Scroll;
             public static Dictionary<string, Texture2D> Minimap;
             public static Dictionary<string, Texture2D> HealthBar;
+            public static Dictionary<string, Texture2D> UIFrames;
 
             public static void Load()
             {
@@ -724,6 +725,24 @@ namespace ProjectDonut.Core.Sprites
                 LoadScroll();
                 LoadMinimapFrame();
                 LoadHealthBar();
+                LoadUIFrames();
+            }
+
+            public static void LoadUIFrames()
+            {
+                UIFrames = new Dictionary<string, Texture2D>();
+
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/UI/battleframeui");
+
+                UIFrames.Add("battle-nw", ExtractSprite(sheet, 0, 0));
+                UIFrames.Add("battle-n", ExtractSprite(sheet, 1, 0));
+                UIFrames.Add("battle-ne", ExtractSprite(sheet, 2, 0));
+                UIFrames.Add("battle-w", ExtractSprite(sheet, 0, 1));
+                UIFrames.Add("battle-c", ExtractSprite(sheet, 1, 1));
+                UIFrames.Add("battle-e", ExtractSprite(sheet, 2, 1));
+                UIFrames.Add("battle-sw", ExtractSprite(sheet, 0, 2));
+                UIFrames.Add("battle-s", ExtractSprite(sheet, 1, 2));
+                UIFrames.Add("battle-se", ExtractSprite(sheet, 2, 2));
             }
 
             public static void LoadItems()

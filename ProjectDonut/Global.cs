@@ -97,6 +97,12 @@ namespace ProjectDonut
             public static PlayerEquipment Equipment;
         }
 
+        public static class Fonts
+        {
+            public static SpriteFont OldeEnglishDescLarge;
+            public static SpriteFont OldeEnglishDescMedium;
+        }
+
 
         public static Camera Camera;
         public static CameraMinimap CameraMinimap;

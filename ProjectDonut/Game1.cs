@@ -105,6 +105,9 @@ namespace ProjectDonut
             Global.PlayerObj = new PlayerObj();
             Global.PlayerObj.Initialize();
 
+            Global.Fonts.OldeEnglishDescLarge = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
+            Global.Fonts.OldeEnglishDescMedium = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDescSubText ");
+
             CreateGameComponents();
             CreateGameObjects();
             CreateScreenObjects();
@@ -122,7 +125,7 @@ namespace ProjectDonut
             base.Initialize();
 
 
-            //TEST_COMBAT_SCENE();
+            TEST_COMBAT_SCENE();
         }
 
         private void TEST_COMBAT_SCENE()

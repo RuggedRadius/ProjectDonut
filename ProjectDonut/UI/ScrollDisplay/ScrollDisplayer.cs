@@ -42,9 +42,6 @@ namespace ProjectDonut.UI.ScrollDisplay
         private Texture2D scrollTopRight;
         private Texture2D scrollBottom;
 
-        private SpriteFont _fontText;
-        private SpriteFont _fontSubText;
-
         public Vector2 Position { get; set; }
         public int ZIndex { get; set; }
                 
@@ -70,8 +67,8 @@ namespace ProjectDonut.UI.ScrollDisplay
                     Global.GraphicsDeviceManager.PreferredBackBufferHeight - 200);
             }
 
-            scroll.TextDimensions = _fontText.MeasureString(scroll.Text);
-            scroll.SubTextDimensions = _fontText.MeasureString(scroll.SubText);
+            scroll.TextDimensions = Global.Fonts.OldeEnglishDescLarge.MeasureString(scroll.Text);
+            scroll.SubTextDimensions = Global.Fonts.OldeEnglishDescLarge.MeasureString(scroll.SubText);
 
             if (scroll.TextDimensions.X > scroll.SubTextDimensions.X)
                 scroll.DisplayWidth = (int)scroll.TextDimensions.X + (scrollTopLeft.Width * scale * 2);
@@ -108,8 +105,8 @@ namespace ProjectDonut.UI.ScrollDisplay
             scrollTopRight = SpriteLib.UI.Scroll["scroll-right"];
             scrollBottom = SpriteLib.UI.Scroll["scroll-middle"];
 
-            _fontText = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
-            _fontSubText = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDescSubText");
+            Global.Fonts.OldeEnglishDescLarge = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDesc");
+            Global.Fonts.OldeEnglishDescMedium = Global.ContentManager.Load<SpriteFont>("Fonts/OldeEnglishDescSubText");
         }
         public void Update(GameTime gameTime)
         {
@@ -181,11 +178,11 @@ namespace ProjectDonut.UI.ScrollDisplay
 
                 var textStartX = (int)(scroll.ScreenPosition.Value.X - (scroll.TextDimensions.X / 2) + (scrollTopLeft.Width * scale / 2)) + 5;
                 var textStartY = startY - 5;
-                Global.SpriteBatch.DrawString(_fontText, scroll.Text, new Vector2(textStartX, textStartY), Color.Black);
+                Global.SpriteBatch.DrawString(Global.Fonts.OldeEnglishDescLarge, scroll.Text, new Vector2(textStartX, textStartY), Color.Black);
 
                 var subTextStartY = startY + 55;
                 var subTextStartX = (int)(scroll.ScreenPosition.Value.X - (scroll.SubTextDimensions.X / 4) + (scrollTopLeft.Width * scale / 2));
-                Global.SpriteBatch.DrawString(_fontSubText, scroll.SubText, new Vector2(subTextStartX, subTextStartY), Color.Black);
+                Global.SpriteBatch.DrawString(Global.Fonts.OldeEnglishDescMedium, scroll.SubText, new Vector2(subTextStartX, subTextStartY), Color.Black);
 
                 Global.SpriteBatch.End();
 

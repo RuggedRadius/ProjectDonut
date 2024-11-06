@@ -34,13 +34,25 @@ namespace ProjectDonut.Combat.UI
 
         private Texture2D Indicator;
 
-        private int height = 220;
+        private int height = 250;
         private int width = 300;
-        private int margin = 10;
-        private int padding = 10;
+        private int margin = 20;
+        private int padding = 20;
         private int indicatorWidth = 32;
         private int optionHeight = 50;
         private int indicatorHeighOffset;
+
+        int uiScale = 4;
+
+        private SpriteFont _optionFont = Global.Fonts.OldeEnglishDescMedium;
+        private Color _colourActive = Color.Black;
+        private Color _colourInactive = Color.Brown;
+        private Color _frameDrawColour;
+
+        private Rectangle originRect;
+        private Rectangle targetRect;
+        private int middleTileWidth;
+        private int middleTileHeight;
 
         public CombatUIOptions()
         {
@@ -58,6 +70,17 @@ namespace ProjectDonut.Combat.UI
             _manager = CombatScene.Instance.Manager;
 
             indicatorHeighOffset = ((int)Global.FontDebug.MeasureString("ABC").Y / 2) + Indicator.Height / 2;
+
+            originRect = new Rectangle(
+                RectBackground.X - (Global.TileSize * uiScale / 2),
+                RectBackground.Y - (Global.TileSize * uiScale / 2),
+                Global.TileSize * uiScale,
+                Global.TileSize * uiScale);
+
+            targetRect = originRect;
+
+            middleTileWidth = ((RectBackground.Width - (2 * (Global.TileSize * uiScale))) / Global.TileSize) + 1;
+            middleTileHeight = ((RectBackground.Height - (2 * (Global.TileSize * uiScale))) / Global.TileSize) + 1;
         }
 
         public void Update(GameTime gameTime)
@@ -100,6 +123,19 @@ namespace ProjectDonut.Combat.UI
 
             HandleComponentWindowVisibility();
             HandleInput();
+
+            if (CombatScene.Instance.CurrentTargetUI == this)
+            {
+                _frameDrawColour = Color.White;
+                _colourActive = Color.Black;
+                _colourInactive = Color.SaddleBrown;
+            }
+            else
+            {
+                _frameDrawColour = Color.White * 0.25f;
+                _colourActive = Color.Black * 0.25f;
+                _colourInactive = Color.SaddleBrown * 0.25f;
+            }
         }
 
         private void HandleInput()
@@ -168,27 +204,71 @@ namespace ProjectDonut.Combat.UI
             if (_manager.IsExecutingTurn)
                 return;
 
-            // Draw background
-            if (CombatScene.Instance.CurrentTargetUI != this)
-            {
-                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
-            }
-            else
-            {
-                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Black * 0.5f);
-                Global.SpriteBatch.Draw(Global.BLANK_TEXTURE, RectBackground, null, Color.Yellow * 0.25f);
-            }
-
-            // Draw the combat UI options
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Melee Attack", ScreenPositionAttack, _selectedOption == CombatUIOptionsType.Attack ? Color.White : Color.Gray);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Ability", ScreenPositionAbility, _selectedOption == CombatUIOptionsType.Ability ? Color.White : Color.Gray);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Item", ScreenPositionItem, _selectedOption == CombatUIOptionsType.Item ? Color.White : Color.Gray);
-            Global.SpriteBatch.DrawString(Global.FontDebug, "Strategy Action", ScreenPositionCombatActions, _selectedOption == CombatUIOptionsType.CombatAction ? Color.White : Color.Gray);
+            DrawUIFrame();
+            DrawTextOptions();
 
             // Draw selection indicator
             if (CombatScene.Instance.CurrentTargetUI != this)
                 return;
 
+            DrawIndicator();
+        }
+
+        private void DrawUIFrame()
+        {
+            targetRect = originRect;
+
+            // Draw top
+            Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-nw"], targetRect, _frameDrawColour);
+            for (int i = 0; i < middleTileWidth; i++)
+            {
+                targetRect.X += (Global.TileSize * uiScale);
+                Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-n"], targetRect, _frameDrawColour);
+            }
+            targetRect.X += (Global.TileSize * uiScale);
+            Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-ne"], targetRect, _frameDrawColour);
+
+
+            // Draw middle
+            for (int i = 0; i < middleTileHeight; i++)
+            {
+                targetRect.Y += (Global.TileSize * uiScale);
+                targetRect.X = originRect.X;
+                Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-w"], targetRect, _frameDrawColour);
+                for (int j = 0; j < middleTileWidth; j++)
+                {
+                    targetRect.X += (Global.TileSize * uiScale);
+                    Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-c"], targetRect, _frameDrawColour);
+                }
+                targetRect.X += (Global.TileSize * uiScale);
+                Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-e"], targetRect, _frameDrawColour);
+            }
+
+
+            // Draw bottom
+            targetRect.Y += (Global.TileSize * uiScale);
+            targetRect.X = originRect.X;
+            Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-sw"], targetRect, _frameDrawColour);
+            for (int i = 0; i < middleTileWidth; i++)
+            {
+                targetRect.X += (Global.TileSize * uiScale);
+                Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-s"], targetRect, _frameDrawColour);
+            }
+            targetRect.X += (Global.TileSize * uiScale);
+            Global.SpriteBatch.Draw(SpriteLib.UI.UIFrames["battle-se"], targetRect, _frameDrawColour);
+        }
+
+        private void DrawTextOptions()
+        {
+            // Draw the combat UI options
+            Global.SpriteBatch.DrawString(_optionFont, "Melee Attack", ScreenPositionAttack, _selectedOption == CombatUIOptionsType.Attack ? _colourActive : _colourInactive);
+            Global.SpriteBatch.DrawString(_optionFont, "Ability", ScreenPositionAbility, _selectedOption == CombatUIOptionsType.Ability ? _colourActive : _colourInactive);
+            Global.SpriteBatch.DrawString(_optionFont, "Item", ScreenPositionItem, _selectedOption == CombatUIOptionsType.Item ? _colourActive : _colourInactive);
+            Global.SpriteBatch.DrawString(_optionFont, "Strategy Action", ScreenPositionCombatActions, _selectedOption == CombatUIOptionsType.CombatAction ? _colourActive : _colourInactive);
+        }
+
+        private void DrawIndicator()
+        {
             if (_manager.TurnOrder[0].Team == TeamType.Player)
             {
                 switch (_selectedOption)
