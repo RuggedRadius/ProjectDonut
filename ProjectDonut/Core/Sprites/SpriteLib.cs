@@ -323,21 +323,23 @@ namespace ProjectDonut.Core.Sprites
             private static void LoadRaisedRock()
             {
                 RaisedRock = new Dictionary<string, Texture2D>();
-                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/RaisedTerrain");
+                var sheet = Global.ContentManager.Load<Texture2D>("Sprites/Map/World/RaisedTerrain2");
 
                 RaisedRock.Add("nw", ExtractSprite(sheet, 0, 0));
                 RaisedRock.Add("n", ExtractSprite(sheet, 1, 0));
                 RaisedRock.Add("ne", ExtractSprite(sheet, 2, 0));
+
                 RaisedRock.Add("w", ExtractSprite(sheet, 0, 1));
                 RaisedRock.Add("c", ExtractSprite(sheet, 1, 1));
                 RaisedRock.Add("e", ExtractSprite(sheet, 2, 1));
-                RaisedRock.Add("sw", ExtractSprite(sheet, 0, 2));
-                RaisedRock.Add("s", ExtractSprite(sheet, 1, 3));
-                RaisedRock.Add("se", ExtractSprite(sheet, 2, 2));
-                RaisedRock.Add("2sw", ExtractSprite(sheet, 0, 3));
-                RaisedRock.Add("2s", ExtractSprite(sheet, 1, 3));
-                RaisedRock.Add("2se", ExtractSprite(sheet, 2, 3));
 
+                RaisedRock.Add("sw", ExtractSprite(sheet, 0, 2));
+                RaisedRock.Add("s", ExtractSprite(sheet, 1, 2));
+                RaisedRock.Add("se", ExtractSprite(sheet, 2, 2));
+
+                //RaisedRock.Add("2sw", ExtractSprite(sheet, 0, 3));
+                //RaisedRock.Add("2s", ExtractSprite(sheet, 1, 3));
+                //RaisedRock.Add("2se", ExtractSprite(sheet, 2, 3));
 
                 RaisedRock.Add("entrance-1", ExtractSprite(sheet, 3, 2));
                 RaisedRock.Add("entrance-2", ExtractSprite(sheet, 3, 3));

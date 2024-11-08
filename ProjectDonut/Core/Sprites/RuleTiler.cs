@@ -4,6 +4,8 @@ using ProjectDonut.ProceduralGeneration;
 using ProjectDonut.ProceduralGeneration.World;
 using ProjectDonut.ProceduralGeneration.World.Generators;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static ProjectDonut.ProceduralGeneration.Dungeons.DungeonGenerator;
 
 namespace ProjectDonut.Core.Sprites
@@ -48,6 +50,151 @@ namespace ProjectDonut.Core.Sprites
         public bool South { get; set; }
         public bool SouthEast { get; set; }
     }
+
+    public class NeighbourDataTilesRaisedRock
+    {
+        public bool NW { get; set; }
+        public bool N { get; set; }
+        public bool NE { get; set; }
+
+        public bool W { get; set; }
+        public bool E { get; set; }
+
+        public bool SW { get; set; }
+        public bool S { get; set; }
+        public bool SE { get; set; }
+
+        //public bool SW2 { get; set; }
+        public bool S2 { get; set; }
+
+        //public bool SE2 { get; set; }
+
+        public NeighbourDataTilesRaisedRock(int[,] map, int x, int y)
+        {
+            var mapWidth = map.GetLength(0);
+            var mapHeight = map.GetLength(1);
+
+            if (y > 0 && x > 0)
+                NW = map[x - 1, y - 1] > Global.RaisedRockHeight;
+
+            if (y > 0)
+                N = map[x, y - 1] > Global.RaisedRockHeight;
+
+            if (y > 0 && x < mapWidth - 1)
+                NE = map[x + 1, y - 1] > Global.RaisedRockHeight;
+
+            if (x > 0)
+                W = map[x - 1, y] > Global.RaisedRockHeight;
+
+            if (x < mapWidth - 1)
+                E = map[x + 1, y] > Global.RaisedRockHeight;
+
+            if (y < mapHeight - 1 && x > 0)
+                SW = map[x - 1, y + 1] > Global.RaisedRockHeight;
+
+            if (y < mapHeight - 1)
+                S = map[x, y + 1] > Global.RaisedRockHeight;
+
+            if (y < mapHeight - 1 && x < mapWidth - 1)
+                SE = map[x + 1, y + 1] > Global.RaisedRockHeight;
+
+            //if (y < mapHeight - 2 && x > 0)
+            //    SW2 = map[x - 1, y + 2] > Global.RaisedRockHeight;
+
+            if (y < mapHeight - 2)
+                S2 = map[x, y + 2] > Global.RaisedRockHeight;
+
+            //if (y < mapHeight - 2 && x < mapWidth - 1)
+            //    SE2 = map[x + 1, y + 2] > Global.RaisedRockHeight;
+        }
+
+        public bool MissingNW
+        {
+            get
+            {
+                return !NW && N && NE && E && SE && S && SW && W;
+            }
+        }
+        public bool MissingNE
+        {
+            get
+            {
+                return NW && N && !NE && E && SE && S && SW && W;
+            }
+        }
+
+        public bool MissingSW
+        {
+            get
+            {
+                return NW && N && NE && E && SE && S && !SW && W;
+            }
+        }
+
+        public bool MissingSE
+        {
+            get
+            {
+                return NW && N && NE && E && !SE && S && SW && W;
+            }
+        }
+        //public bool MissingSW2
+        //{
+        //    get
+        //    {
+        //        return NW && N && NE && E && SE && S && !SW2 && W;
+        //    }
+        //}
+        public bool MissingN
+        {
+            get
+            {
+                return NW && !N && NE && E && SE && S && SW && W;
+            }
+        }
+
+        public bool MissingE
+        {
+            get
+            {
+                return NW && N && NE && !E && SE && S && SW && W;
+            }
+        }
+
+        public bool MissingS
+        {
+            get
+            {
+                return NW && N && NE && E && W && !S;
+            }
+        }
+
+        public bool MissingW
+            {
+            get
+            {
+                return NW && N && NE && E && SE && S && SW && !W;
+            }
+        }
+
+        //public bool MissingSE2
+        //    {
+        //    get
+        //    {
+        //        return NW && N && NE && E && SE && S && SW && W && !SE2;
+        //    }
+        //}
+
+        public bool MissingS2
+            {
+            get
+            {
+                return !S2;
+            }
+        }
+    }
+
+
 
     public class RuleTiler
     {
@@ -771,41 +918,125 @@ namespace ProjectDonut.Core.Sprites
                 }
             }
 
-            public static Texture2D DetermineRaisedRockTexture(int[,] dataMap, int x, int y)
+            public static Texture2D DetermineRaisedRockTexture(ref int[,] dataMap, int x, int y)
             {
-                var nbs = new NeighbourDataTiles(dataMap, x, y);
+                var n = new NeighbourDataTilesRaisedRock(dataMap, x, y);
                 var lib = SpriteLib.World.RaisedRock;
 
-                // CORNERS
-                if (!nbs.North && nbs.East && nbs.South && !nbs.West) // ES
-                    return lib["nw"];
+                var label = GetTextureLabel(ref dataMap, x, y).ToLower();
+                //if (label == "empty")
+                //    return null;
 
-                if (!nbs.North && !nbs.East && nbs.South && nbs.West) // SW
-                    return lib["ne"];
+                return lib[label];
 
-                if (nbs.North && !nbs.East && !nbs.South && nbs.West) // NW
-                    return lib["2se"];
+                // BOTTOM ROW
+                if (!n.S && !n.W && n.E)
+                    return lib["sw"];
 
-                if (nbs.North && nbs.East && !nbs.South && !nbs.West) // NE
-                    return lib["2sw"];
+                if (!n.S && !n.E && n.W)
+                    return lib["se"];
 
-                // STRAIGHTS
-                if (!nbs.North && nbs.East && nbs.South && nbs.West) // EW
-                    return lib["n"];
-
-                if (nbs.North && !nbs.East && nbs.South && nbs.West) // NS
-                    return lib["e"];
-
-                if (nbs.North && nbs.East && !nbs.South && nbs.West) // EW
+                if (!n.S && n.W && n.E)
                     return lib["s"];
 
-                if (nbs.North && nbs.East && nbs.South && !nbs.West) // NS
+                // STRAIGHTS
+                if (!n.N && n.W && n.E)
+                    return lib["n"];
+
+                if (!n.E && n.N && n.S)
+                    return lib["e"];
+
+                if (!n.W && n.N && n.S)
                     return lib["w"];
 
+                // CORNERS
+                if (!n.N && n.E && n.S && !n.W && !n.NW)
+                    return lib["nw"];
+
+                if (!n.N && !n.E && n.S && n.W && !n.NE)
+                    return lib["ne"];
 
 
                 return lib["c"];
             }
+
+            public static string GetTextureLabel(ref int[,] grid, int x, int y)
+            {
+                // Bounds check to avoid array out-of-bounds access
+                int rows = grid.GetLength(0);
+                int cols = grid.GetLength(1);
+
+                // Ensure the current cell is occupied (1)
+                if (grid[x, y] == 0)
+                    return "Empty";
+
+                // Check neighbors: assign 1 if occupied, 0 if empty or out of bounds
+                int north = (y > 0 && grid[x, y - 1] >= Global.RaisedRockHeight) ? 1 : 0;
+                int south = (y < rows - 1 && grid[x, y + 1] >= Global.RaisedRockHeight) ? 1 : 0;
+                int west = (x > 0 && grid[x - 1, y] >= Global.RaisedRockHeight) ? 1 : 0;
+                int east = (x < cols - 1 && grid[x + 1, y] >= Global.RaisedRockHeight) ? 1 : 0;
+                int nw = (x > 0 && y > 0 && grid[x - 1, y - 1] >= Global.RaisedRockHeight) ? 1 : 0;
+                int ne = (x < cols - 1 && y > 0 && grid[x + 1, y - 1] >= Global.RaisedRockHeight) ? 1 : 0;
+                int sw = (x > 0 && y < rows - 1 && grid[x - 1, y + 1] >= Global.RaisedRockHeight) ? 1 : 0;
+                int se = (x < cols - 1 && y < rows - 1 && grid[x + 1, y + 1] >= Global.RaisedRockHeight) ? 1 : 0;
+
+
+
+                //List<bool> cardinals = new List<bool>()
+                //{
+                //    north == 1,
+                //    east == 1,
+                //    south == 1,
+                //    west == 1,
+                //    nw == 1,
+                //    ne == 1,
+                //    sw == 1,
+                //    se == 1
+                //};
+
+                //var falseCount = cardinals.Where(c => c == false).Count();
+
+                //if (falseCount >= 5)
+                //{
+                //    grid[x, y] = 0;
+                //    return "Empty";
+                //}
+
+                if (y == rows - 1)
+                    south = 1;
+                if (y == 0)
+                    north = 1;
+                if (x == cols - 1)
+                    east = 1;
+                if (x == 0)
+                    west = 1;
+
+                // Determine texture label based on neighboring tiles
+                if (north == 1 && south == 1 && west == 1 && east == 1)
+                    return "C";  // Center surrounded on all sides
+
+                else if (north == 0 && south == 1 && west == 1 && east == 0)
+                    return "NE";
+                else if (north == 0 && south == 1 && west == 0 && east == 1)
+                    return "NW";
+                else if (north == 0 && south == 1)// && west == 0 && east == 0)
+                    return "N";
+                else if (north == 1 && south == 0 && west == 0 && east == 1)
+                    return "SW";
+                else if (north == 1 && south == 0 && west == 1 && east == 0)
+                    return "SE";
+                else if (north == 1 && south == 0)// && west == 0 && east == 0)
+                    return "S";
+                else if (north == 0 && south == 0 && west == 1 && east == 1)
+                    return "C";  // Default center if both horizontal neighbors occupied
+                else if (west == 1 && east == 0)
+                    return "E";
+                else if (east == 1 && west == 0)
+                    return "W";
+                else
+                    return "C";  // Default to Center for any other configuration
+            }
+
         }
     }
 }

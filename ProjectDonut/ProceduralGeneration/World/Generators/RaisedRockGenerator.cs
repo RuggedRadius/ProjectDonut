@@ -28,6 +28,14 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
         {
             int[,] heightData = new int[height, width];
 
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    for (int j = 0; j < 4; j++)
+            //    {
+            //        heightData[i + 20, j + 20] = 100;
+            //    }
+            //}
+
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
@@ -86,13 +94,16 @@ namespace ProjectDonut.ProceduralGeneration.World.Generators
                         yIndex = j,
                         LocalPosition = new Vector2(i * settings.TileSize, j * settings.TileSize),
                         Size = new Vector2(settings.TileSize, settings.TileSize),
-                        Texture = RuleTiler.World.DetermineRaisedRockTexture(chunk.RaisedRockData, i, j),
+                        Texture = RuleTiler.World.DetermineRaisedRockTexture(ref chunk.RaisedRockData, i, j),
                         //Texture = SpriteLib.World.RaisedRock["s"],
                         TileType = TileType.World,
                         WorldTileType = WorldTileType.Ground,
                         Biome = (Biome)chunk.BiomeData[i, j],
                         IsCollidable = true
                     };
+
+                    if (tile.Texture == null)
+                        continue;
                     
                     tile.Initialize();
                     tmBase.Map[i, j] = tile;

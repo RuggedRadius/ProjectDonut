@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using ProjectDonut.Core.SceneManagement.SceneTypes;
 using ProjectDonut.Interfaces;
 using ProjectDonut.ProceduralGeneration.World;
@@ -183,6 +184,7 @@ namespace ProjectDonut.ProceduralGeneration
             //    return;
 
             Global.SpriteBatch.Draw(Texture, WorldPosition, null, drawColour * alphaValue);
+            //Global.SpriteBatch.DrawRectangle(Bounds, Color.Red, 1f);
         }
 
         private bool IsInCameraView()

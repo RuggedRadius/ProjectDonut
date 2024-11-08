@@ -53,7 +53,7 @@ namespace ProjectDonut
         // MAP SETTINGS
         public static int TileSize = 32;
         public static int ChunkSize = 100;
-        public static int RaisedRockHeight = 70;
+        public static int RaisedRockHeight = 90;
 
         // MINING
         public static int TEMP_PLAYER_DAMAGE = 10;
